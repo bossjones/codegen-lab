@@ -1,0 +1,99 @@
+version: '3'
+
+# Variables used across tasks
+vars:
+  PYTHON_VERSION: 3.12
+  IGNORE_PATTERNS: "**/uv.lock,**/package-lock.json,**/.env,**/Cargo.lock,**/node_modules,**/target,**/dist,**/build,**/output.txt,**/yarn.lock"
+  DEFAULT_MODEL: claude-3.5-sonnet
+
+# Tool versions and settings
+env:
+  # Python environment variables
+  PYTHONPATH: "{{.ROOT_DIR}}"
+
+tasks:
+  # LLM Tasks
+  llm:generate_bundle:
+    desc: 'Generate LLM bundle output file using repomix'
+    silent: true
+    cmds:
+      - npx repomix --style xml --output-show-line-numbers --output output.txt --ignore {{.IGNORE_PATTERNS}}
+
+  llm:clean_bundles:
+    desc: 'Remove all generated LLM bundle output files'
+    cmds:
+      - find . -name "output.txt" -print -delete
+
+  llm:generate_readme:
+    desc: 'Generate README.md from repository content stored in output.txt using LLM generation'
+    deps: [llm:generate_bundle]
+    cmds:
+      - cat output.txt | llm -t readme-gen > README.md
+
+  llm:copy_buffer_bundle:
+    desc: 'Copy generated LLM bundle from output.txt to system clipboard for external use'
+    deps: [llm:generate_bundle]
+    cmds:
+      - cat output.txt | pbcopy
+      - echo "Pushed output.txt to the copy buffer"
+
+  llm:generate_github_issues:
+    desc: 'Generate GitHub issues from repository content stored in output.txt using LLM generation'
+    deps: [llm:generate_bundle]
+    cmds:
+      - cat output.txt | llm -m {{.DEFAULT_MODEL}} -t github-issue-gen > issues.md
+
+  llm:generate_code_review:
+    desc: 'Generate code review output from repository content stored in output.txt using LLM generation'
+    deps: [llm:generate_bundle]
+    cmds:
+      - cat output.txt | llm -m {{.DEFAULT_MODEL}} -t code-review-gen > code-review.md
+
+  llm:generate_missing_tests:
+    desc: 'Generate missing tests for code in repository content stored in output.txt using LLM generation'
+    deps: [llm:generate_bundle]
+    cmds:
+      - cat output.txt | llm -m {{.DEFAULT_MODEL}} -t missing-tests-gen > missing-tests.md
+
+  llm:generate_issue_prompts:
+    desc: 'Generate issue prompts from repository content stored in output.txt using LLM generation'
+    deps: [llm:generate_bundle]
+    cmds:
+      - cat output.txt | llm -m o3-mini -t issue-prompts-gen > issue-prompts.md
+
+  # Python Tasks
+  python:format:
+    desc: 'Format Python code using ruff formatter'
+    cmds:
+      - uvx ruff format
+
+  python:lint:
+    desc: 'Lint Python code using ruff'
+    cmds:
+      - uvx ruff check
+
+  python:lint-fix:
+    desc: 'Automatically fix Python linting issues using ruff'
+    cmds:
+      - uvx ruff check --fix
+
+  python:test:
+    desc: 'Run Python tests using pytest'
+    cmds:
+      - uv run pytest
+
+  # Utility Tasks
+  jupyter:
+    desc: 'Start Jupyter Lab'
+    cmds:
+      - uv run --with jupyter jupyter lab
+
+  webui:
+    desc: 'Start WebUI'
+    cmds:
+      - uvx --python 3.11 open-webui serve
+
+  claude:
+    desc: 'Start Claude CLI'
+    cmds:
+      - bash -c 'claude'
