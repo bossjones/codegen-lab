@@ -1,3 +1,5 @@
+SHELL := /opt/homebrew/bin/zsh
+
 .PHONY: install
 install: ## Install the virtual environment and install the pre-commit hooks
 	@echo "🚀 Creating virtual environment using uv"
@@ -140,6 +142,7 @@ update-cursor-rules:  ## Update cursor rules from prompts/drafts/cursor_rules
 
 # Serve documentation locally
 docs-serve:
+	@echo "Using shell: $$ZSH_VERSION"
 	uv run python scripts/serve_docs.py --no-gh-deploy-url
 
 # Build documentation without serving
@@ -161,5 +164,24 @@ docs-setup:
 # Clean documentation build
 docs-clean:
 	rm -rf site/
+
+# Print current shell information
+.PHONY: print-shell
+print-shell:
+	@echo "SHELL is: $(SHELL)"
+	@echo "Current shell from environment:"
+	@echo $$SHELL
+	@echo "Current interpreter:"
+	@ps -p $$$$
+
+# Test the shell type
+.PHONY: test-shell-type
+test-shell-type:
+	@echo "Testing shell type:"
+	@echo $0
+	@echo $SHELL
+	@echo "Shell features test:"
+	@if [ -n "$$ZSH_VERSION" ]; then echo "Running in ZSH"; else echo "Not running in ZSH"; fi
+	@if [ -n "$$BASH_VERSION" ]; then echo "Running in BASH"; else echo "Not running in BASH"; fi
 
 .DEFAULT_GOAL := help
