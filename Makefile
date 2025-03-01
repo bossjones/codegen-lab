@@ -135,4 +135,31 @@ update-cursor-rules:  ## Update cursor rules from prompts/drafts/cursor_rules
 	# Copy files from prompts/drafts/cursor_rules to .cursor/rules and change extension to .mdc
 	find hack/drafts/cursor_rules -type f -name "*.md" -exec sh -c 'for file; do target=$${file%.md}; cp -a "$$file" ".cursor/rules/$$(basename "$$target")"; done' sh {} +
 
+# Documentation targets
+.PHONY: docs-serve docs-build docs-deploy docs-clean
+
+# Serve documentation locally
+docs-serve:
+	uv run python scripts/serve_docs.py
+
+# Build documentation without serving
+docs-build:
+	uv run python scripts/serve_docs.py --build-only
+
+# Clean and build documentation
+docs-clean-build:
+	uv run python scripts/serve_docs.py --build-only --clean
+
+# Deploy documentation to GitHub Pages
+docs-deploy:
+	uv run mkdocs gh-deploy --force
+
+# Install documentation dependencies
+docs-setup:
+	uv add --dev mkdocs mkdocs-material
+
+# Clean documentation build
+docs-clean:
+	rm -rf site/
+
 .DEFAULT_GOAL := help
