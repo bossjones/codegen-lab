@@ -27,12 +27,18 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.12'
-          cache: 'pip'
+
+      - name: Install UV
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install mkdocs mkdocs-material
+          # Set up a virtual environment
+          uv venv
+          # Install documentation dependencies using the Makefile target
+          make docs-setup
 
       - name: Deploy documentation
         run: |
@@ -43,5 +49,5 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
 
-          # Deploy with MkDocs
-          mkdocs gh-deploy --force
+          # Deploy with MkDocs using the Makefile target
+          make docs-deploy

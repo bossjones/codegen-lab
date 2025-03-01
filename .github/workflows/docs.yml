@@ -26,7 +26,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-          cache: 'pip'
 
       - name: Install UV
         run: |
@@ -35,10 +34,18 @@ jobs:
 
       - name: Install dependencies
         run: |
-          uv pip install mkdocs mkdocs-material
+          # Set up a virtual environment
+          uv venv
+          # Install documentation dependencies using the Makefile target
+          make docs-setup
 
       - name: Deploy Documentation
         run: |
+          # Create an empty .nojekyll file to disable Jekyll processing
+          touch .nojekyll
+
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          mkdocs gh-deploy --force
+
+          # Deploy with MkDocs using the Makefile target
+          make docs-deploy
