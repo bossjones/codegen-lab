@@ -184,4 +184,18 @@ test-shell-type:
 	@if [ -n "$$ZSH_VERSION" ]; then echo "Running in ZSH"; else echo "Not running in ZSH"; fi
 	@if [ -n "$$BASH_VERSION" ]; then echo "Running in BASH"; else echo "Not running in BASH"; fi
 
+# Changelog targets
+.PHONY: changelog-update changelog-finalize
+
+# Generate changelog entries from Git history
+changelog-update:
+	@echo "🚀 Updating changelog from Git history"
+	@uv run python scripts/update_changelog.py $(if $(BRANCH),--branch=$(BRANCH)) $(if $(SINCE),--since=$(SINCE)) $(if $(UNTIL),--until=$(UNTIL)) $(if $(TYPES),--types=$(TYPES))
+
+# Finalize a release in the changelog
+changelog-finalize:
+	@if [ -z "$(VERSION)" ]; then echo "Please provide a VERSION parameter, e.g., make changelog-finalize VERSION=1.0.0"; exit 1; fi
+	@echo "🚀 Finalizing changelog for version $(VERSION)"
+	@uv run python scripts/update_changelog.py --finalize --version=$(VERSION)
+
 .DEFAULT_GOAL := help

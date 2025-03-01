@@ -1,0 +1,29 @@
+# Changelog Tool Configuration
+
+# Repository information
+version_prefix: 'v'  # Prefix for version tags, e.g., v1.0.0
+repo_url: 'https://github.com/bossjones/codegen-lab'  # Repository URL for links
+
+# Commit type mappings (conventional commits → changelog sections)
+commit_types:
+  feat: 'Added'
+  fix: 'Fixed'
+  perf: 'Changed'
+  docs: 'Changed'
+  style: 'Changed'
+  refactor: 'Changed'
+  build: 'Changed'
+  ci: 'Changed'
+  chore: 'Changed'
+  deprecate: 'Deprecated'
+  remove: 'Removed'
+  security: 'Security'
+
+# Commit types to exclude from changelog
+exclude_types:
+  - 'test'
+  - 'ci'
+  - 'chore'
+
+# Path to the changelog file
+changelog_path: 'docs/changelog.md'
