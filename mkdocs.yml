@@ -2,7 +2,7 @@ site_name: Codegen Lab
 site_description: AI-powered code generation tooling for efficient software development
 site_author: Malcolm Jones
 # For GitHub Pages deployment
-site_url: http://127.0.0.1:8000/
+site_url: https://bossjones.github.io/codegen-lab/
 
 # Repository
 repo_name: bossjones/codegen-lab
@@ -18,7 +18,9 @@ nav:
   - Getting Started: getting-started.md
   - User Guide:
     - Installation: user-guide/installation.md
-    - Configuration: configuration.md
+    - Configuration: user-guide/configuration.md
+  - Development Tools:
+    - Cursor Rules: tools/cursor-rules.md
   - API Reference: api-reference.md
   - Troubleshooting: troubleshooting.md
   - Contributing: contributing.md

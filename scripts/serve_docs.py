@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Script to serve MkDocs documentation locally with enhanced functionality.
+Script to serve MkDocs documentation with automatic port conflict resolution.
 
-This script provides a convenient way to serve the documentation locally,
-with additional features like automatic builds and hot reloading.
+This script checks if the default port is in use, and either:
+1. Kills existing MkDocs processes using that port, or
+2. Uses an alternative port
 """
 
 import argparse
@@ -12,6 +13,10 @@ import os
 import shutil
 import subprocess
 import sys
+import socket
+import time
+import signal
+import psutil
 from typing import List, Optional, Union
 
 
@@ -23,33 +28,27 @@ def parse_args() -> argparse.Namespace:
         argparse.Namespace: The parsed command line arguments.
     """
     parser = argparse.ArgumentParser(
-        description="Serve MkDocs documentation locally with enhanced functionality"
+        description="Serve MkDocs documentation with automatic port management"
     )
     parser.add_argument(
-        "--port", type=int, default=8000, help="Port to serve documentation on"
+        "--port", type=int, default=8000, help="Port to use for the server (default: 8000)"
     )
     parser.add_argument(
-        "--host", type=str, default="127.0.0.1", help="Host to serve documentation on"
+        "--kill-existing", action="store_true", help="Kill existing MkDocs processes using the port"
     )
     parser.add_argument(
-        "--no-livereload", action="store_true", help="Disable live reload"
+        "--no-kill-existing", action="store_false", dest="kill_existing",
+        help="Don't kill existing processes, use alternative port instead"
     )
     parser.add_argument(
-        "--build-only", action="store_true", help="Build documentation without serving"
+        "--no-gh-deploy-url", action="store_false", dest="gh_deploy_url",
+        help="Don't use GitHub Pages URL in configuration"
     )
     parser.add_argument(
         "--clean", action="store_true", help="Clean the build directory before building"
     )
     parser.add_argument(
-        "--dev-addr",
-        type=str,
-        default="127.0.0.1:8000",
-        help="IP address and port to serve documentation (default: 127.0.0.1:8000)",
-    )
-    parser.add_argument(
-        "--no-gh-deploy-url",
-        action="store_true",
-        help="Disable GitHub Pages URL path for local development",
+        "--build-only", action="store_true", help="Only build the documentation, don't serve it"
     )
     return parser.parse_args()
 
@@ -130,6 +129,159 @@ def modify_mkdocs_config_for_local(enable_local_mode: bool) -> None:
             os.remove(f"{config_file}.bak")
 
 
+def is_port_in_use(port: int) -> bool:
+    """
+    Check if a port is already in use.
+
+    Args:
+        port: The port number to check
+
+    Returns:
+        True if the port is in use, False otherwise
+    """
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        return s.connect_ex(('localhost', port)) == 0
+
+
+def find_mkdocs_pid(port: int) -> List[int]:
+    """
+    Find process IDs of MkDocs servers running on the given port.
+
+    Args:
+        port: The port number to check
+
+    Returns:
+        List of process IDs running MkDocs on the specified port
+    """
+    pids = []
+    for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+        try:
+            cmdline = proc.info.get('cmdline', [])
+            if cmdline and 'mkdocs' in ' '.join(cmdline) and f'127.0.0.1:{port}' in ' '.join(cmdline):
+                pids.append(proc.info['pid'])
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass
+    return pids
+
+
+def kill_process(pid: int) -> bool:
+    """
+    Kill a process by its PID.
+
+    Args:
+        pid: Process ID to kill
+
+    Returns:
+        True if successfully killed, False otherwise
+    """
+    try:
+        os.kill(pid, signal.SIGTERM)
+        # Wait to see if it actually died
+        time.sleep(0.5)
+        if psutil.pid_exists(pid):
+            os.kill(pid, signal.SIGKILL)  # Force kill if still alive
+        return True
+    except OSError:
+        return False
+
+
+def find_available_port(start_port: int = 8000, max_port: int = 8100) -> int:
+    """
+    Find an available port starting from the specified port.
+
+    Args:
+        start_port: The port to start checking from
+        max_port: The maximum port number to check
+
+    Returns:
+        An available port number
+    """
+    for port in range(start_port, max_port):
+        if not is_port_in_use(port):
+            return port
+    raise RuntimeError(f"Could not find an available port between {start_port} and {max_port}")
+
+
+def serve_docs(default_port: int = 8000,
+               kill_existing: bool = False,
+               gh_deploy_url: bool = False) -> int:
+    """
+    Serve MkDocs documentation with automatic port conflict resolution.
+
+    Args:
+        default_port: The default port to use
+        kill_existing: Whether to kill existing MkDocs processes on the port
+        gh_deploy_url: Whether to use GitHub Pages URL in the configuration
+
+    Returns:
+        Exit code of the MkDocs process
+    """
+    port = default_port
+
+    # Check if the port is in use
+    if is_port_in_use(port):
+        pids = find_mkdocs_pid(port)
+
+        if pids and kill_existing:
+            print(f"Found MkDocs processes using port {port}. Terminating...")
+            for pid in pids:
+                if kill_process(pid):
+                    print(f"Successfully terminated process {pid}")
+                else:
+                    print(f"Failed to terminate process {pid}")
+
+            # Wait a moment for the port to be released
+            time.sleep(1)
+
+        # If we couldn't kill or chose not to, find another port
+        if is_port_in_use(port):
+            if kill_existing:
+                print(f"Port {port} is still in use. Looking for another port...")
+            else:
+                print(f"Port {port} is in use. Looking for another port...")
+            port = find_available_port(port)
+            print(f"Using alternative port: {port}")
+
+    # Prepare the command
+    cmd = [sys.executable, "-m", "mkdocs", "serve", "--dev-addr", f"127.0.0.1:{port}"]
+
+    # Set site_url based on gh_deploy_url flag
+    if not gh_deploy_url:
+        # Use localhost URL
+        cmd.extend(["--config-file", "mkdocs.yml"])
+
+    try:
+        # Print the command we're about to run
+        print(f"Running: {' '.join(cmd)}")
+
+        # Execute mkdocs serve
+        process = subprocess.Popen(cmd)
+
+        # Wait a moment
+        time.sleep(2)
+
+        # Check if the process is still running
+        if process.poll() is None:
+            print(f"MkDocs server started successfully on http://127.0.0.1:{port}/")
+            print("Press Ctrl+C to stop the server")
+            try:
+                # Wait for the user to interrupt
+                process.wait()
+                return process.returncode
+            except KeyboardInterrupt:
+                # Handle Ctrl+C gracefully
+                print("\nStopping MkDocs server...")
+                process.terminate()
+                process.wait(timeout=5)
+                return 0
+        else:
+            print(f"MkDocs server failed to start. Return code: {process.returncode}")
+            return process.returncode
+    except KeyboardInterrupt:
+        print("\nOperation cancelled by user")
+        return 130  # Standard exit code for SIGINT
+
+
 def main() -> int:
     """
     Main function to serve or build the documentation.
@@ -147,43 +299,25 @@ def main() -> int:
         clean_build_dir()
 
     # Modify config for local development if requested
-    if args.no_gh_deploy_url:
+    if not args.gh_deploy_url:
         modify_mkdocs_config_for_local(True)
 
     try:
-        # Create base command with UV
-        base_cmd = [sys.executable, "-m", "mkdocs"]
-
         if args.build_only:
-            # Build the documentation
-            cmd = base_cmd + ["build"]
-            result = run_command(cmd)
-            if isinstance(result, subprocess.CompletedProcess):
-                return result.returncode
-            return result
+            # Just build the docs
+            cmd = [sys.executable, "-m", "mkdocs", "build"]
+            return run_command(cmd)
         else:
-            # Serve the documentation
-            cmd = base_cmd + ["serve"]
-
-            # Add port and host arguments if provided
-            cmd.extend(["--dev-addr", f"{args.dev_addr}"])
-
-            # Add no-livereload flag if provided
-            if args.no_livereload:
-                cmd.append("--no-livereload")
-
-            # Run the command
-            try:
-                result = run_command(cmd)
-                if isinstance(result, subprocess.CompletedProcess):
-                    return result.returncode
-                return result
-            except KeyboardInterrupt:
-                print("\nStopping documentation server")
-                return 0
+            # Serve the docs
+            exit_code = serve_docs(
+                default_port=args.port,
+                kill_existing=args.kill_existing,
+                gh_deploy_url=args.gh_deploy_url
+            )
+            return exit_code
     finally:
         # Restore original config if we modified it
-        if args.no_gh_deploy_url:
+        if not args.gh_deploy_url:
             modify_mkdocs_config_for_local(False)
 
 

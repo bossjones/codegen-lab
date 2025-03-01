@@ -18,6 +18,7 @@ dependencies = [
     "llm-perplexity>=2025.2.0",
     "llm-python>=0.1",
     "llm-sentence-transformers>=0.2",
+    "psutil>=5.9.5",
     "pytz>=2025.1",
     "rich>=13.9.4",
     "ttok>=0.3",

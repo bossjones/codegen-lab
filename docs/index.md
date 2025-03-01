@@ -11,6 +11,7 @@ Codegen Lab is a project focused on code generation and AI-assisted development 
 - Feature 1: Brief description
 - Feature 2: Brief description
 - Feature 3: Brief description
+- **Cursor Rules**: Custom workflow automations for iterative development in existing codebases
 
 ## Quick Start
 
@@ -27,5 +28,7 @@ uv sync --frozen
 
 - **Getting Started**: Basic introduction and setup
 - **User Guide**: Detailed usage instructions
+- **Development Tools**: Tools and workflows for effective development
+  - **Cursor Rules**: Workflow automations for iterative development
 - **API Reference**: Technical reference for APIs
 - **Contributing**: Guidelines for contributors

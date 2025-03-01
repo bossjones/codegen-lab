@@ -143,7 +143,7 @@ update-cursor-rules:  ## Update cursor rules from prompts/drafts/cursor_rules
 # Serve documentation locally
 docs-serve:
 	@echo "Using shell: $$ZSH_VERSION"
-	uv run python scripts/serve_docs.py --no-gh-deploy-url
+	uv run python scripts/serve_docs.py --no-gh-deploy-url --kill-existing
 
 # Build documentation without serving
 docs-build:
