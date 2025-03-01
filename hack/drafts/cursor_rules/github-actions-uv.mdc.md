@@ -26,7 +26,21 @@ actions:
 
       ## 1. Installing UV
 
-      Always use this standard pattern to install UV:
+      ### Preferred: Use the Official Action
+
+      The official `astral-sh/setup-uv` action is recommended for installing UV:
+
+      ```yaml
+      - name: Install UV
+        uses: astral-sh/setup-uv@v5
+        with:
+          # Pin to a specific version for stability
+          version: "0.6.3"
+      ```
+
+      ### Alternative: Manual Installation
+
+      If you prefer manual installation:
 
       ```yaml
       - name: Install UV
@@ -112,6 +126,47 @@ actions:
       - name: Deploy docs
         run: |
           make docs-deploy
+      ```
+
+      ## 6. Matrix Testing with Multiple Python Versions
+
+      When testing against multiple Python versions, use a matrix strategy:
+
+      ```yaml
+      jobs:
+        test:
+          runs-on: ubuntu-latest
+          strategy:
+            matrix:
+              python-version: ["3.9", "3.10", "3.11", "3.12"]
+
+          steps:
+            - uses: actions/checkout@v4
+
+            - name: Set up Python ${{ matrix.python-version }}
+              uses: actions/setup-python@v5
+              with:
+                python-version: ${{ matrix.python-version }}
+
+            - name: Install UV
+              uses: astral-sh/setup-uv@v5
+
+            - name: Install dependencies
+              run: |
+                uv venv
+                uv sync
+
+            - name: Run tests
+              run: |
+                uv run pytest
+      ```
+
+      You can also use UV to install Python directly:
+
+      ```yaml
+      - name: Install Python with UV
+        run: |
+          uv python install ${{ matrix.python-version }}
       ```
 
 examples:
@@ -224,7 +279,20 @@ metadata:
 
 ### Dependency Caching
 
-Using GitHub Actions caching with UV:
+#### Preferred: Using setup-uv Built-in Caching
+
+The `setup-uv` action has built-in caching:
+
+```yaml
+- name: Install UV with caching
+  uses: astral-sh/setup-uv@v5
+  with:
+    cache: true
+```
+
+#### Alternative: Manual Caching
+
+If you need more control over caching:
 
 ```yaml
 - name: Cache UV data
@@ -232,10 +300,37 @@ Using GitHub Actions caching with UV:
   with:
     path: |
       ~/.cache/uv
+      ~/.cache/uv/installs
       ~/.cargo/bin/uv
-    key: ${{ runner.os }}-uv-${{ hashFiles('**/pyproject.toml') }}
+    key: ${{ runner.os }}-uv-${{ hashFiles('**/pyproject.toml', '**/requirements.txt') }}
     restore-keys: |
       ${{ runner.os }}-uv-
+```
+
+#### Pruning the Cache
+
+To keep your cache size manageable in CI:
+
+```yaml
+- name: Prune UV cache
+  run: uv cache prune --ci
+```
+
+### Environment Variables
+
+UV provides several environment variables to control behavior in CI:
+
+```yaml
+- name: Install and run with UV
+  env:
+    # Use project-specific environment settings
+    UV_PROJECT_ENVIRONMENT: true
+    # Avoid interactive prompts in CI
+    UV_NO_PROMPT: 1
+  run: |
+    uv venv
+    uv sync
+    uv run pytest
 ```
 
 ### Common Pitfalls to Avoid
@@ -247,3 +342,76 @@ Using GitHub Actions caching with UV:
 5. **Avoid `--user` flag**: UV creates and manages its own environments
 
 Remember to update existing workflows when they are modified, and ensure all new workflows follow these standards.
+
+## Complete Workflow Example
+
+Here's a complete workflow example that follows all best practices:
+
+```yaml
+name: Python Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install UV
+      uses: astral-sh/setup-uv@v5
+      with:
+        cache: true
+        version: "0.6.3"
+
+    - name: Install dependencies
+      env:
+        UV_PROJECT_ENVIRONMENT: true
+        UV_NO_PROMPT: 1
+      run: |
+        uv venv
+        uv sync
+
+    - name: Lint
+      run: |
+        uv run ruff check .
+        uv run ruff format --check .
+
+    - name: Type check
+      run: |
+        uv run mypy .
+
+    - name: Run tests
+      run: |
+        uv run pytest --cov=./ --cov-report=xml
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./coverage.xml
+        fail_ci_if_error: true
+
+    - name: Prune cache
+      run: uv cache prune --ci
+```
+
+This workflow demonstrates:
+- Using the official setup-uv action with caching
+- Matrix testing across multiple Python versions
+- Using appropriate environment variables
+- Following the sync and run pattern
+- Cleaning up the cache with pruning
+- Running all commands through UV
