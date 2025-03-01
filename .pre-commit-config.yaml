@@ -1,0 +1,40 @@
+---
+exclude: ^adobe_cursor_tools/alembic/.*
+# To use:
+#
+#     pre-commit run -a
+#
+# Or:
+#
+#     pre-commit install  # (runs every time you commit in git)
+#
+# To update this file:
+#
+#     pre-commit autoupdate
+#
+# See https://github.com/pre-commit/pre-commit
+ci:
+    autofix_commit_msg: 'style: pre-commit fixes'
+    autofix_prs: true
+    autoupdate_branch: ''
+    autoupdate_commit_msg: 'chore: update pre-commit hooks'
+    autoupdate_schedule: weekly
+    skip: []
+    submodules: false
+default_install_hook_types:
+    # is triggered before the commit is finalized to allow checks on the code being committed. Running hooks on unstaged changes can lead to both false-positives and false-negatives during committing. pre-commit only runs on the staged contents of files by temporarily stashing the unstaged changes while running hooks.
+    - pre-commit
+    # hooks will be passed a single filename -- this file contains the current contents of the commit message to be validated. The commit will be aborted if there is a nonzero exit code.
+    - commit-msg
+    # pre-push is triggered on git push.
+    - pre-push
+default_stages:
+    - pre-commit
+    - pre-push
+repos:
+    - repo: https://github.com/sirosen/texthooks
+      rev: 0.6.8
+      hooks:
+          - id: alphabetize-codeowners
+          - id: fix-smartquotes
+          - id: fix-ligatures

@@ -1,0 +1,32 @@
+[project]
+name = "adobe-cursor-tools"
+version = "0.1.0"
+description = "Adobe Cursor Tools for Prompting"
+readme = "README.md"
+authors = [
+    { name = "Malcolm Jones", email = "malcolm@adobe.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "better-exceptions>=0.3.3",
+    "bpython>=0.25",
+    "files-to-prompt>=0.4",
+    "llm>=0.19",
+    "llm-anthropic>=0.12",
+    "llm-cmd>=0.2a0",
+    "llm-jq>=0.1.1",
+    "llm-perplexity>=2025.2.0",
+    "llm-python>=0.1",
+    "llm-sentence-transformers>=0.2",
+    "pytz>=2025.1",
+    "ttok>=0.3",
+    "tzlocal>=5.2",
+]
+
+[project.scripts]
+adobe-cursor-tools = "adobe_cursor_tools.cli:main"
+actl = "adobe_cursor_tools.cli:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
