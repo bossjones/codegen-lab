@@ -59,6 +59,69 @@ docs-test: ## Test if documentation can be built without warnings or errors
 docs: ## Build and serve the documentation
 	@uv run mkdocs serve
 
+# UV Package Management Tasks
+.PHONY: uv-sync-all uv-sync-dev uv-sync-group uv-check-lock uv-verify uv-verify-dry-run uv-upgrade-dry-run uv-upgrade-all uv-upgrade-package uv-reinstall-all uv-reinstall-package uv-outdated uv-clean-cache uv-export-requirements uv-export-requirements-resolution
+
+uv-sync-all: ## Sync all dependencies with frozen lockfile
+	@echo "🚀 Syncing all dependencies with frozen lockfile"
+	@uv sync --frozen
+
+uv-sync-dev: ## Sync only development dependencies
+	@echo "🚀 Syncing development dependencies with frozen lockfile"
+	@uv sync --frozen --dev
+
+uv-sync-group: ## Sync dependencies for a specific group
+	@echo "🚀 Syncing dependencies for group: $(group)"
+	@uv sync --frozen --group $(group)
+
+uv-check-lock: ## Check lockfile consistency (prevents updates)
+	@echo "🚀 Checking lockfile consistency"
+	@uv pip compile --check-lock pyproject.toml
+
+uv-verify: ## Verify lockfile is up to date
+	@echo "🚀 Verifying lockfile"
+	@uv pip compile pyproject.toml
+
+uv-verify-dry-run: ## Verify lockfile (dry run)
+	@echo "🚀 Verifying lockfile (dry run)"
+	@uv pip compile --dry-run pyproject.toml
+
+uv-upgrade-dry-run: ## Preview potential upgrades (dry run)
+	@echo "🚀 Previewing potential upgrades"
+	@uv pip compile --upgrade --dry-run pyproject.toml
+
+uv-upgrade-all: ## Upgrade all dependencies
+	@echo "🚀 Upgrading all dependencies"
+	@uv pip compile --upgrade pyproject.toml
+
+uv-upgrade-package: ## Upgrade specific package (usage: make uv-upgrade-package package=ruff)
+	@echo "🚀 Upgrading package: $(package)"
+	@uv pip compile --upgrade-package $(package) pyproject.toml
+
+uv-reinstall-all: ## Reinstall all packages
+	@echo "🚀 Reinstalling all packages"
+	@uv sync --reinstall --frozen
+
+uv-reinstall-package: ## Reinstall specific package (usage: make uv-reinstall-package package=ruff)
+	@echo "🚀 Reinstalling package: $(package)"
+	@uv sync --reinstall-package $(package) --frozen
+
+uv-outdated: ## List outdated packages
+	@echo "🚀 Listing outdated packages"
+	@uv pip list --outdated
+
+uv-clean-cache: ## Clean UV cache
+	@echo "🚀 Cleaning UV cache"
+	@uv cache clean
+
+uv-export-requirements: ## Export requirements without hashes
+	@echo "🚀 Exporting requirements to requirements.txt"
+	@uv pip export --without-hashes pyproject.toml -o requirements.txt
+
+uv-export-requirements-resolution: ## Export with specific resolution strategy (usage: make uv-export-requirements-resolution strategy=highest)
+	@echo "🚀 Exporting requirements with $(strategy) resolution strategy"
+	@uv pip export --without-hashes --resolution $(strategy) pyproject.toml -o requirements.txt
+
 .PHONY: help
 help:
 	@uv run python -c "import re; \
