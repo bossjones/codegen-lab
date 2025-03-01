@@ -140,7 +140,7 @@ update-cursor-rules:  ## Update cursor rules from prompts/drafts/cursor_rules
 
 # Serve documentation locally
 docs-serve:
-	uv run python scripts/serve_docs.py
+	uv run python scripts/serve_docs.py --no-gh-deploy-url
 
 # Build documentation without serving
 docs-build:
