@@ -19,21 +19,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
       - name: Install UV
-        run: |
-          curl -LsSf https://astral.sh/uv/install.sh | sh
-          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+        uses: astral-sh/setup-uv@v5
+        with:
+          cache: true
+          version: "0.6.3"
 
       - name: Install dependencies
+        env:
+          UV_PROJECT_ENVIRONMENT: true
+          UV_NO_PROMPT: 1
         run: |
           # Set up a virtual environment
           uv venv
@@ -51,3 +55,6 @@ jobs:
 
           # Deploy with MkDocs using the Makefile target
           make docs-deploy
+
+      - name: Prune cache
+        run: uv cache prune --ci
