@@ -1,0 +1,19 @@
+{
+  "[yaml]": {
+    "editor.tabSize": 2,
+    "editor.formatOnSave": false,
+    "editor.formatOnPaste": false,
+    "editor.formatOnType": false,
+  },
+  "json.schemas": [
+    {
+      "fileMatch": [
+        "Taskfile.yml"
+      ],
+      "url": "./hack/schemas/taskfile.json"
+    }
+  ],
+  "yaml.schemas": {
+    "./hack/schemas/taskfile.json": "Taskfile.yml"
+  }
+}
