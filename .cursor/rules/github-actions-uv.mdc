@@ -333,6 +333,46 @@ UV provides several environment variables to control behavior in CI:
     uv run pytest
 ```
 
+### Cross-Platform Shell Handling
+
+When your workflow needs to run on multiple operating systems (Linux, macOS), ensure proper shell configuration:
+
+```yaml
+jobs:
+  deploy:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        # Uncomment to run on multiple platforms:
+        # os: [ubuntu-latest, macos-latest]
+    steps:
+      # ... other steps ...
+
+      - name: Set shell path
+        id: set-shell
+        shell: bash
+        run: |
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            echo "SHELL_PATH=/opt/homebrew/bin/zsh" >> $GITHUB_ENV
+          else
+            echo "SHELL_PATH=/bin/bash" >> $GITHUB_ENV
+          fi
+          echo "Shell path set to: $SHELL_PATH"
+
+      # Use the configured shell in steps that need it
+      - name: Run command with OS-specific shell
+        shell: ${{ env.SHELL_PATH }} -e {0}
+        run: |
+          # Your commands here
+```
+
+This approach:
+- Automatically selects the appropriate shell for each platform
+- Ensures macOS can use Homebrew's zsh when available
+- Falls back to bash on Linux which is guaranteed to be available
+- Maintains consistent shell behavior across steps
+
 ### Common Pitfalls to Avoid
 
 1. **Don't use pip with UV**: Never mix `pip install` commands with UV commands
@@ -358,9 +398,10 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
+        os: [ubuntu-latest]
         python-version: ["3.9", "3.10", "3.11", "3.12"]
 
     steps:
@@ -370,6 +411,17 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
+
+    - name: Set shell path
+      id: set-shell
+      shell: bash
+      run: |
+        if [[ "$RUNNER_OS" == "macOS" ]]; then
+          echo "SHELL_PATH=/opt/homebrew/bin/zsh" >> $GITHUB_ENV
+        else
+          echo "SHELL_PATH=/bin/bash" >> $GITHUB_ENV
+        fi
+        echo "Shell path set to: $SHELL_PATH"
 
     - name: Install UV
       uses: astral-sh/setup-uv@v5
@@ -381,20 +433,24 @@ jobs:
       env:
         UV_PROJECT_ENVIRONMENT: true
         UV_NO_PROMPT: 1
+      shell: ${{ env.SHELL_PATH }} -e {0}
       run: |
         uv venv
         uv sync
 
     - name: Lint
+      shell: ${{ env.SHELL_PATH }} -e {0}
       run: |
         uv run ruff check .
         uv run ruff format --check .
 
     - name: Type check
+      shell: ${{ env.SHELL_PATH }} -e {0}
       run: |
         uv run mypy .
 
     - name: Run tests
+      shell: ${{ env.SHELL_PATH }} -e {0}
       run: |
         uv run pytest --cov=./ --cov-report=xml
 
@@ -405,6 +461,7 @@ jobs:
         fail_ci_if_error: true
 
     - name: Prune cache
+      shell: ${{ env.SHELL_PATH }} -e {0}
       run: uv cache prune --ci
 ```
 
@@ -415,3 +472,4 @@ This workflow demonstrates:
 - Following the sync and run pattern
 - Cleaning up the cache with pruning
 - Running all commands through UV
+- Cross-platform shell handling

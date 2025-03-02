@@ -16,7 +16,12 @@ permissions:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        # Uncomment to run on multiple platforms:
+        # os: [ubuntu-latest, macos-latest]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -26,6 +31,17 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
+      - name: Set shell path
+        id: set-shell
+        shell: bash
+        run: |
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            echo "SHELL_PATH=/opt/homebrew/bin/zsh" >> $GITHUB_ENV
+          else
+            echo "SHELL_PATH=/bin/bash" >> $GITHUB_ENV
+          fi
+          echo "Shell path set to: $SHELL_PATH"
 
       - name: Install UV
         uses: astral-sh/setup-uv@v5
@@ -37,6 +53,7 @@ jobs:
         env:
           UV_PROJECT_ENVIRONMENT: true
           UV_NO_PROMPT: 1
+        shell: ${{ env.SHELL_PATH }} -e {0}
         run: |
           # Set up a virtual environment
           uv venv
@@ -44,6 +61,7 @@ jobs:
           make docs-setup
 
       - name: Deploy Documentation
+        shell: ${{ env.SHELL_PATH }} -e {0}
         run: |
           # Create an empty .nojekyll file to disable Jekyll processing
           touch .nojekyll
@@ -55,4 +73,5 @@ jobs:
           make docs-deploy
 
       - name: Prune cache
+        shell: ${{ env.SHELL_PATH }} -e {0}
         run: uv cache prune --ci
