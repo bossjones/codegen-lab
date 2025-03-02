@@ -8,6 +8,7 @@ on:
       - 'docs/**'
       - 'mkdocs.yml'
       - '.github/workflows/docs.yml'
+      - 'Makefile.ci'
   # Allow manual triggering
   workflow_dispatch:
 
@@ -17,6 +18,13 @@ permissions:
 jobs:
   deploy:
     runs-on: ${{ matrix.os }}
+    env:
+      # Set GH_PAGER to prevent interactive output
+      GH_PAGER: cat
+      # No prompts in UV
+      UV_NO_PROMPT: 1
+      # Use project environment settings
+      UV_PROJECT_ENVIRONMENT: true
     strategy:
       matrix:
         os: [ubuntu-latest]
@@ -49,25 +57,29 @@ jobs:
           cache: true
           version: "0.6.3"
 
-      - name: Install dependencies
-        env:
-          UV_PROJECT_ENVIRONMENT: true
-          UV_NO_PROMPT: 1
+      - name: Display environment information
         run: |
-          # Set up a virtual environment
-          uv venv
-          # Install documentation dependencies using the Makefile target
-          make docs-setup
+          make -f Makefile.ci env-info
 
-      - name: Deploy Documentation
+      - name: Install dependencies
+        run: |
+          make -f Makefile.ci ci-install
+
+      - name: Build documentation
+        run: |
+          make -f Makefile.ci ci-docs
+
+      - name: Configure git for deployment
         run: |
           # Create an empty .nojekyll file to disable Jekyll processing
           touch .nojekyll
-
+          # Configure git user
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Deploy with MkDocs using the Makefile target
+      - name: Deploy Documentation
+        run: |
+          # Use makefile target for deployment
           make docs-deploy
 
       - name: Prune cache

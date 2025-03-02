@@ -1,0 +1,127 @@
+# Makefile.ci - Handles differences between local macOS and CI environments
+# This file can be included in the main Makefile or used directly in CI pipelines
+
+# Determine environment
+ifdef CI
+    # CI-specific settings
+    SHELL := /bin/bash
+    PYTHON_BIN := python
+    # In CI, we want to use the system's shell rather than a specific path
+    ENV_DETECTION := $(shell echo $$CI)
+    ENVIRONMENT := ci
+else
+    # Local macOS settings
+    SHELL := /opt/homebrew/bin/zsh
+    PYTHON_BIN := python
+    ENV_DETECTION := $(shell echo $$SHELL)
+    ENVIRONMENT := local
+endif
+
+# Common settings
+.PHONY: env-info ci-install ci-check ci-test ci-docs ci-build ci-publish help
+
+# Print environment information
+env-info:
+	@echo "🔍 Environment: $(ENVIRONMENT)"
+	@echo "🔍 Shell: $(SHELL)"
+	@echo "🔍 Python: $(PYTHON_BIN)"
+	@echo "🔍 Environment detection: $(ENV_DETECTION)"
+	@echo "🔍 Working directory: $(shell pwd)"
+	@if [ -n "$$ZSH_VERSION" ]; then echo "🔍 Running in ZSH"; elif [ -n "$$BASH_VERSION" ]; then echo "🔍 Running in BASH"; else echo "🔍 Running in unknown shell"; fi
+	@echo "🔍 Python version: $$($(PYTHON_BIN) --version)"
+	@echo "🔍 UV version: $$(uv --version || echo 'UV not installed')"
+
+# CI Installation - optimized for CI environments
+ci-install:
+	@echo "🚀 Installing dependencies for $(ENVIRONMENT) environment"
+ifeq ($(ENVIRONMENT),ci)
+	@pip install uv
+	@uv sync --dev
+else
+	@uv sync --dev
+endif
+	@uv run pre-commit install
+
+# CI Check - Code quality checks for CI
+ci-check:
+	@echo "🚀 Running code quality checks for $(ENVIRONMENT) environment"
+	@uv lock --locked
+	@uv run pre-commit run -a
+	@uv run mypy
+	@uv run deptry .
+
+# CI Test - Run tests optimized for CI
+ci-test:
+	@echo "🚀 Running tests for $(ENVIRONMENT) environment"
+ifeq ($(ENVIRONMENT),ci)
+	# CI-specific test configuration with XML reports for CI systems
+	@uv run pytest --diff-width=60 --diff-symbols \
+		--cov-append --cov-report=term-missing \
+		--junitxml=junit/test-results.xml \
+		--cov-report=xml:cov.xml \
+		--cov-report=html:htmlcov \
+		--cov=.
+else
+	# Local test configuration with more developer-friendly output
+	@uv run pytest -s --verbose --showlocals --tb=short \
+		--cov-config=pyproject.toml \
+		--cov-report=term-missing \
+		--cov=.
+endif
+
+# CI Documentation - Build documentation
+ci-docs:
+	@echo "🚀 Building documentation for $(ENVIRONMENT) environment"
+ifeq ($(ENVIRONMENT),ci)
+	@uv run mkdocs build -s
+else
+	@uv run mkdocs serve
+endif
+
+# CI Build - Build packages
+ci-build: ci-clean-build
+	@echo "🚀 Building package for $(ENVIRONMENT) environment"
+	@uvx --from build pyproject-build --installer uv
+
+# CI Clean Build - Clean build artifacts
+ci-clean-build:
+	@echo "🚀 Cleaning build artifacts"
+	@uv run python -c "import shutil; import os; shutil.rmtree('dist') if os.path.exists('dist') else None"
+
+# CI Publish - Publish packages (CI only)
+ci-publish:
+	@echo "🚀 Publishing package"
+ifeq ($(ENVIRONMENT),ci)
+	@uvx twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
+else
+	@echo "⚠️ Publishing is only allowed in CI environment"
+	@exit 1
+endif
+
+# Specialized CI environment setup
+ci-setup-python:
+ifeq ($(ENVIRONMENT),ci)
+	@echo "🚀 Setting up Python environment for CI"
+	@pip install uv
+	@uv python install 3.12
+else
+	@echo "🚀 Setting up Python environment for local development"
+	@uv python install 3.12
+endif
+
+# Help command
+help:
+	@echo "CI Makefile Commands:"
+	@echo "  env-info       - Display environment information"
+	@echo "  ci-install     - Install dependencies"
+	@echo "  ci-check       - Run code quality checks"
+	@echo "  ci-test        - Run tests"
+	@echo "  ci-docs        - Build documentation"
+	@echo "  ci-build       - Build package"
+	@echo "  ci-publish     - Publish package (CI only)"
+	@echo "  ci-setup-python - Setup Python environment"
+	@echo ""
+	@echo "Environment: $(ENVIRONMENT)"
+
+# Default target
+.DEFAULT_GOAL := help

@@ -33,7 +33,7 @@ ci: ## Test the code with pytest
 	@echo "🚀 Checking lock file consistency with 'pyproject.toml'"
 	@uv lock --locked
 	@echo "🚀 Linting code: pylint"
-	@uv run pylint --output-format=colorized --disable=all --max-line-length=120 --enable=F,E --rcfile pyproject.toml src/adobe_cursor_tools tests
+	@uv run pylint --output-format=colorized --disable=all --max-line-length=120 --enable=F,E --rcfile pyproject.toml src/codegen_lab tests
 
 .PHONY: build
 build: clean-build ## Build wheel file

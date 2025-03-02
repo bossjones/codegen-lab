@@ -1,5 +1,5 @@
 ---
-exclude: ^adobe_cursor_tools/alembic/.*
+exclude: ^codegen_lab/alembic/.*
 # To use:
 #
 #     pre-commit run -a

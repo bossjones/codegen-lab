@@ -1,2 +1,2 @@
 # def main() -> None:
-#     print("Hello from adobe-cursor-tools!")
+#     print("Hello from codegen-lab!")
