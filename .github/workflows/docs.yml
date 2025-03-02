@@ -77,10 +77,11 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Deploy documentation
-        run: |
-          # Use makefile target for deployment
-          make -f Makefile.ci docs-deploy
+      # TODO: Uncomment this when we have a way to deploy the docs
+      # - name: Deploy documentation
+      #   run: |
+      #     # Use makefile target for deployment
+      #     make -f Makefile.ci docs-deploy
 
-      - name: Prune cache
-        run: uv cache prune --ci
+      # - name: Prune cache
+      #   run: uv cache prune --ci
