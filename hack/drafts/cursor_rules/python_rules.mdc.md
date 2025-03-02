@@ -169,6 +169,22 @@ actions:
 
       Each group should be separated by a blank line.
 
+      ## Import Style
+
+      **Always use absolute imports, not relative imports.**
+
+      ```python
+      # Good: Absolute imports
+      from myapp.utils import helper
+      from myapp.models import User
+
+      # Bad: Relative imports
+      from ..utils import helper
+      from .models import User
+      ```
+
+      Absolute imports make code more maintainable, explicit, and easier to understand, especially when refactoring or moving files.
+
       ## Example:
 
       ```python
