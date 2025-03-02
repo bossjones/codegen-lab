@@ -53,7 +53,6 @@ jobs:
         env:
           UV_PROJECT_ENVIRONMENT: true
           UV_NO_PROMPT: 1
-        shell: ${{ env.SHELL_PATH }} -e {0}
         run: |
           # Set up a virtual environment
           uv venv
@@ -61,7 +60,6 @@ jobs:
           make docs-setup
 
       - name: Deploy Documentation
-        shell: ${{ env.SHELL_PATH }} -e {0}
         run: |
           # Create an empty .nojekyll file to disable Jekyll processing
           touch .nojekyll
@@ -73,5 +71,4 @@ jobs:
           make docs-deploy
 
       - name: Prune cache
-        shell: ${{ env.SHELL_PATH }} -e {0}
         run: uv cache prune --ci
