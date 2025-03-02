@@ -24,33 +24,47 @@ actions:
 
       This guide provides a systematic approach to debug GitHub Actions workflow issues using the GitHub CLI.
 
+      ## Important: Prevent Interactive Pagers in GitHub CLI
+
+      When using GitHub CLI in scripts or CI/CD environments, always set the `GH_PAGER` environment variable to `cat` to prevent interactive pagers:
+
+      ```bash
+      # Set GH_PAGER to cat to ensure non-interactive output
+      export GH_PAGER=cat
+
+      # Or run commands with GH_PAGER set inline
+      GH_PAGER=cat gh run list
+      ```
+
+      This ensures commands don't hang waiting for user input and output is fully displayed in logs.
+
       ## Phase 1: Identify the Failing Workflow
 
       1. **List Recent Workflow Runs**:
          ```bash
-         # List recent workflow runs
-         gh run list --limit 10
+         # List recent workflow runs (with non-interactive output)
+         GH_PAGER=cat gh run list --limit 10
 
          # List recent runs for a specific workflow
-         gh run list --workflow=workflow-name.yml --limit 5
+         GH_PAGER=cat gh run list --workflow=workflow-name.yml --limit 5
          ```
 
       2. **Check Workflow Run Details**:
          ```bash
          # View details of a specific run (get ID from gh run list)
-         gh run view RUN_ID
+         GH_PAGER=cat gh run view RUN_ID
 
          # View details with logs
-         gh run view RUN_ID --log
+         GH_PAGER=cat gh run view RUN_ID --log
 
          # View details with log failures only
-         gh run view RUN_ID --log-failed
+         GH_PAGER=cat gh run view RUN_ID --log-failed
          ```
 
       3. **Download Run Logs for Detailed Analysis**:
          ```bash
          # Download logs for a specific run
-         gh run download RUN_ID
+         GH_PAGER=cat gh run download RUN_ID
          ```
 
       ## Phase 2: Validate Workflow Configuration
@@ -101,10 +115,10 @@ actions:
       1. **Re-run Failed Jobs**:
          ```bash
          # Re-run a failed workflow
-         gh run rerun RUN_ID
+         GH_PAGER=cat gh run rerun RUN_ID
 
          # Re-run only failed jobs
-         gh run rerun RUN_ID --failed
+         GH_PAGER=cat gh run rerun RUN_ID --failed
          ```
 
       2. **Debug Mode & Enhanced Logging**:
@@ -116,10 +130,10 @@ actions:
       3. **Test Workflow Changes**:
          ```bash
          # Trigger workflow run manually (workflow_dispatch)
-         gh workflow run workflow-name.yml
+         GH_PAGER=cat gh workflow run workflow-name.yml
 
          # Trigger with inputs if workflow accepts them
-         gh workflow run workflow-name.yml -f param=value -f another=value
+         GH_PAGER=cat gh workflow run workflow-name.yml -f param=value -f another=value
          ```
 
       ## Phase 5: Implement and Verify Fixes
@@ -147,12 +161,12 @@ examples:
 
       First, let's check the recent workflow runs to identify the specific failure:
       ```bash
-      gh run list --limit 5
+      GH_PAGER=cat gh run list --limit 5
       ```
 
       Once we identify the failing run ID, let's examine its logs:
       ```bash
-      gh run view RUN_ID --log-failed
+      GH_PAGER=cat gh run view RUN_ID --log-failed
       ```
 
       Based on the permission error when pushing, we need to make sure your workflow has the proper permissions. In your workflow file, you need to add or update the permissions section:
@@ -268,6 +282,9 @@ GitHub Actions logs contain several key sections to examine when debugging:
 ### Advanced GitHub CLI Commands for Workflow Debugging
 
 ```bash
+# Set GH_PAGER to prevent interactive pagers in all commands below
+export GH_PAGER=cat
+
 # List available workflows
 gh workflow list
 
@@ -285,19 +302,45 @@ gh run view RUN_ID --log > workflow-logs.txt
 gh workflow view workflow-name.yml --viz | dot -Tpng > workflow.png
 ```
 
+### Setting GH_PAGER in GitHub Actions Workflows
+
+When running GitHub CLI commands in a workflow, set GH_PAGER to ensure proper output:
+
+```yaml
+- name: Debug workflow run
+  env:
+    GH_PAGER: cat
+  run: |
+    gh run list --limit 5
+    gh workflow view current-workflow.yml
+```
+
+Alternatively, set it for the entire job or workflow:
+
+```yaml
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    env:
+      GH_PAGER: cat
+    steps:
+      - name: Debug workflow
+        run: gh run list --limit 5
+```
+
 ### Using GitHub Actions API for Deeper Debugging
 
 For more complex debugging scenarios, you can interact directly with the GitHub API:
 
 ```bash
 # Get detailed workflow run information
-gh api repos/{owner}/{repo}/actions/runs/{run_id}
+GH_PAGER=cat gh api repos/{owner}/{repo}/actions/runs/{run_id}
 
 # List jobs for a workflow run
-gh api repos/{owner}/{repo}/actions/runs/{run_id}/jobs
+GH_PAGER=cat gh api repos/{owner}/{repo}/actions/runs/{run_id}/jobs
 
 # Get timing metrics for workflow runs
-gh api repos/{owner}/{repo}/actions/workflows/{workflow_id}/timing
+GH_PAGER=cat gh api repos/{owner}/{repo}/actions/workflows/{workflow_id}/timing
 ```
 
 Remember that thorough documentation of both the issue and the solution will help prevent similar problems in the future and assist team members who might encounter similar issues.
