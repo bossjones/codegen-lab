@@ -40,6 +40,7 @@ dev = [
     "debugpy>=1.8.12",
     "mkdocs>=1.6.1",
     "mkdocs-material>=9.6.6",
+    "pre-commit>=4.1.0",
     "pydocstyle>=6.3.0",
     "pylint-per-file-ignores>=1.4.0",
     "pylint-pydantic>=0.3.5",
