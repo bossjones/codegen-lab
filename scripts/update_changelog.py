@@ -50,13 +50,13 @@ DEFAULT_CONFIG: ChangelogConfig = {
         "refactor": "Changed",
         "build": "Changed",
         "ci": "Changed",
-        "chore": "Changed",
+        "chore": "Added",
         "test": None,  # Will be excluded by default
         "deprecate": "Deprecated",
         "remove": "Removed",
         "security": "Security",
     },
-    "exclude_types": ["test", "ci", "chore"],
+    "exclude_types": ["test", "ci"],
     "changelog_path": "docs/changelog.md",
 }
 
@@ -209,10 +209,23 @@ def parse_commit(
     # Check for breaking changes
     is_breaking = bool(BREAKING_PATTERN.search(body))
 
-    # Format the entry
-    entry = subject
+    # Format the entry with better categorization and readability
+    # Extract the first meaningful part of the subject to use as a component name
+    component = None
     if scope:
-        entry = f"{entry} ({scope})"
+        # Use scope as the component
+        component = scope.title()
+    elif ":" in subject:
+        # If there's a colon in the subject, use text before it as component
+        component_candidate = subject.split(":", 1)[0].strip()
+        if len(component_candidate) < 30:  # Avoid using very long text as component
+            component = component_candidate.title()
+
+    # Format the entry with the component as bold prefix if available
+    if component:
+        entry = f"**{component}**: {subject}"
+    else:
+        entry = subject
 
     if is_breaking:
         entry = f"{entry} [BREAKING]"
@@ -319,6 +332,34 @@ def update_changelog_content(
     lines = read_changelog(changelog_path)
     header_lines, sections, links = parse_changelog(lines)
 
+    # Create a copy of the whole original file for reference
+    original_content = lines.copy()
+
+    # Identify which sections already exist in the current Unreleased block
+    # to preserve their order and content
+    unreleased_section_order = []
+    in_unreleased = False
+    current_section = None
+
+    for line in original_content:
+        if VERSION_PATTERN.match(line) and "[Unreleased]" in line:
+            in_unreleased = True
+            continue
+        elif VERSION_PATTERN.match(line) and in_unreleased:
+            # We've reached the next version section, so we're done
+            in_unreleased = False
+            break
+
+        section_match = SECTION_PATTERN.match(line) if in_unreleased else None
+        if section_match:
+            current_section = section_match.group("section")
+            if current_section not in unreleased_section_order:
+                unreleased_section_order.append(current_section)
+
+    # If no unreleased sections were found, use a standard order
+    if not unreleased_section_order:
+        unreleased_section_order = ["Added", "Changed", "Deprecated", "Removed", "Fixed", "Security"]
+
     # Combine existing entries with new ones and deduplicate
     for section, entries in new_entries.items():
         if section not in sections:
@@ -372,30 +413,88 @@ def update_changelog_content(
         new_content.append("")
         new_content.append("## [Unreleased]")
 
-    # Add sections and entries
-    for section_name in ["Added", "Changed", "Deprecated", "Removed", "Fixed", "Security"]:
+    # Add sections and entries in the same order as they were in the original file
+    for section_name in unreleased_section_order:
         if section_name in sections and sections[section_name]:
             new_content.append("")
             new_content.append(f"### {section_name}")
 
-            # Sort entries for consistency
-            sorted_entries = sorted(sections[section_name])
+            # Sort entries for consistency but preserve any formatting
+            # (e.g., if entries start with **Component**:)
+            sorted_entries = sorted(sections[section_name], key=lambda x: x.lower())
             for entry in sorted_entries:
                 new_content.append(entry)
 
     # Add link references
     new_content.append("")
 
-    # Sort links so that Unreleased is first, then versions in descending order
-    sorted_links = sorted(
-        links.items(),
-        key=lambda x: (x[0] != "Unreleased", x[0] != new_version if new_version else False, x[0]),
-    )
+    # Add a blank line after the sections and before the links
+    new_content.append("")
 
-    for version, url in sorted_links:
-        new_content.append(f"[{version}]: {url}")
+    # Extract and preserve any content after the Unreleased section
+    # (excluding the first version section to avoid duplication)
+    preserve_content = []
+    in_unreleased = False
+    past_unreleased = False
+    past_first_version = False
 
-    # Write updated changelog
+    for line in original_content:
+        if VERSION_PATTERN.match(line) and "[Unreleased]" in line:
+            in_unreleased = True
+        elif VERSION_PATTERN.match(line) and in_unreleased:
+            # First version section after Unreleased
+            in_unreleased = False
+            past_unreleased = True
+
+            # If we're finalizing, we add a new version section instead
+            if not finalize:
+                preserve_content.append(line)
+        elif past_unreleased:
+            preserve_content.append(line)
+
+    # If we're not finalizing, add all the preserved content
+    if not finalize and preserve_content:
+        new_content.extend(preserve_content)
+    else:
+        # If we are finalizing, we need to add back the other version sections and links
+        past_first_version = False
+        past_first_version_section = False
+        for line in original_content:
+            # Skip until we find the first version
+            if VERSION_PATTERN.match(line) and "[Unreleased]" not in line and not past_first_version:
+                past_first_version = True
+                # Skip the first version section as we already added it
+                if finalize:
+                    continue
+
+            # Once we're past the first version, start collecting again
+            if past_first_version:
+                # Skip all content in the first version section
+                if not past_first_version_section and SECTION_PATTERN.match(line):
+                    past_first_version_section = True
+                    if finalize:
+                        continue
+
+                # When we hit the next version, reset the section flag
+                if VERSION_PATTERN.match(line) and past_first_version_section:
+                    new_content.append("")  # Add a blank line before the next version
+                    new_content.append(line)
+                    past_first_version_section = False
+                elif not (finalize and not past_first_version_section):
+                    # Only add the line if we're not skipping the first version section
+                    new_content.append(line)
+
+    # Add links at the end
+    link_lines = []
+    for version, url in sorted(links.items(), key=lambda x: x[0] if x[0] != "Unreleased" else ""):
+        if version == "Unreleased":
+            link_lines.insert(0, f"[{version}]: {url}")
+        else:
+            link_lines.append(f"[{version}]: {url}")
+
+    new_content.extend(link_lines)
+
+    # Write the updated changelog
     with open(changelog_path, "w", encoding="utf-8") as f:
         f.write("\n".join(new_content))
 
