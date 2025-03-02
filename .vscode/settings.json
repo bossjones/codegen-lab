@@ -18,5 +18,15 @@
   },
   "files.associations": {
     "*.cheat": "markdown"
-  }
+  },
+  "pylint.interpreter": [
+    "${workspaceFolder}/.venv/bin/python3"
+  ],
+  "pylint.args": [
+    "--enable=F,E,E1101",
+    "--disable=C0111,E0401,C,W,E1205",
+    "--max-line-length=120",
+    "--load-plugins",
+    "pylint_pydantic,pylint_per_file_ignores",
+  ],
 }

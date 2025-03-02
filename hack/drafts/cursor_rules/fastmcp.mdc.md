@@ -1307,3 +1307,134 @@ metadata:
 - [MCP GitHub Repository](https://github.com/microsoft/mcp) - Official specification
 - [JSON-RPC 2.0 Specification](https://www.jsonrpc.org/specification) - Base protocol
 - [Python asyncio Documentation](https://docs.python.org/3/library/asyncio.html) - Asynchronous I/O for Python
+
+## Testing FastMCP Servers
+
+Testing FastMCP servers is an essential part of ensuring your implementation works correctly. The MCP framework provides utilities that make testing straightforward with pytest.
+
+### Testing Framework Setup
+
+To test FastMCP servers, you'll need:
+
+1. **pytest**: The testing framework
+2. **mcp.shared.memory**: For creating in-memory client-server connections
+3. **mcp.types**: For type checking and response validation
+
+### Basic Test Structure
+
+Here's a standard pattern for writing tests for FastMCP servers:
+
+```python
+import pytest
+
+from mcp.shared.memory import (
+    create_connected_server_and_client_session as client_session,
+)
+from mcp.types import TextContent, TextResourceContents
+
+@pytest.mark.anyio
+async def test_your_server():
+    """Test description"""
+    # Import your FastMCP server
+    from your_module import mcp
+
+    # Create an in-memory client-server connection
+    async with client_session(mcp._mcp_server) as client:
+        # Call your tool and test the response
+        result = await client.call_tool("your_tool_name", {"param1": "value1"})
+
+        # Assertions to validate the response
+        assert len(result.content) == 1
+        content = result.content[0]
+        assert isinstance(content, TextContent)
+        assert content.text == "expected_output"
+```
+
+### Example: Testing a Simple Echo Server
+
+This example demonstrates testing a simple echo server:
+
+```python
+@pytest.mark.anyio
+async def test_simple_echo():
+    """Test the simple echo server"""
+    from examples.fastmcp.simple_echo import mcp
+
+    async with client_session(mcp._mcp_server) as client:
+        result = await client.call_tool("echo", {"text": "hello"})
+        assert len(result.content) == 1
+        content = result.content[0]
+        assert isinstance(content, TextContent)
+        assert content.text == "hello"
+```
+
+### Example: Testing Complex Input Validation
+
+This example shows how to test a server with complex inputs using Pydantic models:
+
+```python
+@pytest.mark.anyio
+async def test_complex_inputs():
+    """Test the complex inputs server"""
+    from examples.fastmcp.complex_inputs import mcp
+
+    async with client_session(mcp._mcp_server) as client:
+        tank = {"shrimp": [{"name": "bob"}, {"name": "alice"}]}
+        result = await client.call_tool(
+            "name_shrimp", {"tank": tank, "extra_names": ["charlie"]}
+        )
+        assert len(result.content) == 3
+        assert isinstance(result.content[0], TextContent)
+        assert isinstance(result.content[1], TextContent)
+        assert isinstance(result.content[2], TextContent)
+        assert result.content[0].text == "bob"
+        assert result.content[1].text == "alice"
+        assert result.content[2].text == "charlie"
+```
+
+### Example: Testing Resources and Mocking
+
+For resources that interact with the file system or external services, you can use pytest's `monkeypatch` fixture to mock dependencies:
+
+```python
+@pytest.mark.anyio
+async def test_desktop(monkeypatch):
+    """Test the desktop server"""
+    from pathlib import Path
+    from pydantic import AnyUrl
+    from examples.fastmcp.desktop import mcp
+
+    # Mock desktop directory listing
+    mock_files = [Path("/fake/path/file1.txt"), Path("/fake/path/file2.txt")]
+    monkeypatch.setattr(Path, "iterdir", lambda self: mock_files)
+    monkeypatch.setattr(Path, "home", lambda: Path("/fake/home"))
+
+    async with client_session(mcp._mcp_server) as client:
+        # Test the add function
+        result = await client.call_tool("add", {"a": 1, "b": 2})
+        assert len(result.content) == 1
+        content = result.content[0]
+        assert isinstance(content, TextContent)
+        assert content.text == "3"
+
+        # Test the desktop resource
+        result = await client.read_resource(AnyUrl("dir://desktop"))
+        assert len(result.contents) == 1
+        content = result.contents[0]
+        assert isinstance(content, TextResourceContents)
+        assert isinstance(content.text, str)
+        assert "/fake/path/file1.txt" in content.text
+        assert "/fake/path/file2.txt" in content.text
+```
+
+### Testing Best Practices for FastMCP Servers
+
+1. **Isolate Tests**: Each test should focus on one specific functionality
+2. **Mock External Dependencies**: Use `monkeypatch` or `pytest-mock` to avoid actual file system or network calls
+3. **Test Error Cases**: Verify that your server correctly handles invalid inputs
+4. **Test Protocol Conformance**: Ensure your server follows the MCP protocol correctly
+5. **Use Client Session**: Always use `client_session` to create a proper in-memory connection
+6. **Type Check Results**: Verify that responses contain the expected types
+7. **Content Validation**: Check the actual content of responses, not just their structure
+
+By following these testing patterns, you can ensure your FastMCP servers work correctly and reliably.
