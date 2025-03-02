@@ -1,3 +1,7 @@
+---
+description: Structured workflow for incremental development in existing codebases
+globs: *
+---
 # Iterative Development Workflow
 
 This rule provides a structured workflow for incremental development in existing codebases.

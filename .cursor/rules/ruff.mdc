@@ -1,6 +1,7 @@
 ---
 description: Ruff linting configuration and usage guidelines
-globs: "*.py"
+globs: *.py
+alwaysApply: false
 ---
 # Ruff Configuration Guide
 
@@ -126,12 +127,176 @@ To globally ignore rules in pyproject.toml:
 ignore = ["E501", "B008"]
 ```
 
+## Modern Ruff Configuration Structure
+
+The latest Ruff configuration structure separates linting and formatting settings:
+
+```toml
+[tool.ruff]
+# Basic settings
+target-version = "py312"
+line-length = 120
+# Files to include
+include = ["*.py", "*.pyi", "*.ipynb"]
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
+# Allow imports relative to the "src" and "test" directories
+src = ["src", "tests"]
+# Allow unused variables when underscore-prefixed
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+# Linting-specific settings
+[tool.ruff.lint]
+select = [
+    "D",    # pydocstyle (PEP257)
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "I",    # isort
+    "S",    # bandit (security)
+    "YTT",  # flake8-2020
+    "A",    # flake8-builtins
+    "C4",   # flake8-comprehensions
+    "T10",  # flake8-debugger
+    "SIM",  # flake8-simplify
+    "C90",  # mccabe (complexity)
+    "W",    # pycodestyle warnings
+    "PGH",  # pygrep-hooks
+    "RUF",  # ruff-specific rules
+]
+ignore = [
+    "B008",  # Function calls in default arguments
+    "D417",  # Missing argument descriptions in docstrings
+    "E501",  # Line too long (handled by formatter)
+    "UP006", # Type annotation format
+    "UP007", # Type annotation format
+    "S101",  # Use of assert detected
+    "N812",  # Lowercase imported as non-lowercase
+]
+# Allow all rules to be auto-fixed
+fixable = ["ALL"]
+unfixable = []
+
+# Maximum McCabe complexity allowed
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+# Pydocstyle configuration
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"
+
+# Flake8-type-checking configuration
+[tool.ruff.lint.flake8-type-checking]
+runtime-evaluated-decorators = [
+    "pydantic.computed_field",
+    "pydantic.model_validator"
+]
+
+# isort settings
+[tool.ruff.lint.isort]
+case-sensitive = true
+force-single-line = false
+force-sort-within-sections = true
+known-first-party = ["codegen_lab"]
+required-imports = ["from __future__ import annotations"]
+combine-as-imports = true
+split-on-trailing-comma = false
+# Define sections for imports
+sections = [
+    "future",
+    "standard-library",
+    "third-party",
+    "pytest",
+    "first-party",
+    "local-folder",
+]
+# Define known third-party libraries
+known-third-party = [
+    "better_exceptions",
+    "fastapi",
+    "pydantic",
+    "rich",
+    "tenacity",
+    "uvicorn",
+]
+# Known pytest modules for the pytest section
+known-pytest = ["pytest", "_pytest"]
+
+# Per-file ignores
+[tool.ruff.lint.per-file-ignores]
+# Ignore unused imports and import order in __init__.py files
+"__init__.py" = ["F401", "E402"]
+# Ignore missing docstrings and some other rules in tests
+"tests/**/*.py" = ["D", "C410", "S311", "S103"]
+# Ignore missing docstrings and line length in type stubs
+"**/*.pyi" = ["D", "E501", "E701", "I002"]
+# Ignore missing docstrings in docs and examples
+"docs/**/*.py" = ["D"]
+"examples/**/*.py" = ["D"]
+
+# Formatting settings (commented out in this project but included for completeness)
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+docstring-code-format = false
+```
+
 ## Import Organization with isort
 
 The project uses the following isort configuration via Ruff:
 
-- Required imports: `from __future__ import annotations`
-- Section ordering: future, standard-library, third-party, pytest, first-party, local-folder
-- Single line between import types
-- Known third-party packages defined
-- Split on trailing comma disabled
+```toml
+[tool.ruff.lint.isort]
+case-sensitive = true
+force-single-line = false
+force-sort-within-sections = true
+known-first-party = ["codegen_lab"]
+required-imports = ["from __future__ import annotations"]
+combine-as-imports = true
+split-on-trailing-comma = false
+# Define sections for imports
+sections = [
+    "future",
+    "standard-library",
+    "third-party",
+    "pytest",
+    "first-party",
+    "local-folder",
+]
+# Define known third-party libraries
+known-third-party = [
+    "better_exceptions",
+    "fastapi",
+    "pydantic",
+    "rich",
+    "tenacity",
+    "uvicorn",
+]
+# Known pytest modules for the pytest section
+known-pytest = ["pytest", "_pytest"]

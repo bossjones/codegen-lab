@@ -1,3 +1,7 @@
+---
+description: Break down a development task into smaller, manageable steps for incremental implementation
+globs: *
+---
 # Incremental Task Planner
 
 This rule helps break down a development task into smaller, manageable steps for incremental implementation.

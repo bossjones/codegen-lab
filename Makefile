@@ -237,4 +237,7 @@ copy-global-taskfile:
 	@echo "🚀 Copying global Taskfile.yml to ~/Taskfile.yml"
 	@cp -av Taskfile.yml ~/Taskfile.yml
 
+quick-fmt:
+	@git ls-files '*.py' '*.ipynb' "Dockerfile" "Dockerfile.*" | xargs uv run pre-commit run --files
+
 .DEFAULT_GOAL := help

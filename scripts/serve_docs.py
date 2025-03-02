@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Script to serve MkDocs documentation with automatic port conflict resolution.
 
@@ -53,7 +52,7 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def run_command(cmd: List[str]) -> Union[subprocess.CompletedProcess, int]:
+def run_command(cmd: list[str]) -> subprocess.CompletedProcess | int:
     """
     Run a command in a subprocess.
 
@@ -112,7 +111,7 @@ def modify_mkdocs_config_for_local(enable_local_mode: bool) -> None:
 
     if enable_local_mode:
         # Read the current config
-        with open(config_file, "r") as f:
+        with open(config_file) as f:
             lines = f.readlines()
 
         # Modify the site_url for local development
@@ -143,7 +142,7 @@ def is_port_in_use(port: int) -> bool:
         return s.connect_ex(('localhost', port)) == 0
 
 
-def find_mkdocs_pid(port: int) -> List[int]:
+def find_mkdocs_pid(port: int) -> list[int]:
     """
     Find process IDs of MkDocs servers running on the given port.
 

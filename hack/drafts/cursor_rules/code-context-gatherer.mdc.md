@@ -1,3 +1,8 @@
+---
+description: Efficiently gather code context from the codebase for LLM consumption
+globs: *
+---
+
 # Code Context Gatherer
 
 This rule helps efficiently gather code context from the codebase for LLM consumption.

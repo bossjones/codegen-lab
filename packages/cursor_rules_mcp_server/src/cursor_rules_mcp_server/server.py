@@ -4,18 +4,16 @@ This module implements a Model Context Protocol (MCP) server that helps users
 create custom cursor rules based on their repository structure.
 """
 
-import os
-import sys
-import json
-import sqlite3
-import logging
 import asyncio
+import json
+import logging
+import sqlite3
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple, Callable, Awaitable, Union
+from typing import Any
 
 # Import MCP server library
 try:
-    from mcp_api_server import MCPServer, Handler  # type: ignore
+    from mcp_api_server import Handler, MCPServer  # type: ignore
 except ImportError:
     raise ImportError(
         "Failed to import mcp_api_server module. "
@@ -24,12 +22,17 @@ except ImportError:
 
 # Import local modules
 from .models import (
-    Rule, RuleTemplate, Repository, RepositoryRuleAssociation,
-    DB_SCHEMA, rule_to_dict, dict_to_rule, template_to_dict, dict_to_template,
-    repository_to_dict, dict_to_repository
+    DB_SCHEMA,
+    Repository,
+    Rule,
+    RuleTemplate,
+    dict_to_repository,
+    dict_to_rule,
+    dict_to_template,
+    rule_to_dict,
 )
-from .repository_analyzer import analyze_repository, get_rule_template
-from .rule_generator import RuleGenerator, generate_rule, analyze_and_suggest_rules, validate_rule_content
+from .repository_analyzer import get_rule_template
+from .rule_generator import RuleGenerator, analyze_and_suggest_rules, generate_rule, validate_rule_content
 
 # Set up logging
 logging.basicConfig(
@@ -100,6 +103,7 @@ class CursorRulesDatabase:
     Attributes:
         db_path (Path): Path to the SQLite database file.
         conn (sqlite3.Connection): Connection to the SQLite database.
+
     """
 
     def __init__(self, db_path: str = None):
@@ -108,6 +112,7 @@ class CursorRulesDatabase:
         Args:
             db_path (str, optional): Path to the SQLite database file.
                 If None, uses a default path in the user's home directory.
+
         """
         if db_path is None:
             home_dir = Path.home()
@@ -135,11 +140,12 @@ class CursorRulesDatabase:
 
         self.conn.commit()
 
-    def get_rules(self) -> List[Rule]:
+    def get_rules(self) -> list[Rule]:
         """Get all rules from the database.
 
         Returns:
             List[Rule]: List of all rules.
+
         """
         cursor = self.conn.cursor()
         cursor.execute("SELECT * FROM rules")
@@ -152,7 +158,7 @@ class CursorRulesDatabase:
 
         return rules
 
-    def get_rule(self, rule_id: int) -> Optional[Rule]:
+    def get_rule(self, rule_id: int) -> Rule | None:
         """Get a rule by ID.
 
         Args:
@@ -160,6 +166,7 @@ class CursorRulesDatabase:
 
         Returns:
             Optional[Rule]: The rule if found, None otherwise.
+
         """
         cursor = self.conn.cursor()
         cursor.execute("SELECT * FROM rules WHERE id = ?", (rule_id,))
@@ -179,6 +186,7 @@ class CursorRulesDatabase:
 
         Returns:
             int: The ID of the new rule.
+
         """
         cursor = self.conn.cursor()
         cursor.execute(
@@ -205,6 +213,7 @@ class CursorRulesDatabase:
 
         Returns:
             bool: True if the rule was updated, False otherwise.
+
         """
         cursor = self.conn.cursor()
         cursor.execute(
@@ -232,6 +241,7 @@ class CursorRulesDatabase:
 
         Returns:
             bool: True if the rule was deleted, False otherwise.
+
         """
         cursor = self.conn.cursor()
         cursor.execute("DELETE FROM rules WHERE id = ?", (rule_id,))
@@ -239,11 +249,12 @@ class CursorRulesDatabase:
 
         return cursor.rowcount > 0
 
-    def get_rule_templates(self) -> List[RuleTemplate]:
+    def get_rule_templates(self) -> list[RuleTemplate]:
         """Get all rule templates from the database.
 
         Returns:
             List[RuleTemplate]: List of all rule templates.
+
         """
         cursor = self.conn.cursor()
         cursor.execute("SELECT * FROM rule_templates")
@@ -256,7 +267,7 @@ class CursorRulesDatabase:
 
         return templates
 
-    def get_rule_template(self, template_id: int) -> Optional[RuleTemplate]:
+    def get_rule_template(self, template_id: int) -> RuleTemplate | None:
         """Get a rule template by ID.
 
         Args:
@@ -264,6 +275,7 @@ class CursorRulesDatabase:
 
         Returns:
             Optional[RuleTemplate]: The template if found, None otherwise.
+
         """
         cursor = self.conn.cursor()
         cursor.execute("SELECT * FROM rule_templates WHERE id = ?", (template_id,))
@@ -283,6 +295,7 @@ class CursorRulesDatabase:
 
         Returns:
             int: The ID of the new template.
+
         """
         cursor = self.conn.cursor()
         cursor.execute(
@@ -308,6 +321,7 @@ class CursorRulesDatabase:
 
         Returns:
             int: The ID of the new repository.
+
         """
         cursor = self.conn.cursor()
 
@@ -332,7 +346,7 @@ class CursorRulesDatabase:
 
         return cursor.lastrowid
 
-    def get_repository(self, repo_id: int) -> Optional[Repository]:
+    def get_repository(self, repo_id: int) -> Repository | None:
         """Get a repository by ID.
 
         Args:
@@ -340,6 +354,7 @@ class CursorRulesDatabase:
 
         Returns:
             Optional[Repository]: The repository if found, None otherwise.
+
         """
         cursor = self.conn.cursor()
         cursor.execute("SELECT * FROM repositories WHERE id = ?", (repo_id,))
@@ -357,7 +372,7 @@ class CursorRulesDatabase:
 
         return None
 
-    def get_repository_by_path(self, path: str) -> Optional[Repository]:
+    def get_repository_by_path(self, path: str) -> Repository | None:
         """Get a repository by its path.
 
         Args:
@@ -365,6 +380,7 @@ class CursorRulesDatabase:
 
         Returns:
             Optional[Repository]: The repository if found, None otherwise.
+
         """
         cursor = self.conn.cursor()
         cursor.execute("SELECT * FROM repositories WHERE path = ?", (path,))
@@ -382,7 +398,7 @@ class CursorRulesDatabase:
 
         return None
 
-    def add_repo_analysis(self, repo_path: str, analysis_results: Dict[str, Any]) -> int:
+    def add_repo_analysis(self, repo_path: str, analysis_results: dict[str, Any]) -> int:
         """Add or update repository analysis results.
 
         Args:
@@ -391,6 +407,7 @@ class CursorRulesDatabase:
 
         Returns:
             int: The ID of the repository.
+
         """
         # Check if repository already exists
         repo_path = str(Path(repo_path).expanduser().resolve())
@@ -447,7 +464,7 @@ class CursorRulesDatabase:
             return self.add_repository(repo)
 
 
-async def handle_list_resources(args: Dict[str, Any]) -> Dict[str, Any]:
+async def handle_list_resources(args: dict[str, Any]) -> dict[str, Any]:
     """Handler for listing available resources.
 
     Args:
@@ -455,6 +472,7 @@ async def handle_list_resources(args: Dict[str, Any]) -> Dict[str, Any]:
 
     Returns:
         Dict[str, Any]: Dictionary of available resources.
+
     """
     logger.info("Listing resources")
 
@@ -476,7 +494,7 @@ async def handle_list_resources(args: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-async def handle_read_resource(args: Dict[str, Any]) -> Dict[str, Any]:
+async def handle_read_resource(args: dict[str, Any]) -> dict[str, Any]:
     """Handler for reading a specific resource.
 
     Args:
@@ -484,6 +502,7 @@ async def handle_read_resource(args: Dict[str, Any]) -> Dict[str, Any]:
 
     Returns:
         Dict[str, Any]: Resource content.
+
     """
     resource_name = args.get("resource")
     logger.info(f"Reading resource: {resource_name}")
@@ -517,7 +536,7 @@ async def handle_read_resource(args: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-async def handle_list_prompts(args: Dict[str, Any]) -> Dict[str, Any]:
+async def handle_list_prompts(args: dict[str, Any]) -> dict[str, Any]:
     """Handler for listing available prompts.
 
     Args:
@@ -525,6 +544,7 @@ async def handle_list_prompts(args: Dict[str, Any]) -> Dict[str, Any]:
 
     Returns:
         Dict[str, Any]: Dictionary of available prompts.
+
     """
     logger.info("Listing prompts")
 
@@ -539,7 +559,7 @@ async def handle_list_prompts(args: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-async def handle_get_prompt(args: Dict[str, Any]) -> Dict[str, Any]:
+async def handle_get_prompt(args: dict[str, Any]) -> dict[str, Any]:
     """Handler for retrieving a specific prompt.
 
     Args:
@@ -547,6 +567,7 @@ async def handle_get_prompt(args: Dict[str, Any]) -> Dict[str, Any]:
 
     Returns:
         Dict[str, Any]: Prompt content.
+
     """
     prompt_id = args.get("id")
     logger.info(f"Getting prompt: {prompt_id}")
@@ -564,7 +585,7 @@ async def handle_get_prompt(args: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-async def handle_execute_tool(args: Dict[str, Any]) -> Dict[str, Any]:
+async def handle_execute_tool(args: dict[str, Any]) -> dict[str, Any]:
     """Handler for executing tools.
 
     Args:
@@ -572,6 +593,7 @@ async def handle_execute_tool(args: Dict[str, Any]) -> Dict[str, Any]:
 
     Returns:
         Dict[str, Any]: Tool execution result.
+
     """
     tool_name = args.get("tool")
     tool_args = args.get("args", {})
@@ -602,7 +624,7 @@ async def handle_execute_tool(args: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-async def execute_analyze_repository(args: Dict[str, Any]) -> Dict[str, Any]:
+async def execute_analyze_repository(args: dict[str, Any]) -> dict[str, Any]:
     """Execute the analyze_repository tool.
 
     Args:
@@ -610,6 +632,7 @@ async def execute_analyze_repository(args: Dict[str, Any]) -> Dict[str, Any]:
 
     Returns:
         Dict[str, Any]: Tool execution result.
+
     """
     # Validate required args
     repo_path = args.get("repo_path")
@@ -639,10 +662,10 @@ async def execute_analyze_repository(args: Dict[str, Any]) -> Dict[str, Any]:
         }
     except Exception as e:
         logger.error(f"Error analyzing repository: {e}", exc_info=True)
-        return {"error": f"Failed to analyze repository: {str(e)}"}
+        return {"error": f"Failed to analyze repository: {e!s}"}
 
 
-async def execute_get_rule_templates(args: Dict[str, Any]) -> Dict[str, Any]:
+async def execute_get_rule_templates(args: dict[str, Any]) -> dict[str, Any]:
     """Execute the get_rule_templates tool.
 
     Args:
@@ -650,6 +673,7 @@ async def execute_get_rule_templates(args: Dict[str, Any]) -> Dict[str, Any]:
 
     Returns:
         Dict[str, Any]: Tool execution result.
+
     """
     # Get rule templates from built-in ones
     templates = [
@@ -691,7 +715,7 @@ async def execute_get_rule_templates(args: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-async def execute_get_rule_template(args: Dict[str, Any]) -> Dict[str, Any]:
+async def execute_get_rule_template(args: dict[str, Any]) -> dict[str, Any]:
     """Execute the get_rule_template tool.
 
     Args:
@@ -699,6 +723,7 @@ async def execute_get_rule_template(args: Dict[str, Any]) -> Dict[str, Any]:
 
     Returns:
         Dict[str, Any]: Tool execution result.
+
     """
     # Validate required args
     template_name = args.get("name")
@@ -720,10 +745,10 @@ async def execute_get_rule_template(args: Dict[str, Any]) -> Dict[str, Any]:
         }
     except Exception as e:
         logger.error(f"Error getting rule template: {e}", exc_info=True)
-        return {"error": f"Failed to get rule template: {str(e)}"}
+        return {"error": f"Failed to get rule template: {e!s}"}
 
 
-async def execute_generate_rule(args: Dict[str, Any]) -> Dict[str, Any]:
+async def execute_generate_rule(args: dict[str, Any]) -> dict[str, Any]:
     """Execute the generate_rule tool.
 
     Args:
@@ -731,6 +756,7 @@ async def execute_generate_rule(args: Dict[str, Any]) -> Dict[str, Any]:
 
     Returns:
         Dict[str, Any]: Tool execution result.
+
     """
     # Validate required args
     template_name = args.get("template_name")
@@ -753,10 +779,10 @@ async def execute_generate_rule(args: Dict[str, Any]) -> Dict[str, Any]:
         }
     except Exception as e:
         logger.error(f"Error generating rule: {e}", exc_info=True)
-        return {"error": f"Failed to generate rule: {str(e)}"}
+        return {"error": f"Failed to generate rule: {e!s}"}
 
 
-async def execute_customize_rule(args: Dict[str, Any]) -> Dict[str, Any]:
+async def execute_customize_rule(args: dict[str, Any]) -> dict[str, Any]:
     """Execute the customize_rule tool.
 
     Args:
@@ -764,6 +790,7 @@ async def execute_customize_rule(args: Dict[str, Any]) -> Dict[str, Any]:
 
     Returns:
         Dict[str, Any]: Tool execution result.
+
     """
     # Validate required args
     template_name = args.get("template_name")
@@ -786,10 +813,10 @@ async def execute_customize_rule(args: Dict[str, Any]) -> Dict[str, Any]:
         }
     except Exception as e:
         logger.error(f"Error customizing rule: {e}", exc_info=True)
-        return {"error": f"Failed to customize rule: {str(e)}"}
+        return {"error": f"Failed to customize rule: {e!s}"}
 
 
-async def execute_validate_rule(args: Dict[str, Any]) -> Dict[str, Any]:
+async def execute_validate_rule(args: dict[str, Any]) -> dict[str, Any]:
     """Execute the validate_rule tool.
 
     Args:
@@ -797,6 +824,7 @@ async def execute_validate_rule(args: Dict[str, Any]) -> Dict[str, Any]:
 
     Returns:
         Dict[str, Any]: Tool execution result.
+
     """
     # Validate required args
     rule_content = args.get("content")
@@ -813,10 +841,10 @@ async def execute_validate_rule(args: Dict[str, Any]) -> Dict[str, Any]:
         }
     except Exception as e:
         logger.error(f"Error validating rule: {e}", exc_info=True)
-        return {"error": f"Failed to validate rule: {str(e)}"}
+        return {"error": f"Failed to validate rule: {e!s}"}
 
 
-async def execute_save_rule(args: Dict[str, Any]) -> Dict[str, Any]:
+async def execute_save_rule(args: dict[str, Any]) -> dict[str, Any]:
     """Execute the save_rule tool.
 
     Args:
@@ -824,6 +852,7 @@ async def execute_save_rule(args: Dict[str, Any]) -> Dict[str, Any]:
 
     Returns:
         Dict[str, Any]: Tool execution result.
+
     """
     # Validate required args
     name = args.get("name")
@@ -871,10 +900,10 @@ async def execute_save_rule(args: Dict[str, Any]) -> Dict[str, Any]:
         }
     except Exception as e:
         logger.error(f"Error saving rule: {e}", exc_info=True)
-        return {"error": f"Failed to save rule: {str(e)}"}
+        return {"error": f"Failed to save rule: {e!s}"}
 
 
-async def execute_list_rules(args: Dict[str, Any]) -> Dict[str, Any]:
+async def execute_list_rules(args: dict[str, Any]) -> dict[str, Any]:
     """Execute the list_rules tool.
 
     Args:
@@ -882,6 +911,7 @@ async def execute_list_rules(args: Dict[str, Any]) -> Dict[str, Any]:
 
     Returns:
         Dict[str, Any]: Tool execution result.
+
     """
     try:
         # Get rules from database
@@ -893,10 +923,10 @@ async def execute_list_rules(args: Dict[str, Any]) -> Dict[str, Any]:
         }
     except Exception as e:
         logger.error(f"Error listing rules: {e}", exc_info=True)
-        return {"error": f"Failed to list rules: {str(e)}"}
+        return {"error": f"Failed to list rules: {e!s}"}
 
 
-async def execute_export_rules(args: Dict[str, Any]) -> Dict[str, Any]:
+async def execute_export_rules(args: dict[str, Any]) -> dict[str, Any]:
     """Execute the export_rules tool.
 
     Args:
@@ -904,6 +934,7 @@ async def execute_export_rules(args: Dict[str, Any]) -> Dict[str, Any]:
 
     Returns:
         Dict[str, Any]: Tool execution result.
+
     """
     # Validate required args
     output_dir = args.get("output_dir")
@@ -935,10 +966,10 @@ async def execute_export_rules(args: Dict[str, Any]) -> Dict[str, Any]:
         }
     except Exception as e:
         logger.error(f"Error exporting rules: {e}", exc_info=True)
-        return {"error": f"Failed to export rules: {str(e)}"}
+        return {"error": f"Failed to export rules: {e!s}"}
 
 
-def validate_required_args(args: Dict[str, Any], required_args: List[str]) -> Optional[Dict[str, Any]]:
+def validate_required_args(args: dict[str, Any], required_args: list[str]) -> dict[str, Any] | None:
     """Validate that all required arguments are present.
 
     Args:
@@ -947,6 +978,7 @@ def validate_required_args(args: Dict[str, Any], required_args: List[str]) -> Op
 
     Returns:
         Optional[Dict[str, Any]]: Error dictionary if validation fails, None otherwise.
+
     """
     missing_args = [arg for arg in required_args if arg not in args]
     if missing_args:
@@ -954,7 +986,7 @@ def validate_required_args(args: Dict[str, Any], required_args: List[str]) -> Op
     return None
 
 
-def format_resource_content(content: str) -> Dict[str, Any]:
+def format_resource_content(content: str) -> dict[str, Any]:
     """Format content for a resource.
 
     Args:
@@ -962,6 +994,7 @@ def format_resource_content(content: str) -> Dict[str, Any]:
 
     Returns:
         Dict[str, Any]: Formatted resource.
+
     """
     return {"content": content}
 

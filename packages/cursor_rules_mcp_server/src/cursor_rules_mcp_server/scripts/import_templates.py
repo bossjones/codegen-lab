@@ -4,13 +4,12 @@ This script can be run to import existing cursor rule templates from the
 hack/drafts/cursor_rules directory into the database used by the MCP server.
 """
 
-import os
-import sys
 import logging
 import sqlite3
+import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Any, List, Optional
+from typing import Any
 
 # Add parent directory to path to allow importing from parent package
 sys.path.insert(0, str(Path(__file__).parents[2]))
@@ -25,7 +24,7 @@ logging.basicConfig(
 logger = logging.getLogger("import_templates")
 
 
-def parse_template_file(file_path: Path) -> Optional[Dict[str, Any]]:
+def parse_template_file(file_path: Path) -> dict[str, Any] | None:
     """Parse a template file into a dictionary.
 
     Args:
@@ -33,11 +32,12 @@ def parse_template_file(file_path: Path) -> Optional[Dict[str, Any]]:
 
     Returns:
         Optional[Dict[str, Any]]: Template data dictionary or None if parsing failed.
+
     """
     logger.info(f"Parsing template file: {file_path}")
 
     try:
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             content = f.read()
 
         # Extract metadata from the filename
@@ -92,7 +92,7 @@ def parse_template_file(file_path: Path) -> Optional[Dict[str, Any]]:
         return None
 
 
-def import_templates(templates_dir: Path, db_path: Optional[str] = None) -> List[RuleTemplate]:
+def import_templates(templates_dir: Path, db_path: str | None = None) -> list[RuleTemplate]:
     """Import templates from the templates directory.
 
     Args:
@@ -101,6 +101,7 @@ def import_templates(templates_dir: Path, db_path: Optional[str] = None) -> List
 
     Returns:
         List[RuleTemplate]: List of imported templates.
+
     """
     logger.info(f"Importing templates from {templates_dir}")
 

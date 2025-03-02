@@ -6,7 +6,7 @@ for storing rule templates, repository analysis results, and user-generated rule
 
 import datetime
 from dataclasses import dataclass, field
-from typing import Dict, List, Any, Optional, Union
+from typing import Any
 
 
 @dataclass
@@ -21,7 +21,9 @@ class RuleTemplate:
         content (str): Full markdown content of the rule template.
         category (str): Category for organization (e.g., "workflow", "standards").
         created_at (str): Timestamp when the template was created.
+
     """
+
     id: int
     name: str
     title: str
@@ -44,13 +46,15 @@ class Rule:
         repository_id (Optional[int]): ID of the repository it was created for, if any.
         created_at (str): Timestamp when the rule was created.
         updated_at (str): Timestamp when the rule was last updated.
+
     """
+
     id: int
     name: str
     description: str
     content: str
-    template_id: Optional[int] = None
-    repository_id: Optional[int] = None
+    template_id: int | None = None
+    repository_id: int | None = None
     created_at: str = field(default_factory=lambda: datetime.datetime.now().isoformat())
     updated_at: str = field(default_factory=lambda: datetime.datetime.now().isoformat())
 
@@ -68,14 +72,16 @@ class Repository:
         frameworks (Dict[str, List[str]]): Frameworks detected for each language.
         file_stats (Dict[str, Any]): Statistics about files in the repository.
         analysis_date (str): Timestamp when the repository was last analyzed.
+
     """
+
     id: int
     name: str
     path: str
     repo_type: str
-    languages: Dict[str, int]
-    frameworks: Dict[str, List[str]]
-    file_stats: Dict[str, Any]
+    languages: dict[str, int]
+    frameworks: dict[str, list[str]]
+    file_stats: dict[str, Any]
     analysis_date: str = field(default_factory=lambda: datetime.datetime.now().isoformat())
 
 
@@ -88,7 +94,9 @@ class RepositoryRuleAssociation:
         rule_id (int): ID of the rule.
         status (str): Status of the rule (e.g., "active", "disabled").
         priority (str): Priority of the rule (e.g., "high", "medium", "low").
+
     """
+
     repository_id: int
     rule_id: int
     status: str = "active"  # active, disabled
@@ -151,7 +159,7 @@ DB_SCHEMA = {
 }
 
 
-def rule_to_dict(rule: Rule) -> Dict[str, Any]:
+def rule_to_dict(rule: Rule) -> dict[str, Any]:
     """Convert a Rule dataclass to a dictionary.
 
     Args:
@@ -159,6 +167,7 @@ def rule_to_dict(rule: Rule) -> Dict[str, Any]:
 
     Returns:
         Dict[str, Any]: Dictionary representation of the rule.
+
     """
     return {
         "id": rule.id,
@@ -172,7 +181,7 @@ def rule_to_dict(rule: Rule) -> Dict[str, Any]:
     }
 
 
-def dict_to_rule(rule_dict: Dict[str, Any]) -> Rule:
+def dict_to_rule(rule_dict: dict[str, Any]) -> Rule:
     """Convert a dictionary to a Rule dataclass.
 
     Args:
@@ -180,6 +189,7 @@ def dict_to_rule(rule_dict: Dict[str, Any]) -> Rule:
 
     Returns:
         Rule: The Rule dataclass.
+
     """
     return Rule(
         id=rule_dict["id"],
@@ -193,7 +203,7 @@ def dict_to_rule(rule_dict: Dict[str, Any]) -> Rule:
     )
 
 
-def template_to_dict(template: RuleTemplate) -> Dict[str, Any]:
+def template_to_dict(template: RuleTemplate) -> dict[str, Any]:
     """Convert a RuleTemplate dataclass to a dictionary.
 
     Args:
@@ -201,6 +211,7 @@ def template_to_dict(template: RuleTemplate) -> Dict[str, Any]:
 
     Returns:
         Dict[str, Any]: Dictionary representation of the template.
+
     """
     return {
         "id": template.id,
@@ -213,7 +224,7 @@ def template_to_dict(template: RuleTemplate) -> Dict[str, Any]:
     }
 
 
-def dict_to_template(template_dict: Dict[str, Any]) -> RuleTemplate:
+def dict_to_template(template_dict: dict[str, Any]) -> RuleTemplate:
     """Convert a dictionary to a RuleTemplate dataclass.
 
     Args:
@@ -221,6 +232,7 @@ def dict_to_template(template_dict: Dict[str, Any]) -> RuleTemplate:
 
     Returns:
         RuleTemplate: The RuleTemplate dataclass.
+
     """
     return RuleTemplate(
         id=template_dict["id"],
@@ -233,7 +245,7 @@ def dict_to_template(template_dict: Dict[str, Any]) -> RuleTemplate:
     )
 
 
-def repository_to_dict(repo: Repository) -> Dict[str, Any]:
+def repository_to_dict(repo: Repository) -> dict[str, Any]:
     """Convert a Repository dataclass to a dictionary.
 
     Args:
@@ -241,6 +253,7 @@ def repository_to_dict(repo: Repository) -> Dict[str, Any]:
 
     Returns:
         Dict[str, Any]: Dictionary representation of the repository.
+
     """
     return {
         "id": repo.id,
@@ -254,7 +267,7 @@ def repository_to_dict(repo: Repository) -> Dict[str, Any]:
     }
 
 
-def dict_to_repository(repo_dict: Dict[str, Any]) -> Repository:
+def dict_to_repository(repo_dict: dict[str, Any]) -> Repository:
     """Convert a dictionary to a Repository dataclass.
 
     Args:
@@ -262,6 +275,7 @@ def dict_to_repository(repo_dict: Dict[str, Any]) -> Repository:
 
     Returns:
         Repository: The Repository dataclass.
+
     """
     return Repository(
         id=repo_dict["id"],

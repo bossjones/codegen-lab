@@ -6,6 +6,7 @@ def main() -> None:
 
     Returns:
         None
+
     """
     print("Hello from codegen-lab!")
 

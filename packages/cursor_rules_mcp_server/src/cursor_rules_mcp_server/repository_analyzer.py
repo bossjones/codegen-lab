@@ -4,10 +4,10 @@ This module provides functionality to analyze a repository structure
 and suggest cursor rules based on the repository's contents.
 """
 
+import json
 import os
 from pathlib import Path
-import json
-from typing import Dict, List, Set, Any, Optional, Tuple
+from typing import Any
 
 
 class RepositoryAnalyzer:
@@ -19,6 +19,7 @@ class RepositoryAnalyzer:
     Attributes:
         repo_path (Path): Path to the repository root directory.
         ignored_dirs (Set[str]): Set of directory names to ignore during scanning.
+
     """
 
     def __init__(self, repo_path: str):
@@ -26,6 +27,7 @@ class RepositoryAnalyzer:
 
         Args:
             repo_path (str): Path to the repository to analyze.
+
         """
         self.repo_path = Path(repo_path).expanduser().resolve()
         self.ignored_dirs = {
@@ -33,7 +35,7 @@ class RepositoryAnalyzer:
             "venv", ".venv", "__pycache__", ".pytest_cache"
         }
 
-    def analyze(self) -> Dict[str, Any]:
+    def analyze(self) -> dict[str, Any]:
         """Perform a full analysis of the repository.
 
         Returns:
@@ -42,6 +44,7 @@ class RepositoryAnalyzer:
                 - languages: Dictionary of languages with file counts
                 - frameworks: Detected frameworks/libraries
                 - suggested_rules: List of suggested cursor rules
+
         """
         file_stats = self._collect_file_stats()
         languages = self._detect_languages(file_stats)
@@ -56,11 +59,12 @@ class RepositoryAnalyzer:
             "suggested_rules": self._suggest_rules(repo_type, languages, frameworks, file_stats)
         }
 
-    def _collect_file_stats(self) -> Dict[str, Any]:
+    def _collect_file_stats(self) -> dict[str, Any]:
         """Collect file statistics from the repository.
 
         Returns:
             Dict[str, Any]: Statistics about the repository files.
+
         """
         result = {
             "file_count": 0,
@@ -74,7 +78,7 @@ class RepositoryAnalyzer:
                              "Cargo.toml", "go.mod", "Gemfile", "build.gradle",
                              "pom.xml", "Dockerfile", "docker-compose.yml"]:
             if (self.repo_path / special_file).exists():
-                with open(self.repo_path / special_file, 'r', encoding='utf-8') as f:
+                with open(self.repo_path / special_file, encoding='utf-8') as f:
                     try:
                         if special_file == "package.json":
                             data = json.load(f)
@@ -116,7 +120,7 @@ class RepositoryAnalyzer:
 
         return result
 
-    def _detect_languages(self, file_stats: Dict[str, Any]) -> Dict[str, int]:
+    def _detect_languages(self, file_stats: dict[str, Any]) -> dict[str, int]:
         """Detect programming languages used in the repository.
 
         Args:
@@ -124,6 +128,7 @@ class RepositoryAnalyzer:
 
         Returns:
             Dict[str, int]: Dictionary mapping language names to file counts.
+
         """
         file_types = file_stats.get("file_types", {})
         languages = {}
@@ -184,7 +189,7 @@ class RepositoryAnalyzer:
 
         return dict(sorted(languages.items(), key=lambda x: x[1], reverse=True))
 
-    def _detect_frameworks(self, file_stats: Dict[str, Any]) -> Dict[str, List[str]]:
+    def _detect_frameworks(self, file_stats: dict[str, Any]) -> dict[str, list[str]]:
         """Detect frameworks and libraries used in the repository.
 
         Args:
@@ -192,6 +197,7 @@ class RepositoryAnalyzer:
 
         Returns:
             Dict[str, List[str]]: Dictionary mapping language to list of frameworks.
+
         """
         frameworks = {}
         special_files = file_stats.get("special_files", {})
@@ -251,9 +257,9 @@ class RepositoryAnalyzer:
 
     def _determine_repo_type(
         self,
-        languages: Dict[str, int],
-        frameworks: Dict[str, List[str]],
-        file_stats: Dict[str, Any]
+        languages: dict[str, int],
+        frameworks: dict[str, list[str]],
+        file_stats: dict[str, Any]
     ) -> str:
         """Determine the repository type based on analysis.
 
@@ -264,6 +270,7 @@ class RepositoryAnalyzer:
 
         Returns:
             str: Repository type (web, library, CLI, etc.).
+
         """
         # Default to 'generic' if we can't determine
         repo_type = "generic"
@@ -300,10 +307,10 @@ class RepositoryAnalyzer:
     def _suggest_rules(
         self,
         repo_type: str,
-        languages: Dict[str, int],
-        frameworks: Dict[str, List[str]],
-        file_stats: Dict[str, Any]
-    ) -> List[Dict[str, Any]]:
+        languages: dict[str, int],
+        frameworks: dict[str, list[str]],
+        file_stats: dict[str, Any]
+    ) -> list[dict[str, Any]]:
         """Suggest cursor rules based on repository analysis.
 
         Args:
@@ -314,6 +321,7 @@ class RepositoryAnalyzer:
 
         Returns:
             List[Dict[str, Any]]: List of suggested cursor rules.
+
         """
         suggested_rules = []
 
@@ -388,7 +396,7 @@ class RepositoryAnalyzer:
 
         return suggested_rules
 
-    def get_rule_template(self, rule_name: str) -> Optional[str]:
+    def get_rule_template(self, rule_name: str) -> str | None:
         """Get the content for a rule template by name.
 
         Args:
@@ -396,6 +404,7 @@ class RepositoryAnalyzer:
 
         Returns:
             Optional[str]: The rule template content or None if not found.
+
         """
         # Base template for cursor rules
         base_template = """# {title}
@@ -728,7 +737,7 @@ Would you like me to continue with any specific component, or would you prefer t
         return None
 
 
-def analyze_repository(repo_path: str) -> Dict[str, Any]:
+def analyze_repository(repo_path: str) -> dict[str, Any]:
     """Analyze a repository and return detailed information.
 
     Args:
@@ -736,12 +745,13 @@ def analyze_repository(repo_path: str) -> Dict[str, Any]:
 
     Returns:
         Dict[str, Any]: Analysis results.
+
     """
     analyzer = RepositoryAnalyzer(repo_path)
     return analyzer.analyze()
 
 
-def get_rule_template(rule_name: str, repo_analysis: Optional[Dict[str, Any]] = None) -> Optional[str]:
+def get_rule_template(rule_name: str, repo_analysis: dict[str, Any] | None = None) -> str | None:
     """Get a cursor rule template by name.
 
     Args:
@@ -751,6 +761,7 @@ def get_rule_template(rule_name: str, repo_analysis: Optional[Dict[str, Any]] = 
 
     Returns:
         Optional[str]: The rule template content or None if not found.
+
     """
     # For now, just delegate to the analyzer method
     analyzer = RepositoryAnalyzer("")  # Empty path since we're just using the template method

@@ -4,10 +4,9 @@ This module provides functionality to generate and customize cursor rules
 based on repository analysis and user input.
 """
 
-import json
-from typing import Dict, List, Any, Optional, Tuple, Union
-from pathlib import Path
 import re
+from pathlib import Path
+from typing import Any
 
 from .repository_analyzer import analyze_repository, get_rule_template
 
@@ -21,19 +20,21 @@ class RuleGenerator:
     Attributes:
         repo_path (Path): Path to the repository root directory.
         analysis_results (Optional[Dict[str, Any]]): Cached analysis results.
+
     """
 
-    def __init__(self, repo_path: Optional[str] = None):
+    def __init__(self, repo_path: str | None = None):
         """Initialize the rule generator.
 
         Args:
             repo_path (Optional[str]): Path to the repository to analyze. If None,
                 rule generation won't include repository-specific customizations.
+
         """
         self.repo_path = Path(repo_path).expanduser().resolve() if repo_path else None
-        self.analysis_results: Optional[Dict[str, Any]] = None
+        self.analysis_results: dict[str, Any] | None = None
 
-    def analyze_repo(self) -> Dict[str, Any]:
+    def analyze_repo(self) -> dict[str, Any]:
         """Analyze the repository and cache the results.
 
         Returns:
@@ -41,6 +42,7 @@ class RuleGenerator:
 
         Raises:
             ValueError: If no repository path was provided during initialization.
+
         """
         if not self.repo_path:
             raise ValueError("No repository path provided for analysis")
@@ -50,7 +52,7 @@ class RuleGenerator:
 
         return self.analysis_results
 
-    def get_suggested_rules(self) -> List[Dict[str, Any]]:
+    def get_suggested_rules(self) -> list[dict[str, Any]]:
         """Get suggested rules based on repository analysis.
 
         Returns:
@@ -58,11 +60,12 @@ class RuleGenerator:
 
         Raises:
             ValueError: If no repository path was provided during initialization.
+
         """
         analysis = self.analyze_repo()
         return analysis.get("suggested_rules", [])
 
-    def generate_rule(self, rule_name: str, customizations: Optional[Dict[str, Any]] = None) -> str:
+    def generate_rule(self, rule_name: str, customizations: dict[str, Any] | None = None) -> str:
         """Generate a cursor rule based on a template and customizations.
 
         Args:
@@ -75,6 +78,7 @@ class RuleGenerator:
 
         Raises:
             ValueError: If the rule template could not be found.
+
         """
         # Get repository analysis if available
         repo_analysis = self.analysis_results if self.repo_path else None
@@ -94,7 +98,7 @@ class RuleGenerator:
 
         return template
 
-    def validate_rule(self, rule_content: str) -> Tuple[bool, List[str]]:
+    def validate_rule(self, rule_content: str) -> tuple[bool, list[str]]:
         """Validate cursor rule content for correctness.
 
         Args:
@@ -103,6 +107,7 @@ class RuleGenerator:
         Returns:
             Tuple[bool, List[str]]: A tuple containing a boolean indicating if the
                 rule is valid, and a list of validation messages/errors.
+
         """
         errors = []
 
@@ -149,7 +154,7 @@ class RuleGenerator:
 
         return len(errors) == 0, errors
 
-    def generate_multiple_rules(self, rule_names: List[str]) -> Dict[str, str]:
+    def generate_multiple_rules(self, rule_names: list[str]) -> dict[str, str]:
         """Generate multiple cursor rules from a list of rule names.
 
         Args:
@@ -157,13 +162,14 @@ class RuleGenerator:
 
         Returns:
             Dict[str, str]: Mapping of rule names to generated rule content.
+
         """
         result = {}
         for rule_name in rule_names:
             try:
                 rule_content = self.generate_rule(rule_name)
                 result[rule_name] = rule_content
-            except ValueError as e:
+            except ValueError:
                 # Skip rules that couldn't be generated
                 continue
 
@@ -180,6 +186,7 @@ class RuleGenerator:
 
         Raises:
             ValueError: If no repository path was provided or rule template not found.
+
         """
         if not self.repo_path:
             raise ValueError("No repository path provided for customization")
@@ -202,7 +209,7 @@ class RuleGenerator:
         # Generate and return the customized rule
         return self.generate_rule(rule_name, customizations)
 
-    def export_rules_to_files(self, rules: Dict[str, str], output_dir: str) -> List[str]:
+    def export_rules_to_files(self, rules: dict[str, str], output_dir: str) -> list[str]:
         """Export generated rules to markdown files.
 
         Args:
@@ -211,6 +218,7 @@ class RuleGenerator:
 
         Returns:
             List[str]: List of paths to created rule files.
+
         """
         output_path = Path(output_dir).expanduser().resolve()
         output_path.mkdir(parents=True, exist_ok=True)
@@ -225,8 +233,8 @@ class RuleGenerator:
         return created_files
 
 
-def generate_rule(rule_name: str, repo_path: Optional[str] = None,
-                 customizations: Optional[Dict[str, Any]] = None) -> str:
+def generate_rule(rule_name: str, repo_path: str | None = None,
+                 customizations: dict[str, Any] | None = None) -> str:
     """Generate a cursor rule based on a template and optional customizations.
 
     Args:
@@ -236,12 +244,13 @@ def generate_rule(rule_name: str, repo_path: Optional[str] = None,
 
     Returns:
         str: The generated rule content.
+
     """
     generator = RuleGenerator(repo_path)
     return generator.generate_rule(rule_name, customizations)
 
 
-def analyze_and_suggest_rules(repo_path: str) -> Dict[str, Any]:
+def analyze_and_suggest_rules(repo_path: str) -> dict[str, Any]:
     """Analyze a repository and suggest appropriate cursor rules.
 
     Args:
@@ -249,6 +258,7 @@ def analyze_and_suggest_rules(repo_path: str) -> Dict[str, Any]:
 
     Returns:
         Dict[str, Any]: Analysis results with suggested rules.
+
     """
     generator = RuleGenerator(repo_path)
     analysis = generator.analyze_repo()
@@ -258,7 +268,7 @@ def analyze_and_suggest_rules(repo_path: str) -> Dict[str, Any]:
     }
 
 
-def validate_rule_content(rule_content: str) -> Tuple[bool, List[str]]:
+def validate_rule_content(rule_content: str) -> tuple[bool, list[str]]:
     """Validate cursor rule content for correctness.
 
     Args:
@@ -267,6 +277,7 @@ def validate_rule_content(rule_content: str) -> Tuple[bool, List[str]]:
     Returns:
         Tuple[bool, List[str]]: A tuple containing a boolean indicating if the
             rule is valid, and a list of validation messages/errors.
+
     """
     generator = RuleGenerator()
     return generator.validate_rule(rule_content)

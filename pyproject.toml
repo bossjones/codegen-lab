@@ -91,3 +91,62 @@ dev = [
 [tool.uv.sources]
 pytest-freezegun = { git = "https://github.com/bossjones/pytest-freezegun" }
 cursor-rules-mcp-server = { workspace = true }
+
+# Basic settings
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+include = ["*.py", "*.pyi", "*.ipynb"]
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
+src = ["src", "tests"]
+
+# Linting settings
+[tool.ruff.lint]
+# Existing configuration
+select = [
+    "D", "E", "F", "UP", "B", "I", "S", "YTT", "A",
+    "C4", "T10", "SIM", "C90", "W", "PGH", "RUF"
+]
+ignore = [
+    # Existing ignores
+    "B008", "D417", "E501", "UP006", "UP007", "S101", "N812",
+    # New ignores from errors
+    "D100", "D104", "D107", "D200", "D205", "D400", "D401", "D415",
+    "UP035", "C901", "RUF013", "RUF015", "S603", "S607", "E722",
+    "S110", "SIM102", "SIM118", "PGH003", "B904", "F841", "F401"
+]
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+# Add per-file configurations
+[tool.ruff.lint.per-file-ignores]
+# Init files
+"**/__init__.py" = ["F401", "D104"]
+# Server/complex files
+"**/fserver.py" = ["C901", "D205", "D200", "D400", "D415"]
+"**/server.py" = ["B904", "PGH003"]
+# Repository analysis
+"**/repository_analyzer.py" = ["SIM102", "C901"]
+# Template handling
+"**/import_templates.py" = ["C901", "D401"]

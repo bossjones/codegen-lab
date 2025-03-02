@@ -4,15 +4,14 @@ This module allows running the server as a package:
     python -m cursor_rules_mcp_server
 """
 
-import sys
-import logging
 import asyncio
-from typing import List, Optional
+import logging
+import sys
 
 from .server import main
 
 
-def parse_args(args: Optional[List[str]] = None) -> dict:
+def parse_args(args: list[str] | None = None) -> dict:
     """Parse command line arguments.
 
     Args:
@@ -20,6 +19,7 @@ def parse_args(args: Optional[List[str]] = None) -> dict:
 
     Returns:
         dict: Parsed arguments.
+
     """
     import argparse
 
