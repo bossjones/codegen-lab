@@ -107,46 +107,7 @@ uv-workspace-add-dep: ## Add a workspace package as a dependency to the root pyp
 uv-workspace-init-package: ## Initialize a new package in the workspace (usage: make uv-workspace-init-package name=new-package)
 	@if [ -z "$(name)" ]; then echo "Please provide a package name with name=package-name"; exit 1; fi
 	@echo "🚀 Initializing new package: $(name)"
-	@mkdir -p packages/$(name)/src/$(shell echo $(name) | tr '-' '_')
-	@echo "Creating pyproject.toml for $(name)"
-	@cat > packages/$(name)/pyproject.toml << EOF
-[project]
-name = "$(name)"
-version = "0.1.0"
-description = "$(name) package"
-readme = "README.md"
-authors = [
-    { name = "Malcolm Jones", email = "bossjones@theblacktonystark.com" }
-]
-requires-python = ">=3.12"
-dependencies = [
-    "better-exceptions>=0.3.3",
-]
-
-[build-system]
-requires = ["setuptools>=61"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools]
-package-dir = {"" = "src"}
-packages = ["$(shell echo $(name) | tr '-' '_')"]
-EOF
-	@echo "Creating __init__.py for $(name)"
-	@cat > packages/$(name)/src/$(shell echo $(name) | tr '-' '_')/__init__.py << EOF
-"""$(name) package."""
-
-__version__ = "0.1.0"
-EOF
-	@echo "Creating README.md for $(name)"
-	@cat > packages/$(name)/README.md << EOF
-# $(name)
-
-Description of $(name) package.
-EOF
-	@echo "Don't forget to add workspace dependency in root pyproject.toml:"
-	@echo "[tool.uv.sources]"
-	@echo "$(name) = { workspace = true }"
-	@echo "Then run: make uv-workspace-lock"
+	@./scripts/uv-workspace-init-package.sh "$(name)"
 
 uv-check-lock: ## Check lockfile consistency (prevents updates)
 	@echo "🚀 Checking lockfile consistency"
@@ -188,14 +149,10 @@ uv-clean-cache: ## Clean UV cache
 	@echo "🚀 Cleaning UV cache"
 	@uv cache clean
 
-# uv-export-requirements: ## Export requirements without hashes
-# 	@echo "🚀 Exporting requirements to requirements.txt"
-# 	@uv pip export --without-hashes pyproject.toml -o requirements.txt
-
 # Export requirements without hashes
 uv-export-requirements:
 	@echo "🚀 Exporting requirements.txt"
-	uv export --no-hashes --format requirements-txt -o requirements.txt
+	@uv export --no-hashes --format requirements-txt -o requirements.txt
 
 uv-export-requirements-resolution: ## Export with specific resolution strategy (usage: make uv-export-requirements-resolution strategy=highest)
 	@echo "🚀 Exporting requirements with $(strategy) resolution strategy"
