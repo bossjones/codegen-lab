@@ -151,7 +151,7 @@ def resize_image_with_background(
     logger.debug(f"Resizing from {img_width}x{img_height} to {new_width}x{new_height} to preserve aspect ratio")
 
     # Resize image
-    resized_img = image.resize((new_width, new_height), PIL.Image.LANCZOS)
+    resized_img = image.resize((new_width, new_height), PIL.Image.Resampling.LANCZOS)
 
     # Calculate position to paste (center)
     paste_x = (target_width - new_width) // 2
