@@ -12,6 +12,12 @@ env:
   PYTHONPATH: "{{.ROOT_DIR}}"
 
 tasks:
+  open:codegen_blog:
+    dir: '{{.USER_WORKING_DIR}}'
+    desc: 'Open the codegen blog'
+    cmds:
+      - open https://harper.blog/2025/02/16/my-llm-codegen-workflow-atm/
+
   # LLM Tasks
   llm:generate_bundle:
     dir: '{{.USER_WORKING_DIR}}'

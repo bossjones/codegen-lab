@@ -1,16 +1,32 @@
-# LLM Codegen Workflow
+# 🧩 LLM Codegen Lab
 
-This repository contains task runner configurations for LLM-related code generation tasks, inspired by [Harper Reed's LLM codegen workflow](https://harper.blog/2025/02/16/my-llm-codegen-workflow-atm/).
+A comprehensive toolkit for AI-assisted code generation workflows, inspired by [Harper Reed's LLM codegen workflow](https://harper.blog/2025/02/16/my-llm-codegen-workflow-atm/).
 
-## Prerequisites
+This lab provides a collection of tools and workflows for leveraging Large Language Models (LLMs) in your development process, with a focus on:
 
-To use these task runners, you'll need to install:
+- 🤖 **Cursor Agent** integration with cursor rule files
+- 📋 **Taskfile** for context collection and LLM interactions
+- 🚀 **Greenfield Development** using LLM-assisted workflows
+- 🧪 **Test-Driven Development** with AI assistance
+
+## ✨ Features
+
+- 📝 Generate codebases from specifications
+- 🔍 Create comprehensive code reviews
+- 🧩 Identify and implement missing tests
+- 📊 Generate GitHub issues from codebase analysis
+- 🧠 Leverage Cursor IDE with custom rule files for enhanced AI assistance
+
+## 🛠️ Prerequisites
+
+To use these tools, you'll need to install:
 
 1. [repomix](https://github.com/replicate/repomix) - For bundling your codebase
 2. [llm](https://llm.datasette.io/) - For interacting with various LLMs
-3. Either [Task](https://taskfile.dev/) or [mise](https://mise.jdx.dev/) - Task runners
+3. [Cursor](https://cursor.sh/) - The AI-native code editor
+4. Either [Task](https://taskfile.dev/) or [mise](https://mise.jdx.dev/) - Task runners
 
-### Installation
+### 📥 Installation
 
 ```bash
 # Install repomix
@@ -26,9 +42,69 @@ brew install go-task/tap/go-task
 # Install mise (for mise.toml)
 # macOS
 brew install mise
+
+# Install Cursor IDE
+# Visit https://cursor.sh/ and follow instructions
 ```
 
-## Available Task Runners
+## 🚀 Quickstart Guide
+
+### 1️⃣ Using Cursor Agent with Custom Rules
+
+The repository includes a collection of specialized cursor rule files in `hack/drafts/cursor_rules/` that enhance Cursor's AI capabilities:
+
+```bash
+# Clone the repository
+git clone https://github.com/bossjones/codegen-lab.git
+cd codegen-lab
+
+# Setup your project by copying cursor rules to your editor
+mkdir -p ~/.cursor/rules
+cp hack/drafts/cursor_rules/*.mdc ~/.cursor/rules/
+```
+
+Key cursor rules include:
+- `greenfield.mdc` - For implementing new projects from scratch
+- `tdd.mdc` - For test-driven development workflows
+- `anthropic-chain-of-thought.mdc` - For enhanced reasoning
+- `code-context-gatherer.mdc` - For context collection
+
+### 2️⃣ Using Taskfile for Context Collection
+
+Generate codebase bundles and LLM prompts using Task:
+
+```bash
+# Generate a bundle of your codebase
+task llm:generate_bundle
+
+# Generate missing tests and copy to clipboard
+task llm:generate_missing_tests
+task llm:copy_buffer_bundle
+
+# Format and lint your Python code
+task python:format
+task python:lint
+```
+
+### 3️⃣ Implementing Greenfield Projects
+
+Follow the Greenfield development workflow:
+
+1. **Idea Honing** (15 minutes):
+   - Use an LLM to refine your idea into a detailed specification
+   - Save the specification as `spec.md`
+
+2. **Planning** (15-30 minutes):
+   - Create a step-by-step implementation plan
+   - Break down into small, incremental tasks
+   - Save as `prompt_plan.md` and `todo.md`
+
+3. **Execution**:
+   - Use Cursor's AI capabilities with custom rules
+   - Implement each step from your plan
+   - Test and verify at each stage
+
+## 🧰 Available Task Runners
 
 This repository provides two equivalent task runner configurations:
 
@@ -37,7 +113,7 @@ This repository provides two equivalent task runner configurations:
 
 Both provide the same functionality, just choose the one that fits your workflow.
 
-## LLM Tasks
+### 📚 LLM Tasks
 
 | Task Name | Description |
 |-----------|-------------|
@@ -50,7 +126,7 @@ Both provide the same functionality, just choose the one that fits your workflow
 | `llm:generate_missing_tests` | Identifies and generates missing tests for your codebase |
 | `llm:generate_issue_prompts` | Generates issue prompts from your codebase |
 
-## Python Tasks
+### 🐍 Python Tasks
 
 | Task Name | Description |
 |-----------|-------------|
@@ -59,7 +135,7 @@ Both provide the same functionality, just choose the one that fits your workflow
 | `python:lint-fix` | Automatically fixes Python linting issues |
 | `python:test` | Runs Python tests using pytest |
 
-## Utility Tasks
+### 🔧 Utility Tasks
 
 | Task Name | Description |
 |-----------|-------------|
@@ -67,54 +143,36 @@ Both provide the same functionality, just choose the one that fits your workflow
 | `webui` | Starts WebUI |
 | `claude` | Starts Claude CLI |
 
-## Usage
+## 💡 Typical Workflow
 
-### Using Task
+1. **Setup your environment**:
+   - Configure Cursor with custom rule files
+   - Initialize your project structure
 
-```bash
-# Generate a bundle of your codebase
-task llm:generate_bundle
+2. **Generate code context**:
+   - `task llm:generate_bundle` to create a codebase snapshot
+   - `task llm:generate_missing_tests` to identify gaps
 
-# Generate a README
-task llm:generate_readme
+3. **Use Cursor with context**:
+   - Copy the bundle to clipboard: `task llm:copy_buffer_bundle`
+   - Use Cursor's AI capabilities with specific prompts
+   - Leverage custom rule files for specialized assistance
 
-# Generate missing tests
-task llm:generate_missing_tests
+4. **Implement and test**:
+   - Write code in Cursor with AI assistance
+   - Run tests: `task python:test`
+   - Format code: `task python:format`
 
-# Run Python tests
-task python:test
-```
+5. **Review and refine**:
+   - Generate code reviews: `task llm:generate_code_review`
+   - Identify issues: `task llm:generate_github_issues`
+   - Iterate and improve
 
-### Using mise
+## 📘 Documentation
 
-```bash
-# Generate a bundle of your codebase
-mise run llm:generate_bundle
+For more detailed information, check out the documentation in the `docs/` directory.
 
-# Generate a README
-mise run llm:generate_readme
-
-# Generate missing tests
-mise run llm:generate_missing_tests
-
-# Run Python tests
-mise run python:test
-```
-
-## LLM Codegen Workflow
-
-The typical workflow as described in the blog post:
-
-1. Set up your repository with boilerplate code and tools
-2. Generate a bundle of your codebase: `task llm:generate_bundle` or `mise run llm:generate_bundle`
-3. Generate missing tests or other artifacts: `task llm:generate_missing_tests` or `mise run llm:generate_missing_tests`
-4. Copy the bundle to your clipboard for use with Claude or other LLMs: `task llm:copy_buffer_bundle` or `mise run llm:copy_buffer_bundle`
-5. Paste the bundle into your LLM along with specific prompts (from the generated markdown files)
-6. Implement the generated code in your IDE
-7. Run tests and verify: `task python:test` or `mise run python:test`
-8. Repeat as needed
-
-## Customization
+## 🔧 Customization
 
 You can customize these task runner configurations by:
 
