@@ -11,6 +11,7 @@ env:
   # Python environment variables
   PYTHONPATH: "{{.ROOT_DIR}}"
 
+
 tasks:
   open:codegen_blog:
     dir: '{{.USER_WORKING_DIR}}'
