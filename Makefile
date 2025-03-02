@@ -116,9 +116,14 @@ uv-clean-cache: ## Clean UV cache
 	@echo "🚀 Cleaning UV cache"
 	@uv cache clean
 
-uv-export-requirements: ## Export requirements without hashes
-	@echo "🚀 Exporting requirements to requirements.txt"
-	@uv pip export --without-hashes pyproject.toml -o requirements.txt
+# uv-export-requirements: ## Export requirements without hashes
+# 	@echo "🚀 Exporting requirements to requirements.txt"
+# 	@uv pip export --without-hashes pyproject.toml -o requirements.txt
+
+# Export requirements without hashes
+uv-export-requirements:
+	@echo "🚀 Exporting requirements.txt"
+	uv export --no-hashes --format requirements-txt -o requirements.txt
 
 uv-export-requirements-resolution: ## Export with specific resolution strategy (usage: make uv-export-requirements-resolution strategy=highest)
 	@echo "🚀 Exporting requirements with $(strategy) resolution strategy"
