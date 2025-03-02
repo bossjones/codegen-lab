@@ -128,6 +128,12 @@ Examples:
     # Customize the bounding box
     python bboxes.py --image-path "tweet.png" --box-color "blue" --box-width 5 --label "Twitter Post"
 
+    # Crop to the detected area instead of drawing a box
+    python bboxes.py --image-path "tweet.jpg" --autocrop
+
+    # Crop with custom percentage (to fine-tune where the bottom crop occurs)
+    python bboxes.py --image-path "tweet.jpg" --autocrop --crop-percent 90.0
+
     # Enable debug logging
     python bboxes.py --verbose --image-path "image.jpg"
     """
@@ -162,6 +168,14 @@ Examples:
         help="Custom label for the bounding box (tweet mode only)"
     )
     parser.add_argument(
+        "--autocrop", action="store_true",
+        help="Crop image to the detected area instead of drawing a bounding box"
+    )
+    parser.add_argument(
+        "--crop-percent", type=float, default=100.0,
+        help="When using --autocrop with tweets, percentage of tweet height to include (default: 100.0)"
+    )
+    parser.add_argument(
         "--verbose", action="store_true",
         help="Enable verbose debug logging"
     )
@@ -173,15 +187,16 @@ def detect_tweet_content(
     output_path: str = "tweet_with_box.jpg",
     box_color: str = "red",
     box_width: int = 4,
-    label: Optional[str] = None
+    label: Optional[str] = None,
+    autocrop: bool = False,
+    crop_percent: float = 92.0
 ) -> None:
     """
     Detects tweet content in an image using Gemini, draws a bounding box, and saves the result.
 
     This function uses the Gemini generative model to identify tweet components in the
-    provided image. It draws a red bounding box around the main tweet content (user profile,
-    name, follow button, and tweet text), excluding date/time information and engagement
-    metrics.
+    provided image. It either draws a bounding box around the main tweet content or crops
+    the image to that content, depending on the autocrop parameter.
 
     Args:
         image_path: Path to the input image file containing a tweet.
@@ -189,6 +204,8 @@ def detect_tweet_content(
         box_color: Color of the bounding box (name or hex code). Defaults to "red".
         box_width: Width of the bounding box line. Defaults to 4.
         label: Custom label for the bounding box. Defaults to "Tweet Content".
+        autocrop: If True, crop the image to the detected area instead of drawing a box. Defaults to False.
+        crop_percent: Percentage of tweet height to include when cropping. Defaults to 92.0.
 
     Returns:
         None
@@ -199,7 +216,7 @@ def detect_tweet_content(
     """
     try:
         logger.info(f"Detecting tweet content in {image_path}")
-        logger.debug(f"Using box color: {box_color}, width: {box_width}, label: {label}")
+        logger.debug(f"Using box color: {box_color}, width: {box_width}, label: {label}, autocrop: {autocrop}, crop_percent: {crop_percent}")
 
         model = genai.GenerativeModel(settings.GEMINI_MODEL)
         logger.debug(f"Initialized Gemini model: {settings.GEMINI_MODEL}")
@@ -226,12 +243,16 @@ def detect_tweet_content(
 
             The bounding box MUST exclude:
             1. The navigation elements and header
-            2. The date/timestamp
-            3. Like/retweet/view counts and all engagement metrics
-            4. Any replies or comments below the main tweet
-            5. Any UI elements at the bottom of the screen
+            2. The date/timestamp (generally a line like "11:34 PM · 2/28/25")
+            3. The view count (e.g., "2M Views")
+            4. Like/retweet/view counts and all engagement metrics
+            5. Any replies or comments below the main tweet
+            6. Any UI elements at the bottom of the screen
 
-            IMPORTANT: Make sure your coordinates cover the ENTIRE tweet content from the profile picture to the end of the tweet text.
+            VERY IMPORTANT: Draw the bottom boundary of the box ABOVE the timestamp and view count row.
+            The timestamp is generally shown in a smaller font below the tweet content, often with a dot separator and view count.
+
+            Make sure your coordinates cover the ENTIRE tweet content from the profile picture to the end of the tweet text.
             When in doubt, make the bounding box LARGER rather than smaller to ensure no text is cut off.
 
             It is better to include a bit more space than to cut off any part of the text!
@@ -303,8 +324,6 @@ def detect_tweet_content(
 
             # Validate coordinates
             if all(isinstance(coord, (int, float)) for coord in [xmin, ymin, xmax, ymax]):
-                draw = PIL.ImageDraw.Draw(img)
-
                 # Convert normalized coordinates (0-1000 range) to absolute pixel coordinates
                 width, height = img.size
                 abs_xmin = int(xmin / 1000 * width)
@@ -316,29 +335,60 @@ def detect_tweet_content(
                 # Add padding to ensure we capture all content
                 # Horizontal padding (5% of width on each side)
                 h_padding = int(width * 0.05)
-                # Vertical padding (10% of detected height for bottom to ensure we capture all text)
+                # Vertical padding (5% of detected height for top, but no padding at the bottom to exclude timestamp/view count)
                 v_padding_top = int((abs_ymax - abs_ymin) * 0.05)
-                v_padding_bottom = int((abs_ymax - abs_ymin) * 0.10)
 
-                # Apply padding while ensuring we don't go out of bounds
-                padded_xmin = max(0, abs_xmin - h_padding)
-                padded_ymin = max(0, abs_ymin - v_padding_top)
-                padded_xmax = min(width, abs_xmax + h_padding)
-                padded_ymax = min(height, abs_ymax + v_padding_bottom)
+                # For autocrop, we want to exclude the timestamp and view count at the bottom
+                # Create smarter padding calculations based on whether we're cropping or drawing boxes
+                if autocrop:
+                    # When cropping, reduce bottom padding to exclude timestamp
+                    # Estimate the position of timestamp (typically about 92-95% of the way down from the top of the tweet)
+                    # Find approximate height of tweet content excluding timestamp
+                    tweet_content_height = abs_ymax - abs_ymin
+                    # Target approximately 92% of the tweet height to cut off timestamp
+                    timestamp_position = abs_ymin + int(tweet_content_height * crop_percent / 100)
+
+                    # Apply more precise padding for cropping
+                    padded_xmin = max(0, abs_xmin - h_padding)
+                    padded_ymin = max(0, abs_ymin - v_padding_top)
+                    padded_xmax = min(width, abs_xmax + h_padding)
+                    # Use the estimated timestamp position instead of the full ymax
+                    padded_ymax = min(height, timestamp_position)
+
+                    logger.debug(f"Cropping with tighter bottom margin to exclude timestamp: ymax={padded_ymax}")
+                    logger.debug(f"Original height: {abs_ymax-abs_ymin}px, Cropped height: {padded_ymax-padded_ymin}px, Crop percent: {crop_percent}%")
+                    logger.debug(f"Removed approximately {abs_ymax-timestamp_position}px from bottom to exclude timestamp/views")
+                else:
+                    # For drawing boxes, use normal padding to show the full tweet
+                    v_padding_bottom = int((abs_ymax - abs_ymin) * 0.10)
+
+                    # Apply standard padding for drawing boxes
+                    padded_xmin = max(0, abs_xmin - h_padding)
+                    padded_ymin = max(0, abs_ymin - v_padding_top)
+                    padded_xmax = min(width, abs_xmax + h_padding)
+                    padded_ymax = min(height, abs_ymax + v_padding_bottom)
 
                 logger.debug(f"Added padding to coordinates: xmin={padded_xmin}, ymin={padded_ymin}, xmax={padded_xmax}, ymax={padded_ymax}")
 
-                # Draw using padded coordinates
-                draw.rectangle([(padded_xmin, padded_ymin), (padded_xmax, padded_ymax)], outline=box_color, width=box_width)
+                if autocrop:
+                    # Crop the image to the padded bounding box
+                    cropped_img = img.crop((padded_xmin, padded_ymin, padded_xmax, padded_ymax))
+                    cropped_img.save(output_path)
+                    logger.info(f"Cropped image saved to {output_path}")
+                    print(f"Cropped image saved to {output_path}")
+                else:
+                    # Draw using padded coordinates
+                    draw = PIL.ImageDraw.Draw(img)
+                    draw.rectangle([(padded_xmin, padded_ymin), (padded_xmax, padded_ymax)], outline=box_color, width=box_width)
 
-                # Use custom label or default
-                box_label = label if label else "Tweet Content"
-                draw.text((padded_xmin, padded_ymin - 20), box_label, fill=box_color)
-                logger.debug(f"Drew bounding box with label: {box_label}")
+                    # Use custom label or default
+                    box_label = label if label else "Tweet Content"
+                    draw.text((padded_xmin, padded_ymin - 20), box_label, fill=box_color)
+                    logger.debug(f"Drew bounding box with label: {box_label}")
 
-                img.save(output_path)
-                logger.info(f"Image with tweet content box saved to {output_path}")
-                print(f"Image with tweet content box saved to {output_path}")
+                    img.save(output_path)
+                    logger.info(f"Image with tweet content box saved to {output_path}")
+                    print(f"Image with tweet content box saved to {output_path}")
             else:
                 logger.warning(f"Invalid bounding box coordinates: {tweet_box}")
                 print(f"Warning: Invalid bounding box coordinates: {tweet_box}")
@@ -356,20 +406,22 @@ def detect_objects_and_draw_boxes(
     image_path: str,
     output_path: str = "output_with_boxes.jpg",
     box_color: str = "red",
-    box_width: int = 3
+    box_width: int = 3,
+    autocrop: bool = False
 ) -> None:
     """
     Detects objects in an image using Gemini, draws bounding boxes, and saves the result.
 
     This function uses the Gemini generative model to identify objects in the provided
-    image. It then draws red bounding boxes around each detected object, labels them,
-    and saves the resulting image to the specified output path.
+    image. It then either draws bounding boxes around each detected object or crops
+    the image to each object, depending on the autocrop parameter.
 
     Args:
         image_path: Path to the input image file.
         output_path: Path to save the output image with bounding boxes. Defaults to "output_with_boxes.jpg".
         box_color: Color of the bounding box (name or hex code). Defaults to "red".
         box_width: Width of the bounding box line. Defaults to 3.
+        autocrop: If True, save individual cropped images for each object instead of drawing boxes. Defaults to False.
 
     Returns:
         None
@@ -380,7 +432,7 @@ def detect_objects_and_draw_boxes(
     """
     try:
         logger.info(f"Detecting objects in {image_path}")
-        logger.debug(f"Using box color: {box_color}, width: {box_width}")
+        logger.debug(f"Using box color: {box_color}, width: {box_width}, autocrop: {autocrop}")
 
         model = genai.GenerativeModel(settings.GEMINI_MODEL)
         logger.debug(f"Initialized Gemini model: {settings.GEMINI_MODEL}")
@@ -420,10 +472,14 @@ def detect_objects_and_draw_boxes(
             return
 
         if isinstance(object_data, list):
-            draw = PIL.ImageDraw.Draw(img)
+            width, height = img.size
             object_count = 0
 
-            for obj in object_data:
+            if not autocrop:
+                # Draw bounding boxes on the original image
+                draw = PIL.ImageDraw.Draw(img)
+
+            for i, obj in enumerate(object_data):
                 xmin: Optional[float] = obj.get('xmin')
                 ymin: Optional[float] = obj.get('ymin')
                 xmax: Optional[float] = obj.get('xmax')
@@ -434,7 +490,6 @@ def detect_objects_and_draw_boxes(
 
                 if all(isinstance(coord, (int, float)) for coord in [xmin, ymin, xmax, ymax]): #check if coordinates are valid numbers.
                     # Convert normalized coordinates (0-1000 range) to absolute pixel coordinates
-                    width, height = img.size
                     abs_xmin = int(xmin / 1000 * width)
                     abs_ymin = int(ymin / 1000 * height)
                     abs_xmax = int(xmax / 1000 * width)
@@ -442,10 +497,17 @@ def detect_objects_and_draw_boxes(
                     logger.debug(f"Converted to absolute coordinates: xmin={abs_xmin}, ymin={abs_ymin}, xmax={abs_xmax}, ymax={abs_ymax}")
 
                     # Add padding to ensure we capture all content
-                    # Horizontal padding (5% of width on each side)
+                    # Horizontal padding (3% of width on each side)
                     h_padding = int(width * 0.03)
-                    # Vertical padding (8% of detected height for top and bottom)
-                    v_padding = int((abs_ymax - abs_ymin) * 0.08)
+
+                    if autocrop:
+                        # For autocropping, use tighter padding to avoid including unwanted elements
+                        # Vertical padding (5% of detected height)
+                        v_padding = int((abs_ymax - abs_ymin) * 0.05)
+                    else:
+                        # For drawing boxes, use more generous padding
+                        # Vertical padding (8% of detected height for top and bottom)
+                        v_padding = int((abs_ymax - abs_ymin) * 0.08)
 
                     # Apply padding while ensuring we don't go out of bounds
                     padded_xmin = max(0, abs_xmin - h_padding)
@@ -455,18 +517,42 @@ def detect_objects_and_draw_boxes(
 
                     logger.debug(f"Added padding to coordinates: xmin={padded_xmin}, ymin={padded_ymin}, xmax={padded_xmax}, ymax={padded_ymax}")
 
-                    # Draw using padded coordinates
-                    draw.rectangle([(padded_xmin, padded_ymin), (padded_xmax, padded_ymax)], outline=box_color, width=box_width)
-                    draw.text((padded_xmin, padded_ymin - 10), label, fill=box_color) #draw the label above the bounding box.
+                    if autocrop:
+                        # For autocrop, create a unique filename for each object
+                        # Get the base output path and extension
+                        output_dir = os.path.dirname(output_path)
+                        output_basename = os.path.basename(output_path)
+                        output_name, output_ext = os.path.splitext(output_basename)
+
+                        # Create a unique filename for each object
+                        object_output = os.path.join(
+                            output_dir,
+                            f"{output_name}_{i+1}_{label.lower().replace(' ', '_')}{output_ext}"
+                        )
+
+                        # Crop the image to the padded bounding box
+                        cropped_img = img.crop((padded_xmin, padded_ymin, padded_xmax, padded_ymax))
+                        cropped_img.save(object_output)
+                        logger.info(f"Cropped image for {label} saved to {object_output}")
+                        print(f"Cropped image for {label} saved to {object_output}")
+                    else:
+                        # Draw using padded coordinates
+                        draw.rectangle([(padded_xmin, padded_ymin), (padded_xmax, padded_ymax)], outline=box_color, width=box_width)
+                        draw.text((padded_xmin, padded_ymin - 10), label, fill=box_color) #draw the label above the bounding box.
+                        logger.debug(f"Drew bounding box for object: {label}")
+
                     object_count += 1
-                    logger.debug(f"Drew bounding box for object: {label}")
                 else:
                     logger.warning(f"Invalid bounding box coordinates for {label}: {obj}")
                     print(f"Warning: Invalid bounding box coordinates for {label}: {obj}")
 
-            img.save(output_path)
-            logger.info(f"Image with {object_count} bounding boxes saved to {output_path}")
-            print(f"Image with bounding boxes saved to {output_path}")
+            if not autocrop and object_count > 0:
+                img.save(output_path)
+                logger.info(f"Image with {object_count} bounding boxes saved to {output_path}")
+                print(f"Image with bounding boxes saved to {output_path}")
+            elif not autocrop and object_count == 0:
+                logger.warning("No valid objects detected to draw bounding boxes")
+                print("Warning: No valid objects detected to draw bounding boxes")
         else:
             logger.error("Gemini returned results that are not a list")
             print("Gemini returned results that are not a list. Check the output.")
@@ -514,8 +600,13 @@ def main() -> int:
         input_basename = os.path.basename(image_path)
         input_name, input_ext = os.path.splitext(input_basename)
 
-        # Create default output filename by adding _bbox before the extension
-        default_output_name = f"{input_name}_bbox{input_ext}"
+        # Create default output filename suffix based on mode
+        if args.autocrop:
+            suffix = "_cropped"
+        else:
+            suffix = "_bbox"
+
+        default_output_name = f"{input_name}{suffix}{input_ext}"
 
         # Combine with the original directory to keep in same location
         output_file = os.path.join(input_dir, default_output_name)
@@ -546,7 +637,9 @@ def main() -> int:
                 output_path,
                 box_color=args.box_color,
                 box_width=args.box_width,
-                label=args.label
+                label=args.label,
+                autocrop=args.autocrop,
+                crop_percent=args.crop_percent
             )
         else:  # general mode
             logger.info("Using general object detection mode")
@@ -554,7 +647,8 @@ def main() -> int:
                 image_path,
                 output_path,
                 box_color=args.box_color,
-                box_width=args.box_width
+                box_width=args.box_width,
+                autocrop=args.autocrop
             )
         logger.info("Processing completed successfully")
         return 0
