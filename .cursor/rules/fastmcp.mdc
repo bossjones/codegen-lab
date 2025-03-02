@@ -21,6 +21,69 @@ actions:
     message: |
       # Python MCP Server Development Guidelines
 
+      ## Server Type Selection
+
+      When creating a new FastMCP server, it's important to determine which type of server best suits your needs. Please specify which type of FastMCP server you want to implement:
+
+      1. **Simple Echo Server** - Basic server that echoes input text
+      2. **Quick Start Example** - Minimal implementation with both a tool and a resource
+      3. **Complex Input Validation** - Server using Pydantic models for advanced validation
+      4. **Parameter Descriptions** - Server demonstrating detailed parameter documentation
+      5. **Dynamic Resources** - Server with path templates and variable resources
+      6. **Unicode Support** - Server supporting international characters and emojis
+      7. **Return Types Beyond Primitives** - Server returning non-primitive types (like images)
+      8. **Desktop Files Listing** - Server exposing file system information
+      9. **Text Message Service** - Server integrating with external SMS API
+      10. **Recursive Memory System** - Advanced server with vector database and embeddings
+
+      If you have specific requirements that don't match any of these templates, please describe your use case and I'll suggest the most appropriate approach.
+
+      ### Recommendations by Use Case
+
+      Not sure which server type to choose? Here are recommendations based on common use cases:
+
+      - **Getting Started**: Choose the **Quick Start Example** or **Simple Echo Server**
+      - **Data Validation Focus**: Choose **Complex Input Validation**
+      - **Documentation Focus**: Choose **Parameter Descriptions**
+      - **External API Integration**: Choose **Text Message Service**
+      - **File System Integration**: Choose **Desktop Files Listing**
+      - **International Support**: Choose **Unicode Support**
+      - **Binary Data Handling**: Choose **Return Types Beyond Primitives**
+      - **Dynamic Content**: Choose **Dynamic Resources**
+      - **Advanced Integration**: Choose **Recursive Memory System**
+
+      ### Responding to Selection
+
+      Once the user has selected a server type:
+
+      1. Confirm their selection and briefly explain the key features of the chosen server type
+      2. Ask about any specific customizations they might need for their implementation
+      3. Provide a complete implementation that includes:
+         - All necessary import statements
+         - Proper type annotations
+         - Detailed docstrings
+         - Configuration code (if applicable)
+         - Tool and/or resource implementations
+         - Main execution block with proper server startup
+      4. Explain key aspects of the implementation to help the user understand the code
+      5. Suggest next steps or extensions if appropriate
+
+      ### Combining Features for Complex Projects
+
+      Many real-world applications require combining features from different server types. Here are guidelines for creating more complex servers:
+
+      1. **Start with the Most Relevant Template**: Choose the example that best matches your primary requirement
+      2. **Incremental Addition**: Add features one at a time, testing after each addition
+      3. **Feature Compatibility**:
+         - All server types can include multiple tools and resources
+         - Pydantic models can be used with any server type for input validation
+         - Environment variables can be integrated into any configuration
+         - External API calls can be added to any server implementation
+      4. **Organization for Complex Servers**:
+         - Consider splitting code into multiple files for better organization
+         - Use classes to encapsulate related functionality
+         - Separate configuration from implementation logic
+
       ## Overview
 
       The Model Context Protocol (MCP) is a standardized communication protocol that enables AI clients and servers to exchange
@@ -906,6 +969,110 @@ actions:
       4. **Complex Pydantic Models**: Uses advanced Pydantic features for data validation and representation
       5. **Resource Management**: Demonstrates proper connection pooling and resource cleanup
       6. **Tool Annotations**: Provides detailed Field descriptions for better client experiences
+
+      ### Quick Start Example
+
+      This minimal example shows how to quickly set up a FastMCP server with both a tool and a dynamic resource:
+
+      ```python
+      from mcp.server.fastmcp import FastMCP
+
+      # Create an MCP server
+      mcp = FastMCP("Demo")
+
+
+      # Add an addition tool
+      @mcp.tool()
+      def add(a: int, b: int) -> int:
+          """Add two numbers"""
+          return a + b
+
+
+      # Add a dynamic greeting resource
+      @mcp.resource("greeting://{name}")
+      def get_greeting(name: str) -> str:
+          """Get a personalized greeting"""
+          return f"Hello, {name}!"
+      ```
+
+      Key aspects of this example:
+
+      1. **Minimal Setup**: Shows the absolute essentials needed to create a working FastMCP server
+      2. **Combined Functionality**: Demonstrates both tools and resources in a single server
+      3. **Dynamic Resource Paths**: Illustrates path variables in resource templates
+      4. **Type Annotations**: Uses Python's type hints for parameter and return value specification
+
+      This example serves as an excellent starting point for new FastMCP projects, providing a foundation that can be easily expanded.
+
+      ### Text Message Service Example
+
+      This example demonstrates integrating an external API (SMS service) with FastMCP and using environment variables for configuration:
+
+      ```python
+      from typing import Annotated
+
+      import httpx
+      from pydantic import BeforeValidator
+      from pydantic_settings import BaseSettings, SettingsConfigDict
+
+      from mcp.server.fastmcp import FastMCP
+
+
+      class SurgeSettings(BaseSettings):
+          model_config: SettingsConfigDict = SettingsConfigDict(
+              env_prefix="SURGE_", env_file=".env"
+          )
+
+          api_key: str
+          account_id: str
+          my_phone_number: Annotated[
+              str, BeforeValidator(lambda v: "+" + v if not v.startswith("+") else v)
+          ]
+          my_first_name: str
+          my_last_name: str
+
+
+      # Create server
+      mcp = FastMCP("Text me")
+      surge_settings = SurgeSettings()  # type: ignore
+
+
+      @mcp.tool(name="textme", description="Send a text message to me")
+      def text_me(text_content: str) -> str:
+          """Send a text message to a phone number via https://surgemsg.com/"""
+          with httpx.Client() as client:
+              response = client.post(
+                  "https://api.surgemsg.com/messages",
+                  headers={
+                      "Authorization": f"Bearer {surge_settings.api_key}",
+                      "Surge-Account": surge_settings.account_id,
+                      "Content-Type": "application/json",
+                  },
+                  json={
+                      "body": text_content,
+                      "conversation": {
+                          "contact": {
+                              "first_name": surge_settings.my_first_name,
+                              "last_name": surge_settings.my_last_name,
+                              "phone_number": surge_settings.my_phone_number,
+                          }
+                      },
+                  },
+              )
+              response.raise_for_status()
+              return f"Message sent: {text_content}"
+      ```
+
+      Key aspects of this example:
+
+      1. **External API Integration**: Shows how to integrate with third-party APIs (SMS service in this case)
+      2. **Environment Configuration**: Uses pydantic-settings to manage environment variables with validation
+      3. **HTTP Client Usage**: Demonstrates using httpx for HTTP requests with proper error handling
+      4. **Pydantic Annotations**: Uses Annotated with BeforeValidator for phone number formatting
+      5. **Tool Customization**: Shows custom naming and description of tools
+      6. **Security Handling**: Properly manages API keys and sensitive information via environment variables
+
+      This pattern is particularly useful for creating notification services, chatbots, or any tool that needs to interact with external APIs.
 
       ## Implementation Checklist
 
