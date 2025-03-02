@@ -181,3 +181,28 @@ You can customize these task runner configurations by:
 3. Adding new tasks specific to your workflow
 
 For mise, you can override tasks locally by creating a `.mise.toml` file in your project directory.
+
+## 📝 Changelog Management
+
+This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format and [Semantic Versioning](https://semver.org/spec/v2.0.0.html) principles for documenting changes.
+
+### Updating the Changelog
+
+To automatically update the changelog with the latest changes:
+
+```bash
+# Update changelog with changes from a specific branch
+python scripts/update_changelog.py --branch=your-branch-name
+
+# Finalize a new release version
+python scripts/update_changelog.py --finalize --version=1.0.0
+```
+
+The script will extract conventional commit messages and categorize them according to their type:
+- `feat`: Added
+- `fix`: Fixed
+- `refactor`, `style`, `perf`: Changed
+- `chore`: Added (for important changes)
+- `docs`: Documentation changes
+
+You can customize the changelog configuration by editing the `.changelog-config.yml` file in the project root.

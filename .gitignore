@@ -141,7 +141,8 @@ dmypy.json
 cython_debug/
 
 # Vscode config files
-.vscode/
+# .vscode/
+# !.vscode/settings.json
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
@@ -337,7 +338,6 @@ venv/
 .ruff_cache/
 .mypy_cache/
 .pytest_cache/
-.vscode/settings.json
 .hypothesis/
 .tox/
 *,cover
@@ -452,7 +452,6 @@ monkeytype.sqlite3
 
 stubs
 colorization_release_v2.caffemodel
-.vscode/settings.json
 gallery-dl
 youtube-dl
 machine_learning_with_python/settings_test.toml
@@ -604,5 +603,5 @@ token_logs/
 test_token_logs/
 local-research/*.md
 .cursor/mcp-server-shims/.env
-.cursor/mcp.json
 .cursor/mcp.bak.json
+output.txt

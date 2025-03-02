@@ -200,7 +200,7 @@ changelog-finalize:
 
 .PHONY: copy-global-taskfile
 copy-global-taskfile:
-	@echo "🚀 Copying global Taskfile.yml to ~/.taskfile.yml"
-	@cp -av Taskfile.yml ~/.taskfile.yml
+	@echo "🚀 Copying global Taskfile.yml to ~/Taskfile.yml"
+	@cp -av Taskfile.yml ~/Taskfile.yml
 
 .DEFAULT_GOAL := help

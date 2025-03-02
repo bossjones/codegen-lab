@@ -1,10 +1,13 @@
-# Changelog Tool Configuration
+# Changelog Configuration for Codegen Lab
+# This configuration file customizes the behavior of the update_changelog.py script
 
-# Repository information
-version_prefix: 'v'  # Prefix for version tags, e.g., v1.0.0
-repo_url: 'https://github.com/bossjones/codegen-lab'  # Repository URL for links
+# Version tag prefix
+version_prefix: 'v'
 
-# Commit type mappings (conventional commits → changelog sections)
+# Repository URL for links
+repo_url: 'https://github.com/bossjones/codegen-lab'
+
+# Mapping of commit types to changelog sections
 commit_types:
   feat: 'Added'
   fix: 'Fixed'
@@ -14,16 +17,17 @@ commit_types:
   refactor: 'Changed'
   build: 'Changed'
   ci: 'Changed'
-  chore: 'Changed'
+  chore: 'Added'  # Important - chore commits often contain valuable additions
+  test: null      # Excluded by default
   deprecate: 'Deprecated'
   remove: 'Removed'
   security: 'Security'
 
-# Commit types to exclude from changelog
+# Commit types to exclude from the changelog
 exclude_types:
-  - 'test'
-  - 'ci'
-  - 'chore'
+  - 'test'  # Exclude test-related commits
+  - 'ci'    # Exclude CI-related commits
+  # Note: 'chore' is not excluded by default as it often contains valuable changes
 
 # Path to the changelog file
 changelog_path: 'docs/changelog.md'
