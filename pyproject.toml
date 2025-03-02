@@ -24,6 +24,7 @@ dependencies = [
     "pydantic-settings>=2.8.1",
     "pytz>=2025.1",
     "rich>=13.9.4",
+    "tenacity>=9.0.0",
     "ttok>=0.3",
     "tzlocal>=5.2",
 ]
