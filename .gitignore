@@ -603,6 +603,5 @@ token_logs/
 test_token_logs/
 local-research/*.md
 .cursor/mcp-server-shims/.env
-.cursor/mcp.json
 .cursor/mcp.bak.json
 output.txt
