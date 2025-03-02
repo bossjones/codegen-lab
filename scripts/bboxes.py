@@ -19,10 +19,11 @@ import json
 import argparse
 import sys
 import re
-from typing import Dict, List, Union, Optional, Any, Tuple
+from typing import Dict, List, Union, Optional, Any, Tuple, Set
 import logging
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pathlib import Path
 
 
 # Setup logging
@@ -165,6 +166,188 @@ def resize_image_with_background(
     logger.info(f"Resized image saved to {larger_output_path}")
     print(f"Resized image saved to {larger_output_path}")
 
+def is_valid_image(file_path: str) -> bool:
+    """
+    Check if a file is a valid image that can be processed.
+
+    Args:
+        file_path: Path to the file to check
+
+    Returns:
+        bool: True if the file is a valid image, False otherwise
+    """
+    # Skip hidden files
+    if os.path.basename(file_path).startswith('.'):
+        return False
+
+    # Valid image extensions
+    valid_extensions: Set[str] = {'.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'}
+
+    # Check file extension
+    file_ext = os.path.splitext(file_path)[1].lower()
+    if file_ext not in valid_extensions:
+        return False
+
+    # Try to open the file as an image
+    try:
+        with PIL.Image.open(file_path) as img:
+            img.verify()  # Verify it's an image
+        return True
+    except Exception:
+        logger.debug(f"File {file_path} is not a valid image")
+        return False
+
+def process_path(
+    path: str,
+    output_path: Optional[str] = None,
+    mode: str = "tweet",
+    box_color: str = "red",
+    box_width: int = 4,
+    label: Optional[str] = None,
+    autocrop: bool = False,
+    crop_percent: float = 100.0,
+    resize: bool = False
+) -> int:
+    """
+    Process a path which can be either a file or directory.
+
+    Args:
+        path: Path to process (file or directory)
+        output_path: Path for the output file(s). If None, default naming is used.
+        mode: Detection mode ('tweet' or 'general')
+        box_color: Color of the bounding box
+        box_width: Width of the bounding box line
+        label: Custom label for the bounding box
+        autocrop: If True, crop the image to the detected area
+        crop_percent: Percentage of tweet height to include when cropping
+        resize: If True, resize the cropped image to 1080x1350
+
+    Returns:
+        int: 0 for success, non-zero for failure
+    """
+    path_obj = Path(path)
+    success_count = 0
+    failure_count = 0
+
+    if path_obj.is_file():
+        # Process a single file
+        if is_valid_image(str(path_obj)):
+            result = process_single_image(
+                str(path_obj), output_path, mode, box_color,
+                box_width, label, autocrop, crop_percent, resize
+            )
+            return 0 if result else 1
+        else:
+            logger.error(f"Not a valid image file: {path}")
+            print(f"Error: Not a valid image file: {path}")
+            return 1
+
+    elif path_obj.is_dir():
+        # Process all image files in the directory
+        logger.info(f"Processing all images in directory: {path}")
+        print(f"Processing all images in directory: {path}")
+
+        for item in path_obj.glob('*'):
+            if item.is_file() and is_valid_image(str(item)):
+                # For directories, we need to generate output paths for each file
+                if output_path:
+                    # If explicit output directory is provided, use it
+                    output_dir = Path(output_path)
+                    if not output_dir.exists():
+                        output_dir.mkdir(parents=True, exist_ok=True)
+
+                    # Create output filename based on input filename with suffix
+                    input_name, input_ext = os.path.splitext(item.name)
+                    suffix = "_cropped" if autocrop else "_bbox"
+                    output_filename = f"{input_name}{suffix}{input_ext}"
+                    file_output_path = str(output_dir / output_filename)
+                else:
+                    # Generate output path based on input file
+                    input_name, input_ext = os.path.splitext(item.name)
+                    suffix = "_cropped" if autocrop else "_bbox"
+                    output_filename = f"{input_name}{suffix}{input_ext}"
+                    file_output_path = str(item.parent / output_filename)
+
+                logger.info(f"Processing image: {item.name}")
+                print(f"Processing image: {item.name}")
+
+                result = process_single_image(
+                    str(item), file_output_path, mode, box_color,
+                    box_width, label, autocrop, crop_percent, resize
+                )
+
+                if result:
+                    success_count += 1
+                else:
+                    failure_count += 1
+
+        logger.info(f"Processing completed. Successful: {success_count}, Failed: {failure_count}")
+        print(f"Processing completed. Successful: {success_count}, Failed: {failure_count}")
+
+        return 0 if failure_count == 0 else 1
+    else:
+        logger.error(f"Path does not exist: {path}")
+        print(f"Error: Path does not exist: {path}")
+        return 1
+
+def process_single_image(
+    image_path: str,
+    output_path: str,
+    mode: str = "tweet",
+    box_color: str = "red",
+    box_width: int = 4,
+    label: Optional[str] = None,
+    autocrop: bool = False,
+    crop_percent: float = 100.0,
+    resize: bool = False
+) -> bool:
+    """
+    Process a single image file.
+
+    Args:
+        image_path: Path to the input image file
+        output_path: Path to save the output image with bounding box
+        mode: Detection mode ('tweet' or 'general')
+        box_color: Color of the bounding box
+        box_width: Width of the bounding box line
+        label: Custom label for the bounding box
+        autocrop: If True, crop the image to the detected area
+        crop_percent: Percentage of tweet height to include when cropping
+        resize: If True, resize the cropped image to 1080x1350
+
+    Returns:
+        bool: True if processing succeeded, False otherwise
+    """
+    try:
+        if mode == "tweet":
+            logger.info(f"Using tweet content detection mode for {image_path}")
+            detect_tweet_content(
+                image_path,
+                output_path,
+                box_color=box_color,
+                box_width=box_width,
+                label=label,
+                autocrop=autocrop,
+                crop_percent=crop_percent,
+                resize=resize
+            )
+        else:  # general mode
+            logger.info(f"Using general object detection mode for {image_path}")
+            detect_objects_and_draw_boxes(
+                image_path,
+                output_path,
+                box_color=box_color,
+                box_width=box_width,
+                autocrop=autocrop,
+                resize=resize
+            )
+        logger.info(f"Successfully processed: {image_path}")
+        return True
+    except Exception as e:
+        logger.exception(f"Error processing image {image_path}: {e}")
+        print(f"Error processing image {image_path}: {e}")
+        return False
+
 def parse_args() -> argparse.Namespace:
     """
     Parse command line arguments for the bounding box script.
@@ -178,6 +361,12 @@ Examples:
     # Basic usage with default parameters (tweet mode)
     # Output will be saved as input_filename_bbox.ext
     python bboxes.py --image-path "my_tweet.jpg"
+
+    # Process all images in a directory
+    python bboxes.py --image-path "path/to/image/directory"
+
+    # Process directory with custom output directory
+    python bboxes.py --image-path "input/directory" --output-path "output/directory"
 
     # Specify an image path and output
     python bboxes.py --image-path "my_tweet.jpg" --output-path "result.jpg"
@@ -208,11 +397,11 @@ Examples:
     )
     parser.add_argument(
         "--image-path", type=str, required=False,
-        help="Path to the input image file"
+        help="Path to the input image file or directory containing images"
     )
     parser.add_argument(
         "--output-path", type=str,
-        help="Path to save the output image with bounding boxes"
+        help="Path to save the output image or directory for multiple images"
     )
     parser.add_argument(
         "--mode", type=str, choices=["tweet", "general"], default="tweet",
@@ -552,6 +741,9 @@ def detect_objects_and_draw_boxes(
             width, height = img.size
             object_count = 0
 
+            # Initialize draw only if we're not autocropping
+            # This fixes the linter error about using draw before assignment
+            draw = None
             if not autocrop:
                 # Draw bounding boxes on the original image
                 draw = PIL.ImageDraw.Draw(img)
@@ -667,17 +859,27 @@ def main() -> int:
     # Resolve path to handle relative paths, home directory paths, etc.
     image_path = resolve_path(image_file)
 
-    logger.debug(f"Using image file: {image_path}")
+    logger.debug(f"Using image path: {image_path}")
 
     if not os.path.exists(image_path):
-        logger.error(f"Image file '{image_path}' not found")
-        print(f"Error: Image file '{image_path}' not found.")
+        logger.error(f"Path '{image_path}' not found")
+        print(f"Error: Path '{image_path}' not found.")
         return 1
 
-    # Generate default output path based on input filename if not provided
-    if args.output_path:
-        output_file = args.output_path
-    else:
+    # Handle output path (could be None at this point)
+    output_path = args.output_path
+
+    # If output_path is provided but image_path is a directory,
+    # output_path should be treated as a directory
+    if output_path and os.path.isdir(image_path):
+        # Ensure output directory exists
+        os.makedirs(output_path, exist_ok=True)
+        logger.debug(f"Ensuring output directory exists: {output_path}")
+
+    # If output_path is not provided and image_path is a file,
+    # generate a default output path
+    elif not output_path and os.path.isfile(image_path):
+        # Generate default output path based on input filename
         # Split the image path into directory, filename, and extension
         input_dir = os.path.dirname(image_path)
         input_basename = os.path.basename(image_path)
@@ -692,57 +894,40 @@ def main() -> int:
         default_output_name = f"{input_name}{suffix}{input_ext}"
 
         # Combine with the original directory to keep in same location
-        output_file = os.path.join(input_dir, default_output_name)
+        output_path = os.path.join(input_dir, default_output_name)
+        logger.debug(f"Generated default output path: {output_path}")
 
-        logger.debug(f"Generated default output path: {output_file}")
+    # If output_path is provided and image_path is a file,
+    # resolve the output path
+    elif output_path and os.path.isfile(image_path):
+        output_path = resolve_path(output_path)
+        logger.debug(f"Resolved output path: {output_path}")
 
-    # Resolve the output path
-    output_path = resolve_path(output_file)
-    logger.debug(f"Resolved output path: {output_path}")
+    # Create output directory if it's a file path and its directory doesn't exist
+    if output_path and not os.path.isdir(image_path):
+        output_dir = os.path.dirname(output_path)
+        if output_dir and not os.path.exists(output_dir):
+            try:
+                os.makedirs(output_dir)
+                logger.info(f"Created output directory: {output_dir}")
+                print(f"Created output directory: {output_dir}")
+            except OSError as e:
+                logger.error(f"Error creating output directory: {e}")
+                print(f"Error creating output directory: {e}")
+                return 1
 
-    # Create output directory if it doesn't exist
-    output_dir = os.path.dirname(output_path)
-    if output_dir and not os.path.exists(output_dir):
-        try:
-            os.makedirs(output_dir)
-            logger.info(f"Created output directory: {output_dir}")
-            print(f"Created output directory: {output_dir}")
-        except OSError as e:
-            logger.error(f"Error creating output directory: {e}")
-            print(f"Error creating output directory: {e}")
-            return 1
-
-    try:
-        if args.mode == "tweet":
-            logger.info("Using tweet content detection mode")
-            detect_tweet_content(
-                image_path,
-                output_path,
-                box_color=args.box_color,
-                box_width=args.box_width,
-                label=args.label,
-                autocrop=args.autocrop,
-                crop_percent=args.crop_percent,
-                resize=args.resize
-            )
-        else:  # general mode
-            logger.info("Using general object detection mode")
-            detect_objects_and_draw_boxes(
-                image_path,
-                output_path,
-                box_color=args.box_color,
-                box_width=args.box_width,
-                autocrop=args.autocrop,
-                resize=args.resize
-            )
-        logger.info("Processing completed successfully")
-        return 0
-    except Exception as e:
-        logger.exception(f"Unexpected error: {e}")
-        print(f"Error: {e}")
-        import traceback
-        traceback.print_exc()
-        return 1
+    # Process the path (file or directory)
+    return process_path(
+        image_path,
+        output_path,
+        mode=args.mode,
+        box_color=args.box_color,
+        box_width=args.box_width,
+        label=args.label,
+        autocrop=args.autocrop,
+        crop_percent=args.crop_percent,
+        resize=args.resize
+    )
 
 if __name__ == "__main__":
     sys.exit(main())
