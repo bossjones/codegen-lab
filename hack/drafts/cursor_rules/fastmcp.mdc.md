@@ -390,6 +390,125 @@ actions:
               web.run_app(self.app, host=self.host, port=self.port)
       ```
 
+      ## FastMCP: Higher-level API
+
+      FastMCP provides a more convenient, decorator-based API for creating MCP servers:
+
+      ### Simple Echo Server
+
+      ```python
+      from mcp.server.fastmcp import FastMCP
+
+      # Create server
+      mcp = FastMCP("Echo Server")
+
+      @mcp.tool()
+      def echo(text: str) -> str:
+          """Echo the input text"""
+          return text
+      ```
+
+      ### Complex Input Validation with Pydantic
+
+      ```python
+      from typing import Annotated
+      from pydantic import BaseModel, Field
+      from mcp.server.fastmcp import FastMCP
+
+      mcp = FastMCP("Shrimp Tank")
+
+      class ShrimpTank(BaseModel):
+          class Shrimp(BaseModel):
+              name: Annotated[str, Field(max_length=10)]
+
+          shrimp: list[Shrimp]
+
+      @mcp.tool()
+      def name_shrimp(
+          tank: ShrimpTank,
+          # You can use pydantic Field in function signatures for validation
+          extra_names: Annotated[list[str], Field(max_length=10)],
+      ) -> list[str]:
+          """List all shrimp names in the tank"""
+          return [shrimp.name for shrimp in tank.shrimp] + extra_names
+      ```
+
+      ### Parameter Descriptions with Field
+
+      ```python
+      from pydantic import Field
+      from mcp.server.fastmcp import FastMCP
+
+      mcp = FastMCP("Parameter Descriptions Server")
+
+      @mcp.tool()
+      def greet_user(
+          name: str = Field(description="The name of the person to greet"),
+          title: str = Field(description="Optional title like Mr/Ms/Dr", default=""),
+          times: int = Field(description="Number of times to repeat the greeting", default=1),
+      ) -> str:
+          """Greet a user with optional title and repetition"""
+          greeting = f"Hello {title + ' ' if title else ''}{name}!"
+          return "\n".join([greeting] * times)
+      ```
+
+      ### Dynamic Resources with Path Templates
+
+      ```python
+      from mcp.server.fastmcp import FastMCP
+
+      mcp = FastMCP("Demo")
+
+      # Dynamic resource with path variable
+      @mcp.resource("greeting://{name}")
+      def get_greeting(name: str) -> str:
+          """Get a personalized greeting"""
+          return f"Hello, {name}!"
+      ```
+
+      ### Unicode Support
+
+      ```python
+      from mcp.server.fastmcp import FastMCP
+
+      mcp = FastMCP()
+
+      @mcp.tool(
+          description="🌟 A tool that uses various Unicode characters in its description: "
+          "á é í ó ú ñ 漢字 🎉"
+      )
+      def hello_unicode(name: str = "世界", greeting: str = "¡Hola") -> str:
+          """
+          A simple tool that demonstrates Unicode handling in:
+          - Tool description (emojis, accents, CJK characters)
+          - Parameter defaults (CJK characters)
+          - Return values (Spanish punctuation, emojis)
+          """
+          return f"{greeting}, {name}! 👋"
+      ```
+
+      ### Return Types Beyond Primitives
+
+      ```python
+      import io
+      from mcp.server.fastmcp import FastMCP
+      from mcp.server.fastmcp.utilities.types import Image
+
+      mcp = FastMCP("Screenshot Demo", dependencies=["pyautogui", "Pillow"])
+
+      @mcp.tool()
+      def take_screenshot() -> Image:
+          """
+          Take a screenshot of the user's screen and return it as an image.
+          """
+          import pyautogui
+
+          buffer = io.BytesIO()
+          screenshot = pyautogui.screenshot()
+          screenshot.convert("RGB").save(buffer, format="JPEG", quality=60, optimize=True)
+          return Image(data=buffer.getvalue(), format="jpeg")
+      ```
+
       ## Implementation Checklist
 
       - [ ] Basic server structure with request/notification handling
@@ -545,6 +664,84 @@ examples:
 
               result = await self.tools[tool_name].call(tool_params)
               return {"result": result}
+      ```
+
+  - input: |
+      # Need to implement a FastMCP server with complex input validation
+      from mcp.server.fastmcp import FastMCP
+
+      # How do I use Pydantic models for parameter validation?
+    output: |
+      Here's how to implement complex input validation using Pydantic models with FastMCP:
+
+      ```python
+      from typing import Annotated, List
+      from pydantic import BaseModel, Field
+      from mcp.server.fastmcp import FastMCP
+
+      # Create the server
+      mcp = FastMCP("Validation Example")
+
+      # Define complex models with validation
+      class User(BaseModel):
+          name: str
+          email: Annotated[str, Field(pattern=r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")]
+          age: Annotated[int, Field(ge=0, lt=150)]
+
+      class TeamRequest(BaseModel):
+          team_name: Annotated[str, Field(min_length=3, max_length=50)]
+          members: Annotated[List[User], Field(min_length=1)]
+
+      @mcp.tool()
+      def create_team(request: TeamRequest) -> dict:
+          """Create a team with the given members"""
+          return {
+              "team_id": "team_123",
+              "team_name": request.team_name,
+              "member_count": len(request.members),
+              "members": [user.name for user in request.members]
+          }
+      ```
+
+  - input: |
+      # How do I handle Unicode in MCP tools?
+      from mcp.server.fastmcp import FastMCP
+
+      # Need to support international characters
+    output: |
+      Here's how to handle Unicode properly in your MCP tools:
+
+      ```python
+      from mcp.server.fastmcp import FastMCP
+
+      mcp = FastMCP("Unicode Support Demo")
+
+      @mcp.tool(
+          description="🌍 International greeting tool supporting multiple languages"
+      )
+      def multilingual_greeting(
+          name: str,
+          language: str = "english"
+      ) -> str:
+          """
+          Generate a greeting in different languages.
+
+          Supported languages:
+          - english: "Hello"
+          - spanish: "¡Hola!"
+          - french: "Bonjour"
+          - japanese: "こんにちは"
+          - arabic: "مرحبا"
+          """
+          greetings = {
+              "english": f"Hello, {name}!",
+              "spanish": f"¡Hola, {name}!",
+              "french": f"Bonjour, {name}!",
+              "japanese": f"こんにちは, {name}さん!",
+              "arabic": f"مرحبا {name}!"
+          }
+
+          return greetings.get(language.lower(), f"Hello, {name}!")
       ```
 
 metadata:
