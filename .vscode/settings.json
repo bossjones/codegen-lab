@@ -15,5 +15,8 @@
   ],
   "yaml.schemas": {
     "./hack/schemas/taskfile.json": "Taskfile.yml"
+  },
+  "files.associations": {
+    "*.cheat": "markdown"
   }
 }
