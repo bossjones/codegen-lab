@@ -62,7 +62,7 @@ docs: ## Build and serve the documentation
 	@uv run mkdocs serve
 
 # UV Package Management Tasks
-.PHONY: uv-sync-all uv-sync-dev uv-sync-group uv-check-lock uv-verify uv-verify-dry-run uv-upgrade-dry-run uv-upgrade-all uv-upgrade-package uv-reinstall-all uv-reinstall-package uv-outdated uv-clean-cache uv-export-requirements uv-export-requirements-resolution
+.PHONY: uv-sync-all uv-sync-dev uv-sync-group uv-check-lock uv-verify uv-verify-dry-run uv-upgrade-dry-run uv-upgrade-all uv-upgrade-package uv-reinstall-all uv-reinstall-package uv-outdated uv-clean-cache uv-export-requirements uv-export-requirements-resolution uv-workspace-lock uv-workspace-sync uv-workspace-package-sync uv-workspace-run uv-workspace-init-package uv-workspace-add-dep
 
 uv-sync-all: ## Sync all dependencies with frozen lockfile
 	@echo "🚀 Syncing all dependencies with frozen lockfile"
@@ -75,6 +75,78 @@ uv-sync-dev: ## Sync only development dependencies
 uv-sync-group: ## Sync dependencies for a specific group
 	@echo "🚀 Syncing dependencies for group: $(group)"
 	@uv sync --frozen --group $(group)
+
+# UV Workspace Management Tasks
+uv-workspace-lock: ## Update lockfile for the entire workspace
+	@echo "🚀 Updating lockfile for the entire workspace"
+	@uv lock
+
+uv-workspace-sync: ## Install dependencies for the workspace root
+	@echo "🚀 Installing dependencies for the workspace root"
+	@uv sync
+
+uv-workspace-package-sync: ## Install dependencies for a specific package (usage: make uv-workspace-package-sync package=cursor-rules-mcp-server)
+	@echo "🚀 Installing dependencies for package: $(package)"
+	@uv sync --package $(package)
+
+uv-workspace-run: ## Run a command in a specific package (usage: make uv-workspace-run package=cursor-rules-mcp-server cmd="python -m cursor_rules_mcp_server")
+	@echo "🚀 Running command in package: $(package)"
+	@uv run --package $(package) $(cmd)
+
+uv-workspace-add-dep: ## Add a workspace package as a dependency to the root pyproject.toml (usage: make uv-workspace-add-dep package=cursor-rules-mcp-server)
+	@if [ -z "$(package)" ]; then echo "Please provide a package name with package=package-name"; exit 1; fi
+	@echo "🚀 Adding $(package) as a workspace dependency"
+	@if grep -q "$(package).*workspace = true" pyproject.toml; then \
+		echo "$(package) is already a workspace dependency"; \
+	else \
+		awk '/\[tool.uv.sources\]/{found=1} found==1 && /}$$/{print "$(package) = { workspace = true }"; found=0} {print}' pyproject.toml > pyproject.toml.tmp && \
+		mv pyproject.toml.tmp pyproject.toml && \
+		echo "Added $(package) as a workspace dependency. Now run: make uv-workspace-lock"; \
+	fi
+
+uv-workspace-init-package: ## Initialize a new package in the workspace (usage: make uv-workspace-init-package name=new-package)
+	@if [ -z "$(name)" ]; then echo "Please provide a package name with name=package-name"; exit 1; fi
+	@echo "🚀 Initializing new package: $(name)"
+	@mkdir -p packages/$(name)/src/$(shell echo $(name) | tr '-' '_')
+	@echo "Creating pyproject.toml for $(name)"
+	@cat > packages/$(name)/pyproject.toml << EOF
+[project]
+name = "$(name)"
+version = "0.1.0"
+description = "$(name) package"
+readme = "README.md"
+authors = [
+    { name = "Malcolm Jones", email = "bossjones@theblacktonystark.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "better-exceptions>=0.3.3",
+]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["$(shell echo $(name) | tr '-' '_')"]
+EOF
+	@echo "Creating __init__.py for $(name)"
+	@cat > packages/$(name)/src/$(shell echo $(name) | tr '-' '_')/__init__.py << EOF
+"""$(name) package."""
+
+__version__ = "0.1.0"
+EOF
+	@echo "Creating README.md for $(name)"
+	@cat > packages/$(name)/README.md << EOF
+# $(name)
+
+Description of $(name) package.
+EOF
+	@echo "Don't forget to add workspace dependency in root pyproject.toml:"
+	@echo "[tool.uv.sources]"
+	@echo "$(name) = { workspace = true }"
+	@echo "Then run: make uv-workspace-lock"
 
 uv-check-lock: ## Check lockfile consistency (prevents updates)
 	@echo "🚀 Checking lockfile consistency"

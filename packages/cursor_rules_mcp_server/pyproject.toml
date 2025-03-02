@@ -1,0 +1,28 @@
+[project]
+name = "cursor-rules-mcp-server"
+version = "0.1.0"
+description = "Cursor Rules MCP Server for creating and managing repository-specific cursor rules"
+readme = "README.md"
+authors = [
+    { name = "Malcolm Jones", email = "bossjones@theblacktonystark.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "better-exceptions>=0.3.3",
+    "pydantic>=2.7.4",
+    "fastapi>=0.115.0",
+    "uvicorn>=0.29.0",
+    "rich>=13.9.4",
+    "tenacity>=9.0.0",
+]
+
+[project.scripts]
+cursor-rules-server = "cursor_rules_mcp_server.__main__:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["cursor_rules_mcp_server"]

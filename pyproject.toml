@@ -37,6 +37,14 @@ clctl = "codegen_lab.cli:main"
 requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
+# UV Workspace Configuration
+[tool.uv.workspace]
+members = ["packages/*"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["codegen_lab"]
+
 [dependency-groups]
 dev = [
     "bpython>=0.25",
@@ -81,3 +89,4 @@ dev = [
 
 [tool.uv.sources]
 pytest-freezegun = { git = "https://github.com/bossjones/pytest-freezegun" }
+cursor-rules-mcp-server = { workspace = true }

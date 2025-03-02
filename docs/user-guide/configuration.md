@@ -100,3 +100,74 @@ Most configuration options can also be set via command line arguments. Command l
 ```bash
 python -m codegen_lab --model gpt-4 --temperature 0.8 --debug --output-dir ./custom_output
 ```
+
+## UV Workspace Configuration
+
+Codegen Lab uses UV workspaces to manage multiple packages within a single repository. The workspace configuration is defined in the root `pyproject.toml` file.
+
+### Root pyproject.toml Configuration
+
+The root `pyproject.toml` file contains the configuration for the entire workspace:
+
+```toml
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "codegen-lab"
+version = "0.1.0"
+description = "A toolkit for AI-assisted code generation and development"
+requires-python = ">=3.12"
+dependencies = [
+    "better-exceptions>=0.3.3",
+]
+
+# UV Workspace Configuration
+[tool.uv.sources]
+# Workspace packages
+cursor-rules-mcp-server = { workspace = true }
+# Add other packages here
+```
+
+### Workspace Package Configuration
+
+Each package in the `packages` directory has its own `pyproject.toml` file:
+
+```toml
+[project]
+name = "cursor-rules-mcp-server"
+version = "0.1.0"
+description = "Cursor rules MCP server package"
+requires-python = ">=3.12"
+dependencies = [
+    "better-exceptions>=0.3.3",
+]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["cursor_rules_mcp_server"]
+```
+
+### Workspace Dependencies
+
+To use one workspace package as a dependency in another, add it to the dependencies list:
+
+```toml
+[project]
+dependencies = [
+    "another-workspace-package",
+]
+```
+
+Then update the workspace lockfile:
+
+```bash
+make uv-workspace-lock
+```
+
+For more detailed information about working with UV workspaces, refer to the [UV Workspace documentation](../tools/uv-workspace.md).
