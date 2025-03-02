@@ -14,161 +14,161 @@ exclude: ^codegen_lab/alembic/.*
 #
 # See https://github.com/pre-commit/pre-commit
 ci:
-    autofix_commit_msg: 'style: pre-commit fixes'
-    autofix_prs: true
-    autoupdate_branch: ''
-    autoupdate_commit_msg: 'chore: update pre-commit hooks'
-    autoupdate_schedule: weekly
-    skip: []
-    submodules: false
+  autofix_commit_msg: "style: pre-commit fixes"
+  autofix_prs: true
+  autoupdate_branch: ""
+  autoupdate_commit_msg: "chore: update pre-commit hooks"
+  autoupdate_schedule: weekly
+  skip: []
+  submodules: false
 default_install_hook_types:
-    # is triggered before the commit is finalized to allow checks on the code being committed. Running hooks on unstaged changes can lead to both false-positives and false-negatives during committing. pre-commit only runs on the staged contents of files by temporarily stashing the unstaged changes while running hooks.
-    - pre-commit
-    # hooks will be passed a single filename -- this file contains the current contents of the commit message to be validated. The commit will be aborted if there is a nonzero exit code.
-    - commit-msg
-    # pre-push is triggered on git push.
-    - pre-push
+  # is triggered before the commit is finalized to allow checks on the code being committed. Running hooks on unstaged changes can lead to both false-positives and false-negatives during committing. pre-commit only runs on the staged contents of files by temporarily stashing the unstaged changes while running hooks.
+  - pre-commit
+  # hooks will be passed a single filename -- this file contains the current contents of the commit message to be validated. The commit will be aborted if there is a nonzero exit code.
+  - commit-msg
+  # pre-push is triggered on git push.
+  - pre-push
 default_stages:
-    - pre-commit
-    - pre-push
+  - pre-commit
+  - pre-push
 # TODO: Work with team to see when the right time is to enable this
 repos:
-    - repo: https://github.com/sirosen/texthooks
-      rev: 0.6.8
-      hooks:
-          - id: alphabetize-codeowners
-          - id: fix-smartquotes
-          - id: fix-ligatures
+  - repo: https://github.com/sirosen/texthooks
+    rev: 0.6.8
+    hooks:
+      - id: alphabetize-codeowners
+      - id: fix-smartquotes
+      - id: fix-ligatures
 
-    - repo: https://github.com/pre-commit/mirrors-prettier
-      rev: v3.1.0
-      hooks:
-          - id: prettier
-            types_or: [yaml, json5]
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        types_or: [yaml, json5]
 
-    - repo: https://github.com/pre-commit/pre-commit-hooks
-      rev: v5.0.0
-      hooks:
-          # Simply check whether files parse as valid python.
-          - id: check-ast
-            exclude: (.vscode|contrib)
-          - id: check-json
-            exclude: (.vscode|.devcontainer|hack|cookbook|ai_docs)
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      # Simply check whether files parse as valid python.
+      - id: check-ast
+        exclude: (.vscode|contrib)
+      - id: check-json
+        exclude: (.vscode|.devcontainer|hack|cookbook|ai_docs)
 
-    - repo: https://github.com/bwhmather/ssort
-      rev: 0.14.0
-      hooks:
-          - id: ssort
-            files: ^.*aio_settings\.py$
+  - repo: https://github.com/bwhmather/ssort
+    rev: 0.14.0
+    hooks:
+      - id: ssort
+        files: ^.*aio_settings\.py$
 
-    # When running with --fix, Ruff's lint hook should be placed before Ruff's formatter hook, and before Black, isort, and other formatting tools, as Ruff's fix behavior can output code changes that require reformatting.
-    # SOURCE: https://github.com/astral-sh/ruff-pre-commit
-    - repo: https://github.com/astral-sh/ruff-pre-commit
-      rev: v0.9.5
-      hooks:
-          # Run the linter.
-          - id: ruff
-            # entry: ruff check --force-exclude
-            args:
-                - --fix
-                - --exit-non-zero-on-fix
-                - --show-fixes
-                - --config=pyproject.toml
-            # SOURCE: https://github.com/girder/large_image/blob/2e6fd90cfb9179f2c0bd59031f45805018f3f04a/.pre-commit-config.yaml
-            types_or:
-                - python
-                # - jupyter
-            exclude: ^(scripts|typings)/.*
+  # When running with --fix, Ruff's lint hook should be placed before Ruff's formatter hook, and before Black, isort, and other formatting tools, as Ruff's fix behavior can output code changes that require reformatting.
+  # SOURCE: https://github.com/astral-sh/ruff-pre-commit
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.9.9
+    hooks:
+      # Run the linter.
+      - id: ruff
+        # entry: ruff check --force-exclude
+        args:
+          - --fix
+          - --exit-non-zero-on-fix
+          - --show-fixes
+          - --config=pyproject.toml
+        # SOURCE: https://github.com/girder/large_image/blob/2e6fd90cfb9179f2c0bd59031f45805018f3f04a/.pre-commit-config.yaml
+        types_or:
+          - python
+          # - jupyter
+        exclude: ^(scripts|typings)/.*
 
-          # Run the formatter.
-          - id: ruff-format
-            # entry: ruff format --force-exclude
-            types_or:
-                - python
-                # - jupyter
-            args:
-                - --config=pyproject.toml
-            files: ^((src|tests|notebooks)/.+)?[^/]+\.(py|ipynb)$
-            exclude: (.tasks|hack|scripts)
-    - repo: https://github.com/pre-commit/pre-commit-hooks
-      rev: v5.0.0
-      hooks:
-          - id: check-case-conflict
-          - id: check-merge-conflict
-          - id: check-symlinks
-          - id: end-of-file-fixer
-            exclude: (.*\.pyi$)
-          - id: mixed-line-ending
-            exclude: (.*\.pyi$)
-          - id: trailing-whitespace
-            exclude: (.*\.pyi$)
-    ##########################################################################################
-    # #  # NOTE: if we are going to use this, it needs to run AFTER ruff.
-    ##########################################################################################
+      # Run the formatter.
+      - id: ruff-format
+        # entry: ruff format --force-exclude
+        types_or:
+          - python
+          # - jupyter
+        args:
+          - --config=pyproject.toml
+        files: ^((src|tests|notebooks)/.+)?[^/]+\.(py|ipynb)$
+        exclude: (.tasks|hack|scripts)
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: end-of-file-fixer
+        exclude: (.*\.pyi$)
+      - id: mixed-line-ending
+        exclude: (.*\.pyi$)
+      - id: trailing-whitespace
+        exclude: (.*\.pyi$)
+  ##########################################################################################
+  # #  # NOTE: if we are going to use this, it needs to run AFTER ruff.
+  ##########################################################################################
 
-    # SOURCE:https://github.com/humblFINANCE/humblAPI/blob/master/.pre-commit-config.yaml
-    # SOURCE: https://github.com/pypa/pip/blob/main/.pre-commit-config.yaml
-    - repo: https://github.com/pre-commit/pygrep-hooks
-      rev: v1.10.0
-      hooks:
-          - id: python-no-log-warn
-          - id: text-unicode-replacement-char
+  # SOURCE:https://github.com/humblFINANCE/humblAPI/blob/master/.pre-commit-config.yaml
+  # SOURCE: https://github.com/pypa/pip/blob/main/.pre-commit-config.yaml
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.10.0
+    hooks:
+      - id: python-no-log-warn
+      - id: text-unicode-replacement-char
 
-    # NOTE: This requires you to brew install taplo
-    - repo: local
-      hooks:
-          - id: detect-pytest-live-log
-            name: detect-pytest-live-log
-            entry: bash -x ./detect_pytest_live_logging.sh
-            language: system
-            types:
-                - toml
-            files: ^pyproject.*$
+  # NOTE: This requires you to brew install taplo
+  - repo: local
+    hooks:
+      - id: detect-pytest-live-log
+        name: detect-pytest-live-log
+        entry: bash -x ./detect_pytest_live_logging.sh
+        language: system
+        types:
+          - toml
+        files: ^pyproject.*$
 
-    # SOURCE: https://github.com/3MAH/microgen/blob/0a7b86ccffb6a904443049e475c1c571a94addb5/.pre-commit-config.yaml#L42
-    - repo: https://github.com/DanielNoord/pydocstringformatter
-      rev: v0.7.3
-      hooks:
-          - id: pydocstringformatter
-            args:
-                - --style {numpydoc,pep257}
-                - --no-strip-whitespace
-                - --no-capitalize-first-letter
-            files: ^((src|tests|notebooks)/.+)?[^/]+\.(py|ipynb)$
-            exclude: (.tasks|hack)
-    - repo: https://github.com/asottile/pyupgrade
-      rev: v3.19.1
-      hooks:
-          - id: pyupgrade
-            args:
-                - --py310-plus
-                - --keep-runtime-typing
-    - repo: https://github.com/twisted/towncrier
-      rev: 24.8.0
-      hooks:
-          - id: towncrier-update
-            files: $changelog\.d/
-            args:
-                - --keep
+  # SOURCE: https://github.com/3MAH/microgen/blob/0a7b86ccffb6a904443049e475c1c571a94addb5/.pre-commit-config.yaml#L42
+  - repo: https://github.com/DanielNoord/pydocstringformatter
+    rev: v0.7.3
+    hooks:
+      - id: pydocstringformatter
+        args:
+          - --style {numpydoc,pep257}
+          - --no-strip-whitespace
+          - --no-capitalize-first-letter
+        files: ^((src|tests|notebooks)/.+)?[^/]+\.(py|ipynb)$
+        exclude: (.tasks|hack)
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.19.1
+    hooks:
+      - id: pyupgrade
+        args:
+          - --py310-plus
+          - --keep-runtime-typing
+  - repo: https://github.com/twisted/towncrier
+    rev: 24.8.0
+    hooks:
+      - id: towncrier-update
+        files: $changelog\.d/
+        args:
+          - --keep
 
-    - repo: https://github.com/python-jsonschema/check-jsonschema
-      rev: 0.31.1
-      hooks:
-          - id: check-github-workflows
-            exclude: (.tasks|hack|.github/workflows/_python-vulnerability-scan.yml)
-          - id: check-readthedocs
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.31.2
+    hooks:
+      - id: check-github-workflows
+        exclude: (.tasks|hack|.github/workflows/_python-vulnerability-scan.yml)
+      - id: check-readthedocs
 
-    # SOURCE: https://github.com/kiwicom/pytest-recording/tree/master
-    - repo: https://github.com/codingjoe/relint
-      rev: 3.3.1
-      hooks:
-          - id: relint
+  # SOURCE: https://github.com/kiwicom/pytest-recording/tree/master
+  - repo: https://github.com/codingjoe/relint
+    rev: 3.3.1
+    hooks:
+      - id: relint
 
-    # - repo: local
-    #   hooks:
-    #       - id: uv-lock-check
-    #         name: Check uv.lock is up to date
-    #         entry: uv lock --check
-    #         language: system
-    #         files: ^(pyproject\.toml|uv\.lock)$
-    #         pass_filenames: false
+  # - repo: local
+  #   hooks:
+  #       - id: uv-lock-check
+  #         name: Check uv.lock is up to date
+  #         entry: uv lock --check
+  #         language: system
+  #         files: ^(pyproject\.toml|uv\.lock)$
+  #         pass_filenames: false
