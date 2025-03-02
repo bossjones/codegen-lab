@@ -19,15 +19,29 @@ import json
 import argparse
 import sys
 import re
-from typing import Dict, List, Union, Optional, Any, Tuple, Set
+import functools
+from typing import Dict, List, Union, Optional, Any, Tuple, Set, Callable, TypeVar, cast
 import logging
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pathlib import Path
+from tenacity import (
+    retry,
+    stop_after_attempt,
+    wait_exponential,
+    retry_if_exception_type,
+    before_sleep_log,
+    RetryCallState
+)
 
 
 # Setup logging
 logger = logging.getLogger('bboxes')
+
+# Define a custom exception for Gemini API errors
+class GeminiAPIError(Exception):
+    """Exception raised for errors in the Gemini API."""
+    pass
 
 class Settings(BaseSettings):
     """
@@ -40,10 +54,16 @@ class Settings(BaseSettings):
             Lower values (closer to 0.0) produce more deterministic results.
             Higher values (closer to 1.0) produce more diverse results.
             Default is 0.0 for complete determinism.
+        GEMINI_MAX_RETRIES: Maximum number of retry attempts for Gemini API calls.
+        GEMINI_MIN_WAIT: Minimum wait time between retries in seconds.
+        GEMINI_MAX_WAIT: Maximum wait time between retries in seconds.
     """
     GEMINI_API_KEY: SecretStr
     GEMINI_MODEL: str = 'gemini-2.0-flash'
     GEMINI_TEMPERATURE: float = 0.0  # Default to deterministic (0.0)
+    GEMINI_MAX_RETRIES: int = 3  # Default to 3 retry attempts
+    GEMINI_MIN_WAIT: float = 2.0  # Default minimum wait time in seconds
+    GEMINI_MAX_WAIT: float = 10.0  # Default maximum wait time in seconds
 
     # Use SettingsConfigDict instead of Config inner class
     model_config = SettingsConfigDict(
@@ -76,8 +96,88 @@ def setup_logging(verbose: bool = False) -> None:
     logger.debug("Debug logging enabled")
     logger.info("Logging initialized")
 
+
 # Load settings with API key
 settings = Settings()
+
+# Define the retry mechanism for Gemini API calls
+def gemini_retry(
+    max_retries: Optional[int] = None,
+    min_wait: Optional[float] = None,
+    max_wait: Optional[float] = None
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+    """
+    Retry decorator specifically for Gemini API calls.
+
+    Args:
+        max_retries: Maximum number of retry attempts. If None, uses settings.GEMINI_MAX_RETRIES.
+        min_wait: Minimum wait time between retries in seconds. If None, uses settings.GEMINI_MIN_WAIT.
+        max_wait: Maximum wait time between retries in seconds. If None, uses settings.GEMINI_MAX_WAIT.
+
+    Returns:
+        A decorator function that can be applied to functions making Gemini API calls.
+    """
+    # Use settings values if not explicitly provided
+    _max_retries = max_retries if max_retries is not None else settings.GEMINI_MAX_RETRIES
+    _min_wait = min_wait if min_wait is not None else settings.GEMINI_MIN_WAIT
+    _max_wait = max_wait if max_wait is not None else settings.GEMINI_MAX_WAIT
+
+    # Define the before sleep function for logging
+    def _before_sleep(retry_state: RetryCallState) -> None:
+        exception = retry_state.outcome.exception() if retry_state.outcome and retry_state.outcome.failed else None
+        exception_name = exception.__class__.__name__ if exception else "Unknown error"
+
+        logger.warning(
+            f"Gemini API call failed with {exception_name}. "
+            f"Retrying in {retry_state.next_action.sleep:.2f} seconds... "
+            f"(Attempt {retry_state.attempt_number}/{_max_retries})"
+        )
+
+        # Log the full exception details at debug level
+        if exception:
+            logger.debug(f"Exception details: {str(exception)}")
+
+    # Create the retry decorator
+    return retry(
+        reraise=True,  # Re-raise the last exception if all retries fail
+        stop=stop_after_attempt(_max_retries),
+        wait=wait_exponential(multiplier=1, min=_min_wait, max=_max_wait),
+        retry=(
+            retry_if_exception_type(ConnectionError) |
+            retry_if_exception_type(TimeoutError) |
+            retry_if_exception_type(GeminiAPIError) |
+            retry_if_exception_type(Exception)
+        ),
+        before_sleep=_before_sleep,
+    )
+
+# Add this function to wrap the Gemini API call
+@gemini_retry()
+def generate_gemini_content(
+    model: genai.GenerativeModel,
+    prompt_parts: List[Union[Dict[str, Union[str, bytes]], str]]
+) -> Any:
+    """
+    Make a call to the Gemini API with retry mechanism.
+
+    Args:
+        model: The Gemini model instance
+        prompt_parts: The prompt parts to send to the model
+
+    Returns:
+        The response from the Gemini model
+
+    Raises:
+        GeminiAPIError: If there's an error in the Gemini API call
+    """
+    try:
+        response = model.generate_content(prompt_parts)
+        response.resolve()
+        return response
+    except Exception as e:
+        # Wrap the original exception in our custom exception
+        raise GeminiAPIError(f"Error in Gemini API call: {str(e)}") from e
+
 
 # Configure Gemini with the API key from settings
 try:
@@ -545,8 +645,8 @@ def detect_tweet_content(
         ]
 
         logger.debug("Sending prompt to Gemini")
-        response = model.generate_content(prompt_parts)
-        response.resolve()
+        # Use the retry mechanism for the API call
+        response = generate_gemini_content(model, prompt_parts)
         logger.debug("Received response from Gemini")
 
         json_string: str = response.text
@@ -688,6 +788,7 @@ def detect_tweet_content(
         print(f"Error processing image: {e}")
         import traceback
         traceback.print_exc()
+
 
 def detect_objects_and_draw_boxes(
     image_path: str,
