@@ -37,6 +37,7 @@ ci-install:
 ifeq ($(ENVIRONMENT),ci)
 	@pip install uv
 	@uv sync --dev
+	@pip install pre-commit
 else
 	@uv sync --dev
 endif

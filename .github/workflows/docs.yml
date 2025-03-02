@@ -54,7 +54,7 @@ jobs:
       - name: Install UV
         uses: astral-sh/setup-uv@v5
         with:
-          cache: true
+          enable-cache: true
           version: "0.6.3"
 
       - name: Display environment information
