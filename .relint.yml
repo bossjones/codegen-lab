@@ -11,7 +11,7 @@
 - name: IPython debug leftover
   pattern: IPython\.embed()
   filename:
-      - '*.py'
+    - "*.py"
 # - name: Leftover print
 #   pattern: "print\\("
 #   filename:
