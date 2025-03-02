@@ -23,24 +23,74 @@ uv run ruff format path/to/file_or_dir
 
 This project uses Ruff with the following configuration:
 
+### Basic Settings
+- Target Python version: 3.12
+- Line length: 120 characters
+- Includes Python files (`.py`, `.pyi`) and Jupyter notebooks (`.ipynb`)
+- Respects `.gitignore` for excluding files
+
 ### Selected Rule Categories
-- `D`: pydocstyle (Google convention)
+- `D`: pydocstyle (PEP257 convention)
 - `E`: pycodestyle
 - `F`: Pyflakes
 - `UP`: pyupgrade
 - `B`: flake8-bugbear
 - `I`: isort
+- `S`: bandit (security)
+- `YTT`: flake8-2020
+- `A`: flake8-builtins
+- `C4`: flake8-comprehensions
+- `T10`: flake8-debugger
+- `SIM`: flake8-simplify
+- `C90`: mccabe (complexity checking)
+- `W`: pycodestyle warnings
+- `PGH`: pygrep-hooks
+- `RUF`: ruff-specific rules
 
 ### Major Ignore Rules
 - `B008`: Function calls in default arguments
 - `D417`: Not requiring documentation for every function parameter
 - `E501`: Line length limitations
 - `UP006/UP007`: Type annotation format rules
+- `S101`: Allows `assert` statements
+- `F401`: Unused imports in certain files
+- `N812`: Lowercase imported as non-lowercase
+- Many more rules listed in the configuration
 
 ### Special Configurations
-- Special rules for tests, allowing relaxed documentation
-- Special handling for notebook files
-- Different rules for documentation and example files
+- isort configuration with custom section ordering
+- flake8-type-checking with runtime-evaluated settings for Pydantic
+- Per-file ignores for specific file types
+- Different mccabe complexity levels
+
+### Per-file Ignores
+Special ignore configurations are applied to:
+- `__init__.py` files: `["F401", "E402"]`
+- Test files: `["D", "C410", "S311", "S103"]`
+- Type stub files: `["D", "E501", "E701", "I002"]`
+- Documentation and example files: `["D"]`
+
+## Using Ruff with Editor Integration
+
+Most modern code editors provide Ruff integration:
+
+### VS Code
+Install the Ruff extension and add to settings.json:
+```json
+{
+    "editor.formatOnSave": true,
+    "ruff.enable": true,
+    "ruff.format.args": ["--preview"],
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.fixAll.ruff": "explicit",
+            "source.organizeImports.ruff": "explicit"
+        }
+    }
+}
+```
 
 ## Troubleshooting Common Issues
 
@@ -52,14 +102,36 @@ If you encounter linting errors, I can help you understand and fix them by:
 
 ## Ignore Strategies
 
-For one-off ignores:
+### Inline Ignores
 ```python
-# Example of inline ignore
+# Example of inline ignore for a single rule
 my_long_line = "..." # noqa: E501
+
+# Example of inline ignore for multiple rules
+from module import unused_import  # noqa: F401, E501
 ```
 
-For file-level ignores, add to pyproject.toml:
+### File-level Ignores
+Add to pyproject.toml:
 ```toml
 [tool.ruff.lint.per-file-ignores]
 "your/file/path.py" = ["E501", "F401"]
+"tests/**/*.py" = ["D", "S101"]
 ```
+
+### Global Ignores
+To globally ignore rules in pyproject.toml:
+```toml
+[tool.ruff.lint]
+ignore = ["E501", "B008"]
+```
+
+## Import Organization with isort
+
+The project uses the following isort configuration via Ruff:
+
+- Required imports: `from __future__ import annotations`
+- Section ordering: future, standard-library, third-party, pytest, first-party, local-folder
+- Single line between import types
+- Known third-party packages defined
+- Split on trailing comma disabled

@@ -1,0 +1,128 @@
+## https://taplo.tamasfe.dev/configuration/file.html
+#:schema = "taplo://taplo.toml"
+include = ["*.toml"]
+
+[schema]
+path = "http://json.schemastore.org/pyproject"
+enabled = true
+
+# |        option         |                                                          description                                                           | default value  |
+# | :-------------------: | :----------------------------------------------------------------------------------------------------------------------------: | :------------: |
+# |     align_entries     |       Align entries vertically. Entries that have table headers, comments, or blank lines between them are not aligned.        |     false      |
+# |    align_comments     | Align consecutive comments after entries and items vertically. This applies to comments that are after entries or array items. |      true      |
+# | array_trailing_comma  |                                           Put trailing commas for multiline arrays.                                            |      true      |
+# |   array_auto_expand   |                   Automatically expand arrays to multiple lines when they exceed `column_width` characters.                    |      true      |
+# |  array_auto_collapse  |                                     Automatically collapse arrays if they fit in one line.                                     |      true      |
+# |    compact_arrays     |                                       Omit whitespace padding inside single-line arrays.                                       |      true      |
+# | compact_inline_tables |                                         Omit whitespace padding inside inline tables.                                          |     false      |
+# |  inline_table_expand  |                                       Expand values (e.g. arrays) inside inline tables.                                        |      true      |
+# |    compact_entries    |                                                  Omit whitespace around `=`.                                                   |     false      |
+# |     column_width      |                          Target maximum column width after which arrays are expanded into new lines.                           |       80       |
+# |     indent_tables     |                                            Indent subtables if they come in order.                                             |     false      |
+# |    indent_entries     |                                                  Indent entries under tables.                                                  |     false      |
+# |     indent_string     |                        Indentation to use, should be tabs or spaces but technically could be anything.                         | 2 spaces (" ") |
+# |   trailing_newline    |                                              Add trailing newline to the source.                                               |      true      |
+# |     reorder_keys      |                               Alphabetically reorder keys that are not separated by blank lines.                               |     false      |
+# |    reorder_arrays     |                           Alphabetically reorder array values that are not separated by blank lines.                           |     false      |
+# |  allowed_blank_lines  |                                     The maximum amount of consecutive blank lines allowed.                                     |       2        |
+# |         crlf          |                                                     Use CRLF line endings.                                                     |     false      |
+
+# SOURCE: https://github.com/tamasfe/taplo/blob/4890bd426ce432a97596944ca6496979ff757355/site/site/configuration/formatter-options.md
+# default formatting rules for everything in pyproject
+[[rule]]
+include = ["pyproject.toml"]
+
+[rule.formatting]
+array_auto_collapse = false
+compact_arrays = true
+compact_inline_tables = true
+indent_string = "    "       # pdm uses 4 spaces
+reorder_arrays = false
+
+# override formatting specifically for these ruff keys
+[[rule]]
+include = ["pyproject.toml"]
+keys = [
+    # "project.dependencies",
+    # "project.optional-dependencies",
+    # "tool.pdm.dev-dependencies",
+    # "tool.ruff.lint",
+    "tool.ruff.lint.select",
+    "tool.ruff.lint.ignore",
+    "tool.ruff.lint.extend-select",
+    "tool.ruff.per-file-ignores",
+    "tool.rye.dev-dependencies",
+    "dependencies"
+]
+
+[rule.formatting]
+# # Collapse arrays that don't exceed the maximum column width and don't contain comments.
+array_auto_collapse = false
+# # Omit white space padding from single-line arrays
+compact_arrays = true
+# # Omit white space padding from the start and end of inline tables.
+compact_inline_tables = true
+# Alphabetically reorder keys that are not separated by blank lines.
+reorder_keys = true
+# Indent subtables if they come in order.
+indent_tables = false
+# Alphabetically reorder array values that are not separated by blank lines.
+reorder_arrays = true
+# Indentation to use, should be tabs or spaces but technically could be anything.
+indent_string = "    "
+
+
+# ------------------------------------------
+
+# [formatting]
+# # Align consecutive entries vertically.
+# align_entries = false
+# # Append trailing commas for multi-line arrays.
+# array_trailing_comma = true
+# # Expand arrays to multiple lines that exceed the maximum column width.
+# array_auto_expand = true
+# # Collapse arrays that don't exceed the maximum column width and don't contain comments.
+# array_auto_collapse = false
+# # Omit white space padding from single-line arrays
+# compact_arrays = true
+# # Omit white space padding from the start and end of inline tables.
+# compact_inline_tables = false
+# # Maximum column width in characters, affects array expansion and collapse, this doesn't take whitespace into account.
+# # Note that this is not set in stone, and works on a best-effort basis.
+# column_width = 120
+# # Indent based on tables and arrays of tables and their subtables, subtables out of order are not indented.
+# indent_tables = false
+# # The substring that is used for indentation, should be tabs or spaces (but technically can be anything).
+# indent_string = '    '
+# # Add trailing newline at the end of the file if not present.
+# trailing_newline = true
+# # Alphabetically reorder keys that are not separated by empty lines.
+# reorder_keys = false
+# # Maximum amount of allowed consecutive blank lines. This does not affect the whitespace at the end of the document, as it is always stripped.
+# allowed_blank_lines = 1
+# # Use CRLF for line endings.
+# crlf = false
+
+
+# [[rule]]
+# include = ["pyproject.toml"]
+
+# [rule.formatting]
+# array_auto_collapse = false
+# compact_arrays = true
+# compact_inline_tables = true
+# indent_string = "    "       # pdm uses 4 spaces
+# reorder_arrays = false
+
+# [[rule]]
+# include = ["pyproject.toml"]
+# keys = [
+#   "project.dependencies",
+#   "project.optional-dependencies",
+#   "tool.pdm.dev-dependencies",
+#   "tool.ruff.lint",
+#   "tool.ruff.per-file-ignores",
+# ]
+
+# [rule.formatting]
+# reorder_arrays = true
