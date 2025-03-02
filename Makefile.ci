@@ -74,7 +74,7 @@ endif
 ci-docs:
 	@echo "🚀 Building documentation for $(ENVIRONMENT) environment"
 ifeq ($(ENVIRONMENT),ci)
-	@uv run mkdocs build -s
+	@uv run mkdocs build
 else
 	@uv run mkdocs serve
 endif
