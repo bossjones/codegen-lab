@@ -18,7 +18,7 @@ else
 endif
 
 # Common settings
-.PHONY: env-info ci-install ci-check ci-test ci-docs ci-build ci-publish help
+.PHONY: env-info ci-install ci-check ci-test ci-docs ci-build ci-publish help docs-deploy
 
 # Print environment information
 env-info:
@@ -79,6 +79,11 @@ else
 	@uv run mkdocs serve
 endif
 
+# CI Documentation - Deploy documentation to GitHub Pages
+docs-deploy:
+	@echo "🚀 Deploying documentation to GitHub Pages"
+	@uv run mkdocs gh-deploy --force
+
 # CI Build - Build packages
 ci-build: ci-clean-build
 	@echo "🚀 Building package for $(ENVIRONMENT) environment"
@@ -121,6 +126,7 @@ help:
 	@echo "  ci-build       - Build package"
 	@echo "  ci-publish     - Publish package (CI only)"
 	@echo "  ci-setup-python - Setup Python environment"
+	@echo "  docs-deploy    - Deploy documentation to GitHub Pages"
 	@echo ""
 	@echo "Environment: $(ENVIRONMENT)"
 

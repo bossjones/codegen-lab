@@ -80,7 +80,7 @@ jobs:
       - name: Deploy documentation
         run: |
           # Use makefile target for deployment
-          make docs-deploy
+          make -f Makefile.ci docs-deploy
 
       - name: Prune cache
         run: uv cache prune --ci
