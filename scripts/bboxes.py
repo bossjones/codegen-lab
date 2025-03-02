@@ -214,19 +214,32 @@ def detect_tweet_content(
 
         prompt_parts: List[Union[Dict[str, Union[str, bytes]], str]] = [
             img_part,
-            """Identify the main content of the tweet in this image. I need a single bounding box that includes:
-            1. The user's profile picture/icon
-            2. The username/handle
-            3. The follow button
-            4. The main content/text of the tweet
+            """You're looking at a screenshot of a tweet. Create a precise bounding box around the MAIN TWEET CONTENT ONLY.
 
-            BUT it should exclude:
-            1. The date/timestamp
-            2. Like/retweet counts and other engagement metrics
-            3. Any replies or comments
+            The bounding box MUST include:
+            1. The user's profile picture/avatar (usually circular)
+            2. The username and @handle
+            3. The "Follow" button
+            4. The entire tweet text/content - CRITICALLY IMPORTANT TO INCLUDE ALL TEXT, INCLUDING ANY EMOJI OR SPECIAL CHARACTERS
 
-            Return the result as a single JSON object with 'xmin', 'ymin', 'xmax', and 'ymax' coordinates.
-            For example: {"xmin": 10, "ymin": 20, "xmax": 500, "ymax": 400}"""
+            This is a single cohesive unit that forms the main tweet. Make sure the box captures ALL of this content.
+
+            The bounding box MUST exclude:
+            1. The navigation elements and header
+            2. The date/timestamp
+            3. Like/retweet/view counts and all engagement metrics
+            4. Any replies or comments below the main tweet
+            5. Any UI elements at the bottom of the screen
+
+            IMPORTANT: Make sure your coordinates cover the ENTIRE tweet content from the profile picture to the end of the tweet text.
+            When in doubt, make the bounding box LARGER rather than smaller to ensure no text is cut off.
+
+            It is better to include a bit more space than to cut off any part of the text!
+
+            Return only a JSON object with the exact coordinates as:
+            {"xmin": [left coordinate], "ymin": [top coordinate], "xmax": [right coordinate], "ymax": [bottom coordinate]}
+
+            The coordinates should be NORMALIZED to a range of 0-1000, where 0 represents the left/top edge and 1000 represents the right/bottom edge of the image."""
         ]
 
         logger.debug("Sending prompt to Gemini")
@@ -246,11 +259,37 @@ def detect_tweet_content(
                 json_string = match.group(0)
                 logger.debug(f"Extracted JSON: {json_string}")
 
+            # Clean up malformed JSON with square brackets around values
+            json_string = re.sub(r'\[\s*(\d+)\s*\]', r'\1', json_string)
+            logger.debug(f"Cleaned JSON: {json_string}")
+
             tweet_box: Dict[str, Any] = json.loads(json_string)
         except json.JSONDecodeError:
             logger.error(f"Invalid JSON response from Gemini: {json_string}")
             print(f"Error: Invalid JSON response from Gemini: {json_string}")
-            return
+
+            # Attempt to manually extract coordinates if JSON parsing fails
+            try:
+                logger.debug("Attempting manual coordinate extraction")
+                xmin_match = re.search(r'"xmin":\s*\[?(\d+)', json_string)
+                ymin_match = re.search(r'"ymin":\s*\[?(\d+)', json_string)
+                xmax_match = re.search(r'"xmax":\s*\[?(\d+)', json_string)
+                ymax_match = re.search(r'"ymax":\s*\[?(\d+)', json_string)
+
+                if all([xmin_match, ymin_match, xmax_match, ymax_match]):
+                    tweet_box = {
+                        'xmin': int(xmin_match.group(1)),
+                        'ymin': int(ymin_match.group(1)),
+                        'xmax': int(xmax_match.group(1)),
+                        'ymax': int(ymax_match.group(1))
+                    }
+                    logger.debug(f"Manually extracted coordinates: {tweet_box}")
+                else:
+                    logger.error("Could not manually extract coordinates")
+                    return
+            except Exception as e:
+                logger.exception(f"Failed to manually extract coordinates: {e}")
+                return
 
         # Check if we have valid coordinates
         required_keys = ['xmin', 'ymin', 'xmax', 'ymax']
@@ -265,11 +304,36 @@ def detect_tweet_content(
             # Validate coordinates
             if all(isinstance(coord, (int, float)) for coord in [xmin, ymin, xmax, ymax]):
                 draw = PIL.ImageDraw.Draw(img)
-                draw.rectangle([(xmin, ymin), (xmax, ymax)], outline=box_color, width=box_width)
+
+                # Convert normalized coordinates (0-1000 range) to absolute pixel coordinates
+                width, height = img.size
+                abs_xmin = int(xmin / 1000 * width)
+                abs_ymin = int(ymin / 1000 * height)
+                abs_xmax = int(xmax / 1000 * width)
+                abs_ymax = int(ymax / 1000 * height)
+                logger.debug(f"Converted to absolute coordinates: xmin={abs_xmin}, ymin={abs_ymin}, xmax={abs_xmax}, ymax={abs_ymax}")
+
+                # Add padding to ensure we capture all content
+                # Horizontal padding (5% of width on each side)
+                h_padding = int(width * 0.05)
+                # Vertical padding (10% of detected height for bottom to ensure we capture all text)
+                v_padding_top = int((abs_ymax - abs_ymin) * 0.05)
+                v_padding_bottom = int((abs_ymax - abs_ymin) * 0.10)
+
+                # Apply padding while ensuring we don't go out of bounds
+                padded_xmin = max(0, abs_xmin - h_padding)
+                padded_ymin = max(0, abs_ymin - v_padding_top)
+                padded_xmax = min(width, abs_xmax + h_padding)
+                padded_ymax = min(height, abs_ymax + v_padding_bottom)
+
+                logger.debug(f"Added padding to coordinates: xmin={padded_xmin}, ymin={padded_ymin}, xmax={padded_xmax}, ymax={padded_ymax}")
+
+                # Draw using padded coordinates
+                draw.rectangle([(padded_xmin, padded_ymin), (padded_xmax, padded_ymax)], outline=box_color, width=box_width)
 
                 # Use custom label or default
                 box_label = label if label else "Tweet Content"
-                draw.text((xmin, ymin - 20), box_label, fill=box_color)
+                draw.text((padded_xmin, padded_ymin - 20), box_label, fill=box_color)
                 logger.debug(f"Drew bounding box with label: {box_label}")
 
                 img.save(output_path)
@@ -331,7 +395,7 @@ def detect_objects_and_draw_boxes(
 
         prompt_parts: List[Union[Dict[str, Union[str, bytes]], str]] = [
             img_part,
-            "Identify and provide bounding box coordinates for all objects in the image. Return the results in JSON format. Each object should have 'label', 'xmin', 'ymin', 'xmax', and 'ymax' fields. If there are no objects, return an empty JSON array. Example: [{'label': 'dog', 'xmin': 10, 'ymin': 20, 'xmax': 100, 'ymax': 150}, {'label': 'cat', 'xmin': 150, 'ymin': 50, 'xmax': 250, 'ymax': 200}]"
+            "Identify and provide bounding box coordinates for all objects in the image. Return the results in JSON format. Each object should have 'label', 'xmin', 'ymin', 'xmax', and 'ymax' fields. The coordinates should be NORMALIZED to a range of 0-1000, where 0 represents the left/top edge and 1000 represents the right/bottom edge of the image. If there are no objects, return an empty JSON array. Example: [{'label': 'dog', 'xmin': 100, 'ymin': 200, 'xmax': 400, 'ymax': 600}, {'label': 'cat', 'xmin': 500, 'ymin': 300, 'xmax': 800, 'ymax': 700}]"
         ]
 
         logger.debug("Sending prompt to Gemini")
@@ -343,11 +407,16 @@ def detect_objects_and_draw_boxes(
         logger.debug(f"Raw response: {json_string}")
 
         try:
+            # Clean up malformed JSON with square brackets around values
+            json_string = re.sub(r'\[\s*(\d+)\s*\]', r'\1', json_string)
+            logger.debug(f"Cleaned JSON data: {json_string}")
+
             object_data: List[Dict[str, Any]] = json.loads(json_string)
             logger.debug(f"Parsed JSON data with {len(object_data)} objects")
         except json.JSONDecodeError:
             logger.error(f"Invalid JSON response from Gemini: {json_string}")
             print(f"Error: Invalid JSON response from Gemini: {json_string}")
+            # No manual extraction for object detection as it's more complex
             return
 
         if isinstance(object_data, list):
@@ -364,8 +433,31 @@ def detect_objects_and_draw_boxes(
                 logger.debug(f"Processing object: {label} at coordinates: xmin={xmin}, ymin={ymin}, xmax={xmax}, ymax={ymax}")
 
                 if all(isinstance(coord, (int, float)) for coord in [xmin, ymin, xmax, ymax]): #check if coordinates are valid numbers.
-                    draw.rectangle([(xmin, ymin), (xmax, ymax)], outline=box_color, width=box_width)
-                    draw.text((xmin, ymin - 10), label, fill=box_color) #draw the label above the bounding box.
+                    # Convert normalized coordinates (0-1000 range) to absolute pixel coordinates
+                    width, height = img.size
+                    abs_xmin = int(xmin / 1000 * width)
+                    abs_ymin = int(ymin / 1000 * height)
+                    abs_xmax = int(xmax / 1000 * width)
+                    abs_ymax = int(ymax / 1000 * height)
+                    logger.debug(f"Converted to absolute coordinates: xmin={abs_xmin}, ymin={abs_ymin}, xmax={abs_xmax}, ymax={abs_ymax}")
+
+                    # Add padding to ensure we capture all content
+                    # Horizontal padding (5% of width on each side)
+                    h_padding = int(width * 0.03)
+                    # Vertical padding (8% of detected height for top and bottom)
+                    v_padding = int((abs_ymax - abs_ymin) * 0.08)
+
+                    # Apply padding while ensuring we don't go out of bounds
+                    padded_xmin = max(0, abs_xmin - h_padding)
+                    padded_ymin = max(0, abs_ymin - v_padding)
+                    padded_xmax = min(width, abs_xmax + h_padding)
+                    padded_ymax = min(height, abs_ymax + v_padding)
+
+                    logger.debug(f"Added padding to coordinates: xmin={padded_xmin}, ymin={padded_ymin}, xmax={padded_xmax}, ymax={padded_ymax}")
+
+                    # Draw using padded coordinates
+                    draw.rectangle([(padded_xmin, padded_ymin), (padded_xmax, padded_ymax)], outline=box_color, width=box_width)
+                    draw.text((padded_xmin, padded_ymin - 10), label, fill=box_color) #draw the label above the bounding box.
                     object_count += 1
                     logger.debug(f"Drew bounding box for object: {label}")
                 else:
