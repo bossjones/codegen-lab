@@ -21,16 +21,28 @@ Cursor rules are instructions that guide Claude when working with your code. The
 
 ## Installation
 
+This package is part of the Codegen Lab UV workspace. You can install it with:
+
 ```bash
-# Clone this repository
-git clone <repository-url>
-cd <repository-name>
+# Clone the repository
+git clone https://github.com/bossjones/codegen-lab.git
+cd codegen-lab
 
-# Install the package
-pip install -e .
+# Install workspace dependencies
+make uv-workspace-sync
 
-# Install dependencies
-pip install mcp-api-server
+# Install this package specifically
+make uv-workspace-package-sync package=cursor_rules_mcp_server
+```
+
+Alternatively, you can install it directly:
+
+```bash
+# Install using UV
+uv pip install -e packages/cursor_rules_mcp_server
+
+# Or using pip
+pip install -e packages/cursor_rules_mcp_server
 ```
 
 ## Usage
@@ -38,6 +50,10 @@ pip install mcp-api-server
 ### Starting the Server
 
 ```bash
+# Run via the workspace
+make uv-workspace-run package=cursor_rules_mcp_server cmd="python -m cursor_rules_mcp_server"
+
+# Or run directly
 python -m cursor_rules_mcp_server
 ```
 
@@ -69,13 +85,16 @@ The server provides the following tools:
 ### Project Structure
 
 ```
-src/cursor_rules_mcp_server/
-├── __init__.py        # Package initialization and docstring checklist
-├── server.py          # MCP server implementation
-├── models.py          # Database models and schema
-├── repository_analyzer.py  # Repository structure analysis
-├── rule_generator.py  # Rule generation and customization
-└── README.md          # Documentation
+packages/cursor_rules_mcp_server/
+├── pyproject.toml    # Package configuration
+├── README.md         # This documentation
+└── src/              # Source code directory
+    └── cursor_rules_mcp_server/
+        ├── __init__.py        # Package initialization and docstring checklist
+        ├── server.py          # MCP server implementation
+        ├── models.py          # Database models and schema
+        ├── repository_analyzer.py  # Repository structure analysis
+        └── rule_generator.py  # Rule generation and customization
 ```
 
 ### Extending

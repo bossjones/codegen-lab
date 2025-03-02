@@ -8,6 +8,7 @@ This lab provides a collection of tools and workflows for leveraging Large Langu
 - 📋 **Taskfile** for context collection and LLM interactions
 - 🚀 **Greenfield Development** using LLM-assisted workflows
 - 🧪 **Test-Driven Development** with AI assistance
+- 📦 **UV Workspace** for managing modular packages
 
 ## ✨ Features
 
@@ -16,6 +17,7 @@ This lab provides a collection of tools and workflows for leveraging Large Langu
 - 🧩 Identify and implement missing tests
 - 📊 Generate GitHub issues from codebase analysis
 - 🧠 Leverage Cursor IDE with custom rule files for enhanced AI assistance
+- 📦 Organize code in modular packages with UV workspace management
 
 ## 🛠️ Prerequisites
 
@@ -24,7 +26,8 @@ To use these tools, you'll need to install:
 1. [repomix](https://github.com/replicate/repomix) - For bundling your codebase
 2. [llm](https://llm.datasette.io/) - For interacting with various LLMs
 3. [Cursor](https://cursor.sh/) - The AI-native code editor
-4. Either [Task](https://taskfile.dev/) or [mise](https://mise.jdx.dev/) - Task runners
+4. [UV](https://github.com/astral-sh/uv) - Fast Python package installer and environment manager
+5. Either [Task](https://taskfile.dev/) or [mise](https://mise.jdx.dev/) - Task runners
 
 ### 📥 Installation
 
@@ -34,6 +37,9 @@ npm install -g repomix
 
 # Install llm
 pip install llm
+
+# Install UV
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Install Task (for Taskfile.yml)
 # macOS
@@ -68,8 +74,33 @@ Key cursor rules include:
 - `tdd.mdc` - For test-driven development workflows
 - `anthropic-chain-of-thought.mdc` - For enhanced reasoning
 - `code-context-gatherer.mdc` - For context collection
+- `uv-workspace.mdc` - For UV workspace package management
 
-### 2️⃣ Using Taskfile for Context Collection
+### 2️⃣ Using UV Workspace for Package Management
+
+The project uses UV workspace to manage multiple packages in a single repository:
+
+```bash
+# Lock dependencies for the entire workspace
+make uv-workspace-lock
+
+# Install dependencies for the workspace root
+make uv-workspace-sync
+
+# Create a new package in the workspace
+make uv-workspace-init-package name=my-new-package
+
+# Add a workspace package as a dependency
+make uv-workspace-add-dep package=cursor-rules-mcp-server
+
+# Install dependencies for a specific package
+make uv-workspace-package-sync package=cursor-rules-mcp-server
+
+# Run a command in a specific package
+make uv-workspace-run package=cursor-rules-mcp-server cmd="python -m cursor_rules_mcp_server"
+```
+
+### 3️⃣ Using Taskfile for Context Collection
 
 Generate codebase bundles and LLM prompts using Task:
 
@@ -86,7 +117,7 @@ task python:format
 task python:lint
 ```
 
-### 3️⃣ Implementing Greenfield Projects
+### 4️⃣ Implementing Greenfield Projects
 
 Follow the Greenfield development workflow:
 
@@ -103,6 +134,30 @@ Follow the Greenfield development workflow:
    - Use Cursor's AI capabilities with custom rules
    - Implement each step from your plan
    - Test and verify at each stage
+
+## 📂 Project Structure
+
+```
+.
+├── .cursor/                     # Active cursor rules directory
+│   └── rules/                   # Production cursor rules
+├── Makefile                     # Build automation
+├── README.md                    # Project overview and setup instructions
+├── hack/                        # Development tooling
+│   └── drafts/                  # Work-in-progress resources
+│       └── cursor_rules/        # Staging area for cursor rules
+├── packages/                    # UV workspace packages
+│   └── cursor-rules-mcp-server/ # Cursor rules MCP server package
+│       ├── pyproject.toml       # Package configuration
+│       └── src/                 # Package source code
+│           └── cursor_rules_mcp_server/ # Package code
+├── src/                         # Python source code
+│   └── goob_ai/                 # Core application modules
+├── tests/                       # Test suites
+│   ├── integration/             # Integration tests
+│   └── unittests/               # Unit tests
+└── docs/                        # Project documentation
+```
 
 ## 🧰 Available Task Runners
 
@@ -142,6 +197,17 @@ Both provide the same functionality, just choose the one that fits your workflow
 | `jupyter` | Starts Jupyter Lab |
 | `webui` | Starts WebUI |
 | `claude` | Starts Claude CLI |
+
+### 📦 UV Workspace Tasks
+
+| Task Name | Description |
+|-----------|-------------|
+| `uv-workspace-lock` | Updates the lockfile for the entire workspace |
+| `uv-workspace-sync` | Installs dependencies for the workspace root |
+| `uv-workspace-init-package` | Creates a new package in the workspace |
+| `uv-workspace-add-dep` | Adds a workspace package as a dependency |
+| `uv-workspace-package-sync` | Installs dependencies for a specific package |
+| `uv-workspace-run` | Runs a command in a specific package |
 
 ## 💡 Typical Workflow
 
