@@ -1,32 +1,67 @@
 {
-  "[yaml]": {
-    "editor.tabSize": 2,
-    "editor.formatOnSave": false,
-    "editor.formatOnPaste": false,
-    "editor.formatOnType": false,
-  },
-  "json.schemas": [
-    {
-      "fileMatch": [
-        "Taskfile.yml"
-      ],
-      "url": "./hack/schemas/taskfile.json"
-    }
-  ],
-  "yaml.schemas": {
-    "https://taskfile.dev/schema.json": "**/Taskfile.yml"
-  },
-  "files.associations": {
-    "*.cheat": "markdown"
-  },
-  "pylint.interpreter": [
-    "${workspaceFolder}/.venv/bin/python3"
-  ],
-  "pylint.args": [
-    "--enable=F,E,E1101",
-    "--disable=C0111,E0401,C,W,E1205",
-    "--max-line-length=120",
-    "--load-plugins",
-    "pylint_pydantic,pylint_per_file_ignores",
-  ],
+    "[yaml]": {
+        "editor.tabSize": 2,
+        "editor.formatOnSave": false,
+        "editor.formatOnPaste": false,
+        "editor.formatOnType": false,
+    },
+    "json.schemas": [
+        {
+            "fileMatch": [
+                "Taskfile.yml"
+            ],
+            "url": "./hack/schemas/taskfile.json"
+        }
+    ],
+    "yaml.schemas": {
+        "https://taskfile.dev/schema.json": "**/Taskfile.yml"
+    },
+    "files.associations": {
+        "*.cheat": "markdown"
+    },
+    "pylint.interpreter": [
+        "${workspaceFolder}/.venv/bin/python3"
+    ],
+    "pylint.args": [
+        "--enable=F,E,E1101",
+        "--disable=C0111,E0401,C,W,E1205",
+        "--max-line-length=120",
+        "--load-plugins",
+        "pylint_pydantic,pylint_per_file_ignores",
+    ],
+    // BasedPyright configuration - aligning with pyrightconfig.json
+    "basedpyright.analysis.typeCheckingMode": "recommended",
+    "basedpyright.analysis.diagnosticMode": "openFilesOnly",
+    "basedpyright.analysis.useLibraryCodeForTypes": true,
+    "basedpyright.analysis.autoImportCompletions": true,
+    "basedpyright.analysis.autoSearchPaths": true,
+    "basedpyright.diagnosticsSeverityOverrides": {
+        "reportUnannotatedClassAttribute": "error",
+        "reportPrivateLocalImportUsage": "warning",
+        "reportInvalidCast": "error",
+        "reportUnreachable": "warning",
+        "reportImplicitAbstractClass": "warning",
+        "reportUnusedParameter": "warning",
+        "reportImplicitRelativeImport": "warning",
+        "reportAny": "warning",
+        "reportExplicitAny": "warning"
+    },
+    // Inlay hints configuration
+    "basedpyright.analysis.inlayHints.variableTypes": true,
+    "basedpyright.analysis.inlayHints.functionReturnTypes": true,
+    "basedpyright.analysis.inlayHints.callArgumentNames": true,
+    "basedpyright.analysis.inlayHints.genericTypes": true,
+    // Editor settings for Python files
+    "editor.formatOnSave": true,
+    "[python]": {
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        },
+        "editor.defaultFormatter": "charliermarsh.ruff"
+    },
+    // Python and BasedPyright path settings
+    "python.pythonPath": "${workspaceFolder}/.venv/bin/python",
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+    "basedpyright.pythonPlatform": "Darwin"
 }

@@ -1,0 +1,87 @@
+{
+  "include": [
+    "src",
+    "packages",
+    "scripts"
+  ],
+
+  "exclude": [
+    "**/node_modules",
+    "**/__pycache__",
+    "**/.pytest_cache",
+    "**/.ruff_cache",
+    "**/.mypy_cache",
+    ".venv",
+    "site",
+    "build",
+    "dist"
+  ],
+
+  "ignore": [
+    "src/oldstuff"
+  ],
+
+  "defineConstant": {
+    "DEBUG": true
+  },
+
+  "stubPath": "stubs",
+
+  "reportMissingImports": "error",
+  "reportMissingTypeStubs": false,
+
+  "reportUnannotatedClassAttribute": "error",
+  "reportPrivateLocalImportUsage": "warning",
+  "reportInvalidCast": "error",
+  "reportUnreachable": "warning",
+  "reportImplicitAbstractClass": "warning",
+  "reportUnusedParameter": "warning",
+  "reportImplicitRelativeImport": "warning",
+  "reportAny": "warning",
+  "reportExplicitAny": "warning",
+  "strictGenericNarrowing": true,
+  "failOnWarnings": true,
+
+  "reportCallIssue": "none",
+  "reportOptionalMemberAccess": "none",
+  "reportArgumentType": "none",
+  "reportOptionalOperand": "none",
+
+  "pythonVersion": "3.12",
+  "pythonPlatform": "Darwin",
+
+  "executionEnvironments": [
+    {
+      "root": "packages/cursor_rules_mcp_server",
+      "pythonVersion": "3.12",
+      "extraPaths": [
+        "packages/cursor_rules_mcp_server/src"
+      ]
+    },
+    {
+      "root": "packages/cursor_rules_mcp_server/src/cursor_rules_mcp_server/tests",
+      "pythonVersion": "3.12",
+      "extraPaths": [
+        "packages/cursor_rules_mcp_server/src"
+      ],
+      "reportPrivateUsage": false
+    },
+    {
+      "root": "src/codegen_lab",
+      "pythonVersion": "3.12",
+      "extraPaths": [
+        "src"
+      ]
+    },
+    {
+      "root": "scripts",
+      "pythonVersion": "3.12",
+      "extraPaths": [
+        "src"
+      ]
+    },
+    {
+      "root": "src"
+    }
+  ]
+}
