@@ -36,9 +36,14 @@ class Settings(BaseSettings):
     Attributes:
         GEMINI_API_KEY: Google Gemini API key stored as a SecretStr for security.
         GEMINI_MODEL: The Gemini model to use for image processing.
+        GEMINI_TEMPERATURE: Temperature setting for deterministic outputs (0.0-1.0).
+            Lower values (closer to 0.0) produce more deterministic results.
+            Higher values (closer to 1.0) produce more diverse results.
+            Default is 0.0 for complete determinism.
     """
     GEMINI_API_KEY: SecretStr
     GEMINI_MODEL: str = 'gemini-2.0-flash'
+    GEMINI_TEMPERATURE: float = 0.0  # Default to deterministic (0.0)
 
     # Use SettingsConfigDict instead of Config inner class
     model_config = SettingsConfigDict(
@@ -206,7 +211,8 @@ def process_path(
     label: Optional[str] = None,
     autocrop: bool = False,
     crop_percent: float = 100.0,
-    resize: bool = False
+    resize: bool = False,
+    temperature: float = settings.GEMINI_TEMPERATURE
 ) -> int:
     """
     Process a path which can be either a file or directory.
@@ -221,6 +227,8 @@ def process_path(
         autocrop: If True, crop the image to the detected area
         crop_percent: Percentage of tweet height to include when cropping
         resize: If True, resize the cropped image to 1080x1350
+        temperature: Temperature setting for the Gemini model (0.0-1.0).
+                    Defaults to settings.GEMINI_TEMPERATURE (deterministic).
 
     Returns:
         int: 0 for success, non-zero for failure
@@ -234,7 +242,7 @@ def process_path(
         if is_valid_image(str(path_obj)):
             result = process_single_image(
                 str(path_obj), output_path, mode, box_color,
-                box_width, label, autocrop, crop_percent, resize
+                box_width, label, autocrop, crop_percent, resize, temperature
             )
             return 0 if result else 1
         else:
@@ -273,7 +281,7 @@ def process_path(
 
                 result = process_single_image(
                     str(item), file_output_path, mode, box_color,
-                    box_width, label, autocrop, crop_percent, resize
+                    box_width, label, autocrop, crop_percent, resize, temperature
                 )
 
                 if result:
@@ -299,7 +307,8 @@ def process_single_image(
     label: Optional[str] = None,
     autocrop: bool = False,
     crop_percent: float = 100.0,
-    resize: bool = False
+    resize: bool = False,
+    temperature: float = settings.GEMINI_TEMPERATURE
 ) -> bool:
     """
     Process a single image file.
@@ -308,12 +317,14 @@ def process_single_image(
         image_path: Path to the input image file
         output_path: Path to save the output image with bounding box
         mode: Detection mode ('tweet' or 'general')
-        box_color: Color of the bounding box
+        box_color: Color of the bounding box (name or hex code)
         box_width: Width of the bounding box line
         label: Custom label for the bounding box
         autocrop: If True, crop the image to the detected area
         crop_percent: Percentage of tweet height to include when cropping
         resize: If True, resize the cropped image to 1080x1350
+        temperature: Temperature setting for the Gemini model (0.0-1.0).
+                    Defaults to settings.GEMINI_TEMPERATURE (deterministic).
 
     Returns:
         bool: True if processing succeeded, False otherwise
@@ -329,7 +340,8 @@ def process_single_image(
                 label=label,
                 autocrop=autocrop,
                 crop_percent=crop_percent,
-                resize=resize
+                resize=resize,
+                temperature=temperature
             )
         else:  # general mode
             logger.info(f"Using general object detection mode for {image_path}")
@@ -339,7 +351,8 @@ def process_single_image(
                 box_color=box_color,
                 box_width=box_width,
                 autocrop=autocrop,
-                resize=resize
+                resize=resize,
+                temperature=temperature
             )
         logger.info(f"Successfully processed: {image_path}")
         return True
@@ -385,6 +398,9 @@ Examples:
 
     # Crop and resize to 1080x1350 with primary color background
     python bboxes.py --image-path "tweet.jpg" --autocrop --resize
+
+    # Override the default deterministic temperature setting (0.0)
+    python bboxes.py --image-path "tweet.jpg" --temperature 0.2
 
     # Enable debug logging
     python bboxes.py --verbose --image-path "image.jpg"
@@ -432,6 +448,10 @@ Examples:
         help="When used with --autocrop, resize the output to 1080x1350 and center it on a background of the primary color"
     )
     parser.add_argument(
+        "--temperature", type=float, default=settings.GEMINI_TEMPERATURE,
+        help=f"Temperature setting for the Gemini model (0.0-1.0). Lower values produce more consistent results. (default: {settings.GEMINI_TEMPERATURE} - deterministic)"
+    )
+    parser.add_argument(
         "--verbose", action="store_true",
         help="Enable verbose debug logging"
     )
@@ -446,7 +466,8 @@ def detect_tweet_content(
     label: Optional[str] = None,
     autocrop: bool = False,
     crop_percent: float = 92.0,
-    resize: bool = False
+    resize: bool = False,
+    temperature: float = settings.GEMINI_TEMPERATURE
 ) -> None:
     """
     Detects tweet content in an image using Gemini, draws a bounding box, and saves the result.
@@ -464,6 +485,8 @@ def detect_tweet_content(
         autocrop: If True, crop the image to the detected area instead of drawing a box. Defaults to False.
         crop_percent: Percentage of tweet height to include when cropping. Defaults to 92.0.
         resize: If True and autocrop is True, resize the cropped image to 1080x1350. Defaults to False.
+        temperature: Temperature setting for the Gemini model (0.0-1.0).
+                    Defaults to settings.GEMINI_TEMPERATURE (deterministic).
 
     Returns:
         None
@@ -474,10 +497,10 @@ def detect_tweet_content(
     """
     try:
         logger.info(f"Detecting tweet content in {image_path}")
-        logger.debug(f"Using box color: {box_color}, width: {box_width}, label: {label}, autocrop: {autocrop}, crop_percent: {crop_percent}, resize: {resize}")
+        logger.debug(f"Using box color: {box_color}, width: {box_width}, label: {label}, autocrop: {autocrop}, crop_percent: {crop_percent}, resize: {resize}, temperature: {temperature}")
 
-        model = genai.GenerativeModel(settings.GEMINI_MODEL)
-        logger.debug(f"Initialized Gemini model: {settings.GEMINI_MODEL}")
+        model = genai.GenerativeModel(settings.GEMINI_MODEL, generation_config={"temperature": temperature})
+        logger.debug(f"Initialized Gemini model: {settings.GEMINI_MODEL} with temperature: {temperature}")
 
         img = PIL.Image.open(image_path)
         img_byte_arr = io.BytesIO()
@@ -672,7 +695,8 @@ def detect_objects_and_draw_boxes(
     box_color: str = "red",
     box_width: int = 3,
     autocrop: bool = False,
-    resize: bool = False
+    resize: bool = False,
+    temperature: float = settings.GEMINI_TEMPERATURE
 ) -> None:
     """
     Detects objects in an image using Gemini, draws bounding boxes, and saves the result.
@@ -688,6 +712,8 @@ def detect_objects_and_draw_boxes(
         box_width: Width of the bounding box line. Defaults to 3.
         autocrop: If True, save individual cropped images for each object instead of drawing boxes. Defaults to False.
         resize: If True and autocrop is True, resize the cropped images to 1080x1350. Defaults to False.
+        temperature: Temperature setting for the Gemini model (0.0-1.0).
+                    Defaults to settings.GEMINI_TEMPERATURE (deterministic).
 
     Returns:
         None
@@ -698,10 +724,10 @@ def detect_objects_and_draw_boxes(
     """
     try:
         logger.info(f"Detecting objects in {image_path}")
-        logger.debug(f"Using box color: {box_color}, width: {box_width}, autocrop: {autocrop}, resize: {resize}")
+        logger.debug(f"Using box color: {box_color}, width: {box_width}, autocrop: {autocrop}, resize: {resize}, temperature: {temperature}")
 
-        model = genai.GenerativeModel(settings.GEMINI_MODEL)
-        logger.debug(f"Initialized Gemini model: {settings.GEMINI_MODEL}")
+        model = genai.GenerativeModel(settings.GEMINI_MODEL, generation_config={"temperature": temperature})
+        logger.debug(f"Initialized Gemini model: {settings.GEMINI_MODEL} with temperature: {temperature}")
 
         img = PIL.Image.open(image_path)
         img_byte_arr = io.BytesIO()
@@ -926,7 +952,8 @@ def main() -> int:
         label=args.label,
         autocrop=args.autocrop,
         crop_percent=args.crop_percent,
-        resize=args.resize
+        resize=args.resize,
+        temperature=args.temperature
     )
 
 if __name__ == "__main__":
