@@ -198,4 +198,9 @@ changelog-finalize:
 	@echo "🚀 Finalizing changelog for version $(VERSION)"
 	@uv run python scripts/update_changelog.py --finalize --version=$(VERSION)
 
+.PHONY: copy-global-taskfile
+copy-global-taskfile:
+	@echo "🚀 Copying global Taskfile.yml to ~/.taskfile.yml"
+	@cp -av Taskfile.yml ~/.taskfile.yml
+
 .DEFAULT_GOAL := help
