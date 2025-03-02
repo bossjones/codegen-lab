@@ -105,6 +105,66 @@ def resolve_path(path: str) -> str:
 
     return absolute_path
 
+def resize_image_with_background(
+    image: PIL.Image.Image,
+    output_path: str
+) -> None:
+    """
+    Resize an image to 1080x1350 while preserving aspect ratio, centered on a background of its primary color.
+
+    Args:
+        image: The PIL Image object to resize
+        output_path: Path to save the resized image. Will be modified to include "_larger" before the extension.
+
+    Returns:
+        None
+    """
+    # Create output filename with _larger suffix
+    output_dir = os.path.dirname(output_path)
+    output_basename = os.path.basename(output_path)
+    output_name, output_ext = os.path.splitext(output_basename)
+    larger_output_path = os.path.join(output_dir, f"{output_name}_larger{output_ext}")
+
+    logger.debug(f"Will save resized image as: {larger_output_path}")
+
+    # Get primary color (pixel at top-left corner)
+    primary_color = image.getpixel((0, 0))
+    logger.debug(f"Primary color from top-left pixel: {primary_color}")
+
+    # Target dimensions
+    target_width, target_height = 1080, 1350
+
+    # Create new image with primary color background
+    background = PIL.Image.new('RGB', (target_width, target_height), primary_color)
+
+    # Calculate resize dimensions while preserving aspect ratio
+    img_width, img_height = image.size
+    aspect_ratio = img_width / img_height
+
+    if aspect_ratio > (target_width / target_height):  # Image is wider
+        new_width = target_width
+        new_height = int(new_width / aspect_ratio)
+    else:  # Image is taller
+        new_height = target_height
+        new_width = int(new_height * aspect_ratio)
+
+    logger.debug(f"Resizing from {img_width}x{img_height} to {new_width}x{new_height} to preserve aspect ratio")
+
+    # Resize image
+    resized_img = image.resize((new_width, new_height), PIL.Image.LANCZOS)
+
+    # Calculate position to paste (center)
+    paste_x = (target_width - new_width) // 2
+    paste_y = (target_height - new_height) // 2
+
+    # Paste resized image onto background
+    background.paste(resized_img, (paste_x, paste_y))
+
+    # Save the result with high quality
+    background.save(larger_output_path, quality=92)
+    logger.info(f"Resized image saved to {larger_output_path}")
+    print(f"Resized image saved to {larger_output_path}")
+
 def parse_args() -> argparse.Namespace:
     """
     Parse command line arguments for the bounding box script.
@@ -133,6 +193,9 @@ Examples:
 
     # Crop with custom percentage (to fine-tune where the bottom crop occurs)
     python bboxes.py --image-path "tweet.jpg" --autocrop --crop-percent 90.0
+
+    # Crop and resize to 1080x1350 with primary color background
+    python bboxes.py --image-path "tweet.jpg" --autocrop --resize
 
     # Enable debug logging
     python bboxes.py --verbose --image-path "image.jpg"
@@ -176,6 +239,10 @@ Examples:
         help="When using --autocrop with tweets, percentage of tweet height to include (default: 100.0)"
     )
     parser.add_argument(
+        "--resize", action="store_true",
+        help="When used with --autocrop, resize the output to 1080x1350 and center it on a background of the primary color"
+    )
+    parser.add_argument(
         "--verbose", action="store_true",
         help="Enable verbose debug logging"
     )
@@ -189,7 +256,8 @@ def detect_tweet_content(
     box_width: int = 4,
     label: Optional[str] = None,
     autocrop: bool = False,
-    crop_percent: float = 92.0
+    crop_percent: float = 92.0,
+    resize: bool = False
 ) -> None:
     """
     Detects tweet content in an image using Gemini, draws a bounding box, and saves the result.
@@ -206,6 +274,7 @@ def detect_tweet_content(
         label: Custom label for the bounding box. Defaults to "Tweet Content".
         autocrop: If True, crop the image to the detected area instead of drawing a box. Defaults to False.
         crop_percent: Percentage of tweet height to include when cropping. Defaults to 92.0.
+        resize: If True and autocrop is True, resize the cropped image to 1080x1350. Defaults to False.
 
     Returns:
         None
@@ -216,7 +285,7 @@ def detect_tweet_content(
     """
     try:
         logger.info(f"Detecting tweet content in {image_path}")
-        logger.debug(f"Using box color: {box_color}, width: {box_width}, label: {label}, autocrop: {autocrop}, crop_percent: {crop_percent}")
+        logger.debug(f"Using box color: {box_color}, width: {box_width}, label: {label}, autocrop: {autocrop}, crop_percent: {crop_percent}, resize: {resize}")
 
         model = genai.GenerativeModel(settings.GEMINI_MODEL)
         logger.debug(f"Initialized Gemini model: {settings.GEMINI_MODEL}")
@@ -373,9 +442,15 @@ def detect_tweet_content(
                 if autocrop:
                     # Crop the image to the padded bounding box
                     cropped_img = img.crop((padded_xmin, padded_ymin, padded_xmax, padded_ymax))
-                    cropped_img.save(output_path)
-                    logger.info(f"Cropped image saved to {output_path}")
-                    print(f"Cropped image saved to {output_path}")
+
+                    # Either resize the cropped image or just save it
+                    if resize:
+                        logger.info("Resizing cropped image to 1080x1350")
+                        resize_image_with_background(cropped_img, output_path)
+                    else:
+                        cropped_img.save(output_path)
+                        logger.info(f"Cropped image saved to {output_path}")
+                        print(f"Cropped image saved to {output_path}")
                 else:
                     # Draw using padded coordinates
                     draw = PIL.ImageDraw.Draw(img)
@@ -407,7 +482,8 @@ def detect_objects_and_draw_boxes(
     output_path: str = "output_with_boxes.jpg",
     box_color: str = "red",
     box_width: int = 3,
-    autocrop: bool = False
+    autocrop: bool = False,
+    resize: bool = False
 ) -> None:
     """
     Detects objects in an image using Gemini, draws bounding boxes, and saves the result.
@@ -422,6 +498,7 @@ def detect_objects_and_draw_boxes(
         box_color: Color of the bounding box (name or hex code). Defaults to "red".
         box_width: Width of the bounding box line. Defaults to 3.
         autocrop: If True, save individual cropped images for each object instead of drawing boxes. Defaults to False.
+        resize: If True and autocrop is True, resize the cropped images to 1080x1350. Defaults to False.
 
     Returns:
         None
@@ -432,7 +509,7 @@ def detect_objects_and_draw_boxes(
     """
     try:
         logger.info(f"Detecting objects in {image_path}")
-        logger.debug(f"Using box color: {box_color}, width: {box_width}, autocrop: {autocrop}")
+        logger.debug(f"Using box color: {box_color}, width: {box_width}, autocrop: {autocrop}, resize: {resize}")
 
         model = genai.GenerativeModel(settings.GEMINI_MODEL)
         logger.debug(f"Initialized Gemini model: {settings.GEMINI_MODEL}")
@@ -532,9 +609,15 @@ def detect_objects_and_draw_boxes(
 
                         # Crop the image to the padded bounding box
                         cropped_img = img.crop((padded_xmin, padded_ymin, padded_xmax, padded_ymax))
-                        cropped_img.save(object_output)
-                        logger.info(f"Cropped image for {label} saved to {object_output}")
-                        print(f"Cropped image for {label} saved to {object_output}")
+
+                        # Either resize the cropped image or just save it
+                        if resize:
+                            logger.info(f"Resizing cropped image of {label} to 1080x1350")
+                            resize_image_with_background(cropped_img, object_output)
+                        else:
+                            cropped_img.save(object_output)
+                            logger.info(f"Cropped image for {label} saved to {object_output}")
+                            print(f"Cropped image for {label} saved to {object_output}")
                     else:
                         # Draw using padded coordinates
                         draw.rectangle([(padded_xmin, padded_ymin), (padded_xmax, padded_ymax)], outline=box_color, width=box_width)
@@ -639,7 +722,8 @@ def main() -> int:
                 box_width=args.box_width,
                 label=args.label,
                 autocrop=args.autocrop,
-                crop_percent=args.crop_percent
+                crop_percent=args.crop_percent,
+                resize=args.resize
             )
         else:  # general mode
             logger.info("Using general object detection mode")
@@ -648,7 +732,8 @@ def main() -> int:
                 output_path,
                 box_color=args.box_color,
                 box_width=args.box_width,
-                autocrop=args.autocrop
+                autocrop=args.autocrop,
+                resize=args.resize
             )
         logger.info("Processing completed successfully")
         return 0
