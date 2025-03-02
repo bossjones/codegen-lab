@@ -95,6 +95,7 @@ TOOLS = {
 
 
 class CursorRulesDatabase:
+
     """Manages SQLite database operations for cursor rules.
 
     This class provides methods to interact with the SQLite database,

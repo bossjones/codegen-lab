@@ -3,16 +3,17 @@ import os
 import pathlib
 import re
 import subprocess
+from typing import Dict, List, Optional, Tuple
 
-# Additional libraries for enhanced functionality
 import spacy
 import yaml
 from jinja2 import Template
-from mcp.server.fastmcp import FastMCP
+from mcp.server.fastmcp import Context, FastMCP
 from pydantic import Field
 
 
 class CursorRulesGenerator:
+
     """Enhanced generator for Cursor rules with NLP and project analysis capabilities."""
 
     def __init__(self):
@@ -53,25 +54,33 @@ class CursorRulesGenerator:
 
                 # Parse YAML front matter if present
                 metadata = {}
-                if content.startswith("---"):
-                    end_idx = content.find("---", 3)
+                if content.startswith('---'):
+                    end_idx = content.find('---', 3)
                     if end_idx != -1:
                         yaml_content = content[3:end_idx].strip()
                         try:
                             metadata = yaml.safe_load(yaml_content)
-                            content = content[end_idx + 3 :].strip()
+                            content = content[end_idx+3:].strip()
                         except yaml.YAMLError:
                             # If YAML parsing fails, assume no front matter
                             pass
 
-                templates[template_file.stem] = {"content": content, "metadata": metadata}
+                templates[template_file.stem] = {
+                    'content': content,
+                    'metadata': metadata
+                }
 
         return templates
 
     def _analyze_project(self, project_path: str) -> dict:
         """Analyze project directory to gather context information.
         """
-        context = {"file_count": 0, "technologies": [], "dependencies": [], "project_structure": {}}
+        context = {
+            'file_count': 0,
+            'technologies': [],
+            'dependencies': [],
+            'project_structure': {}
+        }
 
         if not project_path or not os.path.exists(project_path):
             return context
@@ -84,68 +93,68 @@ class CursorRulesGenerator:
                 _, ext = os.path.splitext(file)
                 if ext:
                     file_extensions[ext] = file_extensions.get(ext, 0) + 1
-                context["file_count"] += 1
+                context['file_count'] += 1
 
                 # Check for specific config files to identify technologies
-                if file == "package.json":
+                if file == 'package.json':
                     try:
                         with open(os.path.join(root, file)) as f:
                             package_data = json.load(f)
-                            deps = list(package_data.get("dependencies", {}).keys())
-                            dev_deps = list(package_data.get("devDependencies", {}).keys())
-                            context["dependencies"].extend(deps + dev_deps)
+                            deps = list(package_data.get('dependencies', {}).keys())
+                            dev_deps = list(package_data.get('devDependencies', {}).keys())
+                            context['dependencies'].extend(deps + dev_deps)
 
                             # Check for React
-                            if "react" in deps:
-                                context["technologies"].append("react")
+                            if 'react' in deps:
+                                context['technologies'].append('react')
                             # Check for Node
-                            if "express" in deps:
-                                context["technologies"].append("nodejs")
+                            if 'express' in deps:
+                                context['technologies'].append('nodejs')
                     except:
                         pass
 
-                elif file == "requirements.txt":
+                elif file == 'requirements.txt':
                     try:
                         with open(os.path.join(root, file)) as f:
-                            packages = [line.strip().split("==")[0] for line in f if line.strip()]
-                            context["dependencies"].extend(packages)
-                            context["technologies"].append("python")
+                            packages = [line.strip().split('==')[0] for line in f if line.strip()]
+                            context['dependencies'].extend(packages)
+                            context['technologies'].append('python')
                     except:
                         pass
 
-                elif file == "tsconfig.json":
-                    context["technologies"].append("typescript")
+                elif file == 'tsconfig.json':
+                    context['technologies'].append('typescript')
 
-                elif file == "go.mod":
-                    context["technologies"].append("golang")
+                elif file == 'go.mod':
+                    context['technologies'].append('golang')
 
-                elif file in ["pom.xml", "build.gradle"]:
-                    context["technologies"].append("java")
+                elif file in ['pom.xml', 'build.gradle']:
+                    context['technologies'].append('java')
 
         # Determine dominant file types
         if file_extensions:
-            context["file_extensions"] = file_extensions
+            context['file_extensions'] = file_extensions
 
             # Make technology inferences based on file extensions
-            if ".tsx" in file_extensions or ".jsx" in file_extensions:
-                if "react" not in context["technologies"]:
-                    context["technologies"].append("react")
-            if ".ts" in file_extensions:
-                if "typescript" not in context["technologies"]:
-                    context["technologies"].append("typescript")
-            if ".py" in file_extensions:
-                if "python" not in context["technologies"]:
-                    context["technologies"].append("python")
-            if ".go" in file_extensions:
-                if "golang" not in context["technologies"]:
-                    context["technologies"].append("golang")
-            if ".java" in file_extensions:
-                if "java" not in context["technologies"]:
-                    context["technologies"].append("java")
+            if '.tsx' in file_extensions or '.jsx' in file_extensions:
+                if 'react' not in context['technologies']:
+                    context['technologies'].append('react')
+            if '.ts' in file_extensions:
+                if 'typescript' not in context['technologies']:
+                    context['technologies'].append('typescript')
+            if '.py' in file_extensions:
+                if 'python' not in context['technologies']:
+                    context['technologies'].append('python')
+            if '.go' in file_extensions:
+                if 'golang' not in context['technologies']:
+                    context['technologies'].append('golang')
+            if '.java' in file_extensions:
+                if 'java' not in context['technologies']:
+                    context['technologies'].append('java')
 
         # Remove duplicates
-        context["technologies"] = list(set(context["technologies"]))
-        context["dependencies"] = list(set(context["dependencies"]))
+        context['technologies'] = list(set(context['technologies']))
+        context['dependencies'] = list(set(context['dependencies']))
 
         return context
 
@@ -172,13 +181,13 @@ class CursorRulesGenerator:
                     mentioned_techs.add(tech)
 
         # Also consider technologies detected from project analysis
-        for tech in project_context.get("technologies", []):
+        for tech in project_context.get('technologies', []):
             mentioned_techs.add(tech)
 
         # Score each template
         for template_name, template_data in self.templates.items():
-            metadata = template_data.get("metadata", {})
-            template_techs = set(metadata.get("technologies", []))
+            metadata = template_data.get('metadata', {})
+            template_techs = set(metadata.get('technologies', []))
 
             # Calculate score based on technology match
             match_count = len(mentioned_techs.intersection(template_techs))
@@ -186,7 +195,7 @@ class CursorRulesGenerator:
 
             # Calculate score based on keyword relevance
             keyword_score = 0
-            template_keywords = metadata.get("keywords", [])
+            template_keywords = metadata.get('keywords', [])
             if template_keywords:
                 matches = sum(1 for keyword in template_keywords if keyword.lower() in project_description.lower())
                 keyword_score = matches / len(template_keywords)
@@ -205,7 +214,7 @@ class CursorRulesGenerator:
             else:
                 return self._create_default_template(), 0.5
 
-        return self.templates[best_template_name]["content"], highest_score
+        return self.templates[best_template_name]['content'], highest_score
 
     def _create_default_template(self) -> str:
         """Create a basic default template when no templates are available"""
@@ -254,11 +263,10 @@ project {
     def _render_template(self, template_content: str, context: dict) -> str:
         """Render the template with the provided context using Jinja2.
         """
-
         # Add conditional helpers (similar to Handlebars style)
         def _process_conditionals(content, context):
             # Process {{#if variable}} blocks
-            pattern = r"{{#if ([^}]+)}}(.*?){{/if}}"
+            pattern = r'{{#if ([^}]+)}}(.*?){{/if}}'
 
             def replace_if(match):
                 var_name = match.group(1).strip()
@@ -266,7 +274,7 @@ project {
 
                 if context.get(var_name):
                     return content
-                return ""
+                return ''
 
             # Apply all conditional replacements
             return re.sub(pattern, replace_if, content, flags=re.DOTALL)
@@ -285,29 +293,29 @@ project {
         errors = []
 
         # Check for unbalanced braces
-        open_braces = rules_content.count("{")
-        close_braces = rules_content.count("}")
+        open_braces = rules_content.count('{')
+        close_braces = rules_content.count('}')
 
         if open_braces != close_braces:
             errors.append(f"Unbalanced braces: {open_braces} opening vs {close_braces} closing")
 
         # Check for basic section structure
-        required_sections = ["editing", "technology", "project"]
+        required_sections = ['editing', 'technology', 'project']
         for section in required_sections:
             if section not in rules_content:
                 errors.append(f"Missing recommended section: '{section}'")
 
         # Check for unclosed string literals
-        lines = rules_content.split("\n")
+        lines = rules_content.split('\n')
         for i, line in enumerate(lines):
             # Skip comments
-            if line.strip().startswith("//"):
+            if line.strip().startswith('//'):
                 continue
 
             # Check for unclosed quotes
             quote_count = line.count('"')
             if quote_count % 2 != 0:
-                errors.append(f"Unclosed string on line {i + 1}: {line}")
+                errors.append(f"Unclosed string on line {i+1}: {line}")
 
         return len(errors) == 0, errors
 
@@ -318,7 +326,7 @@ project {
         files = {}
 
         # Extract main sections
-        section_pattern = r"(\w+)\s*{([^{]*(?:{[^{]*(?:{[^}]*}[^{]*)*}[^{]*)*)"
+        section_pattern = r'(\w+)\s*{([^{]*(?:{[^{]*(?:{[^}]*}[^{]*)*}[^{]*)*)'
         sections = re.findall(section_pattern, rules_content, re.DOTALL)
 
         for section_name, section_content in sections:
@@ -328,9 +336,8 @@ project {
 
         return files
 
-    def generate_rules(
-        self, project_description: str, project_path: str | None = None, output_format: str = "single"
-    ) -> str:
+    def generate_rules(self, project_description: str, project_path: str | None = None,
+                       output_format: str = "single") -> str:
         """Create custom Cursor rules based on project description and context.
         """
         # Analyze project if path provided
@@ -346,14 +353,14 @@ project {
 
         # Prepare context for template rendering
         context = {
-            "project_name": project_name,
-            "tech_stack": project_description,
-            "project_context": project_context,
-            "has_typescript": "typescript" in project_context.get("technologies", []),
-            "has_react": "react" in project_context.get("technologies", []),
-            "has_python": "python" in project_context.get("technologies", []),
-            "dependencies": project_context.get("dependencies", []),
-            "file_extensions": project_context.get("file_extensions", {}),
+            'project_name': project_name,
+            'tech_stack': project_description,
+            'project_context': project_context,
+            'has_typescript': 'typescript' in project_context.get('technologies', []),
+            'has_react': 'react' in project_context.get('technologies', []),
+            'has_python': 'python' in project_context.get('technologies', []),
+            'dependencies': project_context.get('dependencies', []),
+            'file_extensions': project_context.get('file_extensions', {})
         }
 
         # Render template
@@ -381,13 +388,12 @@ project {
             # Write each file
             for filename, content in rule_files.items():
                 file_path = output_dir / filename
-                with open(file_path, "w") as f:
+                with open(file_path, 'w') as f:
                     f.write(content)
 
             # Return summary
-            return f"Generated {len(rule_files)} rule files in .cursor/rules/:\n" + "\n".join(
-                [f"- {filename}" for filename in rule_files.keys()]
-            )
+            return f"Generated {len(rule_files)} rule files in .cursor/rules/:\n" + \
+                   "\n".join([f"- {filename}" for filename in rule_files.keys()])
         else:
             # Return single file content
             return generated_rules
@@ -396,23 +402,19 @@ project {
 # Set up FastMCP server
 mcp = FastMCP("Cursor Rules Generator")
 
-
 @mcp.tool()
 def generate_rules(
     project_description: str = Field(description="Describe your project (tech stack, structure, etc)"),
     project_path: str = Field(description="Optional path to project directory for analysis", default=""),
-    output_format: str = Field(
-        description="Output format: 'single' for one file, 'multiple' for separate rule files", default="single"
-    ),
+    output_format: str = Field(description="Output format: 'single' for one file, 'multiple' for separate rule files", default="single"),
 ) -> str:
     """Create custom Cursor rules based on project setup"""
     generator = CursorRulesGenerator()
     return generator.generate_rules(
         project_description=project_description,
         project_path=project_path if project_path else None,
-        output_format=output_format,
+        output_format=output_format
     )
-
 
 # For direct execution
 if __name__ == "__main__":

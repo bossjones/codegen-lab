@@ -11,6 +11,7 @@ from typing import Any
 
 
 class RepositoryAnalyzer:
+
     """Analyzes repository structure to suggest cursor rules.
 
     This class provides methods to scan a repository, detect frameworks,

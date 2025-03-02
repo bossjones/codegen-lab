@@ -3,7 +3,7 @@
         "editor.tabSize": 2,
         "editor.formatOnSave": false,
         "editor.formatOnPaste": false,
-        "editor.formatOnType": false,
+        "editor.formatOnType": false
     },
     "json.schemas": [
         {
@@ -27,7 +27,7 @@
         "--disable=C0111,E0401,C,W,E1205",
         "--max-line-length=120",
         "--load-plugins",
-        "pylint_pydantic,pylint_per_file_ignores",
+        "pylint_pydantic,pylint_per_file_ignores"
     ],
     // BasedPyright configuration - aligning with pyrightconfig.json
     "basedpyright.analysis.typeCheckingMode": "recommended",
@@ -85,7 +85,7 @@
         "editor.defaultFormatter": "charliermarsh.ruff",
         "editor.tabSize": 4,
         "editor.formatOnPaste": false,
-        "editor.formatOnType": false,
+        "editor.formatOnType": false
     },
     "editor.inlineSuggest.showToolbar": "onHover",
     "editor.renderWhitespace": "all",
@@ -145,5 +145,5 @@
     "python.analysis.importFormat": "absolute",
     "python.analysis.stubPath": "${workspaceFolder}/typings",
     "python.analysis.autoSearchPaths": true,
-    "editor.semanticHighlighting.enabled": true,
+    "editor.semanticHighlighting.enabled": true
 }

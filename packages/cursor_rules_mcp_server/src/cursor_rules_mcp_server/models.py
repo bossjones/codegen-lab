@@ -11,6 +11,7 @@ from typing import Any
 
 @dataclass
 class RuleTemplate:
+
     """Represents a cursor rule template.
 
     Attributes:
@@ -35,6 +36,7 @@ class RuleTemplate:
 
 @dataclass
 class Rule:
+
     """Represents a cursor rule created by a user.
 
     Attributes:
@@ -61,6 +63,7 @@ class Rule:
 
 @dataclass
 class Repository:
+
     """Represents a repository that has been analyzed.
 
     Attributes:
@@ -87,6 +90,7 @@ class Repository:
 
 @dataclass
 class RepositoryRuleAssociation:
+
     """Represents the association between a repository and a rule.
 
     Attributes:

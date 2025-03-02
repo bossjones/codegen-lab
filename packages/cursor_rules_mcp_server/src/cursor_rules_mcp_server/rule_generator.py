@@ -12,6 +12,7 @@ from .repository_analyzer import analyze_repository, get_rule_template
 
 
 class RuleGenerator:
+
     """Generates and customizes cursor rules based on analysis and templates.
 
     This class provides methods to create, customize, and validate cursor rules
