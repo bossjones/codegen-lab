@@ -411,26 +411,31 @@ actions:
       ### Complex Input Validation with Pydantic
 
       ```python
-      from typing import Annotated
+      from typing import Annotated, List
       from pydantic import BaseModel, Field
       from mcp.server.fastmcp import FastMCP
 
-      mcp = FastMCP("Shrimp Tank")
+      mcp = FastMCP("Validation Example")
 
-      class ShrimpTank(BaseModel):
-          class Shrimp(BaseModel):
-              name: Annotated[str, Field(max_length=10)]
+      # Define complex models with validation
+      class User(BaseModel):
+          name: str
+          email: Annotated[str, Field(pattern=r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")]
+          age: Annotated[int, Field(ge=0, lt=150)]
 
-          shrimp: list[Shrimp]
+      class TeamRequest(BaseModel):
+          team_name: Annotated[str, Field(min_length=3, max_length=50)]
+          members: Annotated[List[User], Field(min_length=1)]
 
       @mcp.tool()
-      def name_shrimp(
-          tank: ShrimpTank,
-          # You can use pydantic Field in function signatures for validation
-          extra_names: Annotated[list[str], Field(max_length=10)],
-      ) -> list[str]:
-          """List all shrimp names in the tank"""
-          return [shrimp.name for shrimp in tank.shrimp] + extra_names
+      def create_team(request: TeamRequest) -> dict:
+          """Create a team with the given members"""
+          return {
+              "team_id": "team_123",
+              "team_name": request.team_name,
+              "member_count": len(request.members),
+              "members": [user.name for user in request.members]
+          }
       ```
 
       ### Parameter Descriptions with Field
@@ -508,6 +513,399 @@ actions:
           screenshot.convert("RGB").save(buffer, format="JPEG", quality=60, optimize=True)
           return Image(data=buffer.getvalue(), format="jpeg")
       ```
+
+      ### Desktop Files Listing
+
+      This example demonstrates how to expose the user's desktop directory as a resource, providing a practical file system integration with FastMCP:
+
+      ```python
+      """
+      FastMCP Desktop Example
+
+      A simple example that exposes the desktop directory as a resource.
+      """
+
+      from pathlib import Path
+
+      from mcp.server.fastmcp import FastMCP
+
+      # Create server
+      mcp = FastMCP("Demo")
+
+
+      @mcp.resource("dir://desktop")
+      def desktop() -> list[str]:
+          """List the files in the user's desktop"""
+          desktop = Path.home() / "Desktop"
+          return [str(f) for f in desktop.iterdir()]
+
+
+      @mcp.tool()
+      def add(a: int, b: int) -> int:
+          """Add two numbers"""
+          return a + b
+      ```
+
+      Key aspects of this example:
+
+      1. **Directory Resource**: Demonstrates exposing a filesystem directory as a resource with a custom protocol `dir://`.
+      2. **Path Handling**: Uses `pathlib.Path` for cross-platform path management.
+      3. **Resource Protocol**: Shows how to define custom resource protocols (like `dir://`).
+      4. **Simple Tool**: Includes a basic tool for demonstration purposes alongside the resource.
+
+      This pattern can be extended to expose other directories or file system structures as resources, making it useful for file browsers, document managers, or any application that needs access to the local file system.
+
+      ## Advanced Examples
+
+      ### Complex Input Validation with Pydantic
+
+      ```python
+      from typing import Annotated, List
+      from pydantic import BaseModel, Field
+      from mcp.server.fastmcp import FastMCP
+
+      # Create the server
+      mcp = FastMCP("Validation Example")
+
+      # Define complex models with validation
+      class User(BaseModel):
+          name: str
+          email: Annotated[str, Field(pattern=r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")]
+          age: Annotated[int, Field(ge=0, lt=150)]
+
+      class TeamRequest(BaseModel):
+          team_name: Annotated[str, Field(min_length=3, max_length=50)]
+          members: Annotated[List[User], Field(min_length=1)]
+
+      @mcp.tool()
+      def create_team(request: TeamRequest) -> dict:
+          """Create a team with the given members"""
+          return {
+              "team_id": "team_123",
+              "team_name": request.team_name,
+              "member_count": len(request.members),
+              "members": [user.name for user in request.members]
+          }
+      ```
+
+      ### Unicode Support for International Characters
+
+      ```python
+      from mcp.server.fastmcp import FastMCP
+
+      mcp = FastMCP("Unicode Support Demo")
+
+      @mcp.tool(
+          description="🌍 International greeting tool supporting multiple languages"
+      )
+      def multilingual_greeting(
+          name: str,
+          language: str = "english"
+      ) -> str:
+          """
+          Generate a greeting in different languages.
+
+          Supported languages:
+          - english: "Hello"
+          - spanish: "¡Hola!"
+          - french: "Bonjour"
+          - japanese: "こんにちは"
+          - arabic: "مرحبا"
+          """
+          greetings = {
+              "english": f"Hello, {name}!",
+              "spanish": f"¡Hola, {name}!",
+              "french": f"Bonjour, {name}!",
+              "japanese": f"こんにちは, {name}さん!",
+              "arabic": f"مرحبا {name}!"
+          }
+
+          return greetings.get(language.lower(), f"Hello, {name}!")
+      ```
+
+      ### Recursive Memory System with Vector Database
+
+      This advanced example demonstrates how to create a FastMCP server that implements a recursive memory system with vector embeddings, database integration, and asynchronous operations.
+
+      ```python
+      """
+      Recursive memory system inspired by the human brain's clustering of memories.
+      Uses OpenAI's embeddings and pgvector for efficient similarity search.
+      """
+
+      import asyncio
+      import math
+      import os
+      from dataclasses import dataclass
+      from datetime import datetime, timezone
+      from pathlib import Path
+      from typing import Annotated, Self, list
+
+      import asyncpg
+      import numpy as np
+      from openai import AsyncOpenAI
+      from pgvector.asyncpg import register_vector
+      from pydantic import BaseModel, Field
+      from pydantic_ai import Agent
+
+      from mcp.server.fastmcp import FastMCP
+
+      # Configuration constants
+      MAX_DEPTH = 5
+      SIMILARITY_THRESHOLD = 0.7
+      DECAY_FACTOR = 0.99
+      REINFORCEMENT_FACTOR = 1.1
+
+      DEFAULT_LLM_MODEL = "openai:gpt-4o"
+      DEFAULT_EMBEDDING_MODEL = "text-embedding-3-small"
+
+      # Initialize the MCP server with required dependencies
+      mcp = FastMCP(
+          "Memory System",
+          dependencies=[
+              "pydantic-ai-slim[openai]",
+              "asyncpg",
+              "numpy",
+              "pgvector",
+          ],
+      )
+
+      # Database connection string
+      DB_DSN = "postgresql://postgres:postgres@localhost:54320/memory_db"
+
+      # User profile directory for persistent storage
+      PROFILE_DIR = (
+          Path.home() / ".fastmcp" / os.environ.get("USER", "anon") / "memory"
+      ).resolve()
+      PROFILE_DIR.mkdir(parents=True, exist_ok=True)
+
+
+      def cosine_similarity(a: list[float], b: list[float]) -> float:
+          """Calculate cosine similarity between two vectors."""
+          a_array = np.array(a, dtype=np.float64)
+          b_array = np.array(b, dtype=np.float64)
+          return np.dot(a_array, b_array) / (
+              np.linalg.norm(a_array) * np.linalg.norm(b_array)
+          )
+
+
+      @dataclass
+      class Deps:
+          """Dependencies container for easier passing of shared resources."""
+          openai: AsyncOpenAI
+          pool: asyncpg.Pool
+
+
+      class MemoryNode(BaseModel):
+          """Model representing a memory node in the system."""
+          id: int | None = None
+          content: str
+          summary: str = ""
+          importance: float = 1.0
+          access_count: int = 0
+          timestamp: float = Field(
+              default_factory=lambda: datetime.now(timezone.utc).timestamp()
+          )
+          embedding: list[float]
+
+          @classmethod
+          async def from_content(cls, content: str, deps: Deps):
+              """Create a memory node from text content by generating its embedding."""
+              embedding = await get_embedding(content, deps)
+              return cls(content=content, embedding=embedding)
+
+          async def save(self, deps: Deps):
+              """Save the memory node to the database."""
+              async with deps.pool.acquire() as conn:
+                  if self.id is None:
+                      result = await conn.fetchrow(
+                          """
+                          INSERT INTO memories (content, summary, importance, access_count,
+                              timestamp, embedding)
+                          VALUES ($1, $2, $3, $4, $5, $6)
+                          RETURNING id
+                          """,
+                          self.content,
+                          self.summary,
+                          self.importance,
+                          self.access_count,
+                          self.timestamp,
+                          self.embedding,
+                      )
+                      self.id = result["id"]
+                  else:
+                      await conn.execute(
+                          """
+                          UPDATE memories
+                          SET content = $1, summary = $2, importance = $3,
+                              access_count = $4, timestamp = $5, embedding = $6
+                          WHERE id = $7
+                          """,
+                          self.content,
+                          self.summary,
+                          self.importance,
+                          self.access_count,
+                          self.timestamp,
+                          self.embedding,
+                          self.id,
+                      )
+
+
+      async def get_embedding(text: str, deps: Deps) -> list[float]:
+          """Get vector embedding for text using OpenAI's embedding model."""
+          embedding_response = await deps.openai.embeddings.create(
+              input=text,
+              model=DEFAULT_EMBEDDING_MODEL,
+          )
+          return embedding_response.data[0].embedding
+
+
+      async def get_db_pool() -> asyncpg.Pool:
+          """Create and initialize a database connection pool."""
+          async def init(conn):
+              await conn.execute("CREATE EXTENSION IF NOT EXISTS vector;")
+              await register_vector(conn)
+
+          pool = await asyncpg.create_pool(DB_DSN, init=init)
+          return pool
+
+
+      async def find_similar_memories(embedding: list[float], deps: Deps) -> list[MemoryNode]:
+          """Find memories similar to the given embedding vector."""
+          async with deps.pool.acquire() as conn:
+              rows = await conn.fetch(
+                  """
+                  SELECT id, content, summary, importance, access_count, timestamp, embedding
+                  FROM memories
+                  ORDER BY embedding <-> $1
+                  LIMIT 5
+                  """,
+                  embedding,
+              )
+          memories = [
+              MemoryNode(
+                  id=row["id"],
+                  content=row["content"],
+                  summary=row["summary"],
+                  importance=row["importance"],
+                  access_count=row["access_count"],
+                  timestamp=row["timestamp"],
+                  embedding=row["embedding"],
+              )
+              for row in rows
+          ]
+          return memories
+
+
+      # Expose memory functions as MCP tools
+      @mcp.tool()
+      async def remember(
+          contents: list[str] = Field(description="List of observations or memories to store")
+      ) -> str:
+          """
+          Store multiple memory items in the database.
+
+          This function processes each memory, computes its embedding, finds similar
+          existing memories to merge with, and performs importance updates.
+          """
+          deps = Deps(openai=AsyncOpenAI(), pool=await get_db_pool())
+          try:
+              async def add_memory(content: str) -> str:
+                  """Add a single memory item to the database."""
+                  new_memory = await MemoryNode.from_content(content, deps)
+                  await new_memory.save(deps)
+                  return f"Remembered: {content}"
+
+              return "\n".join(
+                  await asyncio.gather(*[add_memory(content) for content in contents])
+              )
+          finally:
+              await deps.pool.close()
+
+
+      @mcp.tool()
+      async def read_memories() -> str:
+          """
+          Read all memories sorted by importance.
+
+          Returns a formatted string with all memories and their importance scores.
+          """
+          deps = Deps(openai=AsyncOpenAI(), pool=await get_db_pool())
+          try:
+              async with deps.pool.acquire() as conn:
+                  rows = await conn.fetch(
+                      """
+                      SELECT content, summary, importance, access_count
+                      FROM memories
+                      ORDER BY importance DESC
+                      LIMIT $1
+                      """,
+                      MAX_DEPTH,
+                  )
+
+              result = []
+              for row in rows:
+                  effective_importance = row["importance"] * (
+                      1 + math.log(row["access_count"] + 1)
+                  )
+                  summary = row["summary"] or row["content"]
+                  result.append(
+                      f"- {summary} (Importance: {effective_importance:.2f})"
+                  )
+
+              return "\n".join(result) if result else "No memories found."
+          finally:
+              await deps.pool.close()
+
+
+      async def initialize_database():
+          """Initialize the database schema for the memory system."""
+          # Create database if it doesn't exist
+          pool = await asyncpg.create_pool(
+              "postgresql://postgres:postgres@localhost:54320/postgres"
+          )
+          try:
+              async with pool.acquire() as conn:
+                  await conn.execute("CREATE DATABASE IF NOT EXISTS memory_db;")
+          finally:
+              await pool.close()
+
+          # Initialize database schema
+          pool = await get_db_pool()
+          try:
+              async with pool.acquire() as conn:
+                  await conn.execute("""
+                      CREATE TABLE IF NOT EXISTS memories (
+                          id SERIAL PRIMARY KEY,
+                          content TEXT NOT NULL,
+                          summary TEXT,
+                          importance REAL NOT NULL,
+                          access_count INT NOT NULL,
+                          timestamp DOUBLE PRECISION NOT NULL,
+                          embedding vector(1536) NOT NULL
+                      );
+                      CREATE INDEX IF NOT EXISTS idx_memories_embedding ON memories
+                          USING hnsw (embedding vector_l2_ops);
+                  """)
+          finally:
+              await pool.close()
+
+
+      if __name__ == "__main__":
+          # Initialize the database when the script is run directly
+          asyncio.run(initialize_database())
+          # Start the MCP server
+          mcp.run()
+      ```
+
+      Key aspects of this example:
+
+      1. **Database Integration**: Uses PostgreSQL with pgvector extension for vector similarity search
+      2. **Embeddings**: Leverages OpenAI's text embedding model to convert memories to vector representations
+      3. **Asynchronous Operations**: Implements async/await pattern for efficient database and API operations
+      4. **Complex Pydantic Models**: Uses advanced Pydantic features for data validation and representation
+      5. **Resource Management**: Demonstrates proper connection pooling and resource cleanup
+      6. **Tool Annotations**: Provides detailed Field descriptions for better client experiences
 
       ## Implementation Checklist
 
@@ -717,31 +1115,17 @@ examples:
       mcp = FastMCP("Unicode Support Demo")
 
       @mcp.tool(
-          description="🌍 International greeting tool supporting multiple languages"
+          description="🌟 A tool that uses various Unicode characters in its description: "
+          "á é í ó ú ñ 漢字 🎉"
       )
-      def multilingual_greeting(
-          name: str,
-          language: str = "english"
-      ) -> str:
+      def hello_unicode(name: str = "世界", greeting: str = "¡Hola") -> str:
           """
-          Generate a greeting in different languages.
-
-          Supported languages:
-          - english: "Hello"
-          - spanish: "¡Hola!"
-          - french: "Bonjour"
-          - japanese: "こんにちは"
-          - arabic: "مرحبا"
+          A simple tool that demonstrates Unicode handling in:
+          - Tool description (emojis, accents, CJK characters)
+          - Parameter defaults (CJK characters)
+          - Return values (Spanish punctuation, emojis)
           """
-          greetings = {
-              "english": f"Hello, {name}!",
-              "spanish": f"¡Hola, {name}!",
-              "french": f"Bonjour, {name}!",
-              "japanese": f"こんにちは, {name}さん!",
-              "arabic": f"مرحبا {name}!"
-          }
-
-          return greetings.get(language.lower(), f"Hello, {name}!")
+          return f"{greeting}, {name}! 👋"
       ```
 
 metadata:
