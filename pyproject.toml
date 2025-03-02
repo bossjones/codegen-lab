@@ -47,6 +47,7 @@ packages = ["codegen_lab"]
 
 [dependency-groups]
 dev = [
+    "basedpyright>=1.28.1",
     "bpython>=0.25",
     "coverage[toml]>=7.6.12",
     "debugpy>=1.8.12",
