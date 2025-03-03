@@ -3,7 +3,7 @@ import os
 import pathlib
 import re
 import subprocess
-from typing import Dict, List, Optional, Tuple, Any, Set
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 import spacy
 import yaml
@@ -13,17 +13,19 @@ from pydantic import Field
 
 
 class CursorRulesGenerator:
+
     """Enhanced generator for Cursor rules with NLP and project analysis capabilities.
-    
+
     This class provides functionality to generate customized Cursor rules based on
     project descriptions and analysis of project structure. It uses NLP techniques
     to match project requirements with appropriate rule templates.
-    
+
     Attributes:
         nlp: A spaCy NLP model for text processing
         template_dir: Directory path where rule templates are stored
         templates: Dictionary of loaded templates with their metadata
         tech_keywords: Dictionary mapping technologies to related keywords
+
     """
 
     def __init__(self) -> None:
@@ -55,13 +57,14 @@ class CursorRulesGenerator:
 
     def _load_templates(self) -> dict[str, dict[str, Any]]:
         """Load all template files with metadata from the template directory.
-        
+
         Each template should have a YAML front matter with metadata. The front matter
         is expected to be enclosed between '---' markers at the beginning of the file.
-        
+
         Returns:
             A dictionary mapping template names to their content and metadata.
             Format: {template_name: {'content': str, 'metadata': dict}}
+
         """
         templates = {}
 
@@ -91,14 +94,14 @@ class CursorRulesGenerator:
 
     def _analyze_project(self, project_path: str) -> dict[str, Any]:
         """Analyze project directory to gather context information.
-        
+
         Scans the project directory to identify technologies, dependencies,
         and file structure. Detects common configuration files and makes
         inferences about the technology stack.
-        
+
         Args:
             project_path: Path to the project directory to analyze
-            
+
         Returns:
             A dictionary containing analysis results with keys:
             - file_count: Total number of files
@@ -106,6 +109,7 @@ class CursorRulesGenerator:
             - dependencies: List of project dependencies
             - file_extensions: Count of files by extension
             - project_structure: Information about project structure
+
         """
         context = {
             'file_count': 0,
@@ -192,18 +196,19 @@ class CursorRulesGenerator:
 
     def _find_best_template(self, project_description: str, project_context: dict[str, Any]) -> tuple[str, float]:
         """Use NLP to find the best matching template based on project description and context.
-        
+
         Analyzes the project description and context to find the most appropriate
         template. Uses a combination of technology matching and keyword relevance
         to calculate a confidence score for each template.
-        
+
         Args:
             project_description: Textual description of the project
             project_context: Dictionary containing project analysis results
-            
+
         Returns:
             A tuple containing (template_content, confidence_score)
             where confidence_score is a float between 0 and 1
+
         """
         if not self.templates:
             # Create a default template if none exist
@@ -265,12 +270,13 @@ class CursorRulesGenerator:
 
     def _create_default_template(self) -> str:
         """Create a basic default template when no templates are available.
-        
+
         Generates a generic template with placeholders for project name and
         conditional sections for common technologies.
-        
+
         Returns:
             A string containing the default template content
+
         """
         return """// Default Cursor Rules Template
 // Generated for {{project_name}}
@@ -316,28 +322,30 @@ project {
 
     def _render_template(self, template_content: str, context: dict[str, Any]) -> str:
         """Render the template with the provided context using Jinja2.
-        
+
         Processes conditional blocks in the template (Handlebars-style)
         before rendering with Jinja2. Supports {{#if variable}}...{{/if}}
         syntax for conditional content.
-        
+
         Args:
             template_content: The template string to render
             context: Dictionary of variables to use in rendering
-            
+
         Returns:
             The rendered template as a string
+
         """
         # Add conditional helpers (similar to Handlebars style)
         def _process_conditionals(content: str, context: dict[str, Any]) -> str:
             """Process Handlebars-style conditional blocks in the template.
-            
+
             Args:
                 content: Template content with conditional blocks
                 context: Context variables for evaluation
-                
+
             Returns:
                 Processed content with conditionals evaluated
+
             """
             # Process {{#if variable}} blocks
             pattern = r'{{#if ([^}]+)}}(.*?){{/if}}'
@@ -362,19 +370,20 @@ project {
 
     def _validate_rules(self, rules_content: str) -> tuple[bool, list[str]]:
         """Basic validation of Cursor rules syntax.
-        
+
         Performs syntax checks on the generated rules:
         - Checks for balanced braces
         - Verifies presence of recommended sections
         - Detects unclosed string literals
-        
+
         Args:
             rules_content: The rules content to validate
-            
+
         Returns:
             A tuple (is_valid, error_messages) where:
             - is_valid: Boolean indicating if validation passed
             - error_messages: List of error messages if validation failed
+
         """
         errors = []
 
@@ -407,15 +416,16 @@ project {
 
     def _split_into_files(self, rules_content: str) -> dict[str, str]:
         """Split the rules content into multiple files based on sections.
-        
+
         Extracts top-level sections from the rules content and creates
         separate files for each section.
-        
+
         Args:
             rules_content: The complete rules content to split
-            
+
         Returns:
             A dictionary mapping filenames to content for each section
+
         """
         files = {}
 
@@ -434,18 +444,19 @@ project {
     def generate_rules(self, project_description: str, project_path: str | None = None,
                        output_format: str = "single") -> str:
         """Create custom Cursor rules based on project description and context.
-        
+
         Main entry point for generating Cursor rules. Analyzes the project,
         selects an appropriate template, renders it with project context,
         validates the result, and outputs in the requested format.
-        
+
         Args:
             project_description: Textual description of the project
             project_path: Optional path to project directory for analysis
             output_format: Output format - 'single' for one file or 'multiple' for separate files
-            
+
         Returns:
             Generated rules content or a summary of generated files
+
         """
         # Step 1: Analyze project if path provided to gather context
         project_context = self._analyze_project(project_path) if project_path else {}
@@ -518,18 +529,19 @@ def generate_rules(
     output_format: str = Field(description="Output format: 'single' for one file, 'multiple' for separate rule files", default="single"),
 ) -> str:
     """Create custom Cursor rules based on project setup.
-    
+
     This tool generates customized Cursor rules for a project based on its description
     and optional analysis of the project directory structure. It can output rules as
     a single file or split them into multiple files by section.
-    
+
     Args:
         project_description: Description of the project including technologies and structure
         project_path: Optional path to the project directory for automated analysis
         output_format: Format for output - 'single' or 'multiple'
-        
+
     Returns:
         Generated rules content or a summary of generated files
+
     """
     generator = CursorRulesGenerator()
     return generator.generate_rules(
