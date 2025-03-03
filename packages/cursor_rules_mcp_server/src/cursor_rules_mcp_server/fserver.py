@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 import spacy
 import yaml
 from jinja2 import Template
-from mcp.server.fastmcp import Context, FastMCP
+from mcp.server.fastmcp import Context, FastMCP, Image
 from pydantic import Field
 
 
@@ -395,10 +395,14 @@ project {
             errors.append(f"Unbalanced braces: {open_braces} opening vs {close_braces} closing")
 
         # Check for basic section structure
-        required_sections = ['editing', 'technology', 'project']
-        for section in required_sections:
+        recommended_sections = ['editing', 'technology', 'project']
+        missing_sections = []
+        for section in recommended_sections:
             if section not in rules_content:
-                errors.append(f"Missing recommended section: '{section}'")
+                missing_sections.append(section)
+        
+        if missing_sections:
+            errors.append(f"Missing recommended sections: {', '.join(missing_sections)}")
 
         # Check for unclosed string literals
         lines = rules_content.split('\n')
@@ -520,13 +524,17 @@ project {
 
 
 # Set up FastMCP server
-mcp = FastMCP("Cursor Rules Generator")
+mcp = FastMCP(
+    name="Cursor Rules Generator",
+    instructions="I can help you generate custom Cursor rules for your project. Provide a description of your project and optionally a path to analyze."
+)
 
 @mcp.tool()
 def generate_rules(
     project_description: str = Field(description="Describe your project (tech stack, structure, etc)"),
     project_path: str = Field(description="Optional path to project directory for analysis", default=""),
     output_format: str = Field(description="Output format: 'single' for one file, 'multiple' for separate rule files", default="single"),
+    ctx: Context = None
 ) -> str:
     """Create custom Cursor rules based on project setup.
 
@@ -538,17 +546,75 @@ def generate_rules(
         project_description: Description of the project including technologies and structure
         project_path: Optional path to the project directory for automated analysis
         output_format: Format for output - 'single' or 'multiple'
+        ctx: FastMCP context for logging
 
     Returns:
         Generated rules content or a summary of generated files
-
     """
+    if ctx:
+        ctx.info(f"Generating Cursor rules for project: {project_description[:50]}...")
+        if project_path:
+            ctx.info(f"Analyzing project directory: {project_path}")
+    
     generator = CursorRulesGenerator()
-    return generator.generate_rules(
+    
+    result = generator.generate_rules(
         project_description=project_description,
         project_path=project_path if project_path else None,
         output_format=output_format
     )
+    
+    if ctx:
+        ctx.info("Rules generation complete!")
+    
+    return result
+
+@mcp.tool()
+def preview_template(template_name: str = Field(description="Name of the template to preview")) -> str:
+    """Preview a specific rule template.
+    
+    Args:
+        template_name: Name of the template to preview
+        
+    Returns:
+        The content of the requested template
+    """
+    generator = CursorRulesGenerator()
+    
+    if not generator.templates:
+        return "No templates found. Please create templates in the hack/drafts/cursor_rules directory."
+    
+    if template_name not in generator.templates:
+        available = ", ".join(generator.templates.keys())
+        return f"Template '{template_name}' not found. Available templates: {available}"
+    
+    return generator.templates[template_name]['content']
+
+@mcp.tool()
+def list_templates() -> str:
+    """List all available rule templates.
+    
+    Returns:
+        A formatted list of available templates with their metadata
+    """
+    generator = CursorRulesGenerator()
+    
+    if not generator.templates:
+        return "No templates found. Please create templates in the hack/drafts/cursor_rules directory."
+    
+    result = "Available templates:\n\n"
+    for name, data in generator.templates.items():
+        metadata = data.get('metadata', {})
+        techs = ", ".join(metadata.get('technologies', ['any']))
+        keywords = ", ".join(metadata.get('keywords', []))
+        
+        result += f"- {name}\n"
+        result += f"  Technologies: {techs}\n"
+        if keywords:
+            result += f"  Keywords: {keywords}\n"
+        result += "\n"
+    
+    return result
 
 # For direct execution
 if __name__ == "__main__":
