@@ -87,6 +87,10 @@
         "editor.formatOnPaste": false,
         "editor.formatOnType": false
     },
+    "[makefile]": {
+        "editor.formatOnSave": true,
+        "editor.tabSize": 4
+    },
     "editor.inlineSuggest.showToolbar": "onHover",
     "editor.renderWhitespace": "all",
     "python.analysis.packageIndexDepths": [

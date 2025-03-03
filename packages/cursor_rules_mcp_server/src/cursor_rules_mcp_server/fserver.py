@@ -400,7 +400,7 @@ project {
         for section in recommended_sections:
             if section not in rules_content:
                 missing_sections.append(section)
-        
+
         if missing_sections:
             errors.append(f"Missing recommended sections: {', '.join(missing_sections)}")
 
@@ -525,7 +525,7 @@ project {
 
 # Set up FastMCP server
 mcp = FastMCP(
-    name="Cursor Rules Generator",
+    name="mcp-cursor-rules",
     instructions="I can help you generate custom Cursor rules for your project. Provide a description of your project and optionally a path to analyze."
 )
 
@@ -550,70 +550,73 @@ def generate_rules(
 
     Returns:
         Generated rules content or a summary of generated files
+
     """
     if ctx:
         ctx.info(f"Generating Cursor rules for project: {project_description[:50]}...")
         if project_path:
             ctx.info(f"Analyzing project directory: {project_path}")
-    
+
     generator = CursorRulesGenerator()
-    
+
     result = generator.generate_rules(
         project_description=project_description,
         project_path=project_path if project_path else None,
         output_format=output_format
     )
-    
+
     if ctx:
         ctx.info("Rules generation complete!")
-    
+
     return result
 
 @mcp.tool()
 def preview_template(template_name: str = Field(description="Name of the template to preview")) -> str:
     """Preview a specific rule template.
-    
+
     Args:
         template_name: Name of the template to preview
-        
+
     Returns:
         The content of the requested template
+
     """
     generator = CursorRulesGenerator()
-    
+
     if not generator.templates:
         return "No templates found. Please create templates in the hack/drafts/cursor_rules directory."
-    
+
     if template_name not in generator.templates:
         available = ", ".join(generator.templates.keys())
         return f"Template '{template_name}' not found. Available templates: {available}"
-    
+
     return generator.templates[template_name]['content']
 
 @mcp.tool()
 def list_templates() -> str:
     """List all available rule templates.
-    
+
     Returns:
         A formatted list of available templates with their metadata
+
     """
     generator = CursorRulesGenerator()
-    
+
     if not generator.templates:
         return "No templates found. Please create templates in the hack/drafts/cursor_rules directory."
-    
+
     result = "Available templates:\n\n"
     for name, data in generator.templates.items():
         metadata = data.get('metadata', {})
         techs = ", ".join(metadata.get('technologies', ['any']))
         keywords = ", ".join(metadata.get('keywords', []))
-        
+
         result += f"- {name}\n"
         result += f"  Technologies: {techs}\n"
         if keywords:
             result += f"  Keywords: {keywords}\n"
         result += "\n"
-    
+
     return result
 
 # For direct execution

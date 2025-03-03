@@ -240,4 +240,10 @@ copy-global-taskfile:
 quick-fmt:
 	@git ls-files '*.py' '*.ipynb' "Dockerfile" "Dockerfile.*" | xargs uv run pre-commit run --files
 
+aider:
+	uv run aider --sonnet --architect --map-tokens 2048 --cache-prompts --edit-format diff
+
+inspect-fserver:
+	@npx @modelcontextprotocol/inspector uv run python -m packages.cursor_rules_mcp_server.src.cursor_rules_mcp_server.fserver
+
 .DEFAULT_GOAL := help

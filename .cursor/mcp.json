@@ -8,6 +8,15 @@
         "-y",
         "@modelcontextprotocol/server-memory"
       ]
+    },
+    "cursor-rules": {
+      "command": "uv",
+      "args": [
+        "run",
+        "python",
+        "-m",
+        "packages.cursor_rules_mcp_server.src.cursor_rules_mcp_server.fserver"
+      ]
     }
   }
 }
