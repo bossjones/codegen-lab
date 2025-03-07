@@ -163,6 +163,9 @@ repos:
     rev: 3.3.1
     hooks:
       - id: relint
+        args:
+          - --config=.relint.yml
+          - --diff
 
   # - repo: local
   #   hooks:

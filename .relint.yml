@@ -1,23 +1,80 @@
 ---
-# - name: Fix it now
-#   pattern: "[fF][iI][xX][mM][eE]"
-#   filename:
-#     - "*.py"
-
-# - name: No sys.path changes
-#   pattern: "sys\\.path\\.append|sys\\.path\\.insert"
-#   filename:
-#     - "src/**.py"
 - name: IPython debug leftover
   pattern: IPython\.embed()
-  filename:
-    - "*.py"
-# - name: Leftover print
-#   pattern: "print\\("
-#   filename:
-#     - ^(?!.*conftest).*\.py$
+  filePattern: .*\.py$
+  hint: Remove IPython.embed() debugging statements before committing
+  error: true
 
-# - name: Use relative imports
-#   pattern: "import pytest_recording|from pytest_recording"
-#   filename:
-#     - "src/**.py"
+# Cursor Rules Linting Rules
+
+- name: Cursor rule file in wrong location
+  pattern: "^---\n(?:.*\n)+?---"
+  filePattern: .*\.(mdc|mdc\.md)$
+  hint: "Cursor rule files (.mdc) must be placed in the .cursor/rules/ directory"
+  error: true
+  exclude: \.cursor/rules/.*\.mdc$|\.relint\.yml$
+
+- name: Cursor rule with wrong extension
+  pattern: "^---\n(?:.*\n)+?---"
+  filePattern: .*\.mdc\.md$
+  hint: "Cursor rule files should use .mdc extension, not .mdc.md"
+  error: true
+  exclude: \.relint\.yml$
+
+- name: Missing alwaysApply in frontmatter
+  pattern: "^---\n(?!(?:.*\n)*?alwaysApply:(?:.*\n)+?---)(?:.*\n)+?---"
+  filePattern: .*\.(mdc|mdc\.md)$
+  hint: "Cursor rule files must include 'alwaysApply: true' or 'alwaysApply: false' in frontmatter"
+  error: true
+  exclude: \.relint\.yml$
+
+- name: Quoted glob patterns in frontmatter
+  pattern: "^---\n(?:(?!---).)*?globs:(?:.*?[\"'].*?[\"'].*?\n)(?:(?!---).)*?---"
+  filePattern: .*\.(mdc|mdc\.md)$
+  hint: |
+    Glob patterns in cursor rules should be unquoted:
+    Use `globs: *.py` instead of `globs: "*.py"`
+  error: true
+  exclude: \.relint\.yml$
+
+- name: Array notation for globs in frontmatter
+  pattern: "^---\n(?:(?!---).)*?globs:\\s*\\[(?:(?!---).)*?---"
+  filePattern: .*\.(mdc|mdc\.md)$
+  hint: |
+    Glob patterns in cursor rules should use comma-separated values, not array notation:
+    Use `globs: *.py, *.md` instead of `globs: ["*.py", "*.md"]`
+  error: true
+  exclude: \.relint\.yml$
+
+- name: Missing spaces after commas in globs
+  pattern: "^---\n(?:(?!---).)*?globs:.*?,\\S(?:(?!---).)*?---"
+  filePattern: .*\.(mdc|mdc\.md)$
+  hint: |
+    Glob patterns in cursor rules should have spaces after commas:
+    Use `globs: *.py, *.md` instead of `globs: *.py,*.md`
+  error: true
+  exclude: \.relint\.yml$
+
+- name: Curly brace notation in globs
+  pattern: "^---\n(?:(?!---).)*?globs:.*?\\{.*?\\}(?:(?!---).)*?---"
+  filePattern: .*\.(mdc|mdc\.md)$
+  hint: |
+    Glob patterns in cursor rules should use comma-separated values, not curly brace notation:
+    Use `globs: *.py, *.js, *.ts` instead of `globs: *.{py,js,ts}`
+  error: true
+  exclude: \.relint\.yml$
+
+- name: Missing rule tag
+  pattern: "^---\n(?:.*\n)+?---\n(?:(?!<rule>).)*$"
+  filePattern: .*\.(mdc|mdc\.md)$
+  hint: "Cursor rule files must include a <rule> tag"
+  error: true
+  exclude: \.relint\.yml$
+
+- name: Missing rule name after tag
+  # Match <rule> tag not followed by name: within 5 lines
+  pattern: "<rule>(?:\n[^\n]*){0,5}(?!.*name:)"
+  filePattern: .*\.(mdc|mdc\.md)$
+  hint: "Cursor rule must include a name field immediately after the <rule> tag"
+  error: true
+  exclude: \.relint\.yml$

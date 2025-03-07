@@ -272,3 +272,122 @@ The script will extract conventional commit messages and categorize them accordi
 - `docs`: Documentation changes
 
 You can customize the changelog configuration by editing the `.changelog-config.yml` file in the project root.
+
+# Cursor Rules Migration Checklist
+
+This checklist tracks the progress of updating cursor rules files to meet the proper frontmatter requirements according to the `cursor_rules_location.mdc` standard.
+
+## Required Changes
+
+Each `.mdc.md` file in the `hack/drafts/cursor_rules` directory needs the following changes:
+
+1. Add `alwaysApply: false` (or `true` as appropriate) to the frontmatter
+2. Fix glob pattern formats:
+   - Remove quotes from glob patterns
+   - Convert array notation to comma-separated values
+   - Convert curly brace notation to comma-separated values
+   - Add spaces after commas for readability
+3. Move files from `hack/drafts/cursor_rules/*.mdc.md` to `.cursor/rules/*.mdc`
+
+## Migration Progress
+
+### Fixed Files (✅)
+
+- [x] anthropic-chain-of-thought.mdc.md
+- [x] basedpyright.mdc.md
+- [x] bossjones-cursor-tools.mdc.md
+- [x] changelog.mdc.md
+- [x] cheatsheet.mdc.md
+- [x] code-context-gatherer.mdc.md
+- [x] cursor_rules_location.mdc.md
+- [x] debug-gh-actions.mdc.md
+- [x] docs.mdc.md
+- [x] fastmcp.mdc.md
+- [x] get_context_for_llm.mdc.md
+- [x] github-actions-uv.mdc.md
+- [x] greenfield-documentation.mdc.md
+- [x] greenfield-execution.mdc.md
+- [x] greenfield-index.mdc.md
+- [x] greenfield.mdc.md
+- [x] incremental-task-planner.mdc.md
+- [x] iterative-debug-fix.mdc.md
+- [x] iterative-development-workflow.mdc.md
+- [x] mcp_spec.mdc.md
+- [x] notify.mdc.md
+- [x] output_txt_context.mdc.md
+- [x] project_layout.mdc.md
+- [x] python_rules.mdc.md
+- [x] ruff.mdc.md
+- [x] tdd.mdc.md
+- [x] test-generator.mdc.md
+- [x] tree.mdc.md
+- [x] uv-workspace.mdc.md
+- [x] uv.mdc.md
+
+### Remaining Tasks
+
+- [ ] Move all fixed files from `hack/drafts/cursor_rules/*.mdc.md` to `.cursor/rules/*.mdc`
+- [ ] Verify all files work correctly after migration
+- [ ] Update any references to these files in other parts of the codebase
+
+## Installation After Migration
+
+To install these rules in your project after they've been fixed:
+
+```bash
+mkdir -p .cursor/rules
+# Copy the fixed files with the correct extension
+cp hack/drafts/cursor_rules/*.mdc.md .cursor/rules/
+# Rename files to remove .md extension
+for file in .cursor/rules/*.mdc.md; do
+  mv "$file" "${file%.md}"
+done
+```
+
+## Original README Content
+
+# Non-Greenfield Iterative Development Cursor Rules
+
+This collection of cursor rules implements Harper Reed's non-greenfield iteration workflow as described in [their blog post](https://harper.blog/2025/02/16/my-llm-codegen-workflow-atm/). The rules are designed to help you automatically follow this workflow using Cursor's agent mode.
+
+## Workflow Overview
+
+Harper's non-greenfield iteration workflow involves:
+
+1. **Getting context** from the existing codebase
+2. **Planning per task** rather than for the entire project
+3. **Implementing incrementally** with constant testing and feedback
+4. **Debugging and fixing issues** as they arise
+
+## Rules in this Collection
+
+This collection contains the following cursor rules:
+
+1. **[incremental-task-planner.mdc.md](incremental-task-planner.mdc.md)** - Breaks down a development task into smaller, manageable steps for incremental implementation
+2. **[code-context-gatherer.mdc.md](code-context-gatherer.mdc.md)** - Efficiently gathers code context from the codebase for LLM consumption
+3. **[test-generator.mdc.md](test-generator.mdc.md)** - Identifies missing tests and generates appropriate test cases for the codebase
+4. **[iterative-debug-fix.mdc.md](iterative-debug-fix.mdc.md)** - Provides guidance for debugging and fixing issues that arise during iterative development
+5. **[iterative-development-workflow.mdc.md](iterative-development-workflow.mdc.md)** - Master rule that provides a structured workflow for incremental development in existing codebases
+
+## How to Use These Rules
+
+To use these rules in your project:
+
+1. These are draft rules that need to be moved to your `.cursor/rules/` directory for Cursor to apply them
+2. Copy the `.mdc.md` files to `.cursor/rules/` in your project
+3. Cursor's agent mode will automatically apply these rules based on your queries
+
+## Sample Usage Flow
+
+Here's how you might use these rules in a typical development session:
+
+1. **Start with the workflow**: "Help me implement a feature using the iterative development workflow"
+2. **Gather context**: "Help me understand the current authentication system"
+3. **Plan your task**: "Break down the task of adding two-factor authentication"
+4. **Implement incrementally**: "Help me implement the first step of the 2FA feature"
+5. **Add tests**: "Generate tests for the 2FA authentication code"
+6. **Debug issues**: "The 2FA verification isn't working, help me debug it"
+
+## Credits
+
+These rules are based on Harper Reed's blog post ["My LLM codegen workflow atm"](https://harper.blog/2025/02/16/my-llm-codegen-workflow-atm/) which describes an effective iterative development workflow using LLMs.

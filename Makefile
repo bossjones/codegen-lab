@@ -169,7 +169,10 @@ update-cursor-rules:  ## Update cursor rules from prompts/drafts/cursor_rules
 	# Note: at the time of writing, cursor does not support generating .mdc files via Composer Agent.s
 	mkdir -p .cursor/rules || true
 	# Copy files from prompts/drafts/cursor_rules to .cursor/rules and change extension to .mdc
-	find hack/drafts/cursor_rules -type f -name "*.md" -exec sh -c 'for file; do target=$${file%.md}; cp -a "$$file" ".cursor/rules/$$(basename "$$target")"; done' sh {} +
+	# Exclude README.md files from being copied
+	find hack/drafts/cursor_rules -type f -name "*.md" ! -name "README.md" -exec sh -c 'for file; do target=$${file%.md}; cp -a "$$file" ".cursor/rules/$$(basename "$$target")"; done' sh {} +
+
+
 
 # Documentation targets
 .PHONY: docs-serve docs-build docs-deploy docs-clean
@@ -245,5 +248,18 @@ aider:
 
 inspect-fserver:
 	@npx @modelcontextprotocol/inspector uv run python -m packages.cursor_rules_mcp_server.src.cursor_rules_mcp_server.fserver
+
+.PHONY: relint relint-cursor-rules
+relint: ## Run relint via pre-commit on specified files (usage: make relint FILES="file1 file2")
+	@echo "🚀 Running relint on specified files"
+	@if [ -z "$(FILES)" ]; then \
+		echo "Please provide files to check with FILES=\"file1 file2\""; \
+	else \
+		echo $(FILES) | xargs uv run pre-commit run relint --files; \
+	fi
+
+relint-cursor-rules: ## Run relint via pre-commit on all cursor rule files tracked by git
+	@echo "🚀 Running relint on cursor rule files"
+	@git ls-files 'hack/drafts/cursor_rules/*.mdc.md' 'hack/drafts/cursor_rules/*.mdc' '.cursor/rules/*.mdc' | xargs uv run pre-commit run relint --files
 
 .DEFAULT_GOAL := help
