@@ -1,6 +1,7 @@
 ---
 description: Cursor Rules Location
 globs: *.mdc
+alwaysApply: false
 ---
 # Cursor Rules Location
 
@@ -58,6 +59,41 @@ actions:
          - In subdirectories outside .cursor/rules
          - In any other location
 
+      5. Format the globs section correctly:
+         - Use unquoted glob patterns: `globs: *.py` ✓
+         - Do NOT use quoted glob patterns: `globs: "*.py"` ✗
+         - Multiple patterns should be comma-separated: `globs: *.py, *.md, *.txt`
+
+      6. Configure rule application mode correctly:
+         - Include the `alwaysApply` field in the frontmatter
+         - Set appropriate values based on rule type:
+           ```
+           ---
+           description: Your rule description
+           globs: *.py, *.md
+           alwaysApply: false
+           ---
+           ```
+
+      7. Follow these requirements based on rule type:
+         - **Always** mode:
+           - Set `alwaysApply: true`
+           - `globs` can be empty
+           - `description` can be blank
+
+         - **Auto Attached** mode:
+           - Set `alwaysApply: false`
+           - `globs` must contain valid patterns
+           - `description` should be populated
+
+         - **Agent Requested** mode:
+           - No special frontmatter requirements
+           - `description` must be populated for discoverability
+
+         - **Manual** mode:
+           - Rule must be manually included in the chat window
+           - No special frontmatter requirements
+
 examples:
   - input: |
       # Bad: Rule file in wrong location
@@ -67,7 +103,32 @@ examples:
 
       # Good: Rule file in correct location
       .cursor/rules/my-rule.mdc
-    output: "Correctly placed Cursor rule file"
+
+      # Bad: Quoted glob pattern
+      globs: "*.py"
+
+      # Good: Unquoted glob pattern
+      globs: *.py
+      globs: *.py, *.md
+
+      # Always mode example
+      ---
+      description: Optional description
+      alwaysApply: true
+      ---
+
+      # Auto Attached mode example
+      ---
+      description: Required description
+      globs: *.py, *.md
+      alwaysApply: false
+      ---
+
+      # Agent Requested mode example
+      ---
+      description: Required detailed description for discoverability
+      ---
+    output: "Correctly placed Cursor rule file with proper configuration"
 
 metadata:
   priority: high

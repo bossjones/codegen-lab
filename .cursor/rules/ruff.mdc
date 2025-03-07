@@ -1,7 +1,6 @@
 ---
 description: Ruff linting configuration and usage guidelines
-globs: *.py
-alwaysApply: false
+globs: "*.py"
 ---
 # Ruff Configuration Guide
 
