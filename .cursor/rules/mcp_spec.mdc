@@ -1,6 +1,7 @@
 ---
 description: Anthropic Model Context Protocol (MCP) Specification Reference
-globs: "**/*.py,**/*.md,**/*.json"
+globs: **/*.py, **/*.md, **/*.json
+alwaysApply: false
 ---
 
 # Anthropic Model Context Protocol (MCP) Reference

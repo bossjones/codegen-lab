@@ -1,6 +1,7 @@
 ---
 description: Cheatsheet Creation Best Practices
-globs: "*.cheat,**/*.cheat"
+globs: *.cheat, **/*.cheat
+alwaysApply: false
 ---
 # Cheatsheet Creation Expert
 

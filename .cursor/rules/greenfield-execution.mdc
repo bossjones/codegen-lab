@@ -1,6 +1,7 @@
 ---
 description: Greenfield Execution Best Practices
-globs: *.{py,js,ts,jsx,tsx,rs,go,cpp,java}
+globs: *.py, *.js, *.ts, *.jsx, *.tsx, *.rs, *.go, *.cpp, *.java
+alwaysApply: false
 ---
 # Greenfield Execution Best Practices
 

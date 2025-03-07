@@ -1,6 +1,7 @@
 ---
 description: UV Workspace Configuration
 globs: pyproject.toml
+alwaysApply: false
 ---
 # UV Workspace Configuration
 
