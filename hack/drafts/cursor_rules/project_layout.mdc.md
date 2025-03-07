@@ -1,6 +1,7 @@
 ---
 description: Documentation of the Codegen Lab project structure, organization, and Greenfield development process
-globs: ["**/*.md", "**/*.py", "**/*.mdc"]
+globs: **/*.md, **/*.py, **/*.mdc
+alwaysApply: false
 ---
 # Codegen Lab Project Layout
 

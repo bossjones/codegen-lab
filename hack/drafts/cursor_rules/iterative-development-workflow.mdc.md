@@ -1,6 +1,7 @@
 ---
 description: Structured workflow for incremental development in existing codebases
 globs: *
+alwaysApply: false
 ---
 # Iterative Development Workflow
 

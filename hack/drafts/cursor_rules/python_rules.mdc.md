@@ -1,6 +1,7 @@
 ---
 description: Comprehensive Python development rules and standards for the Codegen Lab project
-globs: ["**/*.py"]
+globs: **/*.py
+alwaysApply: false
 ---
 # Python Development Standards
 

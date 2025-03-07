@@ -1,6 +1,7 @@
 ---
 description: Efficiently gather code context from the codebase for LLM consumption
 globs: *
+alwaysApply: false
 ---
 
 # Code Context Gatherer

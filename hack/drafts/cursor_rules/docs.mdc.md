@@ -1,6 +1,7 @@
 ---
 description: Documentation Standards and Workflows for Codegen Lab
-globs: *.md,mkdocs.yml,scripts/serve_docs.py
+globs: *.md, mkdocs.yml, scripts/serve_docs.py
+alwaysApply: false
 ---
 # Documentation Standards and Workflows
 

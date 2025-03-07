@@ -1,6 +1,7 @@
 ---
 description: GitHub Actions with UV Package Manager Standards
 globs: .github/workflows/*.yml
+alwaysApply: false
 ---
 # GitHub Actions with UV Standards
 
