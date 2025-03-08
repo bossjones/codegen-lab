@@ -559,8 +559,19 @@ def save_cursor_rule(rule_name: str, rule_content: str) -> str:
         str: Success message
 
     """
-    rule_path = CURSOR_RULES_DIR / f"{rule_name}.mdc.md"
+    # Get the current working directory
+    current_dir = Path.cwd()
+
+    # Create the cursor rules directory path relative to the current directory
+    local_cursor_rules_dir = current_dir / "hack" / "drafts" / "cursor_rules"
+
+    # Create the directory if it doesn't exist
+    local_cursor_rules_dir.mkdir(parents=True, exist_ok=True)
+
+    # Save the rule to the local cursor rules directory
+    rule_path = local_cursor_rules_dir / f"{rule_name}.mdc.md"
     rule_path.write_text(rule_content)
+
     return f"Cursor rule saved to {rule_path}"
 
 

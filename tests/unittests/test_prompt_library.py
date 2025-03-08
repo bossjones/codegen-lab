@@ -5,6 +5,7 @@ cursor rules as resources and provides a prompt endpoint for creating custom cur
 """
 
 import json
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List
 
 import pytest
@@ -15,6 +16,7 @@ from codegen_lab.prompt_library import (
     mcp,
     parse_cursor_rule,
     read_cursor_rule,
+    save_cursor_rule,
 )
 
 if TYPE_CHECKING:
@@ -294,3 +296,31 @@ def test_generate_cursor_rule() -> None:
     assert "- test" in result
     assert "- example" in result
     assert "</rule>" in result
+
+
+def test_save_cursor_rule(mocker: "MockerFixture", tmp_path: "Path") -> None:
+    """Test that the save_cursor_rule function saves files relative to the current working directory.
+
+    Args:
+        mocker: Pytest fixture for mocking
+        tmp_path: Pytest fixture providing a temporary directory path
+
+    """
+    # Mock the current working directory to be the temporary directory
+    mocker.patch("pathlib.Path.cwd", return_value=tmp_path)
+
+    # Call the function
+    rule_name = "test-rule"
+    rule_content = "# Test Rule\n\nThis is a test rule."
+    result = save_cursor_rule(rule_name, rule_content)
+
+    # Check that the file was saved in the correct location
+    expected_path = tmp_path / "hack" / "drafts" / "cursor_rules" / f"{rule_name}.mdc.md"
+    assert expected_path.exists()
+    assert expected_path.read_text() == rule_content
+    assert f"Cursor rule saved to {expected_path}" in result
+
+    # Check that the directory structure was created
+    assert (tmp_path / "hack").exists()
+    assert (tmp_path / "hack" / "drafts").exists()
+    assert (tmp_path / "hack" / "drafts" / "cursor_rules").exists()

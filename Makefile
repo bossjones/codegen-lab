@@ -274,6 +274,11 @@ run-prompt-library-mcp: ## Run the prompt_library MCP server
 	@echo "🚀 Starting prompt_library MCP server"
 	@uv run --with 'mcp[cli]' mcp run src/codegen_lab/prompt_library.py
 
+.PHONY: install-prompt-library-mcp
+install-prompt-library-mcp: ## Install the prompt_library MCP server
+	@echo "🚀 Installing prompt_library MCP server"
+	@uv run --with 'mcp[cli]' mcp install src/codegen_lab/prompt_library.py
+
 .PHONY: run-prompt-library-mcp-dev
 run-prompt-library-mcp-dev: ## Run the prompt_library MCP server in development mode
 	@echo "🚀 Starting prompt_library MCP server in development mode"
