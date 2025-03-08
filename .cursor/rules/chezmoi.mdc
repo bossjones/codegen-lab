@@ -1,12 +1,12 @@
-# Chezmoi Dotfile Manager
-
-Guidelines for working with the Chezmoi dotfile management tool and its codebase.
-
 ---
 description: Best practices and reference for working with Chezmoi dotfile manager
 globs: *.go, *.toml, *.tmpl
 alwaysApply: false
 ---
+# Chezmoi Dotfile Manager
+
+Guidelines for working with the Chezmoi dotfile management tool and its codebase.
+
 
 <rule>
 name: chezmoi_dotfile_manager

@@ -1,3 +1,9 @@
+---
+description: Expert guidance for Sheldon shell plugin manager configuration and debugging
+globs: *.toml, *.lock, .zshrc, .bashrc
+alwaysApply: false
+---
+
 # Sheldon Configuration and Debugging Expert
 
 Guidelines for configuring, troubleshooting, and optimizing Sheldon shell plugin manager.
