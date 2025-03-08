@@ -267,3 +267,36 @@ relint-cursor-rules: ## Run relint via pre-commit on all cursor rule files track
 .PHONY: unittests
 unittests: ## Run unittests
 	uv run pytest tests/unittests/test_prompt_library.py -v -k "test_repo_analysis_prompt or test_generate_cursor_rule_prompt"
+
+
+.PHONY: run-prompt-library-mcp
+run-prompt-library-mcp: ## Run the prompt_library MCP server
+	@echo "🚀 Starting prompt_library MCP server"
+	@uv run --with 'mcp[cli]' mcp run src/codegen_lab/prompt_library.py
+
+.PHONY: run-prompt-library-mcp-dev
+run-prompt-library-mcp-dev: ## Run the prompt_library MCP server in development mode
+	@echo "🚀 Starting prompt_library MCP server in development mode"
+	@uv run --with 'mcp[cli]' mcp dev src/codegen_lab/prompt_library.py
+
+.PHONY: run-mcp-dev
+run-mcp-dev: ## Run any MCP script in development mode (usage: make run-mcp-dev script=path/to/script.py)
+	@if [ -z "$(script)" ]; then \
+		echo "Please provide a script path with script=path/to/script.py"; \
+		exit 1; \
+	fi
+	@echo "🚀 Starting MCP server in development mode: $(script)"
+	@uv run --with 'mcp[cli]' mcp dev $(script)
+
+.PHONY: run-mcp-dev-with
+run-mcp-dev-with: ## Run any MCP script in development mode with additional dependencies (usage: make run-mcp-dev-with script=path/to/script.py deps="pandas numpy")
+	@if [ -z "$(script)" ]; then \
+		echo "Please provide a script path with script=path/to/script.py"; \
+		exit 1; \
+	fi
+	@if [ -z "$(deps)" ]; then \
+		echo "Please provide dependencies with deps=\"package1 package2\""; \
+		exit 1; \
+	fi
+	@echo "🚀 Starting MCP server in development mode with dependencies: $(script)"
+	@uv run --with 'mcp[cli]' mcp dev $(script) --with $(deps)

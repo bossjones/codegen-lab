@@ -17,6 +17,17 @@
         "-m",
         "packages.cursor_rules_mcp_server.src.cursor_rules_mcp_server.fserver"
       ]
-    }
+    },
+    "prompt_library": {
+        "command": "uv",
+        "args": [
+          "run",
+          "--with",
+          "mcp[cli]",
+          "mcp",
+          "run",
+          "/Users/malcolm/dev/bossjones/codegen-lab/src/codegen_lab/prompt_library.py"
+        ]
+      }
   }
 }
