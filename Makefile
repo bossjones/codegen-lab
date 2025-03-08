@@ -263,3 +263,7 @@ relint-cursor-rules: ## Run relint via pre-commit on all cursor rule files track
 	@git ls-files 'hack/drafts/cursor_rules/*.mdc.md' 'hack/drafts/cursor_rules/*.mdc' '.cursor/rules/*.mdc' | xargs uv run pre-commit run relint --files
 
 .DEFAULT_GOAL := help
+
+.PHONY: unittests
+unittests: ## Run unittests
+	uv run pytest tests/unittests/test_prompt_library.py -v -k "test_repo_analysis_prompt or test_generate_cursor_rule_prompt"

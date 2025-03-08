@@ -128,6 +128,55 @@ actions:
       find ./src -name "*.py" -type f | xargs cat > extracted_files.txt
       ```
 
+      ## Step 7: Save Analysis to Markdown File
+
+      To save this analysis to a markdown file for future reference:
+
+      ```bash
+      # Create a markdown file with the analysis
+      # Replace "component_name" with the specific component you're analyzing
+      cat > component_name_repo_analysis.md << 'EOL'
+      # Repository Analysis: Component Name
+
+      ## Repository Structure
+
+      [Insert tree output here]
+
+      ## Key Components
+
+      1. **Entry Points**:
+         - [List entry points]
+
+      2. **Core Modules**:
+         - [List core modules]
+
+      3. **Type Definitions**:
+         - [List type definitions]
+
+      4. **Configuration**:
+         - [List configuration files]
+
+      5. **Utilities**:
+         - [List utility functions]
+
+      ## Relevant Code Extracts
+
+      ### Component Implementation
+
+      ```python
+      # Insert relevant code here
+      ```
+
+      ### Dependencies
+
+      [List dependencies]
+
+      ## Analysis Summary
+
+      [Summarize findings]
+      EOL
+      ```
+
 examples:
   - input: |
       I need to understand where the authentication system is defined in this repository.
@@ -255,70 +304,47 @@ examples:
 
       The models appear to be using various patterns based on the codebase's preferred ORM or database access layer.
 
-  - input: |
-      I need to understand the API endpoints in this project.
-    output: |
-      I'll help you locate and understand the API endpoints in this project.
+      ## Repository Structure
 
-      First, let's analyze the repository structure:
+      [Insert tree output here]
 
-      ```bash
-      # Get directory structure
-      tree -L 7 -I "*.pyc|__pycache__|.git|.pytest_cache|.ruff_cache|.mypy_cache|.coverage|htmlcov|.venv|.env|*.egg-info|build|dist|node_modules|.DS_Store|images"
+      ## Key Components
+
+      1. **Models Directory**:
+         - [List model directories]
+
+      2. **Main Model Files**:
+         - [List model files]
+
+      3. **Database Configuration**:
+         - [List configuration files]
+
+      ## Relevant Code Extracts
+
+      ### Model Definitions
+
+      ```python
+      # Insert model class definitions here
       ```
 
-      Now, let's search for API endpoint definitions using patterns common across different frameworks and languages:
+      ### Database Configuration
 
-      ```bash
-      # Find route definitions in JavaScript/TypeScript frameworks
-      grep -r "app.get" --include="*.js" --include="*.ts" .
-      grep -r "app.post" --include="*.js" --include="*.ts" .
-      grep -r "router.get" --include="*.js" --include="*.ts" .
-      grep -r "router.post" --include="*.js" --include="*.ts" .
-
-      # Find route definitions in Python frameworks
-      grep -r "@app.route" --include="*.py" .
-      grep -r "@app.get" --include="*.py" .
-      grep -r "@app.post" --include="*.py" .
-      grep -r "path(" --include="*.py" .
-
-      # Find controller files
-      find . -type f -name "*controller*" -o -name "*route*" -o -name "*api*" -o -name "*endpoint*" -o -name "*resource*" | grep -v "node_modules" | grep -v "__pycache__"
-
-      # Look for API documentation
-      find . -type f -name "*swagger*" -o -name "*openapi*" -o -name "*api-doc*" | grep -v "node_modules" | grep -v "__pycache__"
+      ```python
+      # Insert database configuration here
       ```
 
-      Based on the search results, I can identify where the API endpoints are defined:
+      ### Relationships
 
-      1. **Controllers/Handlers**: Files that contain the business logic for endpoints
-      2. **Routes/URL Configuration**: Files that map URLs to handlers
-      3. **API Documentation**: Swagger/OpenAPI specs or other API docs
+      [Describe relationships between models]
 
-      Now I'll extract the relevant code to help you understand the API endpoints:
+      ## Analysis Summary
 
-      ```bash
-      # Extract route definitions
-      # For Express.js
-      grep -r -A 10 -B 2 "app.get" --include="*.js" --include="*.ts" .
-      grep -r -A 10 -B 2 "router.post" --include="*.js" --include="*.ts" .
-
-      # For Flask/FastAPI
-      grep -r -A 10 -B 2 "@app.route" --include="*.py" .
-      grep -r -A 10 -B 2 "@app.get" --include="*.py" .
-
-      # Extract controller methods
-      grep -r -A 30 -B 5 "def " --include="*.py" . | grep -A 30 -B 5 "request"
-      grep -r -A 30 -B 5 "function" --include="*.js" --include="*.ts" . | grep -A 30 -B 5 "req, res"
+      The database models in this repository use [ORM/framework name] and follow [architectural pattern].
+      The main entities are [list main entities] with relationships that represent [describe domain model].
+      EOL
       ```
 
-      This extraction will provide you with:
-      - All API route definitions
-      - Controller/handler implementations
-      - Middleware applied to routes
-      - Request/response handling logic
-
-      The API structure follows patterns typical of the framework used in this project, with endpoints organized around resources and following RESTful or RPC conventions.
+      The database_models_repo_analysis.md file has been created with a comprehensive analysis of all database models in this repository. Would you like me to help you understand any specific aspect of the database models in more detail?
 
 metadata:
   priority: high

@@ -134,7 +134,7 @@ ignore = [
     # Existing ignores
     "B008", "D417", "E501", "UP006", "UP007", "S101", "N812",
     # New ignores from errors
-    "D100", "D104", "D107", "D200", "D205", "D211", "D213", "D400", "D401", "D415",
+    "D100", "D104", "D107", "D200", "D205", "D211", "D213", "D400", "D401", "D415", "D203",
     "UP035", "C901", "RUF013", "RUF015", "S603", "S607", "E722",
     "S110", "SIM102", "SIM118", "PGH003", "B904", "F841", "F401"
 ]
@@ -151,3 +151,84 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "**/repository_analyzer.py" = ["SIM102", "C901"]
 # Template handling
 "**/import_templates.py" = ["C901", "D401"]
+
+[tool.pytest.ini_options]
+structlog_keep=["add_logger_name", "StackInfoRenderer", "TimeStamper", "ConsoleRenderer"]
+testpaths = ["tests"]
+
+filterwarnings = [
+    'ignore:configuration option "asyncio_default_fixture_loop_scope" is unset',
+    "ignore::DeprecationWarning:.venv.*:",
+    "ignore::pydantic.warnings.PydanticDeprecatedSince20:.venv.*:",
+    "ignore::DeprecationWarning:discord.*:",
+    "ignore::pydantic.warnings.PydanticDeprecatedSince20:pydantic.*:",
+    "ignore::pydantic.warnings.PydanticDeprecatedSince20:fireworks.*:",
+    "ignore::DeprecationWarning:audioop:",
+    "default::DeprecationWarning:democracy_exe.*:",
+    "default::pydantic.warnings.PydanticDeprecatedSince20:democracy_exe.*:",
+]
+
+pythonpath = "."
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+addopts = [
+    # Print runtimes of the slowest tests.
+    '--durations=10',
+    '--durations-min=0.05',
+    '--junitxml=junit/test-results.xml',
+    '--cov-report=annotate:cov_annotate',
+]
+
+
+log_cli = false
+log_cli_level = "DEBUG"
+# log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
+# log_cli_format = "%(asctime)s [%(levelname)8s] %(module)s.%(funcName)s:%(lineno)d - %(message)s"
+log_cli_format = "%(asctime)s [%(levelname)8s] [%(threadName)s] %(name)s - %(module)s.%(funcName)s (%(filename)s:%(lineno)d) - %(message)s"
+log_cli_date_format = "%Y-%m-%d %H:%M:%S"
+
+# Enable live logging to a file when needed (very useful when debugging evals)
+log_file = "pytest-accuracy-debug.log"
+log_file_date_format = "%Y-%m-%d %H:%M:%S"
+log_file_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
+log_file_level = "DEBUG"
+
+markers = [
+    "cogs: marks tests that run code that utilizes the cogs module (deselect with '-m \"not cogs\"')",
+    "configonly: marks tests that run code that utilizes the config module (deselect with '-m \"not configonly\"')",
+    "e2e: marks tests dealing with e2e testing (deselect with '-m \"not e2e\"')",
+    "evals: marks tests as evals (run with '-m evals')",
+    "fast: marks tests as fast (run with '-m fast')",
+    "httpclientonly: marks tests that run code that utilizes the http_client module (deselect with '-m \"not httpclientonly\"')",
+    "imgops: marks tests as imgops (run with '-m imgops')",
+    "integration: marks tests dealing with integration testing (deselect with '-m \"not integration\"')",
+    "onboardingonly: marks tests that run code that utilizes the new_dev_onboarding_tool module (deselect with '-m \"not onboardingonly\"')",
+    "utilsonly: marks tests that run code that utilizes any utils module (deselect with '-m \"not utilsonly\"')",
+    "retryonly: marks tests that run code that utilizes the retry module (deselect with '-m \"not retryonly\"')",
+    "skip_in_parallel: marks tests that should be run in serial only (deselect with '-m \"not skip_in_parallel\"')",
+    "slow: marks tests as slow (run with '-m slow')",
+    "toolonly: marks tests that run code that utilizes a Custom Langchain tool module in the tools directory (deselect with '-m \"not toolonly\"')",
+    "unittest: marks tests dealing with unittest (deselect with '-m \"not unittest\"')",
+    "vectorstoronly: marks tests that run code that utilizes the flex_vector_store_tool module (deselect with '-m \"not vectorstoronly\"')",
+    "visiontoolonly: marks tests that run code that utilizes vision_tool.py (deselect with '-m \"not visiontoolonly\"')",
+    "webpagetoolonly: marks tests that run code that utilizes the fetch_webpage_tool module (deselect with '-m \"not webpagetoolonly\"')",
+    "vcronly: marks tests that run code that utilizes the vcr module (deselect with '-m \"not vcronly\"')",
+    "vcrcanary: marks tests that run code that utilizes the vcr test canary module (deselect with '-m \"not vcrcanary\"')",
+    "pgvectoronly: marks tests that run code that utilizes the pgvector module (deselect with '-m \"not pgvectoronly\"')",
+    "services: marks tests that run code that belongs to the services module  (deselect with '-m \"not services\"')",
+    "slower: marks tests that run code that belongs to the slower calls at end of pytest run module  (deselect with '-m \"not slower\"')",
+    "discordonly: marks tests that run code that belongs to the discordonly calls at end of pytest run module  (deselect with '-m \"not discordonly\"')",
+    "cursorgenerated: marks tests that are cursor generated (deselect with '-m \"not cursorgenerated\"')",
+    "aidergenerated: marks tests that are aider generated (deselect with '-m \"not aidergenerated\"')",
+    "asynciotyper: marks tests that are asyncio typer generated (deselect with '-m \"not asynciotyper\"')",
+    "cli: marks tests that are cli generated (deselect with '-m \"not cli\"')",
+    "dropboxonly: marks tests that run code that utilizes the dropbox module (deselect with '-m \"not dropboxonly\"')",
+    "gallerydlonly: marks tests that run code that utilizes the gallery-dl module (deselect with '-m \"not gallerydlonly\"')",
+    "logsonly: marks tests that run code that utilizes the logs module (deselect with '-m \"not logsonly\"')",
+    "chatbotonly: marks tests that run code that utilizes the chatbot module (deselect with '-m \"not chatbotonly\"')",
+    "agenticonly: marks tests that run code that utilizes the agentic module (deselect with '-m \"not agenticonly\"')",
+
+
+
+
+]
