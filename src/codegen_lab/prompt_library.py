@@ -129,7 +129,7 @@ class CursorRule(TypedDict):
 
 
 # Create server
-mcp = FastMCP("Cursor Rules Prompt Library")
+mcp = FastMCP("prompt_library")
 
 # Define paths
 CURSOR_RULES_DIR = Path(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../hack/drafts/cursor_rules")))
