@@ -32,8 +32,8 @@ class ChangelogConfig(TypedDict, total=False):
 
     version_prefix: str
     repo_url: str
-    commit_types: Dict[str, str]
-    exclude_types: List[str]
+    commit_types: dict[str, str]
+    exclude_types: list[str]
     changelog_path: str
 
 
@@ -75,7 +75,7 @@ SECTION_PATTERN = re.compile(r"### (?P<section>Added|Changed|Deprecated|Removed|
 ENTRY_PATTERN = re.compile(r"- (?P<entry>.+)$")
 
 
-def load_config(config_path: Optional[str] = None) -> ChangelogConfig:
+def load_config(config_path: str | None = None) -> ChangelogConfig:
     """
     Load configuration from file or use defaults.
 
@@ -92,7 +92,7 @@ def load_config(config_path: Optional[str] = None) -> ChangelogConfig:
 
     config_file = Path(config_path)
     if config_file.exists():
-        with open(config_file, "r", encoding="utf-8") as f:
+        with open(config_file, encoding="utf-8") as f:
             user_config = yaml.safe_load(f)
             if user_config and isinstance(user_config, dict):
                 # Update only the keys that are provided
@@ -103,7 +103,7 @@ def load_config(config_path: Optional[str] = None) -> ChangelogConfig:
     return config
 
 
-def run_git_command(command: List[str]) -> str:
+def run_git_command(command: list[str]) -> str:
     """
     Run a git command and return its output.
 
@@ -129,10 +129,10 @@ def run_git_command(command: List[str]) -> str:
 
 
 def get_commits(
-    branch: Optional[str] = None,
-    since: Optional[str] = None,
-    until: Optional[str] = None,
-) -> List[str]:
+    branch: str | None = None,
+    since: str | None = None,
+    until: str | None = None,
+) -> list[str]:
     """
     Get list of commit messages between main and specified branch.
 
@@ -172,7 +172,7 @@ def get_commits(
 
 def parse_commit(
     commit: str, config: ChangelogConfig
-) -> Optional[Tuple[str, str, bool]]:
+) -> tuple[str, str, bool] | None:
     """
     Parse a commit message according to conventional commits format.
 
@@ -233,7 +233,7 @@ def parse_commit(
     return section, entry, is_breaking
 
 
-def read_changelog(changelog_path: str) -> List[str]:
+def read_changelog(changelog_path: str) -> list[str]:
     """
     Read the changelog file.
 
@@ -244,7 +244,7 @@ def read_changelog(changelog_path: str) -> List[str]:
         List of lines in the changelog.
     """
     try:
-        with open(changelog_path, "r", encoding="utf-8") as f:
+        with open(changelog_path, encoding="utf-8") as f:
             return f.read().splitlines()
     except FileNotFoundError:
         print(f"Warning: Changelog file not found at {changelog_path}", file=sys.stderr)
@@ -252,8 +252,8 @@ def read_changelog(changelog_path: str) -> List[str]:
 
 
 def parse_changelog(
-    lines: List[str],
-) -> Tuple[List[str], Dict[str, List[str]], Dict[str, str]]:
+    lines: list[str],
+) -> tuple[list[str], dict[str, list[str]], dict[str, str]]:
     """
     Parse the changelog into header, sections, and links.
 
@@ -263,13 +263,13 @@ def parse_changelog(
     Returns:
         Tuple of (header_lines, sections, links).
     """
-    header_lines: List[str] = []
-    sections: Dict[str, List[str]] = {}
-    links: Dict[str, str] = {}
+    header_lines: list[str] = []
+    sections: dict[str, list[str]] = {}
+    links: dict[str, str] = {}
 
     # State tracking
-    current_version: Optional[str] = None
-    current_section: Optional[str] = None
+    current_version: str | None = None
+    current_section: str | None = None
     in_unreleased = False
     past_header = False
 
@@ -311,10 +311,10 @@ def parse_changelog(
 
 def update_changelog_content(
     changelog_path: str,
-    new_entries: Dict[str, List[str]],
+    new_entries: dict[str, list[str]],
     config: ChangelogConfig,
     finalize: bool = False,
-    new_version: Optional[str] = None,
+    new_version: str | None = None,
 ) -> None:
     """
     Update the changelog with new entries.
@@ -565,7 +565,7 @@ def main() -> None:
         return
 
     # Parse commits and group by section
-    new_entries: Dict[str, List[str]] = {}
+    new_entries: dict[str, list[str]] = {}
     has_breaking_changes = False
 
     for commit in commits:

@@ -1,6 +1,7 @@
 ---
 description: Greenfield Development Index
 globs: *
+alwaysApply: false
 ---
 # Greenfield Development Index
 

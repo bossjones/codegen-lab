@@ -1,6 +1,7 @@
 ---
 description: Greenfield Documentation Standards
-globs: spec.md,prompt_plan.md,todo.md
+globs: spec.md, prompt_plan.md, todo.md
+alwaysApply: false
 ---
 # Greenfield Documentation Standards
 

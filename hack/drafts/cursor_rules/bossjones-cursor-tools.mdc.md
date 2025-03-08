@@ -1,6 +1,7 @@
 ---
 description: Global Rule
 globs:
+alwaysApply: false
 ---
 <bossjones-cursor-tools Integration>
 # Instructions

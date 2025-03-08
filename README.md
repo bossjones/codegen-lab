@@ -8,6 +8,7 @@ This lab provides a collection of tools and workflows for leveraging Large Langu
 - 📋 **Taskfile** for context collection and LLM interactions
 - 🚀 **Greenfield Development** using LLM-assisted workflows
 - 🧪 **Test-Driven Development** with AI assistance
+- 📦 **UV Workspace** for managing modular packages
 
 ## ✨ Features
 
@@ -16,6 +17,7 @@ This lab provides a collection of tools and workflows for leveraging Large Langu
 - 🧩 Identify and implement missing tests
 - 📊 Generate GitHub issues from codebase analysis
 - 🧠 Leverage Cursor IDE with custom rule files for enhanced AI assistance
+- 📦 Organize code in modular packages with UV workspace management
 
 ## 🛠️ Prerequisites
 
@@ -24,7 +26,8 @@ To use these tools, you'll need to install:
 1. [repomix](https://github.com/replicate/repomix) - For bundling your codebase
 2. [llm](https://llm.datasette.io/) - For interacting with various LLMs
 3. [Cursor](https://cursor.sh/) - The AI-native code editor
-4. Either [Task](https://taskfile.dev/) or [mise](https://mise.jdx.dev/) - Task runners
+4. [UV](https://github.com/astral-sh/uv) - Fast Python package installer and environment manager
+5. Either [Task](https://taskfile.dev/) or [mise](https://mise.jdx.dev/) - Task runners
 
 ### 📥 Installation
 
@@ -34,6 +37,9 @@ npm install -g repomix
 
 # Install llm
 pip install llm
+
+# Install UV
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Install Task (for Taskfile.yml)
 # macOS
@@ -68,8 +74,33 @@ Key cursor rules include:
 - `tdd.mdc` - For test-driven development workflows
 - `anthropic-chain-of-thought.mdc` - For enhanced reasoning
 - `code-context-gatherer.mdc` - For context collection
+- `uv-workspace.mdc` - For UV workspace package management
 
-### 2️⃣ Using Taskfile for Context Collection
+### 2️⃣ Using UV Workspace for Package Management
+
+The project uses UV workspace to manage multiple packages in a single repository:
+
+```bash
+# Lock dependencies for the entire workspace
+make uv-workspace-lock
+
+# Install dependencies for the workspace root
+make uv-workspace-sync
+
+# Create a new package in the workspace
+make uv-workspace-init-package name=my-new-package
+
+# Add a workspace package as a dependency
+make uv-workspace-add-dep package=cursor-rules-mcp-server
+
+# Install dependencies for a specific package
+make uv-workspace-package-sync package=cursor-rules-mcp-server
+
+# Run a command in a specific package
+make uv-workspace-run package=cursor-rules-mcp-server cmd="python -m cursor_rules_mcp_server"
+```
+
+### 3️⃣ Using Taskfile for Context Collection
 
 Generate codebase bundles and LLM prompts using Task:
 
@@ -86,7 +117,7 @@ task python:format
 task python:lint
 ```
 
-### 3️⃣ Implementing Greenfield Projects
+### 4️⃣ Implementing Greenfield Projects
 
 Follow the Greenfield development workflow:
 
@@ -103,6 +134,30 @@ Follow the Greenfield development workflow:
    - Use Cursor's AI capabilities with custom rules
    - Implement each step from your plan
    - Test and verify at each stage
+
+## 📂 Project Structure
+
+```
+.
+├── .cursor/                     # Active cursor rules directory
+│   └── rules/                   # Production cursor rules
+├── Makefile                     # Build automation
+├── README.md                    # Project overview and setup instructions
+├── hack/                        # Development tooling
+│   └── drafts/                  # Work-in-progress resources
+│       └── cursor_rules/        # Staging area for cursor rules
+├── packages/                    # UV workspace packages
+│   └── cursor-rules-mcp-server/ # Cursor rules MCP server package
+│       ├── pyproject.toml       # Package configuration
+│       └── src/                 # Package source code
+│           └── cursor_rules_mcp_server/ # Package code
+├── src/                         # Python source code
+│   └── goob_ai/                 # Core application modules
+├── tests/                       # Test suites
+│   ├── integration/             # Integration tests
+│   └── unittests/               # Unit tests
+└── docs/                        # Project documentation
+```
 
 ## 🧰 Available Task Runners
 
@@ -142,6 +197,17 @@ Both provide the same functionality, just choose the one that fits your workflow
 | `jupyter` | Starts Jupyter Lab |
 | `webui` | Starts WebUI |
 | `claude` | Starts Claude CLI |
+
+### 📦 UV Workspace Tasks
+
+| Task Name | Description |
+|-----------|-------------|
+| `uv-workspace-lock` | Updates the lockfile for the entire workspace |
+| `uv-workspace-sync` | Installs dependencies for the workspace root |
+| `uv-workspace-init-package` | Creates a new package in the workspace |
+| `uv-workspace-add-dep` | Adds a workspace package as a dependency |
+| `uv-workspace-package-sync` | Installs dependencies for a specific package |
+| `uv-workspace-run` | Runs a command in a specific package |
 
 ## 💡 Typical Workflow
 
@@ -206,3 +272,122 @@ The script will extract conventional commit messages and categorize them accordi
 - `docs`: Documentation changes
 
 You can customize the changelog configuration by editing the `.changelog-config.yml` file in the project root.
+
+# Cursor Rules Migration Checklist
+
+This checklist tracks the progress of updating cursor rules files to meet the proper frontmatter requirements according to the `cursor_rules_location.mdc` standard.
+
+## Required Changes
+
+Each `.mdc.md` file in the `hack/drafts/cursor_rules` directory needs the following changes:
+
+1. Add `alwaysApply: false` (or `true` as appropriate) to the frontmatter
+2. Fix glob pattern formats:
+   - Remove quotes from glob patterns
+   - Convert array notation to comma-separated values
+   - Convert curly brace notation to comma-separated values
+   - Add spaces after commas for readability
+3. Move files from `hack/drafts/cursor_rules/*.mdc.md` to `.cursor/rules/*.mdc`
+
+## Migration Progress
+
+### Fixed Files (✅)
+
+- [x] anthropic-chain-of-thought.mdc.md
+- [x] basedpyright.mdc.md
+- [x] bossjones-cursor-tools.mdc.md
+- [x] changelog.mdc.md
+- [x] cheatsheet.mdc.md
+- [x] code-context-gatherer.mdc.md
+- [x] cursor_rules_location.mdc.md
+- [x] debug-gh-actions.mdc.md
+- [x] docs.mdc.md
+- [x] fastmcp.mdc.md
+- [x] get_context_for_llm.mdc.md
+- [x] github-actions-uv.mdc.md
+- [x] greenfield-documentation.mdc.md
+- [x] greenfield-execution.mdc.md
+- [x] greenfield-index.mdc.md
+- [x] greenfield.mdc.md
+- [x] incremental-task-planner.mdc.md
+- [x] iterative-debug-fix.mdc.md
+- [x] iterative-development-workflow.mdc.md
+- [x] mcp_spec.mdc.md
+- [x] notify.mdc.md
+- [x] output_txt_context.mdc.md
+- [x] project_layout.mdc.md
+- [x] python_rules.mdc.md
+- [x] ruff.mdc.md
+- [x] tdd.mdc.md
+- [x] test-generator.mdc.md
+- [x] tree.mdc.md
+- [x] uv-workspace.mdc.md
+- [x] uv.mdc.md
+
+### Remaining Tasks
+
+- [ ] Move all fixed files from `hack/drafts/cursor_rules/*.mdc.md` to `.cursor/rules/*.mdc`
+- [ ] Verify all files work correctly after migration
+- [ ] Update any references to these files in other parts of the codebase
+
+## Installation After Migration
+
+To install these rules in your project after they've been fixed:
+
+```bash
+mkdir -p .cursor/rules
+# Copy the fixed files with the correct extension
+cp hack/drafts/cursor_rules/*.mdc.md .cursor/rules/
+# Rename files to remove .md extension
+for file in .cursor/rules/*.mdc.md; do
+  mv "$file" "${file%.md}"
+done
+```
+
+## Original README Content
+
+# Non-Greenfield Iterative Development Cursor Rules
+
+This collection of cursor rules implements Harper Reed's non-greenfield iteration workflow as described in [their blog post](https://harper.blog/2025/02/16/my-llm-codegen-workflow-atm/). The rules are designed to help you automatically follow this workflow using Cursor's agent mode.
+
+## Workflow Overview
+
+Harper's non-greenfield iteration workflow involves:
+
+1. **Getting context** from the existing codebase
+2. **Planning per task** rather than for the entire project
+3. **Implementing incrementally** with constant testing and feedback
+4. **Debugging and fixing issues** as they arise
+
+## Rules in this Collection
+
+This collection contains the following cursor rules:
+
+1. **[incremental-task-planner.mdc.md](incremental-task-planner.mdc.md)** - Breaks down a development task into smaller, manageable steps for incremental implementation
+2. **[code-context-gatherer.mdc.md](code-context-gatherer.mdc.md)** - Efficiently gathers code context from the codebase for LLM consumption
+3. **[test-generator.mdc.md](test-generator.mdc.md)** - Identifies missing tests and generates appropriate test cases for the codebase
+4. **[iterative-debug-fix.mdc.md](iterative-debug-fix.mdc.md)** - Provides guidance for debugging and fixing issues that arise during iterative development
+5. **[iterative-development-workflow.mdc.md](iterative-development-workflow.mdc.md)** - Master rule that provides a structured workflow for incremental development in existing codebases
+
+## How to Use These Rules
+
+To use these rules in your project:
+
+1. These are draft rules that need to be moved to your `.cursor/rules/` directory for Cursor to apply them
+2. Copy the `.mdc.md` files to `.cursor/rules/` in your project
+3. Cursor's agent mode will automatically apply these rules based on your queries
+
+## Sample Usage Flow
+
+Here's how you might use these rules in a typical development session:
+
+1. **Start with the workflow**: "Help me implement a feature using the iterative development workflow"
+2. **Gather context**: "Help me understand the current authentication system"
+3. **Plan your task**: "Break down the task of adding two-factor authentication"
+4. **Implement incrementally**: "Help me implement the first step of the 2FA feature"
+5. **Add tests**: "Generate tests for the 2FA authentication code"
+6. **Debug issues**: "The 2FA verification isn't working, help me debug it"
+
+## Credits
+
+These rules are based on Harper Reed's blog post ["My LLM codegen workflow atm"](https://harper.blog/2025/02/16/my-llm-codegen-workflow-atm/) which describes an effective iterative development workflow using LLMs.

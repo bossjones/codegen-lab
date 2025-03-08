@@ -1,6 +1,7 @@
 ---
 description: GitHub Actions Workflow Debugging Guide
 globs: .github/workflows/*.yml
+alwaysApply: false
 ---
 # GitHub Actions Workflow Debugging
 

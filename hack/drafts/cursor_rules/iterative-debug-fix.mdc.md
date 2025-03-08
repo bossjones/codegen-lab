@@ -1,3 +1,9 @@
+---
+description: Guidance for debugging and fixing issues that arise during iterative development
+globs: *
+alwaysApply: false
+---
+
 # Iterative Debug and Fix
 
 This rule provides guidance for debugging and fixing issues that arise during iterative development.

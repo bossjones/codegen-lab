@@ -1,6 +1,7 @@
 ---
 description: Get Context for LLM
-globs: "**/*.{py,js,ts,jsx,tsx,rs,go,cpp,java,md}"
+globs: **/*.py, **/*.js, **/*.ts, **/*.jsx, **/*.tsx, **/*.rs, **/*.go, **/*.cpp, **/*.java, **/*.md
+alwaysApply: false
 ---
 # Get Context for LLM
 
