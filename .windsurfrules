@@ -1,0 +1,165 @@
+# Codegen Lab Python Project Rules
+
+<CURRENT_CURSOR_POSITION>
+<project_stack>
+- uv - Python package management and virtual environments
+- ruff - Fast Python linter and formatter
+- pytest - Testing framework with extensive plugins
+  - pytest-asyncio - Async test support
+  - pytest-cov - Coverage reporting
+  - pytest-mock - Mocking support
+- pyright - Static type checking
+- mkdocs - Documentation generation
+- mcp - Model Context Protocol implementation
+- FastMCP - Fast Python MCP server framework
+</project_stack>
+
+<coding_style>
+- Use a consistent coding style throughout the project
+- Format code with ruff before committing
+- Run linting and type checking before finalizing changes
+- Verify tests pass after each significant change
+- Follow PEP 8 guidelines with ruff-specific adjustments
+- Maximum line length is 120 characters
+- Use Python 3.12+ features and typing
+</coding_style>
+
+<python_docstrings>
+- Use Google style docstrings for all Python files
+- Include type annotations in docstrings for parameters and return values
+- Keep the main description on the first line after the opening `"""`
+- Format docstrings as follows:
+  ```python
+  """Short description of the function or class.
+
+  Detailed description using Google format.
+
+  Args:
+      param1: Description of param1
+      param2: Description of param2
+
+  Returns:
+      Description of return value
+
+  Raises:
+      ExceptionType: When and why this exception is raised
+  """
+  ```
+</python_docstrings>
+
+<python_typing>
+- Use type annotations for all function parameters and return values
+- Import typing-related modules as follows:
+  ```python
+  from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
+
+  if TYPE_CHECKING:
+      from _pytest.capture import CaptureFixture
+      from _pytest.fixtures import FixtureRequest
+      from _pytest.logging import LogCaptureFixture
+      from _pytest.monkeypatch import MonkeyPatch
+      from pytest_mock.plugin import MockerFixture
+  ```
+- Use Union with pipe syntax (|) for Python 3.12+ code
+- Use Optional with question mark syntax (?) for Python 3.12+ code
+</python_typing>
+
+<testing_practices>
+- Use pytest for all tests
+- Create __init__.py files in all test directories
+- Organize tests to mirror the source code structure
+- Use pytest fixtures for common setup/teardown
+- Use pytest-mock for mocking
+- Use pytest-asyncio for testing async code
+- Include proper type annotations in test functions
+- Add docstrings to all test functions explaining what is being tested
+- Run tests with `uv run pytest` before committing changes
+- Use markers to categorize tests for selective running
+</testing_practices>
+
+<git_workflow>
+- Make atomic commits with conventional commit messages
+- Start with an initial commit of functional changes
+- Follow with separate commits for formatting, linting, and type checking fixes
+- Use feature branches for new functionality
+- Create pull requests for significant changes
+</git_workflow>
+
+<git_commit_standards>
+- Use the following commit message format:
+  ```
+  Component/File(commit-type[Subcomponent/method]): Concise description
+
+  why: Explanation of necessity or impact.
+  what:
+  - Specific technical changes made
+  - Focused on a single topic
+
+  refs: #issue-number, breaking changes, or relevant links
+  ```
+
+- Common commit types:
+  - **feat**: New features or enhancements
+  - **fix**: Bug fixes
+  - **refactor**: Code restructuring without functional change
+  - **docs**: Documentation updates
+  - **chore**: Maintenance (dependencies, tooling, config)
+  - **test**: Test-related updates
+  - **style**: Code style and formatting
+
+- Prefix Python package changes with:
+  - `py(deps):` for standard packages
+  - `py(deps[dev]):` for development packages
+  - `py(deps[extra]):` for extras/sub-packages
+
+- General guidelines:
+  - Subject line: Maximum 50 characters
+  - Body lines: Maximum 72 characters
+  - Use imperative mood (e.g., "Add", "Fix", not "Added", "Fixed")
+  - Limit to one topic per commit
+  - Separate subject from body with a blank line
+  - Mark breaking changes clearly: `BREAKING:`
+</git_commit_standards>
+
+<pytest_testing_guidelines>
+- Use fixtures from conftest.py for common setup
+- Use pytest-mock for mocking instead of unittest.mock
+- Use pytest.mark to categorize tests
+- Use pytest-asyncio for testing async code with mark.anyio
+- Use tmp_path (pathlib.Path) fixture over Python's tempfile
+- Include proper error handling and assertions in tests
+- Test both success and failure cases
+- Use parametrize for testing multiple scenarios
+</pytest_testing_guidelines>
+
+<import_guidelines>
+- Group imports in the following order:
+  1. Standard library imports
+  2. Third-party imports
+  3. Local application imports
+- Separate each group with a blank line
+- Sort imports alphabetically within each group
+- Use absolute imports for application code
+- For typing imports, use conditional imports with TYPE_CHECKING
+- Import typing-related modules at the top level when needed for runtime
+</import_guidelines>
+
+<mcp_server_guidelines>
+- Follow FastMCP patterns for server implementation
+- Use pydantic models for data validation
+- Implement proper error handling and logging
+- Use async/await for all I/O operations
+- Test MCP servers with client_session fixtures
+- Document all endpoints and resources
+- Use proper typing for all functions and methods
+</mcp_server_guidelines>
+
+<documentation_guidelines>
+- Use mkdocs for project documentation
+- Keep documentation up-to-date with code changes
+- Include examples and usage patterns
+- Document all public APIs
+- Use markdown for all documentation files
+- Organize documentation in a logical structure
+- Include troubleshooting information
+</documentation_guidelines>
