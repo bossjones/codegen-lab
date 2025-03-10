@@ -509,6 +509,75 @@ def get_cursor_rule_raw(name: str) -> str:
     return content
 
 
+@mcp.tool(
+    name="get_static_cursor_rule",
+    description="Get a static cursor rule file by name to be written to the caller's .cursor/rules directory",
+)
+def get_static_cursor_rule(rule_name: str) -> dict[str, str]:
+    """Get a static cursor rule file by name.
+
+    This tool returns the content of a specific cursor rule file so it can be
+    written to the calling repository's .cursor/rules directory.
+
+    Args:
+        rule_name: The name of the cursor rule to retrieve (without .md extension)
+
+    Returns:
+        dict[str, str]: A dictionary containing the rule_name and content
+
+    Raises:
+        FileNotFoundError: If the cursor rule is not found
+
+    """
+    # Add .md extension if not already present
+    full_rule_name = rule_name if rule_name.endswith(".md") else f"{rule_name}.md"
+
+    content = read_cursor_rule(rule_name.replace(".md", ""))
+    if not content:
+        raise FileNotFoundError(f"Static cursor rule '{rule_name}' not found")
+
+    return {"rule_name": full_rule_name, "content": content}
+
+
+@mcp.tool(
+    name="get_static_cursor_rules",
+    description="Get multiple static cursor rule files to be written to the caller's .cursor/rules directory",
+)
+def get_static_cursor_rules(rule_names: list[str]) -> list[dict[str, str]]:
+    """Get multiple static cursor rule files by name.
+
+    This tool returns the content of specific cursor rule files so they can be
+    written to the calling repository's .cursor/rules directory.
+
+    Args:
+        rule_names: List of cursor rule names to retrieve (without .md extension)
+
+    Returns:
+        list[dict[str, str]]: A list of dictionaries containing rule_name and content
+
+    Raises:
+        FileNotFoundError: If any of the cursor rules is not found
+
+    """
+    results = []
+
+    for rule_name in rule_names:
+        try:
+            rule_data = get_static_cursor_rule(rule_name)
+            results.append(rule_data)
+        except FileNotFoundError as e:
+            # Continue with other rules even if one is not found
+            results.append(
+                {
+                    "rule_name": rule_name if rule_name.endswith(".md") else f"{rule_name}.md",
+                    "error": str(e),
+                    "content": None,
+                }
+            )
+
+    return results
+
+
 # Prompt endpoints
 @mcp.prompt(name="repo-analysis", description="Analyze a repository to gather information for cursor rule creation")
 def repo_analysis_prompt(
@@ -1219,18 +1288,18 @@ def update_dockerignore() -> dict[str, Any]:
 
         if not entry_exists:
             # Add the entry to .dockerignore
-            with open(dockerignore_path, "a") as f:
-                # Add a newline if the file doesn't end with one
-                if not dockerignore_content.endswith("\n"):
-                    f.write("\n")
+            # Ensure the file ends with a newline
+            if not dockerignore_content.endswith("\n"):
+                dockerignore_content += "\n"
 
-                f.write(f"{entry}\n")
+            # Add the new entry
+            updated_content = dockerignore_content + f"{entry}\n"
+            dockerignore_path.write_text(updated_content)
 
             action_taken = "updated"
     else:
         # Create a new .dockerignore file with the entry
-        with open(dockerignore_path, "w") as f:
-            f.write(f"{entry}\n")
+        dockerignore_path.write_text(f"{entry}\n")
 
         action_taken = "created"
         has_dockerignore = True

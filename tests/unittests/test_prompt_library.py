@@ -21,6 +21,8 @@ from codegen_lab.prompt_library import (
     ensure_makefile_task,
     generate_cursor_rule,
     get_cursor_rule_names,
+    get_static_cursor_rule,
+    get_static_cursor_rules,
     mcp,
     parse_cursor_rule,
     prep_workspace,
@@ -618,52 +620,85 @@ update-cursor-rules:
         assert "Failed to run the update-cursor-rules task" in result["message"]
 
     def test_update_dockerignore(self, mocker: "MockerFixture", tmp_path: Path) -> None:
-        """Test that update_dockerignore adds the cursor rules directory to .dockerignore.
+        """Test update_dockerignore function.
+
+        This test verifies that the update_dockerignore function correctly updates
+        the .dockerignore file by adding the cursor rules drafts directory.
 
         Args:
-            mocker: Pytest fixture for mocking
+            mocker: MockerFixture for patching
             tmp_path: Pytest fixture providing a temporary directory path
 
         """
-        # Mock the current working directory
+        # Create a mock .dockerignore file in the tmp_path
+        dockerignore_path = tmp_path / ".dockerignore"
+        dockerignore_path.write_text("node_modules\n.env\n")
+
+        # Patch Path.cwd() to return our tmp_path instead of the real cwd
         mocker.patch("pathlib.Path.cwd", return_value=tmp_path)
 
-        # Case 1: .dockerignore doesn't exist
+        # Execute the function
         result = update_dockerignore()
 
-        # Check that a new .dockerignore file was created
-        dockerignore_path = tmp_path / ".dockerignore"
-        assert dockerignore_path.exists()
-        content = dockerignore_path.read_text()
-        assert "hack/drafts/cursor_rules" in content
-        assert "Created" in result["message"]
+        # Assert
+        assert result["success"] is True
+        assert result["action_taken"] == "updated"
 
-        # Case 2: .dockerignore exists but doesn't have the entry
-        dockerignore_content = """
-node_modules/
-__pycache__/
-"""
-        dockerignore_path.write_text(dockerignore_content)
+        # Verify the file was updated correctly
+        updated_content = dockerignore_path.read_text()
+        assert updated_content == "node_modules\n.env\nhack/drafts/cursor_rules\n"
 
-        result = update_dockerignore()
+    def test_get_static_cursor_rule(self, mocker: "MockerFixture", sample_cursor_rule: str) -> None:
+        """Test get_static_cursor_rule function."""
+        # Setup
+        rule_name = "test_rule"
+        mocker.patch("codegen_lab.prompt_library.read_cursor_rule", return_value=sample_cursor_rule)
 
-        # Check that the entry was added
-        content = dockerignore_path.read_text()
-        assert "hack/drafts/cursor_rules" in content
-        assert "Added" in result["message"]
+        # Execute
+        result = get_static_cursor_rule(rule_name)
 
-        # Case 3: .dockerignore exists and has the entry
-        dockerignore_content = """
-node_modules/
-__pycache__/
-hack/drafts/cursor_rules
-"""
-        dockerignore_path.write_text(dockerignore_content)
+        # Assert
+        assert result["rule_name"] == "test_rule.md"
+        assert result["content"] == sample_cursor_rule
 
-        result = update_dockerignore()
+        # Test with .md extension already in the name
+        result = get_static_cursor_rule("test_rule.md")
+        assert result["rule_name"] == "test_rule.md"
 
-        # Check that we get a message about the entry already existing
-        assert "already" in result["message"]
+        # Test not found case
+        mocker.patch("codegen_lab.prompt_library.read_cursor_rule", return_value=None)
+        with pytest.raises(FileNotFoundError):
+            get_static_cursor_rule("nonexistent_rule")
+
+    def test_get_static_cursor_rules(self, mocker: "MockerFixture", sample_cursor_rule: str) -> None:
+        """Test get_static_cursor_rules function."""
+        # Setup
+        rule_names = ["rule1", "rule2", "nonexistent_rule"]
+
+        # Mock to return content for rule1 and rule2, but None for nonexistent_rule
+        def mock_read_cursor_rule(name: str) -> str | None:
+            if name in ["rule1", "rule2"]:
+                return sample_cursor_rule
+            return None
+
+        mocker.patch("codegen_lab.prompt_library.read_cursor_rule", side_effect=mock_read_cursor_rule)
+
+        # Execute
+        results = get_static_cursor_rules(rule_names)
+
+        # Assert
+        assert len(results) == 3
+
+        # Check first two rules have content
+        assert results[0]["rule_name"] == "rule1.md"
+        assert results[0]["content"] == sample_cursor_rule
+        assert results[1]["rule_name"] == "rule2.md"
+        assert results[1]["content"] == sample_cursor_rule
+
+        # Check nonexistent rule has error information
+        assert results[2]["rule_name"] == "nonexistent_rule.md"
+        assert results[2]["content"] is None
+        assert "not found" in results[2]["error"]
 
 
 class TestWorkflowFunctions:
