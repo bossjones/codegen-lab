@@ -18,7 +18,7 @@
         <link rel="prev" href="../installation/">
       
       
-        <link rel="next" href="../../tools/cursor-rules/">
+        <link rel="next" href="../docs-automation/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -284,6 +284,8 @@
       
         
       
+        
+      
     
     
     
@@ -491,10 +493,74 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#uv-workspace-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      UV Workspace Configuration
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="UV Workspace Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#root-pyprojecttoml-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Root pyproject.toml Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workspace-package-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Workspace Package Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workspace-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      Workspace Dependencies
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../docs-automation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Documentation Automation
+    
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -515,6 +581,8 @@
   
     
     
+      
+        
       
         
       
@@ -561,6 +629,28 @@
   
   <span class="md-ellipsis">
     Cursor Rules
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/uv-workspace/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    UV Workspace
     
   </span>
   
@@ -787,6 +877,48 @@
       Command Line Arguments
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#uv-workspace-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      UV Workspace Configuration
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="UV Workspace Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#root-pyprojecttoml-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Root pyproject.toml Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workspace-package-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Workspace Package Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workspace-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      Workspace Dependencies
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1021,6 +1153,59 @@
 <p>Most configuration options can also be set via command line arguments. Command line arguments take precedence over both environment variables and config file settings.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>python<span class="w"> </span>-m<span class="w"> </span>codegen_lab<span class="w"> </span>--model<span class="w"> </span>gpt-4<span class="w"> </span>--temperature<span class="w"> </span><span class="m">0</span>.8<span class="w"> </span>--debug<span class="w"> </span>--output-dir<span class="w"> </span>./custom_output
 </code></pre></div>
+<h2 id="uv-workspace-configuration">UV Workspace Configuration<a class="headerlink" href="#uv-workspace-configuration" title="Permanent link">&para;</a></h2>
+<p>Codegen Lab uses UV workspaces to manage multiple packages within a single repository. The workspace configuration is defined in the root <code>pyproject.toml</code> file.</p>
+<h3 id="root-pyprojecttoml-configuration">Root pyproject.toml Configuration<a class="headerlink" href="#root-pyprojecttoml-configuration" title="Permanent link">&para;</a></h3>
+<p>The root <code>pyproject.toml</code> file contains the configuration for the entire workspace:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">[build-system]</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">requires</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;setuptools&gt;=61&quot;</span><span class="p">]</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">build-backend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;setuptools.build_meta&quot;</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="k">[project]</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;codegen-lab&quot;</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;0.1.0&quot;</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="n">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;A toolkit for AI-assisted code generation and development&quot;</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="n">requires-python</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&gt;=3.12&quot;</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="n">dependencies</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">    </span><span class="s2">&quot;better-exceptions&gt;=0.3.3&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="p">]</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="c1"># UV Workspace Configuration</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="k">[tool.uv.sources]</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="c1"># Workspace packages</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="n">cursor-rules-mcp-server</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">workspace</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="c1"># Add other packages here</span>
+</code></pre></div>
+<h3 id="workspace-package-configuration">Workspace Package Configuration<a class="headerlink" href="#workspace-package-configuration" title="Permanent link">&para;</a></h3>
+<p>Each package in the <code>packages</code> directory has its own <code>pyproject.toml</code> file:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">[project]</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;cursor-rules-mcp-server&quot;</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;0.1.0&quot;</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Cursor rules MCP server package&quot;</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">requires-python</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&gt;=3.12&quot;</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="n">dependencies</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="s2">&quot;better-exceptions&gt;=0.3.3&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="p">]</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="k">[build-system]</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="n">requires</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;setuptools&gt;=61&quot;</span><span class="p">]</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="n">build-backend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;setuptools.build_meta&quot;</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="k">[tool.setuptools]</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="n">package-dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;src&quot;</span><span class="p">}</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="n">packages</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;cursor_rules_mcp_server&quot;</span><span class="p">]</span>
+</code></pre></div>
+<h3 id="workspace-dependencies">Workspace Dependencies<a class="headerlink" href="#workspace-dependencies" title="Permanent link">&para;</a></h3>
+<p>To use one workspace package as a dependency in another, add it to the dependencies list:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">[project]</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">dependencies</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="s2">&quot;another-workspace-package&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="p">]</span>
+</code></pre></div>
+<p>Then update the workspace lockfile:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>make<span class="w"> </span>uv-workspace-lock
+</code></pre></div>
+<p>For more detailed information about working with UV workspaces, refer to the <a href="../../tools/uv-workspace/">UV Workspace documentation</a>.</p>
 
 
 

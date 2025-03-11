@@ -12,13 +12,13 @@
         <meta name="author" content="Malcolm Jones">
       
       
-        <link rel="canonical" href="https://bossjones.github.io/codegen-lab/tools/cursor-rules/">
+        <link rel="canonical" href="https://bossjones.github.io/codegen-lab/tools/uv-workspace/">
       
       
-        <link rel="prev" href="../../user-guide/docs-automation/">
+        <link rel="prev" href="../cursor-rules/">
       
       
-        <link rel="next" href="../uv-workspace/">
+        <link rel="next" href="../../api-reference/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -26,7 +26,7 @@
     
     
       
-        <title>Cursor Rules - Codegen Lab</title>
+        <title>UV Workspace - Codegen Lab</title>
       
     
     
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#cursor-rules-for-iterative-development" class="md-skip">
+        <a href="#uv-workspace-management" class="md-skip">
           Skip to content
         </a>
       
@@ -112,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Cursor Rules
+              UV Workspace
             
           </span>
         </div>
@@ -436,6 +436,28 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../cursor-rules/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cursor Rules
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -452,7 +474,7 @@
           
   
   <span class="md-ellipsis">
-    Cursor Rules
+    UV Workspace
     
   </span>
   
@@ -464,7 +486,7 @@
         
   
   <span class="md-ellipsis">
-    Cursor Rules
+    UV Workspace
     
   </span>
   
@@ -487,46 +509,83 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#quick-reference" class="md-nav__link">
     <span class="md-ellipsis">
-      Overview
+      Quick Reference
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-are-cursor-rules" class="md-nav__link">
+  <a href="#what-is-a-uv-workspace" class="md-nav__link">
     <span class="md-ellipsis">
-      What are Cursor Rules?
+      What is a UV Workspace?
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#rule-collection-for-iterative-development" class="md-nav__link">
+  <a href="#workspace-structure" class="md-nav__link">
     <span class="md-ellipsis">
-      Rule Collection for Iterative Development
+      Workspace Structure
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Rule Collection for Iterative Development">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#available-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Available Commands
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Available Commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#workflow-philosophy" class="md-nav__link">
+  <a href="#core-workspace-management-commands" class="md-nav__link">
     <span class="md-ellipsis">
-      Workflow Philosophy
+      Core Workspace Management Commands
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Core Workspace Management Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#update-lockfile-for-the-entire-workspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update Lockfile for the Entire Workspace
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#rules-in-this-collection" class="md-nav__link">
+  <a href="#install-dependencies-for-the-workspace-root" class="md-nav__link">
     <span class="md-ellipsis">
-      Rules in this Collection
+      Install Dependencies for the Workspace Root
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install-dependencies-for-a-specific-package" class="md-nav__link">
+    <span class="md-ellipsis">
+      Install Dependencies for a Specific Package
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run-a-command-in-a-specific-package" class="md-nav__link">
+    <span class="md-ellipsis">
+      Run a Command in a Specific Package
     </span>
   </a>
   
@@ -536,136 +595,30 @@
     </nav>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#detailed-rule-descriptions" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#package-management-utilities" class="md-nav__link">
     <span class="md-ellipsis">
-      Detailed Rule Descriptions
+      Package Management Utilities
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Detailed Rule Descriptions">
+    <nav class="md-nav" aria-label="Package Management Utilities">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-incremental-task-planner" class="md-nav__link">
+  <a href="#initialize-a-new-package-in-the-workspace" class="md-nav__link">
     <span class="md-ellipsis">
-      1. Incremental Task Planner
+      Initialize a New Package in the Workspace
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-code-context-gatherer" class="md-nav__link">
+  <a href="#add-a-workspace-package-as-a-dependency-to-the-root" class="md-nav__link">
     <span class="md-ellipsis">
-      2. Code Context Gatherer
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-test-generator" class="md-nav__link">
-    <span class="md-ellipsis">
-      3. Test Generator
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-iterative-debug-and-fix" class="md-nav__link">
-    <span class="md-ellipsis">
-      4. Iterative Debug and Fix
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#5-iterative-development-workflow" class="md-nav__link">
-    <span class="md-ellipsis">
-      5. Iterative Development Workflow
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#how-to-use-these-rules" class="md-nav__link">
-    <span class="md-ellipsis">
-      How to Use These Rules
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="How to Use These Rules">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    <span class="md-ellipsis">
-      Installation
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#usage-flow" class="md-nav__link">
-    <span class="md-ellipsis">
-      Usage Flow
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-conversations" class="md-nav__link">
-    <span class="md-ellipsis">
-      Example Conversations
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Example Conversations">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#example-1-planning-a-new-feature" class="md-nav__link">
-    <span class="md-ellipsis">
-      Example 1: Planning a New Feature
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-2-understanding-existing-code" class="md-nav__link">
-    <span class="md-ellipsis">
-      Example 2: Understanding Existing Code
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-3-adding-tests" class="md-nav__link">
-    <span class="md-ellipsis">
-      Example 3: Adding Tests
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-4-fixing-an-issue" class="md-nav__link">
-    <span class="md-ellipsis">
-      Example 4: Fixing an Issue
+      Add a Workspace Package as a Dependency to the Root
     </span>
   </a>
   
@@ -682,18 +635,84 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#customizing-the-rules" class="md-nav__link">
+  <a href="#working-with-workspace-packages" class="md-nav__link">
     <span class="md-ellipsis">
-      Customizing the Rules
+      Working with Workspace Packages
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Working with Workspace Packages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-a-new-package" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating a New Package
     </span>
   </a>
   
 </li>
+        
+          <li class="md-nav__item">
+  <a href="#developing-across-packages" class="md-nav__link">
+    <span class="md-ellipsis">
+      Developing Across Packages
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#running-tests-for-a-specific-package" class="md-nav__link">
+    <span class="md-ellipsis">
+      Running Tests for a Specific Package
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#credits" class="md-nav__link">
+  <a href="#troubleshooting" class="md-nav__link">
     <span class="md-ellipsis">
-      Credits
+      Troubleshooting
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dependency-resolution-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dependency Resolution Issues
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#package-not-found" class="md-nav__link">
+    <span class="md-ellipsis">
+      Package Not Found
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#further-reading" class="md-nav__link">
+    <span class="md-ellipsis">
+      Further Reading
     </span>
   </a>
   
@@ -703,28 +722,6 @@
   
 </nav>
       
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../uv-workspace/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    UV Workspace
-    
-  </span>
-  
-
-      </a>
     </li>
   
 
@@ -848,46 +845,83 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#quick-reference" class="md-nav__link">
     <span class="md-ellipsis">
-      Overview
+      Quick Reference
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-are-cursor-rules" class="md-nav__link">
+  <a href="#what-is-a-uv-workspace" class="md-nav__link">
     <span class="md-ellipsis">
-      What are Cursor Rules?
+      What is a UV Workspace?
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#rule-collection-for-iterative-development" class="md-nav__link">
+  <a href="#workspace-structure" class="md-nav__link">
     <span class="md-ellipsis">
-      Rule Collection for Iterative Development
+      Workspace Structure
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Rule Collection for Iterative Development">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#available-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Available Commands
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Available Commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#workflow-philosophy" class="md-nav__link">
+  <a href="#core-workspace-management-commands" class="md-nav__link">
     <span class="md-ellipsis">
-      Workflow Philosophy
+      Core Workspace Management Commands
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Core Workspace Management Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#update-lockfile-for-the-entire-workspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update Lockfile for the Entire Workspace
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#rules-in-this-collection" class="md-nav__link">
+  <a href="#install-dependencies-for-the-workspace-root" class="md-nav__link">
     <span class="md-ellipsis">
-      Rules in this Collection
+      Install Dependencies for the Workspace Root
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install-dependencies-for-a-specific-package" class="md-nav__link">
+    <span class="md-ellipsis">
+      Install Dependencies for a Specific Package
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run-a-command-in-a-specific-package" class="md-nav__link">
+    <span class="md-ellipsis">
+      Run a Command in a Specific Package
     </span>
   </a>
   
@@ -897,136 +931,30 @@
     </nav>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#detailed-rule-descriptions" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#package-management-utilities" class="md-nav__link">
     <span class="md-ellipsis">
-      Detailed Rule Descriptions
+      Package Management Utilities
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Detailed Rule Descriptions">
+    <nav class="md-nav" aria-label="Package Management Utilities">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-incremental-task-planner" class="md-nav__link">
+  <a href="#initialize-a-new-package-in-the-workspace" class="md-nav__link">
     <span class="md-ellipsis">
-      1. Incremental Task Planner
+      Initialize a New Package in the Workspace
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-code-context-gatherer" class="md-nav__link">
+  <a href="#add-a-workspace-package-as-a-dependency-to-the-root" class="md-nav__link">
     <span class="md-ellipsis">
-      2. Code Context Gatherer
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-test-generator" class="md-nav__link">
-    <span class="md-ellipsis">
-      3. Test Generator
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-iterative-debug-and-fix" class="md-nav__link">
-    <span class="md-ellipsis">
-      4. Iterative Debug and Fix
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#5-iterative-development-workflow" class="md-nav__link">
-    <span class="md-ellipsis">
-      5. Iterative Development Workflow
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#how-to-use-these-rules" class="md-nav__link">
-    <span class="md-ellipsis">
-      How to Use These Rules
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="How to Use These Rules">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    <span class="md-ellipsis">
-      Installation
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#usage-flow" class="md-nav__link">
-    <span class="md-ellipsis">
-      Usage Flow
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-conversations" class="md-nav__link">
-    <span class="md-ellipsis">
-      Example Conversations
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Example Conversations">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#example-1-planning-a-new-feature" class="md-nav__link">
-    <span class="md-ellipsis">
-      Example 1: Planning a New Feature
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-2-understanding-existing-code" class="md-nav__link">
-    <span class="md-ellipsis">
-      Example 2: Understanding Existing Code
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-3-adding-tests" class="md-nav__link">
-    <span class="md-ellipsis">
-      Example 3: Adding Tests
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-4-fixing-an-issue" class="md-nav__link">
-    <span class="md-ellipsis">
-      Example 4: Fixing an Issue
+      Add a Workspace Package as a Dependency to the Root
     </span>
   </a>
   
@@ -1043,18 +971,84 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#customizing-the-rules" class="md-nav__link">
+  <a href="#working-with-workspace-packages" class="md-nav__link">
     <span class="md-ellipsis">
-      Customizing the Rules
+      Working with Workspace Packages
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Working with Workspace Packages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-a-new-package" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating a New Package
     </span>
   </a>
   
 </li>
+        
+          <li class="md-nav__item">
+  <a href="#developing-across-packages" class="md-nav__link">
+    <span class="md-ellipsis">
+      Developing Across Packages
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#running-tests-for-a-specific-package" class="md-nav__link">
+    <span class="md-ellipsis">
+      Running Tests for a Specific Package
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#credits" class="md-nav__link">
+  <a href="#troubleshooting" class="md-nav__link">
     <span class="md-ellipsis">
-      Credits
+      Troubleshooting
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dependency-resolution-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dependency Resolution Issues
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#package-not-found" class="md-nav__link">
+    <span class="md-ellipsis">
+      Package Not Found
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#further-reading" class="md-nav__link">
+    <span class="md-ellipsis">
+      Further Reading
     </span>
   </a>
   
@@ -1079,154 +1073,177 @@
   
 
 
-<h1 id="cursor-rules-for-iterative-development">Cursor Rules for Iterative Development<a class="headerlink" href="#cursor-rules-for-iterative-development" title="Permanent link">&para;</a></h1>
-<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
-<p>This document describes the collection of Cursor rules implemented for Harper Reed's iterative development workflow. These rules help automate and guide developers through the process of working with existing codebases in a structured, incremental manner.</p>
-<h2 id="what-are-cursor-rules">What are Cursor Rules?<a class="headerlink" href="#what-are-cursor-rules" title="Permanent link">&para;</a></h2>
-<p>Cursor rules are custom instructions for Cursor's AI assistant that help automate repetitive tasks, enforce best practices, and guide you through complex workflows. They're defined in <code>.mdc.md</code> files and are triggered based on specific patterns in your messages or the files you're working with.</p>
-<h2 id="rule-collection-for-iterative-development">Rule Collection for Iterative Development<a class="headerlink" href="#rule-collection-for-iterative-development" title="Permanent link">&para;</a></h2>
-<p>This collection implements Harper Reed's non-greenfield iteration workflow as described in <a href="https://harper.blog/2025/02/16/my-llm-codegen-workflow-atm/">their blog post</a>. The workflow is specifically designed for working with existing codebases rather than greenfield (new) projects.</p>
-<h3 id="workflow-philosophy">Workflow Philosophy<a class="headerlink" href="#workflow-philosophy" title="Permanent link">&para;</a></h3>
-<p>Harper's non-greenfield iteration workflow involves:</p>
-<ol>
-<li><strong>Getting context</strong> from the existing codebase</li>
-<li><strong>Planning per task</strong> rather than for the entire project</li>
-<li><strong>Implementing incrementally</strong> with constant testing and feedback</li>
-<li><strong>Debugging and fixing issues</strong> as they arise</li>
-</ol>
-<h3 id="rules-in-this-collection">Rules in this Collection<a class="headerlink" href="#rules-in-this-collection" title="Permanent link">&para;</a></h3>
-<p>This collection contains the following cursor rules:</p>
-<ol>
-<li><strong>Incremental Task Planner</strong> - Breaks down a development task into smaller, manageable steps for incremental implementation</li>
-<li><strong>Code Context Gatherer</strong> - Efficiently gathers code context from the codebase for LLM consumption</li>
-<li><strong>Test Generator</strong> - Identifies missing tests and generates appropriate test cases for the codebase</li>
-<li><strong>Iterative Debug and Fix</strong> - Provides guidance for debugging and fixing issues that arise during iterative development</li>
-<li><strong>Iterative Development Workflow</strong> - Master rule that provides a structured workflow for incremental development in existing codebases</li>
-</ol>
-<h2 id="detailed-rule-descriptions">Detailed Rule Descriptions<a class="headerlink" href="#detailed-rule-descriptions" title="Permanent link">&para;</a></h2>
-<h3 id="1-incremental-task-planner">1. Incremental Task Planner<a class="headerlink" href="#1-incremental-task-planner" title="Permanent link">&para;</a></h3>
-<p><strong>Purpose</strong>: Help break down a development task into smaller, manageable steps for incremental implementation.</p>
-<p><strong>When to use</strong>: When you need to plan the implementation of a new feature or bug fix in an existing codebase.</p>
-<p><strong>Activation phrases</strong>:
-- "Plan this feature"
-- "Break down this task"
-- "Help me implement this incrementally"
-- "Steps for adding [feature]"</p>
-<p><strong>What it does</strong>:
-- Analyzes the task requirements
-- Identifies relevant parts of the codebase
-- Breaks the task into small, logical steps
-- Creates a todo checklist
-- Plans for testing
-- Provides implementation guidance</p>
-<h3 id="2-code-context-gatherer">2. Code Context Gatherer<a class="headerlink" href="#2-code-context-gatherer" title="Permanent link">&para;</a></h3>
-<p><strong>Purpose</strong>: Efficiently gather code context from the codebase for LLM consumption.</p>
-<p><strong>When to use</strong>: When you need to understand how a specific part of the codebase works.</p>
-<p><strong>Activation phrases</strong>:
-- "Help me understand this code"
-- "Gather context for [feature/component]"
-- "How does [system/feature] work?"
-- "Explain the existing code"</p>
-<p><strong>What it does</strong>:
-- Identifies relevant components and files
-- Efficiently collects context from key files
-- Organizes the context in a logical structure
-- Summarizes architecture and key patterns
-- Highlights potential areas for modification</p>
-<h3 id="3-test-generator">3. Test Generator<a class="headerlink" href="#3-test-generator" title="Permanent link">&para;</a></h3>
-<p><strong>Purpose</strong>: Identify missing tests and generate appropriate test cases for the codebase.</p>
-<p><strong>When to use</strong>: When you need to improve test coverage for an existing component.</p>
-<p><strong>Activation phrases</strong>:
-- "Generate tests for [component]"
-- "We need tests for [feature]"
-- "Add missing test coverage"
-- "Write tests for this code"</p>
-<p><strong>What it does</strong>:
-- Analyzes the code for testable components
-- Determines appropriate test types (unit, integration, etc.)
-- Follows the project's testing patterns
-- Generates comprehensive test cases
-- Includes edge cases and error conditions
-- Implements tests with proper typing and documentation</p>
-<h3 id="4-iterative-debug-and-fix">4. Iterative Debug and Fix<a class="headerlink" href="#4-iterative-debug-and-fix" title="Permanent link">&para;</a></h3>
-<p><strong>Purpose</strong>: Provide guidance for debugging and fixing issues that arise during iterative development.</p>
-<p><strong>When to use</strong>: When you encounter a bug or an issue in your implementation.</p>
-<p><strong>Activation phrases</strong>:
-- "Debug this issue"
-- "Fix this error"
-- "This isn't working correctly"
-- "Help me troubleshoot [problem]"</p>
-<p><strong>What it does</strong>:
-- Helps gather comprehensive error information
-- Guides you through reproducing and isolating the issue
-- Provides a systematic approach to debugging
-- Assists in testing hypotheses about the root cause
-- Helps design and implement targeted fixes
-- Guides verification and regression testing
-- Suggests preventative measures for the future</p>
-<h3 id="5-iterative-development-workflow">5. Iterative Development Workflow<a class="headerlink" href="#5-iterative-development-workflow" title="Permanent link">&para;</a></h3>
-<p><strong>Purpose</strong>: Provide a structured workflow for incremental development in existing codebases.</p>
-<p><strong>When to use</strong>: When you want guidance on the overall process of implementing a feature or fix.</p>
-<p><strong>Activation phrases</strong>:
-- "Help me develop this feature"
-- "Guide me through implementing [feature]"
-- "What's the workflow for adding [feature]"
-- "Non-greenfield development process"</p>
-<p><strong>What it does</strong>:
-- Guides you through the three phases of iterative development:
-  1. Understand and Plan
-  2. Implement Incrementally
-  3. Refine and Complete
-- Provides structured steps for each phase
-- Helps maintain focus on incremental progress
-- Ensures quality through testing and refactoring</p>
-<h2 id="how-to-use-these-rules">How to Use These Rules<a class="headerlink" href="#how-to-use-these-rules" title="Permanent link">&para;</a></h2>
-<h3 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h3>
-<p>To use these rules in your project:</p>
+<h1 id="uv-workspace-management">UV Workspace Management<a class="headerlink" href="#uv-workspace-management" title="Permanent link">&para;</a></h1>
+<p>This document provides documentation for working with UV workspaces in this project. UV workspaces allow you to manage multiple Python packages within a single repository, with proper dependency management and isolation.</p>
+<h2 id="quick-reference">Quick Reference<a class="headerlink" href="#quick-reference" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>make uv-workspace-lock</code></td>
+<td>Update lockfile for entire workspace</td>
+</tr>
+<tr>
+<td><code>make uv-workspace-sync</code></td>
+<td>Install dependencies for workspace root</td>
+</tr>
+<tr>
+<td><code>make uv-workspace-package-sync package=name</code></td>
+<td>Install dependencies for specific package</td>
+</tr>
+<tr>
+<td><code>make uv-workspace-run package=name cmd="command"</code></td>
+<td>Run command in specific package</td>
+</tr>
+<tr>
+<td><code>make uv-workspace-init-package name=new-package</code></td>
+<td>Initialize a new package</td>
+</tr>
+<tr>
+<td><code>make uv-workspace-add-dep package=name</code></td>
+<td>Add package as workspace dependency</td>
+</tr>
+</tbody>
+</table>
+<h2 id="what-is-a-uv-workspace">What is a UV Workspace?<a class="headerlink" href="#what-is-a-uv-workspace" title="Permanent link">&para;</a></h2>
+<p>UV Workspace is a feature of the <a href="https://github.com/astral-sh/uv">UV package manager</a> that allows for managing multiple packages within a single repository. Benefits include:</p>
+<ul>
+<li>Single lockfile for the entire workspace</li>
+<li>Proper isolation between packages</li>
+<li>Ability to develop interdependent packages locally</li>
+<li>Simplified dependency management</li>
+</ul>
+<h2 id="workspace-structure">Workspace Structure<a class="headerlink" href="#workspace-structure" title="Permanent link">&para;</a></h2>
+<p>Our workspace is structured as follows:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>codegen-lab/
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── pyproject.toml       # Workspace root config
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>├── packages/            # Directory containing workspace packages
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>│   ├── package-a/       # Individual package
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>│   │   ├── pyproject.toml
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>│   │   └── src/
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>│   │       └── package_a/
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>│   │           └── __init__.py
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>│   └── cursor-rules-mcp-server/  # Example package
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>│       ├── pyproject.toml
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>│       └── src/
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>│           └── cursor_rules_mcp_server/
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>│               └── __init__.py
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>└── src/
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>    └── codegen_lab/     # Workspace root package
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>        └── __init__.py
+</code></pre></div>
+<h2 id="available-commands">Available Commands<a class="headerlink" href="#available-commands" title="Permanent link">&para;</a></h2>
+<p>These commands are available in the Makefile to help you work with UV workspaces:</p>
+<h3 id="core-workspace-management-commands">Core Workspace Management Commands<a class="headerlink" href="#core-workspace-management-commands" title="Permanent link">&para;</a></h3>
+<h4 id="update-lockfile-for-the-entire-workspace">Update Lockfile for the Entire Workspace<a class="headerlink" href="#update-lockfile-for-the-entire-workspace" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>make<span class="w"> </span>uv-workspace-lock
+</code></pre></div>
+<p>This command updates the lockfile for the entire workspace, resolving all dependencies across all packages and ensuring they work well together.</p>
+<h4 id="install-dependencies-for-the-workspace-root">Install Dependencies for the Workspace Root<a class="headerlink" href="#install-dependencies-for-the-workspace-root" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>make<span class="w"> </span>uv-workspace-sync
+</code></pre></div>
+<p>This command installs all dependencies required by the workspace root package.</p>
+<h4 id="install-dependencies-for-a-specific-package">Install Dependencies for a Specific Package<a class="headerlink" href="#install-dependencies-for-a-specific-package" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>make<span class="w"> </span>uv-workspace-package-sync<span class="w"> </span><span class="nv">package</span><span class="o">=</span>cursor-rules-mcp-server
+</code></pre></div>
+<p>This command installs all dependencies required by a specific package. Replace <code>cursor-rules-mcp-server</code> with the name of your package.</p>
+<h4 id="run-a-command-in-a-specific-package">Run a Command in a Specific Package<a class="headerlink" href="#run-a-command-in-a-specific-package" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>make<span class="w"> </span>uv-workspace-run<span class="w"> </span><span class="nv">package</span><span class="o">=</span>cursor-rules-mcp-server<span class="w"> </span><span class="nv">cmd</span><span class="o">=</span><span class="s2">&quot;python -m cursor_rules_mcp_server&quot;</span>
+</code></pre></div>
+<p>This command runs a specified command within the context of a specific package. Replace <code>cursor-rules-mcp-server</code> with the name of your package and <code>python -m cursor_rules_mcp_server</code> with the command you want to run.</p>
+<h3 id="package-management-utilities">Package Management Utilities<a class="headerlink" href="#package-management-utilities" title="Permanent link">&para;</a></h3>
+<h4 id="initialize-a-new-package-in-the-workspace">Initialize a New Package in the Workspace<a class="headerlink" href="#initialize-a-new-package-in-the-workspace" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>make<span class="w"> </span>uv-workspace-init-package<span class="w"> </span><span class="nv">name</span><span class="o">=</span>new-package
+</code></pre></div>
+<p>This command initializes a new package in the workspace with the following:
+- Creates the proper directory structure under <code>packages/new-package/</code>
+- Generates a basic <code>pyproject.toml</code> file with required fields
+- Creates an initial <code>__init__.py</code> file
+- Adds a <code>README.md</code> file</p>
+<p>After running this command, you'll need to add the package as a workspace dependency in the root <code>pyproject.toml</code> file, which can be done with the command below.</p>
+<h4 id="add-a-workspace-package-as-a-dependency-to-the-root">Add a Workspace Package as a Dependency to the Root<a class="headerlink" href="#add-a-workspace-package-as-a-dependency-to-the-root" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>make<span class="w"> </span>uv-workspace-add-dep<span class="w"> </span><span class="nv">package</span><span class="o">=</span>new-package
+</code></pre></div>
+<p>This command adds a workspace package as a dependency to the root <code>pyproject.toml</code> file. After running this command, you should run <code>make uv-workspace-lock</code> to update the lockfile.</p>
+<h2 id="working-with-workspace-packages">Working with Workspace Packages<a class="headerlink" href="#working-with-workspace-packages" title="Permanent link">&para;</a></h2>
+<h3 id="creating-a-new-package">Creating a New Package<a class="headerlink" href="#creating-a-new-package" title="Permanent link">&para;</a></h3>
 <ol>
 <li>
-<p>Ensure you have a <code>.cursor/rules/</code> directory in your project root:
-   <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>.cursor/rules
+<p>Initialize the package:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>make<span class="w"> </span>uv-workspace-init-package<span class="w"> </span><span class="nv">name</span><span class="o">=</span>my-new-package
 </code></pre></div></p>
 </li>
 <li>
-<p>Copy the rule files from the source location:
-   <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>cp<span class="w"> </span>hack/drafts/cursor_rules/*.mdc.md<span class="w"> </span>.cursor/rules/
+<p>Add it as a workspace dependency:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>make<span class="w"> </span>uv-workspace-add-dep<span class="w"> </span><span class="nv">package</span><span class="o">=</span>my-new-package
+</code></pre></div></p>
+</li>
+<li>
+<p>Update the lockfile:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>make<span class="w"> </span>uv-workspace-lock
 </code></pre></div></p>
 </li>
 </ol>
-<h3 id="usage-flow">Usage Flow<a class="headerlink" href="#usage-flow" title="Permanent link">&para;</a></h3>
-<p>Here's how you might use these rules in a typical development session:</p>
+<h3 id="developing-across-packages">Developing Across Packages<a class="headerlink" href="#developing-across-packages" title="Permanent link">&para;</a></h3>
+<p>If you need to use one workspace package in another:</p>
 <ol>
-<li><strong>Start with the workflow</strong>: "Help me implement a feature using the iterative development workflow"</li>
-<li><strong>Gather context</strong>: "Help me understand the current authentication system"</li>
-<li><strong>Plan your task</strong>: "Break down the task of adding two-factor authentication"</li>
-<li><strong>Implement incrementally</strong>: "Help me implement the first step of the 2FA feature"</li>
-<li><strong>Add tests</strong>: "Generate tests for the 2FA authentication code"</li>
-<li><strong>Debug issues</strong>: "The 2FA verification isn't working, help me debug it"</li>
+<li>
+<p>Add the dependency in the package's <code>pyproject.toml</code>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">[project]</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">dependencies</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="s2">&quot;other-workspace-package&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="p">]</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>Run the workspace lock to update dependencies:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>make<span class="w"> </span>uv-workspace-lock
+</code></pre></div></p>
+</li>
 </ol>
-<h3 id="example-conversations">Example Conversations<a class="headerlink" href="#example-conversations" title="Permanent link">&para;</a></h3>
-<h4 id="example-1-planning-a-new-feature">Example 1: Planning a New Feature<a class="headerlink" href="#example-1-planning-a-new-feature" title="Permanent link">&para;</a></h4>
-<p><strong>You</strong>: "I need to add a new payment method to our existing e-commerce system."</p>
-<p><strong>Cursor Assistant</strong>: <em>[Using Incremental Task Planner rule]</em> "I'll help you break that down into manageable steps..."</p>
-<h4 id="example-2-understanding-existing-code">Example 2: Understanding Existing Code<a class="headerlink" href="#example-2-understanding-existing-code" title="Permanent link">&para;</a></h4>
-<p><strong>You</strong>: "I need to understand how our user authentication system works."</p>
-<p><strong>Cursor Assistant</strong>: <em>[Using Code Context Gatherer rule]</em> "Let me gather the relevant code and explain how it works..."</p>
-<h4 id="example-3-adding-tests">Example 3: Adding Tests<a class="headerlink" href="#example-3-adding-tests" title="Permanent link">&para;</a></h4>
-<p><strong>You</strong>: "We need to add tests for our newly implemented payment service."</p>
-<p><strong>Cursor Assistant</strong>: <em>[Using Test Generator rule]</em> "I'll help you generate comprehensive tests for the payment service..."</p>
-<h4 id="example-4-fixing-an-issue">Example 4: Fixing an Issue<a class="headerlink" href="#example-4-fixing-an-issue" title="Permanent link">&para;</a></h4>
-<p><strong>You</strong>: "The payment processing is failing when users have special characters in their names."</p>
-<p><strong>Cursor Assistant</strong>: <em>[Using Iterative Debug and Fix rule]</em> "Let's debug this issue systematically..."</p>
-<h2 id="customizing-the-rules">Customizing the Rules<a class="headerlink" href="#customizing-the-rules" title="Permanent link">&para;</a></h2>
-<p>You can customize these rules by editing the <code>.mdc.md</code> files in your <code>.cursor/rules/</code> directory:</p>
+<h3 id="running-tests-for-a-specific-package">Running Tests for a Specific Package<a class="headerlink" href="#running-tests-for-a-specific-package" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>make<span class="w"> </span>uv-workspace-run<span class="w"> </span><span class="nv">package</span><span class="o">=</span>my-package<span class="w"> </span><span class="nv">cmd</span><span class="o">=</span><span class="s2">&quot;pytest&quot;</span>
+</code></pre></div>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
+<h3 id="dependency-resolution-issues">Dependency Resolution Issues<a class="headerlink" href="#dependency-resolution-issues" title="Permanent link">&para;</a></h3>
+<p>If you encounter dependency resolution issues:</p>
 <ol>
-<li>Modify the filters to match your specific project patterns</li>
-<li>Adjust the instructions to align with your team's practices</li>
-<li>Add or modify examples to better match your codebase</li>
+<li>
+<p>Make sure all workspace packages have compatible Python version requirements:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>grep<span class="w"> </span><span class="s2">&quot;requires-python&quot;</span><span class="w"> </span>packages/*/pyproject.toml
+</code></pre></div></p>
+</li>
+<li>
+<p>Try reinstalling all dependencies:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>make<span class="w"> </span>uv-workspace-sync
+</code></pre></div></p>
+</li>
 </ol>
-<h2 id="credits">Credits<a class="headerlink" href="#credits" title="Permanent link">&para;</a></h2>
-<p>These rules are based on Harper Reed's blog post <a href="https://harper.blog/2025/02/16/my-llm-codegen-workflow-atm/">"My LLM codegen workflow atm"</a> which describes an effective iterative development workflow using LLMs.</p>
+<h3 id="package-not-found">Package Not Found<a class="headerlink" href="#package-not-found" title="Permanent link">&para;</a></h3>
+<p>If a workspace package cannot be imported:</p>
+<ol>
+<li>
+<p>Verify it's properly added to the workspace sources in root <code>pyproject.toml</code>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="k">[tool.uv.sources]</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="n">my-package</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">workspace</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>Ensure the package directory structure follows the convention:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>packages/my-package/src/my_package/__init__.py
+</code></pre></div></p>
+</li>
+</ol>
+<h2 id="further-reading">Further Reading<a class="headerlink" href="#further-reading" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://github.com/astral-sh/uv">UV Package Manager Documentation</a></li>
+<li><a href="https://github.com/astral-sh/uv/blob/main/WORKSPACE.md">UV Workspace Documentation</a></li>
+</ul>
 
 
 

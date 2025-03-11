@@ -1,0 +1,1084 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="AI-powered code generation tooling for efficient software development">
+      
+      
+        <meta name="author" content="Malcolm Jones">
+      
+      
+        <link rel="canonical" href="https://bossjones.github.io/codegen-lab/user-guide/ai-workflows/autogenerate_cursor_rules/">
+      
+      
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.6">
+    
+    
+      
+        <title>How to Auto-Generate Cursor Rules for Your Repository - Codegen Lab</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.8608ea7d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#how-to-auto-generate-cursor-rules-for-your-repository" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Codegen Lab" class="md-header__button md-logo" aria-label="Codegen Lab" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Codegen Lab
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              How to Auto-Generate Cursor Rules for Your Repository
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/bossjones/codegen-lab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    bossjones/codegen-lab
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Codegen Lab" class="md-nav__button md-logo" aria-label="Codegen Lab" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Codegen Lab
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/bossjones/codegen-lab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    bossjones/codegen-lab
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    User Guide
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            User Guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configuration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configuration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docs-automation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Documentation Automation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Development Tools
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Development Tools
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/cursor-rules/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cursor Rules
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/uv-workspace/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    UV Workspace
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api-reference/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    API Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contributing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../changelog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Changelog
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-youll-need" class="md-nav__link">
+    <span class="md-ellipsis">
+      What You'll Need
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-1-generate-a-repository-report" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 1: Generate a Repository Report
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 1: Generate a Repository Report">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#detailed-example-analyzing-a-zsh-dotfiles-repository" class="md-nav__link">
+    <span class="md-ellipsis">
+      Detailed Example: Analyzing a ZSH Dotfiles Repository
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-2-ensure-required-mcp-servers-are-configured" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 2: Ensure Required MCP Servers are Configured
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-3-generate-custom-cursor-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 3: Generate Custom Cursor Rules
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-4-save-the-generated-cursor-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 4: Save the Generated Cursor Rules
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-5-test-your-new-cursor-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 5: Test Your New Cursor Rules
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-workflow-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example Workflow Results
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-insights-from-repository-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Insights from Repository Analysis
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#benefits-of-custom-cursor-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      Benefits of Custom Cursor Rules
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-tips" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced Tips
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="how-to-auto-generate-cursor-rules-for-your-repository">How to Auto-Generate Cursor Rules for Your Repository<a class="headerlink" href="#how-to-auto-generate-cursor-rules-for-your-repository" title="Permanent link">&para;</a></h1>
+<p>This guide will walk you through the process of automatically generating custom cursor rules for your repository using AI. These steps are designed to be simple enough for anyone to follow.</p>
+<h2 id="what-youll-need">What You'll Need<a class="headerlink" href="#what-youll-need" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Cursor AI editor</li>
+<li>A GitHub repository you want to create cursor rules for</li>
+<li>Access to the prompt_library and sequentialthinking MCP servers</li>
+</ul>
+<h2 id="step-1-generate-a-repository-report">Step 1: Generate a Repository Report<a class="headerlink" href="#step-1-generate-a-repository-report" title="Permanent link">&para;</a></h2>
+<p>First, we need to analyze your repository to understand its structure and technologies.</p>
+<ol>
+<li>Open your repository in Cursor AI</li>
+<li>Ask Cursor to analyze your repository using the repo_analyzer cursor rule</li>
+</ol>
+<p><strong>Example prompt:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Can you analyze this repository and create a comprehensive report about its structure, technologies, and patterns? Please use the @repo_analyzer.mdc cursor rule to guide your analysis.
+</code></pre></div></p>
+<h3 id="detailed-example-analyzing-a-zsh-dotfiles-repository">Detailed Example: Analyzing a ZSH Dotfiles Repository<a class="headerlink" href="#detailed-example-analyzing-a-zsh-dotfiles-repository" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p><strong>Note:</strong> The following zsh-dotfiles repository analysis is provided as a reference example only. You should adapt these approaches to your specific repository and its technologies. The specific files, directories, and technologies mentioned are unique to this example repository.</p>
+</blockquote>
+<p>Here's a real example of how to analyze a repository step by step:</p>
+<p><strong>Initial request:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Please analyze the `zsh-dotfiles` repository and generate a report named `zsh_dotfiles_report.md`, which will detail the technologies used in the repository.
+</code></pre></div></p>
+<p>Cursor will begin by examining the repository structure. You can help it by suggesting specific approaches:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Let&#39;s start by visualizing the directory structure using the `tree` command while excluding specific file types and directories.
+</code></pre></div>
+<p>As Cursor analyzes the repository, it will:</p>
+<ol>
+<li>Retrieve and analyze key files like:</li>
+<li><code>Makefile</code></li>
+<li><code>.pre-commit-config.yaml</code></li>
+<li><code>requirements-test.txt</code></li>
+<li><code>README.md</code></li>
+<li>Configuration files (<code>.zshrc</code>, <code>.chezmoi.yaml.tmpl</code>, etc.)</li>
+<li>
+<p>Test files (<code>test_dotfiles.py</code>, <code>conftest.py</code>)</p>
+</li>
+<li>
+<p>Examine specific configuration directories:</p>
+</li>
+<li><code>home/dot_sheldon</code> for plugin management</li>
+<li><code>home/shell/config.zsh</code> for ZSH settings</li>
+<li>
+<p><code>home/shell/customs/aliases.zsh</code> for custom functions</p>
+</li>
+<li>
+<p>Check installation scripts:</p>
+</li>
+<li><code>home/.chezmoiscripts/run_onchange_before_02-macos-install-sheldon.sh.tmpl</code></li>
+<li><code>home/.chezmoiscripts/run_onchange_before_01-ubuntu-install-packages.sh.tmpl</code></li>
+</ol>
+<p>The final report will include:
+- Overview of the repository
+- Repository structure
+- Core technologies used (Chezmoi, Sheldon, ASDF, etc.)
+- ZSH configuration details
+- Installation scripts
+- Custom aliases and functions
+- External dependencies
+- Configuration features
+- Cross-platform support
+- Security considerations</p>
+<ol>
+<li>Save this report to a file, for example: <code>zsh_dotfiles_report.md</code></li>
+</ol>
+<p>The report will look something like this:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="gh"># ZSH Dotfiles Repository Analysis</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="gu">## Overview</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>The [<span class="nt">zsh-dotfiles</span>](<span class="na">https://github.com/bossjones/zsh-dotfiles</span>) repository is a comprehensive dotfiles management system created by Malcolm Jones (bossjones). It uses [<span class="nt">chezmoi</span>](<span class="na">https://www.chezmoi.io/</span>) as the primary dotfile management tool to maintain consistent shell environments across different machines and operating systems.
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="gu">## Repository Structure</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>The repository follows a structured approach with the following key components:
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="k">-</span><span class="w"> </span><span class="gs">**home/**</span>: The main directory containing all dotfiles that will be managed by chezmoi
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">  </span><span class="k">-</span><span class="w"> </span><span class="gs">**.chezmoiscripts/**</span>: Contains installation and setup scripts that run during chezmoi apply
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">  </span><span class="k">-</span><span class="w"> </span><span class="gs">**shell/**</span>: Contains ZSH configuration files and custom scripts
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">  </span><span class="k">-</span><span class="w"> </span><span class="gs">**dot_sheldon/**</span>: Contains configuration for the Sheldon plugin manager
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">  </span><span class="k">-</span><span class="w"> </span><span class="gs">**private_dot_bin/**</span>: Contains executable scripts and utilities
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="gu">## Core Technologies</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>[Detailed breakdown of technologies used]
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>...
+</code></pre></div></p>
+<blockquote>
+<p><strong>Important:</strong> Your repository analysis will differ based on your project's specific structure and technologies. Use the above example as a template for the type of information to gather, but customize your approach to your repository's unique characteristics.</p>
+</blockquote>
+<h2 id="step-2-ensure-required-mcp-servers-are-configured">Step 2: Ensure Required MCP Servers are Configured<a class="headerlink" href="#step-2-ensure-required-mcp-servers-are-configured" title="Permanent link">&para;</a></h2>
+<p>Before proceeding, make sure both the prompt_library and sequentialthinking MCP servers are properly configured:</p>
+<ol>
+<li>Check your <code>.cursor/mcp.json</code> file to ensure both servers are enabled</li>
+<li>The configuration should look something like this:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">&quot;mcpServers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="nt">&quot;memory&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">      </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;env&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">      </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">        </span><span class="s2">&quot;MEMORY_FILE_PATH=./ai_docs/memory.json&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">        </span><span class="s2">&quot;npx&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">        </span><span class="s2">&quot;-y&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">        </span><span class="s2">&quot;@modelcontextprotocol/server-memory&quot;</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">      </span><span class="p">]</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">    </span><span class="p">},</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">    </span><span class="nt">&quot;prompt_library&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">      </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uv&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="w">      </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="w">        </span><span class="s2">&quot;run&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="w">        </span><span class="s2">&quot;--with&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="w">        </span><span class="s2">&quot;mcp[cli]&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="w">        </span><span class="s2">&quot;mcp&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="w">        </span><span class="s2">&quot;run&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a><span class="w">        </span><span class="s2">&quot;/Users/malcolm/dev/bossjones/codegen-lab/src/codegen_lab/prompt_library.py&quot;</span>
+<a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a><span class="w">      </span><span class="p">]</span>
+<a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a><span class="w">    </span><span class="p">},</span>
+<a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a><span class="w">    </span><span class="nt">&quot;sequentialthinking&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a><span class="w">      </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;npx&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a><span class="w">      </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-4-26" name="__codelineno-4-26" href="#__codelineno-4-26"></a><span class="w">        </span><span class="s2">&quot;-y&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-27" name="__codelineno-4-27" href="#__codelineno-4-27"></a><span class="w">        </span><span class="s2">&quot;@modelcontextprotocol/server-sequential-thinking&quot;</span>
+<a id="__codelineno-4-28" name="__codelineno-4-28" href="#__codelineno-4-28"></a><span class="w">      </span><span class="p">]</span>
+<a id="__codelineno-4-29" name="__codelineno-4-29" href="#__codelineno-4-29"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-4-30" name="__codelineno-4-30" href="#__codelineno-4-30"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-4-31" name="__codelineno-4-31" href="#__codelineno-4-31"></a><span class="p">}</span>
+</code></pre></div>
+<ol>
+<li>Make sure both servers are running (you may need to start them if they're not already running)</li>
+<li>The sequentialthinking server is particularly important for breaking down complex analysis tasks and generating high-quality cursor rules</li>
+</ol>
+<h2 id="step-3-generate-custom-cursor-rules">Step 3: Generate Custom Cursor Rules<a class="headerlink" href="#step-3-generate-custom-cursor-rules" title="Permanent link">&para;</a></h2>
+<p>Now we'll use the repository report to generate custom cursor rules:</p>
+<ol>
+<li>Open a new chat with Cursor AI</li>
+<li>Ask Cursor to recommend cursor rules based on your repository report</li>
+</ol>
+<p><strong>Example prompt:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>Using the prompt_library and sequentialthinking mcp servers, help me recommend cursor rules for this project based on @your_repository_report.md
+</code></pre></div></p>
+<ol>
+<li>Cursor will analyze the report and suggest appropriate cursor rules for your repository</li>
+</ol>
+<p>The response will look something like this:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Based on the analysis of your repository, I&#39;ll recommend several cursor rules that would be beneficial for this project:
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>### 1. [Rule Name]
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>[Rule content in markdown format]
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>### 2. [Rule Name]
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>[Rule content in markdown format]
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>...
+</code></pre></div></p>
+<h2 id="step-4-save-the-generated-cursor-rules">Step 4: Save the Generated Cursor Rules<a class="headerlink" href="#step-4-save-the-generated-cursor-rules" title="Permanent link">&para;</a></h2>
+<p>Now you need to save the generated rules:</p>
+<ol>
+<li>
+<p>Create a directory for your cursor rules if it doesn't exist:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>.cursor/rules
+</code></pre></div></p>
+</li>
+<li>
+<p>Save each rule as a separate file in the <code>.cursor/rules</code> directory with a <code>.mdc</code> extension:</p>
+</li>
+<li><code>.cursor/rules/rule-name-1.mdc</code></li>
+<li><code>.cursor/rules/rule-name-2.mdc</code></li>
+<li>
+<p>etc.</p>
+</li>
+<li>
+<p>You can either:</p>
+</li>
+<li>Copy and paste each rule manually</li>
+<li>Ask Cursor to create these files for you with a prompt like:
+     <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>Please save this cursor rule as .cursor/rules/rule-name.mdc
+</code></pre></div></li>
+</ol>
+<h2 id="step-5-test-your-new-cursor-rules">Step 5: Test Your New Cursor Rules<a class="headerlink" href="#step-5-test-your-new-cursor-rules" title="Permanent link">&para;</a></h2>
+<p>After saving your cursor rules:</p>
+<ol>
+<li>Restart Cursor or reload the window</li>
+<li>Open a file that should trigger one of your new rules</li>
+<li>Cursor should now provide suggestions based on your custom rules</li>
+</ol>
+<h2 id="example-workflow-results">Example Workflow Results<a class="headerlink" href="#example-workflow-results" title="Permanent link">&para;</a></h2>
+<p>Here's what the entire process looks like in practice:</p>
+<blockquote>
+<p><strong>Note:</strong> The following example is based on the zsh-dotfiles repository and is provided for reference only. Your specific questions and analysis should be tailored to your repository's technologies and structure.</p>
+</blockquote>
+<ol>
+<li>
+<p><strong>Repository Analysis Request:</strong>
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>Please analyze the `zsh-dotfiles` repository and generate a report named `zsh_dotfiles_report.md`, which will detail the technologies used in the repository.
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Specific Analysis Questions:</strong>
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>Let&#39;s check the ZSH configuration by examining the `home/shell/config.zsh` file to understand its settings and configurations.
+</code></pre></div></p>
+</li>
+</ol>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>Let&#39;s check the Sheldon configuration to understand the plugin management.
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>Let&#39;s check the `home/dot_zshrc.tmpl` file to understand the ZSH configuration.
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>Let&#39;s check the `home/shell/init.zsh` file to understand the initialization process.
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>Let&#39;s check the `home/shell/customs/aliases.zsh` file to understand the custom aliases defined by the user.
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>Let&#39;s check the `.chezmoi.yaml.tmpl` file to understand the chezmoi configuration.
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>Let&#39;s check the `.chezmoiexternal.yaml` file to understand external dependencies related to the configuration.
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>Let&#39;s check one of the installation scripts to understand how the dotfiles are set up, specifically looking at the file located at `home/.chezmoiscripts/run_onchange_before_02-macos-install-sheldon.sh.tmpl`.
+</code></pre></div>
+<ol>
+<li>
+<p><strong>Generated Repository Report:</strong>
+   A detailed markdown file (<code>zsh_dotfiles_report.md</code>) describing the repository structure, technologies, and patterns.</p>
+</li>
+<li>
+<p><strong>Cursor Rules Generation Request:</strong>
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>Using the prompt_library and sequentialthinking mcp servers, help me recommend cursor rules for this project based on @zsh_dotfiles_report.md
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Generated Cursor Rules:</strong>
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="gh"># Chezmoi Template Best Practices</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>Guidelines for working with Chezmoi templates in the zsh-dotfiles repository.
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>&lt;rule&gt;
+<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>name: chezmoi-templates
+<a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a>description: Best practices for Chezmoi template files
+<a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a>filters:
+<a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a>  # Match Chezmoi template files
+<a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a><span class="w">  </span><span class="k">-</span><span class="w"> </span>type: file_extension
+<a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a>    pattern: &quot;\\.tmpl$&quot;
+<a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a>  # Match Chezmoi configuration files
+<a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a><span class="w">  </span><span class="k">-</span><span class="w"> </span>type: file_path
+<a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a>    pattern: &quot;\\.chezmoi.*&quot;
+<a id="__codelineno-19-15" name="__codelineno-19-15" href="#__codelineno-19-15"></a>
+<a id="__codelineno-19-16" name="__codelineno-19-16" href="#__codelineno-19-16"></a>actions:
+<a id="__codelineno-19-17" name="__codelineno-19-17" href="#__codelineno-19-17"></a><span class="w">  </span><span class="k">-</span><span class="w"> </span>type: suggest
+<a id="__codelineno-19-18" name="__codelineno-19-18" href="#__codelineno-19-18"></a>    message: |
+<a id="__codelineno-19-19" name="__codelineno-19-19" href="#__codelineno-19-19"></a>      # Chezmoi Template Best Practices
+<a id="__codelineno-19-20" name="__codelineno-19-20" href="#__codelineno-19-20"></a>      ...
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Saved Rules:</strong>
+   Multiple <code>.mdc</code> files in the <code>.cursor/rules</code> directory, each containing a custom rule tailored to your repository.</p>
+</li>
+</ol>
+<h2 id="key-insights-from-repository-analysis">Key Insights from Repository Analysis<a class="headerlink" href="#key-insights-from-repository-analysis" title="Permanent link">&para;</a></h2>
+<p>When analyzing a repository for cursor rule generation, focus on:</p>
+<ol>
+<li><strong>Configuration Patterns</strong>: Look for template files, configuration formats, and conditional logic</li>
+<li><strong>Directory Structure</strong>: Understand how the repository organizes its files and components</li>
+<li><strong>Technology Stack</strong>: Identify the main technologies, tools, and frameworks used</li>
+<li><strong>Custom Scripts</strong>: Examine installation scripts, utility functions, and automation tools</li>
+<li><strong>Cross-Platform Support</strong>: Note how the repository handles different operating systems</li>
+<li><strong>Security Practices</strong>: Identify patterns for handling sensitive data</li>
+</ol>
+<p>For a dotfiles repository like the example above, pay special attention to:
+- Template systems (like Chezmoi's <code>.tmpl</code> files)
+- Plugin management (like Sheldon's configuration)
+- Shell customizations (aliases, functions, options)
+- Installation scripts for different platforms
+- External dependencies and their management</p>
+<blockquote>
+<p><strong>Remember:</strong> The zsh-dotfiles example is just one type of repository. Your analysis should focus on the specific technologies and patterns in your own repository. For example, a React application would focus on component structure, state management, and routing, while a Python data science project would focus on data processing pipelines, model training, and visualization tools.</p>
+</blockquote>
+<h2 id="benefits-of-custom-cursor-rules">Benefits of Custom Cursor Rules<a class="headerlink" href="#benefits-of-custom-cursor-rules" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Consistency:</strong> Ensures all team members follow the same coding standards</li>
+<li><strong>Efficiency:</strong> Provides contextual suggestions specific to your project</li>
+<li><strong>Knowledge Sharing:</strong> Captures project-specific best practices</li>
+<li><strong>Onboarding:</strong> Helps new team members understand project conventions</li>
+<li><strong>Documentation:</strong> Serves as interactive documentation for project patterns</li>
+</ul>
+<h2 id="advanced-tips">Advanced Tips<a class="headerlink" href="#advanced-tips" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Iterative Refinement</strong>: After generating initial rules, test them and refine based on usage</li>
+<li><strong>Combine with Documentation</strong>: Link cursor rules to more detailed documentation</li>
+<li><strong>Team Collaboration</strong>: Have team members contribute to rule development</li>
+<li><strong>Version Control</strong>: Keep cursor rules in version control to track changes</li>
+<li><strong>Regular Updates</strong>: Update rules as project patterns evolve</li>
+</ul>
+<p>By following this workflow, you can create custom cursor rules that are specifically tailored to your repository's unique structure and technologies.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2023 - 2024 Malcolm Jones
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/bossjones/codegen-lab" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.tracking", "navigation.expand", "navigation.indexes", "navigation.top", "search.highlight", "search.share", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.c8b220af.min.js"></script>
+      
+    
+  </body>
+</html>
