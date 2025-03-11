@@ -711,12 +711,26 @@ You can save this to a file named `{rule_name}.mdc.md` in your cursor rules dire
 
 
 @mcp.tool(name="save_cursor_rule", description="Save a cursor rule to the cursor rules directory in the project")
-def save_cursor_rule(rule_name: str, rule_content: str) -> str:
+def save_cursor_rule(
+    rule_name: str = Field(
+        description="The name of the cursor rule file (without extension)",
+        examples=["python-best-practices", "react-component-patterns", "error-handling"],
+        min_length=3,
+        pattern="^[a-z0-9-]+$",
+    ),
+    rule_content: str = Field(
+        description="The complete content of the cursor rule in markdown format",
+        examples=[
+            "# Python Best Practices\n\nWhen writing Python code, follow these guidelines:\n\n1. Use type hints\n2. Write docstrings\n3. Follow PEP 8"
+        ],
+        min_length=10,
+    ),
+) -> str:
     """Save a cursor rule to the cursor rules directory.
 
     Args:
-        rule_name: The name of the cursor rule
-        rule_content: The content of the cursor rule
+        rule_name: The name of the cursor rule file (without extension)
+        rule_content: The complete content of the cursor rule in markdown format
 
     Returns:
         str: Success message
@@ -742,7 +756,16 @@ def save_cursor_rule(rule_name: str, rule_content: str) -> str:
     name="recommend_cursor_rules",
     description="Analyze a repository summary and recommend cursor rules to generate based on identified technologies and patterns",
 )
-def recommend_cursor_rules(repo_summary: str) -> list[dict[str, str]]:
+def recommend_cursor_rules(
+    repo_summary: str = Field(
+        description="A summary description of the repository, including technologies, frameworks, and key features",
+        examples=[
+            "A Python web application using FastAPI, SQLAlchemy, and React for the frontend. Includes authentication, API endpoints, and database models.",
+            "A TypeScript library for data visualization with React components. Uses webpack for bundling and Jest for testing.",
+        ],
+        min_length=20,
+    ),
+) -> list[dict[str, str]]:
     """Recommend cursor rules to generate based on a repository summary.
 
     This tool analyzes a summary of a repository and suggests cursor rules
@@ -1030,7 +1053,13 @@ To prepare the workspace for cursor rules, the following steps are needed:
     name="create_cursor_rule_files",
     description="Create empty cursor rule files and provide instructions for sequential content creation",
 )
-def create_cursor_rule_files(rule_names: list[str]) -> dict[str, Any]:
+def create_cursor_rule_files(
+    rule_names: list[str] = Field(
+        description="A list of cursor rule names to create (without file extensions)",
+        examples=["python-best-practices", "react-component-structure", "typescript-patterns"],
+        min_length=1,
+    ),
+) -> dict[str, Any]:
     """Create empty cursor rule files in the hack/drafts/cursor_rules directory.
 
     Args:
@@ -1326,7 +1355,12 @@ def update_dockerignore() -> dict[str, Any]:
     name="cursor_rules_workflow",
     description="Execute the complete cursor rules workflow",
 )
-def cursor_rules_workflow(rule_names: list[str]) -> dict[str, Any]:
+def cursor_rules_workflow(
+    rule_names: list[str] = Field(
+        description="A list of cursor rule names to create (without file extensions)",
+        examples=["python-best-practices", "react-component-structure", "typescript-patterns"],
+    ),
+) -> dict[str, Any]:
     """Execute the complete cursor rules workflow.
 
     Args:
@@ -1382,12 +1416,14 @@ Workflow completed successfully. Next steps:
     description="Execute a structured workflow for generating custom cursor rules based on repository analysis",
 )
 def plan_and_execute_prompt_library_workflow(
-    repo_description: str,
-    main_languages: str,
-    file_patterns: str,
-    key_features: str,
-    phase: int = 1,
-    workflow_state: dict[str, Any] = None,
+    repo_description: str = Field(description="Brief description of the repository's purpose and functionality"),
+    main_languages: str = Field(description="Main programming languages used in the repository (comma-separated)"),
+    file_patterns: str = Field(description="Common file patterns/extensions in the repository (comma-separated)"),
+    key_features: str = Field(description="Key features or functionality of the repository (comma-separated)"),
+    phase: int = Field(description="Current phase of the workflow (1-5)", default=1),
+    workflow_state: dict[str, Any] = Field(
+        description="Current state of the workflow for continuing execution", default=None
+    ),
 ) -> dict[str, Any]:
     """Execute a complete, step-by-step workflow for generating custom cursor rules.
 
