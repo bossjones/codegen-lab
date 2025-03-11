@@ -1036,7 +1036,8 @@ To prepare the workspace for cursor rules, the following steps are needed:
    mkdir -p .cursor/rules
 
 3. Check if Makefile exists with an update-cursor-rules task:
-   The update-cursor-rules task should copy files from hack/drafts/cursor_rules to .cursor/rules
+   The update-cursor-rules task should copy files from hack/drafts/cursor_rules to .cursor/rules. This command updates Cursor editor rules by copying rule definitions from a drafts directory into the Cursor configuration folder. It first creates a .cursor/rules directory if it doesn't exist. Then it finds all Markdown (.md) files in the hack/drafts/cursor_rules directory (excluding any README files), copies them to the .cursor/rules directory, and preserves their filenames without the .md extension. The comment notes that Cursor doesn't support generating .mdc files directly through the Composer Agent at the time this was written
+
 
 4. Update .dockerignore to exclude the cursor rules drafts directory:
    Add 'hack/drafts/cursor_rules' to .dockerignore if it exists
