@@ -162,6 +162,95 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 # Template handling
 "**/import_templates.py" = ["C901", "D401"]
 
+# ===========================[ COVERAGE CONFIGURATION ]========================
+[tool.coverage.run]
+branch = true
+parallel = true
+concurrency = ["thread", "greenlet", "multiprocessing"]
+source = ["src"]
+data_file = ".coverage"
+relative_files = true
+
+[tool.coverage.report]
+skip_empty = true
+fail_under = 33
+omit = [
+    "*/test/*",
+    "*/tests/*",
+    "*/studio/*",
+]
+exclude_lines = [
+    '\(Protocol\):$',
+    '\s*\.\.\.$',
+    "@(abc.)?abstractmethod",
+    "@overload",
+    "@typing.overload",
+    "assert_never",
+    "def __repr__",
+    "def __str__",
+    "except ImportError:",
+    "if __name__ == .__main__.:",
+    "if not _PANDAS_AVAILABLE:",
+    "if self.debug",
+    "if settings.DEBUG",
+    "if TYPE_CHECKING:",
+    "if TYPE_CHECKING",
+    "if typing.TYPE_CHECKING:",
+    "pragma: $TEST_PLATFORM no cover",
+    "pragma: no cover",
+    "pragma: py$PYTHON_VERSION no cover",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "return NotImplemented",
+    "typing.assert_never",
+]
+
+# Additional regexes for lines to exclude from consideration
+exclude_also = [
+    # Don't complain about missing debug-only code:
+    "def __repr__",
+    "if self\\.debug",
+
+    # Don't complain if tests don't hit defensive assertion code:
+    "raise AssertionError",
+    "raise NotImplementedError",
+
+    # Don't complain if non-runnable code isn't run:
+    "if 0:",
+    "if __name__ == .__main__.:",
+
+    # Don't complain about abstract methods, they aren't run:
+    "@(abc\\.)?abstractmethod",
+
+    # Exclude specific exception clauses:
+    "except ValueError:\\n\\s*assume\\(False\\)",
+    # Comments to turn coverage on and off:
+    "no cover: start(?s:.)*?no cover: stop",
+    # A pragma comment that excludes an entire file:
+    "\\A(?s:.*# pragma: exclude file.*)\\Z",
+]
+
+# Ignore source code that can't be found, emitting a warning instead of an exception
+ignore_errors = false
+# When running a summary report, show missing lines
+show_missing = true
+# Don't report files that are 100% covered
+skip_covered = false
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+[tool.coverage.xml]
+output = "cov.xml"
+
+[tool.coverage.paths]
+# The first path is the path on the local filesystem
+# The second path is the path as it appears within the Docker container
+source = [
+    "src/",
+    "/usr/src/python-app",
+]
+
 [tool.pytest.ini_options]
 structlog_keep=["add_logger_name", "StackInfoRenderer", "TimeStamper", "ConsoleRenderer"]
 testpaths = ["tests"]
@@ -192,9 +281,14 @@ addopts = [
     '--durations=10',
     '--durations-min=0.05',
     '--junitxml=junit/test-results.xml',
+    # Coverage reporting options
+    '--cov=src',
+    '--cov-report=term-missing',
+    '--cov-report=xml:cov.xml',
+    '--cov-report=html:htmlcov',
     '--cov-report=annotate:cov_annotate',
+    '--cov-branch',
 ]
-
 
 log_cli = false
 log_cli_level = "DEBUG"
@@ -243,8 +337,4 @@ markers = [
     "logsonly: marks tests that run code that utilizes the logs module (deselect with '-m \"not logsonly\"')",
     "chatbotonly: marks tests that run code that utilizes the chatbot module (deselect with '-m \"not chatbotonly\"')",
     "agenticonly: marks tests that run code that utilizes the agentic module (deselect with '-m \"not agenticonly\"')",
-
-
-
-
 ]
