@@ -1036,7 +1036,7 @@ def prep_workspace() -> dict[str, str]:
 
     # Prepare instructions with relative path for display
     relative_path = "./hack/drafts/cursor_rules"
-    mkdir_cmd = f"mkdir -p {relative_path}"
+    mkdir_cmd = f"mkdir -p {relative_path} .cursor/rules || true"
 
     try:
         # Create the directory if it doesn't exist
@@ -1064,7 +1064,7 @@ def prep_workspace() -> dict[str, str]:
                     "status": "error",
                     "message": f"OS error creating directory: {ose!s}. Try creating it manually with: {mkdir_cmd}",
                     "directory_exists": dir_exists,
-                    "directory_path": str(cursor_rules_dir),
+                    "directory_path": relative_path,
                     "mkdir_command": mkdir_cmd,
                     "workspace_prepared": False,
                     "workspace_result": {
@@ -1128,7 +1128,7 @@ To prepare the workspace for cursor rules, the following steps are needed:
    Note: The path in the prompt_library entry should be adjusted to use the actual project path (PWD) instead of hardcoded paths.
 """,
             "directory_exists": dir_exists,
-            "directory_path": str(cursor_rules_dir),
+            "directory_path": relative_path,
             "mkdir_command": mkdir_cmd,
             "directory_structure": f"Created directory structure at {relative_path}",
             "workspace_prepared": True,
@@ -1148,7 +1148,7 @@ To prepare the workspace for cursor rules, the following steps are needed:
             "status": "error",
             "message": f"Error preparing workspace: {e!s}",
             "directory_exists": dir_exists,
-            "directory_path": str(cursor_rules_dir),
+            "directory_path": relative_path,
             "mkdir_command": mkdir_cmd,
             "workspace_prepared": False,
             "workspace_result": {
