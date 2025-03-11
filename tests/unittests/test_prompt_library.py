@@ -777,12 +777,7 @@ class TestWorkflowFunctions:
 
 
 class TestPlanAndExecuteWorkflow:
-    """Tests for the plan_and_execute_prompt_library_workflow function.
-
-    This test class verifies that the plan_and_execute_prompt_library_workflow function
-    correctly orchestrates the cursor rule workflow, including planning, creating,
-    and deploying cursor rules.
-    """
+    """Tests for the plan_and_execute_prompt_library_workflow function and related utilities."""
 
     def test_plan_and_execute_workflow_success(self, mocker: "MockerFixture") -> None:
         """Test that plan_and_execute_prompt_library_workflow successfully executes the workflow.
@@ -990,6 +985,345 @@ class TestPlanAndExecuteWorkflow:
         # Verify the result contains error information
         assert "error" in result["status"]
         assert "Failed to analyze repository" in str(result)
+
+    def test_plan_and_execute_workflow_phase_3(self, mocker: "MockerFixture") -> None:
+        """Test workflow execution for phase 3 (Workspace Preparation).
+
+        This test verifies that phase 3 correctly prepares the workspace for cursor rule creation.
+
+        Args:
+            mocker: Pytest fixture for mocking
+
+        """
+        # Mock the component functions
+        mock_prep_workspace = mocker.patch(
+            "codegen_lab.prompt_library.prep_workspace",
+            return_value={"status": "success", "directory_structure": "structure"},
+        )
+
+        mock_ensure_makefile = mocker.patch(
+            "codegen_lab.prompt_library.ensure_makefile_task",
+            return_value={"status": "success", "message": "Makefile task added"},
+        )
+
+        mock_update_dockerignore = mocker.patch(
+            "codegen_lab.prompt_library.update_dockerignore",
+            return_value={"status": "success", "message": "Dockerignore updated"},
+        )
+
+        # Create a workflow state with phases 1 and 2 completed
+        workflow_state = {
+            "repository_info": {
+                "description": "Test repository",
+                "main_languages": ["Python"],
+                "file_patterns": ["*.py"],
+                "key_features": ["API", "Database"],
+            },
+            "recommended_rules": [
+                {"name": "test-rule-1", "category": "Testing", "priority": "high"},
+                {"name": "test-rule-2", "category": "Style", "priority": "medium"},
+            ],
+            "created_rules": [],
+            "deployed_rules": [],
+            "workspace_prepared": True,
+            "workspace_result": {"status": "success", "directory_structure": "structure"},
+            "phase_1_complete": True,
+            "phase_2_complete": True,
+        }
+
+        # Call the function with phase 3
+        result = plan_and_execute_prompt_library_workflow(
+            repo_description="Test repository",
+            main_languages="Python",
+            file_patterns="*.py",
+            key_features="API, Database",
+            phase=3,
+            workflow_state=workflow_state,
+        )
+
+        # Verify that the component functions were called
+        mock_ensure_makefile.assert_called_once()
+        mock_update_dockerignore.assert_called_once()
+
+        # Verify the result
+        assert result["status"] == "complete"
+        assert "next_phase" in result
+        assert result["next_phase"] == 4
+        assert "phase_3_complete" in result["workflow_state"]
+        assert result["workflow_state"]["phase_3_complete"] is True
+
+    def test_plan_and_execute_workflow_phase_4(self, mocker: "MockerFixture") -> None:
+        """Test workflow execution for phase 4 (Rule Creation).
+
+        This test verifies that phase 4 correctly creates cursor rule files.
+
+        Args:
+            mocker: Pytest fixture for mocking
+
+        """
+        # Mock the component functions
+        mock_generate_cursor_rule = mocker.patch(
+            "codegen_lab.prompt_library.generate_cursor_rule", return_value="# Generated cursor rule content"
+        )
+
+        mock_save_cursor_rule = mocker.patch(
+            "codegen_lab.prompt_library.save_cursor_rule",
+            return_value={"status": "success", "file_path": "/path/to/rule.mdc"},
+        )
+
+        # Create a workflow state with phases 1, 2, and 3 completed
+        workflow_state = {
+            "repository_info": {
+                "description": "Test repository",
+                "main_languages": ["Python"],
+                "file_patterns": ["*.py"],
+                "key_features": ["API", "Database"],
+            },
+            "recommended_rules": [
+                {"name": "test-rule-1", "category": "Testing", "priority": "high"},
+                {"name": "test-rule-2", "category": "Style", "priority": "medium"},
+            ],
+            "created_rules": [],
+            "deployed_rules": [],
+            "workspace_prepared": True,
+            "workspace_result": {"status": "success", "directory_structure": "structure"},
+            "phase_1_complete": True,
+            "phase_2_complete": True,
+            "phase_3_complete": True,
+            "rule_file_names": ["test_rule_1", "test_rule_2"],
+            "rule_file_mapping": {
+                "test_rule_1": {"name": "test-rule-1", "category": "Testing", "priority": "high"},
+                "test_rule_2": {"name": "test-rule-2", "category": "Style", "priority": "medium"},
+            },
+        }
+
+        # Call the function with phase 4
+        result = plan_and_execute_prompt_library_workflow(
+            repo_description="Test repository",
+            main_languages="Python",
+            file_patterns="*.py",
+            key_features="API, Database",
+            phase=4,
+            workflow_state=workflow_state,
+        )
+
+        # Verify that the component functions were called
+        assert mock_generate_cursor_rule.call_count == 2
+        assert mock_save_cursor_rule.call_count == 2
+
+        # Verify the result
+        assert result["status"] == "complete"
+        assert "next_phase" in result
+        assert result["next_phase"] == 5
+        assert "phase_4_complete" in result["workflow_state"]
+        assert result["workflow_state"]["phase_4_complete"] is True
+        assert "created_rules" in result
+        assert len(result["created_rules"]) == 2
+
+    def test_plan_and_execute_workflow_phase_5(self, mocker: "MockerFixture") -> None:
+        """Test workflow execution for phase 5 (Deployment and Testing).
+
+        This test verifies that phase 5 correctly deploys cursor rules.
+
+        Args:
+            mocker: Pytest fixture for mocking
+
+        """
+        # Mock the component functions
+        mock_run_update = mocker.patch(
+            "codegen_lab.prompt_library.run_update_cursor_rules",
+            return_value={"status": "success", "message": "Cursor rules deployed successfully"},
+        )
+
+        # Create a workflow state with phases 1-4 completed
+        workflow_state = {
+            "repository_info": {
+                "description": "Test repository",
+                "main_languages": ["Python"],
+                "file_patterns": ["*.py"],
+                "key_features": ["API", "Database"],
+            },
+            "recommended_rules": [
+                {"name": "test-rule-1", "category": "Testing", "priority": "high"},
+                {"name": "test-rule-2", "category": "Style", "priority": "medium"},
+            ],
+            "created_rules": [
+                {"rule_name": "test_rule_1", "file_path": "/path/to/test_rule_1.mdc", "status": "created"},
+                {"rule_name": "test_rule_2", "file_path": "/path/to/test_rule_2.mdc", "status": "created"},
+            ],
+            "deployed_rules": [],
+            "workspace_prepared": True,
+            "workspace_result": {"status": "success", "directory_structure": "structure"},
+            "phase_1_complete": True,
+            "phase_2_complete": True,
+            "phase_3_complete": True,
+            "phase_4_complete": True,
+        }
+
+        # Call the function with phase 5
+        result = plan_and_execute_prompt_library_workflow(
+            repo_description="Test repository",
+            main_languages="Python",
+            file_patterns="*.py",
+            key_features="API, Database",
+            phase=5,
+            workflow_state=workflow_state,
+        )
+
+        # Verify that the component function was called
+        mock_run_update.assert_called_once()
+
+        # Verify the result
+        assert result["status"] == "complete"
+        assert "next_phase" in result
+        assert result["next_phase"] is None
+        assert "phase_5_complete" in result["workflow_state"]
+        assert result["workflow_state"]["phase_5_complete"] is True
+        assert "deployed_rules" in result
+        assert len(result["deployed_rules"]) == 2
+        assert "testing_instructions" in result
+
+    def test_plan_and_execute_workflow_invalid_phase(self) -> None:
+        """Test workflow execution with an invalid phase number.
+
+        This test verifies that the workflow correctly handles invalid phase numbers.
+        """
+        # Call the function with an invalid phase
+        result = plan_and_execute_prompt_library_workflow(
+            repo_description="Test repository",
+            main_languages="Python",
+            file_patterns="*.py",
+            key_features="API, Database",
+            phase=6,  # Invalid phase number
+        )
+
+        # Verify the result
+        assert result["status"] == "error"
+        assert "Invalid phase" in result["message"]
+
+    def test_plan_and_execute_workflow_none_workflow_state(self, mocker: "MockerFixture") -> None:
+        """Test workflow execution with None workflow_state.
+
+        This test verifies that the workflow correctly initializes when workflow_state is None.
+
+        Args:
+            mocker: Pytest fixture for mocking
+
+        """
+        # Mock prep_workspace
+        mock_prep_workspace = mocker.patch(
+            "codegen_lab.prompt_library.prep_workspace",
+            return_value={"status": "success", "directory_structure": "structure"},
+        )
+
+        # Call the function with None workflow_state
+        result = plan_and_execute_prompt_library_workflow(
+            repo_description="Test repository",
+            main_languages="Python",
+            file_patterns="*.py",
+            key_features="API, Database",
+            phase=1,
+            workflow_state=None,
+        )
+
+        # Verify that prep_workspace was called
+        mock_prep_workspace.assert_called_once()
+
+        # Verify the workflow_state was initialized
+        assert "workflow_state" in result
+        assert "repository_info" in result["workflow_state"]
+        assert result["workflow_state"]["repository_info"]["description"] == "Test repository"
+
+    def test_plan_and_execute_workflow_already_complete_phase(self, mocker: "MockerFixture") -> None:
+        """Test workflow execution when a phase is already complete.
+
+        This test verifies that the workflow correctly handles already completed phases.
+
+        Args:
+            mocker: Pytest fixture for mocking
+
+        """
+        # Create a workflow state with phase 1 already completed
+        workflow_state = {
+            "repository_info": {
+                "description": "Test repository",
+                "main_languages": ["Python"],
+                "file_patterns": ["*.py"],
+                "key_features": ["API", "Database"],
+            },
+            "recommended_rules": [],
+            "created_rules": [],
+            "deployed_rules": [],
+            "workspace_prepared": True,
+            "workspace_result": {"status": "success", "directory_structure": "structure"},
+            "phase_1_complete": True,  # Mark phase 1 as already complete
+            "analysis_results": {
+                "repository_type": "Python API",
+                "common_patterns": "Common patterns",
+                "recommended_rules": ["rule-1", "rule-2"],
+                "analysis_summary": "Analysis summary",
+            },
+        }
+
+        # Mock repo_analysis_prompt to verify it's not called
+        mock_repo_analysis = mocker.patch(
+            "codegen_lab.prompt_library.repo_analysis_prompt",
+        )
+
+        # Call the function with phase 1
+        result = plan_and_execute_prompt_library_workflow(
+            repo_description="Test repository",
+            main_languages="Python",
+            file_patterns="*.py",
+            key_features="API, Database",
+            phase=1,
+            workflow_state=workflow_state,
+        )
+
+        # Verify that repo_analysis_prompt was not called
+        mock_repo_analysis.assert_not_called()
+
+        # Verify the result
+        assert result["status"] == "already_complete"
+        assert "next_phase" in result
+        assert result["next_phase"] == 2
+
+    def test_plan_and_execute_workflow_prerequisite_not_met(self) -> None:
+        """Test workflow execution when prerequisites are not met.
+
+        This test verifies that the workflow correctly handles cases where
+        prerequisites for a phase are not met.
+        """
+        # Create a workflow state without phase 1 completed
+        workflow_state = {
+            "repository_info": {
+                "description": "Test repository",
+                "main_languages": ["Python"],
+                "file_patterns": ["*.py"],
+                "key_features": ["API", "Database"],
+            },
+            "recommended_rules": [],
+            "created_rules": [],
+            "deployed_rules": [],
+            "workspace_prepared": True,
+            "workspace_result": {"status": "success", "directory_structure": "structure"},
+            "phase_1_complete": False,  # Phase 1 not completed
+        }
+
+        # Call the function with phase 2
+        result = plan_and_execute_prompt_library_workflow(
+            repo_description="Test repository",
+            main_languages="Python",
+            file_patterns="*.py",
+            key_features="API, Database",
+            phase=2,  # Try to run phase 2 without completing phase 1
+            workflow_state=workflow_state,
+        )
+
+        # Verify the result
+        assert result["status"] == "prerequisite_not_met"
+        assert "next_phase" in result
+        assert result["next_phase"] == 1
 
     def test_get_cursor_rule_names(self, tmp_path: Path, monkeypatch: MonkeyPatch) -> None:
         """Test retrieving cursor rule names by copying existing rules from the project.
