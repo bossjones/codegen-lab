@@ -309,3 +309,6 @@ run-mcp-dev-with: ## Run any MCP script in development mode with additional depe
 .PHONY: local-open-coverage
 local-open-coverage: ## open coverage report in browser
 	./scripts/open-browser.py file://${PWD}/htmlcov/index.html
+
+logs:
+	tail -f  ~/Library/Logs/Claude/mcp-server-prompt_library.log | ccze -A

@@ -51,6 +51,53 @@ from mcp.server.fastmcp import FastMCP
 from mcp.server.fastmcp.server import Context
 from pydantic import Field
 
+# import logging
+# import logging.handlers
+# from datetime import datetime
+
+# # Configure JSON logger
+# class JsonFormatter(logging.Formatter):
+#     """Custom JSON formatter for logging.
+
+#     This formatter outputs log records in JSON format with timestamp, level,
+#     and message fields.
+#     """
+
+#     def format(self, record: logging.LogRecord) -> str:
+#         """Format the log record as JSON.
+
+#         Args:
+#             record: The log record to format
+
+#         Returns:
+#             str: JSON formatted log string
+#         """
+#         log_obj = {
+#             "timestamp": datetime.fromtimestamp(record.created).isoformat(),
+#             "level": record.levelname,
+#             "message": record.getMessage(),
+#             "logger": record.name
+#         }
+
+#         if record.exc_info:
+#             log_obj["exc_info"] = self.formatException(record.exc_info)
+
+#         return json.dumps(log_obj)
+
+# # Set up file handler with JSON formatter
+# file_handler = logging.handlers.RotatingFileHandler(
+#     filename="mcpserver.log",
+#     maxBytes=10485760,  # 10MB
+#     backupCount=5,
+#     encoding="utf-8"
+# )
+# file_handler.setFormatter(JsonFormatter())
+
+# # Configure root logger
+# logger = logging.getLogger("prompt_library")
+# logger.setLevel(logging.INFO)
+# logger.addHandler(file_handler)
+
 
 # Define types for cursor rule components
 class CursorRuleMetadata(TypedDict, total=False):
@@ -129,7 +176,7 @@ class CursorRule(TypedDict):
 
 
 # Create server
-mcp = FastMCP("prompt_library")
+mcp = FastMCP("prompt_library", debug=True, log_level="DEBUG")
 
 # Define paths
 CURSOR_RULES_DIR = Path(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../hack/drafts/cursor_rules")))
@@ -513,7 +560,7 @@ def get_cursor_rule_raw(name: str) -> str:
     name="get_static_cursor_rule",
     description="Get a static cursor rule file by name to be written to the caller's .cursor/rules directory",
 )
-def get_static_cursor_rule(rule_name: str) -> dict[str, str]:
+def get_static_cursor_rule(rule_name: str) -> dict[str, str | bool | list[dict[str, str]]]:
     """Get a static cursor rule file by name.
 
     This tool returns the content of a specific cursor rule file so it can be
@@ -523,10 +570,9 @@ def get_static_cursor_rule(rule_name: str) -> dict[str, str]:
         rule_name: The name of the cursor rule to retrieve (without .md extension)
 
     Returns:
-        dict[str, str]: A dictionary containing the rule_name and content
-
-    Raises:
-        FileNotFoundError: If the cursor rule is not found
+        dict[str, str | bool | list[dict[str, str]]]: A dictionary containing either:
+            - On success: {"rule_name": str, "content": str}
+            - On error: {"isError": bool, "content": list[dict[str, str]]}
 
     """
     # Add .md extension if not already present
@@ -534,7 +580,11 @@ def get_static_cursor_rule(rule_name: str) -> dict[str, str]:
 
     content = read_cursor_rule(rule_name.replace(".md", ""))
     if not content:
-        raise FileNotFoundError(f"Static cursor rule '{rule_name}' not found")
+        # Return an error result object instead of raising an exception
+        return {
+            "isError": True,
+            "content": [{"type": "text", "text": f"Error: Static cursor rule '{rule_name}' not found"}],
+        }
 
     return {"rule_name": full_rule_name, "content": content}
 
@@ -543,7 +593,7 @@ def get_static_cursor_rule(rule_name: str) -> dict[str, str]:
     name="get_static_cursor_rules",
     description="Get multiple static cursor rule files to be written to the caller's .cursor/rules directory",
 )
-def get_static_cursor_rules(rule_names: list[str]) -> list[dict[str, str]]:
+def get_static_cursor_rules(rule_names: list[str]) -> dict[str, Any]:
     """Get multiple static cursor rule files by name.
 
     This tool returns the content of specific cursor rule files so they can be
@@ -553,29 +603,20 @@ def get_static_cursor_rules(rule_names: list[str]) -> list[dict[str, str]]:
         rule_names: List of cursor rule names to retrieve (without .md extension)
 
     Returns:
-        list[dict[str, str]]: A list of dictionaries containing rule_name and content
-
-    Raises:
-        FileNotFoundError: If any of the cursor rules is not found
+        dict[str, Any]: A dictionary containing a list of rule data objects
 
     """
     results = []
 
     for rule_name in rule_names:
-        try:
-            rule_data = get_static_cursor_rule(rule_name)
-            results.append(rule_data)
-        except FileNotFoundError as e:
-            # Continue with other rules even if one is not found
-            results.append(
-                {
-                    "rule_name": rule_name if rule_name.endswith(".md") else f"{rule_name}.md",
-                    "error": str(e),
-                    "content": None,
-                }
-            )
+        # Get the rule data using get_static_cursor_rule
+        rule_data = get_static_cursor_rule(rule_name)
 
-    return results
+        # Add the result to our list
+        results.append(rule_data)
+
+    # Return a single JSON object with the results array
+    return {"rules": results}
 
 
 # Prompt endpoints
@@ -1059,12 +1100,12 @@ To prepare the workspace for cursor rules, the following steps are needed:
 4. Update .dockerignore to exclude the cursor rules drafts directory:
    Add 'hack/drafts/cursor_rules' to .dockerignore if it exists
 
-5. Write the following mandatory cursor rule files to the client repo's cursor rules stage directory one at a time, using the get_static_cursor_rules function to retrieve each file:
-   - tree.mdc.md: A rule for displaying repository structure
-   - repo_analyzer.mdc.md: A rule for analyzing repository structure and locating code definitions
-   - notify.mdc.md: A rule for notification at the end of tasks
-   - repomix.mdc.md: A rule for repository summarization and packaging for LLM consumption
-   - cursor_rules_location.mdc.md: A rule for locating the cursor rules directory and how to write them
+5. Write the following mandatory cursor rule files to the client repo's cursor rules stage directory one at a time, using the get_static_cursor_rules function to retrieve each file. when saving the file ensure the file has extension .mdc.md, eg tree.mdc becomes tree.mdc.md:
+   - tree.mdc: A rule for displaying repository structure
+   - repo_analyzer.mdc: A rule for analyzing repository structure and locating code definitions
+   - notify.mdc: A rule for notification at the end of tasks
+   - repomix.mdc: A rule for repository summarization and packaging for LLM consumption
+   - cursor_rules_location.mdc: A rule for locating the cursor rules directory and how to write them
 
 6. Update the client repo's .cursor/mcp.json file to include new entries if they don't already exist:
    Ensure the .cursor/mcp.json file contains entries for prompt_library and sequentialthinking:
