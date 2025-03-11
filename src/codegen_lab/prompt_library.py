@@ -1048,6 +1048,39 @@ To prepare the workspace for cursor rules, the following steps are needed:
 
 4. Update .dockerignore to exclude the cursor rules drafts directory:
    Add 'hack/drafts/cursor_rules' to .dockerignore if it exists
+
+5. Write the following mandatory cursor rule files to the client repo's cursor rules stage directory one at a time, using the get_static_cursor_rules function to retrieve each file:
+   - tree.mdc.md: A rule for displaying repository structure
+   - repo_analyzer.mdc.md: A rule for analyzing repository structure and locating code definitions
+   - notify.mdc.md: A rule for notification at the end of tasks
+   - repomix.mdc.md: A rule for repository summarization and packaging for LLM consumption
+   - cursor_rules_location.mdc.md: A rule for locating the cursor rules directory and how to write them
+
+6. Update the client repo's .cursor/mcp.json file to include new entries if they don't already exist:
+   Ensure the .cursor/mcp.json file contains entries for prompt_library and sequentialthinking:
+   ```json
+   {{
+     "prompt_library": {{
+       "command": "uv",
+       "args": [
+         "run",
+         "--with",
+         "mcp[cli]",
+         "mcp",
+         "run",
+         "${{PWD}}/src/codegen_lab/prompt_library.py"
+       ]
+     }},
+     "sequentialthinking": {{
+       "command": "npx",
+       "args": [
+         "-y",
+         "@modelcontextprotocol/server-sequential-thinking"
+       ]
+     }}
+   }}
+   ```
+   Note: The path in the prompt_library entry should be adjusted to use the actual project path (PWD) instead of hardcoded paths.
 """,
             "directory_exists": dir_exists,
             "directory_path": str(cursor_rules_dir),
