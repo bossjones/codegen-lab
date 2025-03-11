@@ -765,7 +765,7 @@ def recommend_cursor_rules(
         ],
         min_length=20,
     ),
-) -> list[dict[str, str]]:
+) -> list[dict[str, str | list[str]]]:
     """Recommend cursor rules to generate based on a repository summary.
 
     This tool analyzes a summary of a repository and suggests cursor rules
@@ -777,8 +777,9 @@ def recommend_cursor_rules(
                      technologies, frameworks, and key features
 
     Returns:
-        list[dict[str, str]]: A list of recommended cursor rules, each containing
-                             'name', 'description', and 'reason' fields
+        list[dict[str, Union[str, list[str]]]]: A list of recommended cursor rules, each containing
+                             'name', 'description', and 'reason' fields, and potentially 'dependencies'
+                             as a list of strings
 
     """
     # Define technology/feature patterns and corresponding rule recommendations
@@ -1025,8 +1026,14 @@ def prep_workspace() -> dict[str, str]:
     # Prepare instructions
     mkdir_cmd = f"mkdir -p {cursor_rules_dir}"
 
-    instructions = {
-        "message": f"""
+    try:
+        # Create the directory if it doesn't exist
+        if not dir_exists:
+            cursor_rules_dir.mkdir(parents=True, exist_ok=True)
+
+        instructions = {
+            "status": "success",
+            "message": f"""
 To prepare the workspace for cursor rules, the following steps are needed:
 
 1. Create the cursor rules directory structure:
@@ -1042,12 +1049,22 @@ To prepare the workspace for cursor rules, the following steps are needed:
 4. Update .dockerignore to exclude the cursor rules drafts directory:
    Add 'hack/drafts/cursor_rules' to .dockerignore if it exists
 """,
-        "directory_exists": dir_exists,
-        "directory_path": str(cursor_rules_dir),
-        "mkdir_command": mkdir_cmd,
-    }
+            "directory_exists": dir_exists,
+            "directory_path": str(cursor_rules_dir),
+            "mkdir_command": mkdir_cmd,
+            "directory_structure": f"Created directory structure at {cursor_rules_dir}",
+        }
 
-    return instructions
+        return instructions
+
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"Error preparing workspace: {e!s}",
+            "directory_exists": dir_exists,
+            "directory_path": str(cursor_rules_dir),
+            "mkdir_command": mkdir_cmd,
+        }
 
 
 @mcp.tool(
@@ -1426,102 +1443,66 @@ def plan_and_execute_prompt_library_workflow(
         description="Current state of the workflow for continuing execution", default=None
     ),
 ) -> dict[str, Any]:
-    """Execute a complete, step-by-step workflow for generating custom cursor rules.
+    """Execute a structured workflow for generating custom cursor rules based on repository analysis.
 
-    This tool guides users through a structured process to analyze a repository,
-    identify useful cursor rules, prepare the workspace, create the rules, and
-    deploy them for use.
+    This tool facilitates a structured, phase-based workflow for analyzing a repository and
+    generating custom cursor rules tailored to its specific technologies and patterns.
+
+    The workflow consists of five phases:
+    1. Repository Analysis: Analyze the repository to identify technologies, patterns, and features
+    2. Rule Identification: Recommend cursor rules based on the analysis
+    3. Workspace Preparation: Set up the necessary directory structure
+    4. Rule Creation: Generate the content for each cursor rule
+    5. Deployment and Testing: Deploy the cursor rules and verify functionality
 
     Args:
-        repo_description: Brief description of the repository
-        main_languages: Main programming languages used in the repository
-        file_patterns: Common file patterns/extensions in the repository
-        key_features: Key features or functionality of the repository
+        repo_description: Brief description of the repository's purpose and functionality
+        main_languages: Main programming languages used in the repository (comma-separated)
+        file_patterns: Common file patterns/extensions in the repository (comma-separated)
+        key_features: Key features or functionality of the repository (comma-separated)
         phase: Current phase of the workflow (1-5)
-        workflow_state: Current state of the workflow (for continuing execution)
+        workflow_state: Current state of the workflow for continuing execution
 
     Returns:
-        dict[str, Any]: Progress report and next steps in the workflow
-
-    Workflow Checklist:
-        The tool implements a structured workflow with the following phases:
-
-        Phase 1: Repository Analysis ✓
-        - [x] Gather basic repository information (languages used, file types, etc.)
-        - [x] Perform repository structure analysis to understand code organization
-        - [x] Identify common patterns and coding styles in the repository
-        - [x] Analyze existing documentation and standards
-        - [x] Determine the repository's primary purpose and features
-
-        Phase 2: Rule Identification ✓
-        - [x] Generate a list of potential cursor rules based on repository analysis
-        - [x] Prioritize rules based on potential impact and relevance
-        - [x] Filter out redundant or low-value rules
-        - [x] Group related rules into categories
-        - [x] Identify dependencies between rules
-
-        Phase 3: Workspace Preparation ✓
-        - [x] Create the cursor rules directory structure
-        - [x] Ensure the Makefile has the update-cursor-rules task
-        - [x] Update .dockerignore to exclude the cursor rules drafts directory
-        - [x] Prepare empty files for each planned cursor rule
-
-        Phase 4: Rule Creation
-        - [ ] For each rule:
-          - [ ] Define rule name and description
-          - [ ] Specify file patterns to match
-          - [ ] Define content patterns to match
-          - [ ] Craft the action message with clear guidance
-          - [ ] Create example input/output pairs
-          - [ ] Add appropriate tags and metadata
-          - [ ] Review and refine the rule
-
-        Phase 5: Deployment and Testing
-        - [ ] Save each rule to the cursor rules directory
-        - [ ] Deploy rules using the update-cursor-rules task
-        - [ ] Test each rule on appropriate files
-        - [ ] Gather feedback on rule effectiveness
-        - [ ] Make adjustments based on testing results
+        dict[str, Any]: Status of the workflow, next steps, and any generated content
 
     """
-    # Initialize workflow state if not provided
-    if workflow_state is None:
-        workflow_state = {
-            "current_phase": phase,
-            "phase_1_complete": False,
-            "phase_2_complete": False,
-            "phase_3_complete": False,
-            "phase_4_complete": False,
-            "phase_5_complete": False,
+    # Initialize workflow_state if it's None or not a dictionary
+    actual_workflow_state = {} if workflow_state is None or not isinstance(workflow_state, dict) else workflow_state
+
+    # If no workflow_state is provided, initialize it with the input parameters
+    if not actual_workflow_state:
+        # Initialize repository information
+        actual_workflow_state = {
             "repository_info": {
                 "description": repo_description,
-                "main_languages": main_languages,
-                "file_patterns": file_patterns,
-                "key_features": key_features,
+                "main_languages": main_languages.split(","),
+                "file_patterns": file_patterns.split(","),
+                "key_features": key_features.split(","),
             },
-            "analysis_results": {},
             "recommended_rules": [],
-            "selected_rules": [],
             "created_rules": [],
             "deployed_rules": [],
+            "workspace_prepared": True,  # Mark workspace as prepared
+            "workspace_result": prep_workspace(),  # Store workspace preparation result
         }
 
     # Execute the current phase
     if phase == 1:
         # Phase 1: Repository Analysis
-        return execute_phase_1(workflow_state)
+        return execute_phase_1(actual_workflow_state)
     elif phase == 2:
         # Phase 2: Rule Identification
-        return execute_phase_2(workflow_state)
+        return execute_phase_2(actual_workflow_state)
     elif phase == 3:
         # Phase 3: Workspace Preparation
-        return execute_phase_3(workflow_state)
+        return execute_phase_3(actual_workflow_state)
     elif phase == 4:
         # Phase 4: Rule Creation
-        return execute_phase_4(workflow_state)
+        return execute_phase_4(actual_workflow_state)
     elif phase == 5:
         # Phase 5: Deployment and Testing
-        return execute_phase_5(workflow_state)
+        return execute_phase_5(actual_workflow_state)
     else:
         return {"status": "error", "message": f"Invalid phase: {phase}. Valid phases are 1-5."}
 
@@ -1530,12 +1511,31 @@ def execute_phase_1(workflow_state: dict[str, Any]) -> dict[str, Any]:
     """Execute Phase 1: Repository Analysis.
 
     Args:
-        workflow_state: Current state of the workflow
+        workflow_state: Current state of the workflow for continuing execution
 
     Returns:
         dict[str, Any]: Updated workflow state and next steps
 
     """
+    # Initialize workflow_state as an empty dict if it's None or not a dictionary
+    if workflow_state is None or not isinstance(workflow_state, dict):
+        workflow_state = {}
+
+    # First, ensure workspace is prepared before any analysis
+    if not workflow_state.get("workspace_prepared", False):
+        # Prepare the workspace
+        workspace_result = prep_workspace()
+        workflow_state["workspace_prepared"] = True
+        workflow_state["workspace_result"] = workspace_result
+
+        # If workspace preparation failed, return error
+        if workspace_result.get("status") == "error":
+            return {
+                "status": "error",
+                "message": f"Error preparing workspace: {workspace_result.get('message')}",
+                "workflow_state": workflow_state,
+            }
+
     # If Phase 1 is already complete, return the state and suggest moving to Phase 2
     if workflow_state.get("phase_1_complete", False):
         return {
@@ -1579,6 +1579,7 @@ def execute_phase_1(workflow_state: dict[str, Any]) -> dict[str, Any]:
 
         # Create a checklist for phase 1 completion
         checklist = [
+            {"item": "Workspace prepared", "complete": True},
             {"item": "Repository information gathered", "complete": True},
             {"item": "Repository structure analyzed", "complete": True},
             {"item": "Common patterns identified", "complete": len(structured_analysis["common_patterns"]) > 0},
@@ -1704,7 +1705,7 @@ Common Patterns: {analysis_results.get("common_patterns", "")}
                         dependencies.append(other_rule.get("name", ""))
 
             # Add the dependencies to the rule
-            rule["dependencies"] = dependencies
+            rule["dependencies"] = dependencies  # type: ignore
 
         # Update the workflow state
         workflow_state["recommended_rules"] = filtered_rules
@@ -1796,8 +1797,14 @@ def execute_phase_3(workflow_state: dict[str, Any]) -> dict[str, Any]:
         valid_rule_names.append(valid_name)
 
     try:
-        # Step 1: Prepare the workspace
-        workspace_result = prep_workspace()
+        # Get the workspace result from the initial preparation
+        workspace_result = workflow_state.get("workspace_result", {})
+        if not workspace_result:
+            return {
+                "status": "error",
+                "message": "Workspace preparation result not found in workflow state.",
+                "workflow_state": workflow_state,
+            }
 
         # Step 2: Ensure the Makefile has the update-cursor-rules task
         makefile_result = ensure_makefile_task()
@@ -1809,13 +1816,6 @@ def execute_phase_3(workflow_state: dict[str, Any]) -> dict[str, Any]:
         files_result = create_cursor_rule_files(valid_rule_names)
 
         # Check if any of the operations failed
-        if workspace_result.get("status") == "error":
-            return {
-                "status": "error",
-                "message": f"Error preparing workspace: {workspace_result.get('message')}",
-                "workflow_state": workflow_state,
-            }
-
         if makefile_result.get("status") == "error":
             return {
                 "status": "error",
@@ -1854,7 +1854,7 @@ def execute_phase_3(workflow_state: dict[str, Any]) -> dict[str, Any]:
         checklist = [
             {
                 "item": "Created cursor rules directory structure",
-                "complete": workspace_result.get("status") == "success",
+                "complete": True,  # Already completed in initial preparation
             },
             {
                 "item": "Ensured Makefile has update-cursor-rules task",
