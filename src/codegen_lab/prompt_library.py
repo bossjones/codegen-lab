@@ -766,7 +766,7 @@ def save_cursor_rule(
         ],
         min_length=10,
     ),
-) -> str:
+) -> dict[str, Any]:
     """Save a cursor rule to the cursor rules directory.
 
     Args:
@@ -774,23 +774,21 @@ def save_cursor_rule(
         rule_content: The complete content of the cursor rule in mdc.md format
 
     Returns:
-        str: Success message
+        dict: Dictionary containing file operation instructions
 
     """
-    # Get the current working directory
-    current_dir = Path.cwd()
+    # Define the path for the cursor rules directory
+    cursor_rules_dir_path = "hack/drafts/cursor_rules"
+    rule_file_path = f"{cursor_rules_dir_path}/{rule_name}.mdc.md"
 
-    # Create the cursor rules directory path relative to the current directory
-    local_cursor_rules_dir = current_dir / "hack" / "drafts" / "cursor_rules"
-
-    # Create the directory if it doesn't exist
-    local_cursor_rules_dir.mkdir(parents=True, exist_ok=True)
-
-    # Save the rule to the local cursor rules directory
-    rule_path = local_cursor_rules_dir / f"{rule_name}.mdc.md"
-    rule_path.write_text(rule_content)
-
-    return f"Cursor rule saved to {rule_path}"
+    # Return operations for the client to perform
+    return {
+        "operations": [
+            {"type": "create_directory", "path": cursor_rules_dir_path, "options": {"parents": True, "exist_ok": True}},
+            {"type": "write_file", "path": rule_file_path, "content": rule_content, "options": {"mode": "w"}},
+        ],
+        "message": f"Instructions to save cursor rule to {rule_file_path}",
+    }
 
 
 @mcp.tool(
