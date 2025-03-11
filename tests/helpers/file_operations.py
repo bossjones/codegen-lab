@@ -65,7 +65,20 @@ def apply_operations(operations: list[FileOperation], base_dir: str | Path) -> d
                 results[op["path"]] = {"success": False, "error": "File not found"}
 
         elif op_type == "check_file_exists":
-            results[op["path"]] = {"exists": path.exists()}
+            file_exists = path.exists()
+            results[op["path"]] = {
+                "type": "file_exists",
+                "exists": file_exists,
+                "success": True,  # Added for backward compatibility
+            }
+
+            # If this is a check for a file that doesn't exist, we can skip subsequent operations
+            # that would operate on this file
+            if not file_exists and any(
+                other_op["type"] in ["read_file", "write_file"] and other_op["path"] == op["path"]
+                for other_op in operations[operations.index(op) + 1 :]
+            ):
+                break
 
         elif op_type == "execute_command":
             # For testing purposes, we just record the command rather than executing it

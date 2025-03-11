@@ -767,8 +767,11 @@ update-cursor-rules:
 
         # Test not found case
         mocker.patch("codegen_lab.prompt_library.read_cursor_rule", return_value=None)
-        with pytest.raises(FileNotFoundError):
-            get_static_cursor_rule("nonexistent_rule")
+        result = get_static_cursor_rule("nonexistent_rule")
+        assert result["isError"] is True
+        assert isinstance(result["content"], list)
+        assert result["content"][0]["type"] == "text"
+        assert "Error: Static cursor rule 'nonexistent_rule' not found" in result["content"][0]["text"]
 
     def test_get_static_cursor_rules(self, mocker: "MockerFixture", sample_cursor_rule: str) -> None:
         """Test get_static_cursor_rules function."""
@@ -787,18 +790,20 @@ update-cursor-rules:
         results = get_static_cursor_rules(rule_names)
 
         # Assert
-        assert len(results) == 3
+        assert "rules" in results
+        assert len(results["rules"]) == 3
 
         # Check first two rules have content
-        assert results[0]["rule_name"] == "rule1.md"
-        assert results[0]["content"] == sample_cursor_rule
-        assert results[1]["rule_name"] == "rule2.md"
-        assert results[1]["content"] == sample_cursor_rule
+        assert results["rules"][0]["rule_name"] == "rule1.md"
+        assert results["rules"][0]["content"] == sample_cursor_rule
+        assert results["rules"][1]["rule_name"] == "rule2.md"
+        assert results["rules"][1]["content"] == sample_cursor_rule
 
         # Check nonexistent rule has error information
-        assert results[2]["rule_name"] == "nonexistent_rule.md"
-        assert results[2]["content"] is None
-        assert "not found" in results[2]["error"]
+        assert results["rules"][2]["isError"] is True
+        assert isinstance(results["rules"][2]["content"], list)
+        assert results["rules"][2]["content"][0]["type"] == "text"
+        assert "Error: Static cursor rule 'nonexistent_rule' not found" in results["rules"][2]["content"][0]["text"]
 
 
 class TestWorkflowFunctions:

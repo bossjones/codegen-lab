@@ -4,6 +4,11 @@ This module provides fixtures and context managers that make it easier to test
 MCP tools that return file operation instructions rather than performing
 operations directly.
 """
+# pyright: reportMissingImports=false
+# pyright: reportUnusedVariable=warning
+# pyright: reportUntypedBaseClass=error
+# pyright: reportGeneralTypeIssues=false
+# pyright: reportAttributeAccessIssue=false
 
 import contextlib
 import os

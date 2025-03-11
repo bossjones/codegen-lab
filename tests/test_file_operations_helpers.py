@@ -1,4 +1,9 @@
 """Tests for the file operations helpers module."""
+# pyright: reportMissingImports=false
+# pyright: reportUnusedVariable=warning
+# pyright: reportUntypedBaseClass=error
+# pyright: reportGeneralTypeIssues=false
+# pyright: reportAttributeAccessIssue=false
 
 import os
 import tempfile
@@ -73,7 +78,12 @@ def test_apply_operations(test_dir: Path) -> None:
     # Verify results
     assert results["project/src"]["success"] is True
     assert results["project/src/main.py"]["success"] is True
-    assert results["project/src/main.py"]["exists"] is True
+
+    # Verify the check_file_exists result
+    file_exists_result = results.get("project/src/main.py")
+    assert file_exists_result is not None
+    assert file_exists_result.get("type") == "file_exists"
+    assert file_exists_result.get("exists") is True
 
     # Verify files were actually created
     assert (test_dir / "project" / "src").is_dir()

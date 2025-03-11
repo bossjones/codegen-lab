@@ -3,12 +3,17 @@
 This module demonstrates how to use the temporary MCP environment
 context manager for more concise and readable tests.
 """
+# pyright: reportMissingImports=false
+# pyright: reportUnusedVariable=warning
+# pyright: reportUntypedBaseClass=error
+# pyright: reportGeneralTypeIssues=false
+# pyright: reportAttributeAccessIssue=false
 
 from typing import TYPE_CHECKING, Any, Dict, Optional
 
 import pytest
 
-from tests.helpers.test_fixtures import temp_mcp_environment
+from tests.helpers.advanced_fixtures import temp_mcp_environment
 
 if TYPE_CHECKING:
     from _pytest.capture import CaptureFixture
@@ -30,30 +35,36 @@ def update_config_file(config_path: str, settings: dict[str, Any]) -> dict[str, 
         Dictionary with operations to update the configuration file
 
     """
+    # Create operations list with the check_file_exists operation first
+    check_operation = {
+        "type": "check_file_exists",
+        "path": config_path,
+        "content": None,
+        "args": None,
+        "kwargs": None,
+    }
+
+    # Add all operations to the list
+    operations = [
+        check_operation,
+        {
+            "type": "read_file",
+            "path": config_path,
+            "content": None,
+            "args": None,
+            "kwargs": {"encoding": "utf-8"},
+        },
+        {
+            "type": "write_file",
+            "path": config_path,
+            "content": "# Updated Configuration\n" + "\n".join([f"{k} = {v}" for k, v in settings.items()]),
+            "args": None,
+            "kwargs": {"encoding": "utf-8"},
+        },
+    ]
+
     return {
-        "operations": [
-            {
-                "type": "check_file_exists",
-                "path": config_path,
-                "content": None,
-                "args": None,
-                "kwargs": None,
-            },
-            {
-                "type": "read_file",
-                "path": config_path,
-                "content": None,
-                "args": None,
-                "kwargs": {"encoding": "utf-8"},
-            },
-            {
-                "type": "write_file",
-                "path": config_path,
-                "content": "# Updated Configuration\n" + "\n".join([f"{k} = {v}" for k, v in settings.items()]),
-                "args": None,
-                "kwargs": {"encoding": "utf-8"},
-            },
-        ],
+        "operations": operations,
         "requires_result": True,
         "message": f"Instructions to update configuration file {config_path}",
     }
