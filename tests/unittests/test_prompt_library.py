@@ -992,12 +992,15 @@ class TestPlanAndExecuteWorkflow:
         for name in rule_names:
             assert (cursor_rules_dir / f"{name}.mdc.md").exists()
 
-    def test_read_cursor_rule_existing(self, mocker: "MockerFixture", tmp_path: Path) -> None:
+    def test_read_cursor_rule_existing(
+        self, mocker: "MockerFixture", tmp_path: Path, monkeypatch: "MonkeyPatch"
+    ) -> None:
         """Test that read_cursor_rule correctly reads an existing cursor rule.
 
         Args:
             mocker: Pytest fixture for mocking
             tmp_path: Pytest fixture providing a temporary directory path
+            monkeypatch: Pytest fixture for patching objects during testing
 
         """
         # Mock the current working directory
@@ -1011,6 +1014,9 @@ class TestPlanAndExecuteWorkflow:
         rule_content = "# Test Rule\n\nThis is a test rule."
         rule_file = cursor_rules_dir / "test-rule.mdc.md"
         rule_file.write_text(rule_content)
+
+        # Patch the CURSOR_RULES_DIR to point to our test directory
+        monkeypatch.setattr("codegen_lab.prompt_library.CURSOR_RULES_DIR", cursor_rules_dir)
 
         # Call the function
         result = read_cursor_rule("test-rule")
