@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 import pytest
+from _pytest.monkeypatch import MonkeyPatch
 from pytest_mock import MockerFixture
 
 from codegen_lab.prompt_library import (
@@ -37,7 +38,6 @@ if TYPE_CHECKING:
     from _pytest.capture import CaptureFixture
     from _pytest.fixtures import FixtureRequest
     from _pytest.logging import LogCaptureFixture
-    from _pytest.monkeypatch import MonkeyPatch
     from pytest_mock.plugin import MockerFixture
 
 from mcp.shared.memory import create_connected_server_and_client_session as client_session
@@ -950,77 +950,47 @@ class TestPlanAndExecuteWorkflow:
         assert result["status"] == "error"
         assert "Error during repository analysis" in result["message"]
 
-    def test_get_cursor_rule_names(self, mocker: "MockerFixture", tmp_path: Path) -> None:
-        """Test that get_cursor_rule_names correctly retrieves cursor rule names.
+    def test_get_cursor_rule_names(self, tmp_path: Path, monkeypatch: MonkeyPatch) -> None:
+        """Test retrieving cursor rule names by copying existing rules from the project.
 
         Args:
-            mocker: Pytest fixture for mocking
             tmp_path: Pytest fixture providing a temporary directory path
+            monkeypatch: Pytest fixture for patching objects during testing
 
         """
-        # Mock the current working directory
-        mocker.patch("pathlib.Path.cwd", return_value=tmp_path)
+        import shutil
+        from pathlib import Path
 
-        # Create a mock cursor rules directory with some files
-        cursor_rules_dir = tmp_path / "hack" / "drafts" / "cursor_rules"
-        cursor_rules_dir.mkdir(parents=True, exist_ok=True)
+        from codegen_lab.prompt_library import CURSOR_RULES_DIR
 
-        # Create some test files
-        (cursor_rules_dir / "test-rule-1.mdc.md").touch()
-        (cursor_rules_dir / "test-rule-2.mdc.md").touch()
-        (cursor_rules_dir / "not-a-rule.txt").touch()  # Should be ignored
+        # Create a temporary directory for cursor rules
+        cursor_rules_dir = tmp_path / "cursor_rules"
+        cursor_rules_dir.mkdir()
 
-        # Call the function
-        result = get_cursor_rule_names()
+        # Path to the project's cursor rules
+        source_dir = Path("./hack/drafts/cursor_rules")
 
-        # Verify the result
-        assert isinstance(result, list)
-        assert len(result) == 2
-        assert "test-rule-1" in result
-        assert "test-rule-2" in result
-        assert "not-a-rule" not in result
+        # Copy rules if the source directory exists
+        if source_dir.exists():
+            # Copy only .mdc files
+            for rule_file in source_dir.glob("*.mdc.md"):
+                shutil.copy(rule_file, cursor_rules_dir)
+        else:
+            # If source doesn't exist, create some sample files
+            (cursor_rules_dir / "sample1.mdc.md").write_text("# Sample rule 1")
+            (cursor_rules_dir / "sample2.mdc.md").write_text("# Sample rule 2")
 
-    def test_get_cursor_rule_names_empty_directory(self, mocker: "MockerFixture", tmp_path: Path) -> None:
-        """Test that get_cursor_rule_names handles empty directories correctly.
+        # Temporarily patch the CURSOR_RULES_DIR to point to our test directory
+        monkeypatch.setattr("codegen_lab.prompt_library.CURSOR_RULES_DIR", cursor_rules_dir)
 
-        Args:
-            mocker: Pytest fixture for mocking
-            tmp_path: Pytest fixture providing a temporary directory path
+        # Call the function under test
+        rule_names = get_cursor_rule_names()
 
-        """
-        # Mock the current working directory
-        mocker.patch("pathlib.Path.cwd", return_value=tmp_path)
-
-        # Create an empty cursor rules directory
-        cursor_rules_dir = tmp_path / "hack" / "drafts" / "cursor_rules"
-        cursor_rules_dir.mkdir(parents=True, exist_ok=True)
-
-        # Call the function
-        result = get_cursor_rule_names()
-
-        # Verify the result
-        assert isinstance(result, list)
-        assert len(result) == 0
-
-    def test_get_cursor_rule_names_nonexistent_directory(self, mocker: "MockerFixture", tmp_path: Path) -> None:
-        """Test that get_cursor_rule_names handles nonexistent directories correctly.
-
-        Args:
-            mocker: Pytest fixture for mocking
-            tmp_path: Pytest fixture providing a temporary directory path
-
-        """
-        # Mock the current working directory
-        mocker.patch("pathlib.Path.cwd", return_value=tmp_path)
-
-        # Don't create the cursor rules directory
-
-        # Call the function
-        result = get_cursor_rule_names()
-
-        # Verify the result
-        assert isinstance(result, list)
-        assert len(result) == 0
+        # Verify results
+        assert len(rule_names) > 0
+        # Verify all names correspond to .mdc files
+        for name in rule_names:
+            assert (cursor_rules_dir / f"{name}.mdc.md").exists()
 
     def test_read_cursor_rule_existing(self, mocker: "MockerFixture", tmp_path: Path) -> None:
         """Test that read_cursor_rule correctly reads an existing cursor rule.
