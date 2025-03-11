@@ -719,7 +719,7 @@ def save_cursor_rule(
         pattern="^[a-z0-9-]+$",
     ),
     rule_content: str = Field(
-        description="The complete content of the cursor rule in markdown format",
+        description="The complete content of the cursor rule in mdc.md format",
         examples=[
             "# Python Best Practices\n\nWhen writing Python code, follow these guidelines:\n\n1. Use type hints\n2. Write docstrings\n3. Follow PEP 8"
         ],
@@ -730,7 +730,7 @@ def save_cursor_rule(
 
     Args:
         rule_name: The name of the cursor rule file (without extension)
-        rule_content: The complete content of the cursor rule in markdown format
+        rule_content: The complete content of the cursor rule in mdc.md format
 
     Returns:
         str: Success message
