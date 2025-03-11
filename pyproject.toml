@@ -176,6 +176,12 @@ filterwarnings = [
     "ignore::DeprecationWarning:audioop:",
     "default::DeprecationWarning:democracy_exe.*:",
     "default::pydantic.warnings.PydanticDeprecatedSince20:democracy_exe.*:",
+    "ignore::ResourceWarning:anyio.streams.memory",
+    "ignore::ResourceWarning:anyio.streams.stapled",
+    "ignore::ResourceWarning:anyio.abc",
+    "ignore::ResourceWarning:asyncio",
+    "ignore::ResourceWarning:aiohttp",
+    "ignore::ResourceWarning:pytest_asyncio"
 ]
 
 pythonpath = "."
