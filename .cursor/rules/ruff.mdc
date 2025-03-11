@@ -18,7 +18,125 @@ uv run ruff check --fix path/to/file_or_dir
 
 # Format code using Ruff formatter
 uv run ruff format path/to/file_or_dir
+
+# Automatically fix common issues (like D413 and I001)
+uv run ruff check --fix --select D413,I001 path/to/file_or_dir
+
+# Set up a pre-commit hook to automatically run linting (add to your Makefile or scripts)
+make lint-fix  # Where this runs: uv run ruff check --fix . && uv run ruff format .
 ```
+
+## Fixing Common Linting Errors
+
+This project frequently encounters these specific linting errors:
+
+### D413: Missing blank line after last section in docstring
+
+This error occurs when there's no blank line after the last section in a docstring. For example:
+
+```python
+# Incorrect - Will trigger D413
+def example_function(param1: str, param2: int) -> bool:
+    """Check if parameters meet criteria.
+
+    Args:
+        param1: First parameter to check
+        param2: Second parameter to check
+
+    Returns:
+        True if criteria are met, False otherwise"""  # No blank line after Returns section
+    return param1 == "test" and param2 > 10
+
+# Correct - Compliant with D413
+def example_function(param1: str, param2: int) -> bool:
+    """Check if parameters meet criteria.
+
+    Args:
+        param1: First parameter to check
+        param2: Second parameter to check
+
+    Returns:
+        True if criteria are met, False otherwise
+
+    """  # Note the blank line after the Returns section
+    return param1 == "test" and param2 > 10
+```
+
+**Auto-fix command**: `uv run ruff check --fix --select D413 path/to/file_or_dir`
+
+### I001: Unsorted imports
+
+This error occurs when imports are not properly sorted according to the project's isort configuration. The project uses specific import sections:
+
+1. Future imports
+2. Standard library imports
+3. Third-party imports
+4. Pytest imports
+5. First-party imports (project modules)
+6. Local folder imports
+
+```python
+# Incorrect - Will trigger I001
+import os
+from typing import List, Optional
+import pytest
+from codegen_lab.utils import helper
+import json
+from pathlib import Path
+
+# Correct - Compliant with I001
+from __future__ import annotations  # Required import
+
+import json
+import os
+from pathlib import Path
+from typing import List, Optional
+
+import pytest
+
+from codegen_lab.utils import helper
+```
+
+**Auto-fix command**: `uv run ruff check --fix --select I001 path/to/file_or_dir`
+
+### Preventing These Errors
+
+To prevent these common errors during development:
+
+1. **Set up editor auto-formatting**:
+   - Configure your editor to format on save with Ruff
+   - Use the provided VS Code settings in the "Editor Integration" section
+
+2. **Use docstring templates**:
+   - Add a docstring template to your editor for proper PEP257 formatting
+   - Always include a blank line after the last section in your docstrings
+
+3. **Create a pre-commit hook**:
+   - Set up a pre-commit hook to automatically fix these issues before committing
+   - This can be done with tools like pre-commit or in your CI/CD pipeline
+
+4. **Batch fix during development**:
+   - Run this command periodically during development to fix these issues:
+     ```bash
+     uv run ruff check --fix --select D413,I001 .
+     ```
+
+5. **VS Code workspace settings**:
+   Add this to your .vscode/settings.json file:
+   ```json
+   {
+       "editor.formatOnSave": true,
+       "ruff.format.args": ["--preview"],
+       "[python]": {
+           "editor.defaultFormatter": "charliermarsh.ruff",
+           "editor.formatOnSave": true,
+           "editor.codeActionsOnSave": {
+               "source.fixAll.ruff": "explicit",
+               "source.organizeImports.ruff": "explicit"
+           }
+       }
+   }
+   ```
 
 ## Project Configuration Overview
 
