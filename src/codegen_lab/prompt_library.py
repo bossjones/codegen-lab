@@ -1009,7 +1009,8 @@ def prep_workspace() -> dict[str, str]:
 
     This function provides natural language instructions and commands
     for cursor rules, including directory creation and file preparation steps.
-    It creates directories relative to the current working directory.
+    It returns instructions relative to the current working directory without
+    actually creating any directories.
 
     Returns:
         dict[str, str]: A dictionary containing status, instructions, and commands
@@ -1019,62 +1020,25 @@ def prep_workspace() -> dict[str, str]:
         - directory_exists: Boolean indicating if directory already exists
         - directory_path: Path to the cursor rules directory
         - mkdir_command: Command to create the directory
-        - directory_structure: (on success) Information about created structure
+        - directory_structure: Information about the structure to create
 
     Raises:
         No exceptions are raised as they are caught and returned as error messages.
 
     """
-    # Get the current working directory
-    current_dir = Path.cwd()
-
-    # Define the cursor rules directory path
-    cursor_rules_dir = current_dir / "hack" / "drafts" / "cursor_rules"
-
-    # Check if the directory exists
-    dir_exists = cursor_rules_dir.exists()
-
-    # Prepare instructions with relative path for display
-    relative_path = "./hack/drafts/cursor_rules"
-    mkdir_cmd = f"mkdir -p {relative_path} .cursor/rules || true"
-
     try:
-        # Create the directory if it doesn't exist
-        if not dir_exists:
-            try:
-                cursor_rules_dir.mkdir(parents=True, exist_ok=True)
-            except PermissionError as pe:
-                return {
-                    "status": "error",
-                    "message": f"Permission error creating directory: {pe!s}. Try creating it manually with: {mkdir_cmd}",
-                    "directory_exists": dir_exists,
-                    "directory_path": relative_path,
-                    "mkdir_command": mkdir_cmd,
-                    "workspace_prepared": False,
-                    "workspace_result": {
-                        "status": "error",
-                        "message": f"Error preparing workspace: {pe!s}",
-                        "directory_exists": dir_exists,
-                        "directory_path": relative_path,
-                        "mkdir_command": mkdir_cmd,
-                    },
-                }
-            except OSError as ose:
-                return {
-                    "status": "error",
-                    "message": f"OS error creating directory: {ose!s}. Try creating it manually with: {mkdir_cmd}",
-                    "directory_exists": dir_exists,
-                    "directory_path": relative_path,
-                    "mkdir_command": mkdir_cmd,
-                    "workspace_prepared": False,
-                    "workspace_result": {
-                        "status": "error",
-                        "message": f"Error preparing workspace: {ose!s}",
-                        "directory_exists": dir_exists,
-                        "directory_path": relative_path,
-                        "mkdir_command": mkdir_cmd,
-                    },
-                }
+        # Get the current working directory
+        current_dir = Path.cwd()
+
+        # Define the cursor rules directory path
+        cursor_rules_dir = current_dir / "hack" / "drafts" / "cursor_rules"
+
+        # Check if the directory exists
+        dir_exists = cursor_rules_dir.exists()
+
+        # Prepare instructions with relative path for display
+        relative_path = "./hack/drafts/cursor_rules"
+        mkdir_cmd = f"mkdir -p {relative_path} .cursor/rules || true"
 
         instructions = {
             "status": "success",
@@ -1086,6 +1050,7 @@ To prepare the workspace for cursor rules, the following steps are needed:
 
 2. Ensure the .cursor/rules directory exists for deployment:
    mkdir -p .cursor/rules
+   mkdir -p ./hack/drafts/cursor_rules
 
 3. Check if Makefile exists with an update-cursor-rules task:
    The update-cursor-rules task should copy files from hack/drafts/cursor_rules to .cursor/rules. This command updates Cursor editor rules by copying rule definitions from a drafts directory into the Cursor configuration folder. It first creates a .cursor/rules directory if it doesn't exist. Then it finds all Markdown (.md) files in the hack/drafts/cursor_rules directory (excluding any README files), copies them to the .cursor/rules directory, and preserves their filenames without the .md extension. The comment notes that Cursor doesn't support generating .mdc files directly through the Composer Agent at the time this was written
@@ -1130,11 +1095,11 @@ To prepare the workspace for cursor rules, the following steps are needed:
             "directory_exists": dir_exists,
             "directory_path": relative_path,
             "mkdir_command": mkdir_cmd,
-            "directory_structure": f"Created directory structure at {relative_path}",
-            "workspace_prepared": True,
+            "directory_structure": f"Directory structure to create at {relative_path}",
+            "workspace_prepared": False,  # Changed to False since we're not creating directories
             "workspace_result": {
                 "status": "success",
-                "message": f"Workspace prepared successfully at {relative_path}",
+                "message": f"Instructions provided for workspace preparation at {relative_path}",
                 "directory_exists": dir_exists,
                 "directory_path": relative_path,
                 "mkdir_command": mkdir_cmd,
@@ -1146,17 +1111,17 @@ To prepare the workspace for cursor rules, the following steps are needed:
     except Exception as e:
         return {
             "status": "error",
-            "message": f"Error preparing workspace: {e!s}",
-            "directory_exists": dir_exists,
-            "directory_path": relative_path,
-            "mkdir_command": mkdir_cmd,
+            "message": f"Error preparing workspace instructions: {e!s}",
+            "directory_exists": False,
+            "directory_path": "./hack/drafts/cursor_rules",
+            "mkdir_command": "mkdir -p ./hack/drafts/cursor_rules .cursor/rules || true",
             "workspace_prepared": False,
             "workspace_result": {
                 "status": "error",
-                "message": f"Error preparing workspace: {e!s}",
-                "directory_exists": dir_exists,
-                "directory_path": relative_path,
-                "mkdir_command": mkdir_cmd,
+                "message": f"Error preparing workspace instructions: {e!s}",
+                "directory_exists": False,
+                "directory_path": "./hack/drafts/cursor_rules",
+                "mkdir_command": "mkdir -p ./hack/drafts/cursor_rules .cursor/rules || true",
             },
         }
 
@@ -1532,6 +1497,7 @@ def plan_and_execute_prompt_library_workflow(
     main_languages: str = Field(description="Main programming languages used in the repository (comma-separated)"),
     file_patterns: str = Field(description="Common file patterns/extensions in the repository (comma-separated)"),
     key_features: str = Field(description="Key features or functionality of the repository (comma-separated)"),
+    client_repo_root: str = Field(description="Absolute path to the client's repository root directory", default=""),
     phase: int = Field(description="Current phase of the workflow (1-5)", default=1),
     workflow_state: dict[str, Any] = Field(
         description="Current state of the workflow for continuing execution", default=None
@@ -1554,6 +1520,7 @@ def plan_and_execute_prompt_library_workflow(
         main_languages: Main programming languages used in the repository (comma-separated)
         file_patterns: Common file patterns/extensions in the repository (comma-separated)
         key_features: Key features or functionality of the repository (comma-separated)
+        client_repo_root: Absolute path to the client's repository root directory
         phase: Current phase of the workflow (1-5)
         workflow_state: Current state of the workflow for continuing execution
 
@@ -1573,6 +1540,7 @@ def plan_and_execute_prompt_library_workflow(
                 "main_languages": main_languages.split(","),
                 "file_patterns": file_patterns.split(","),
                 "key_features": key_features.split(","),
+                "repo_root": client_repo_root,
             },
             "recommended_rules": [],
             "created_rules": [],

@@ -45,6 +45,51 @@ from mcp.types import TextContent, TextResourceContents
 from pydantic import AnyUrl
 
 
+# Helper function to mimic LLM actions based on prep_workspace instructions
+def helper_execute_prep_workspace_instructions(instructions: dict[str, Any], base_dir: Path) -> dict[str, Any]:
+    """Execute the instructions returned by prep_workspace.
+
+    This helper function mimics what an LLM would do after receiving instructions
+    from the prep_workspace tool. It creates the necessary directories based on
+    the instructions.
+
+    Args:
+        instructions: The instructions dictionary returned by prep_workspace
+        base_dir: The base directory where directories should be created
+
+    Returns:
+        Dict[str, Any]: A dictionary with the results of executing the instructions
+
+    """
+    result = {"status": "success", "actions_performed": [], "errors": []}
+
+    try:
+        # Extract the mkdir command
+        mkdir_cmd = instructions.get("mkdir_command", "")
+
+        # Parse the command to get directory paths
+        if "mkdir -p" in mkdir_cmd:
+            # Extract directory paths from the command
+            cmd_parts = mkdir_cmd.split("mkdir -p")[1].strip().split("||")[0].strip()
+            dir_paths = [p.strip() for p in cmd_parts.split() if p.strip()]
+
+            # Create each directory
+            for dir_path in dir_paths:
+                # Convert relative path to absolute path based on base_dir
+                if dir_path.startswith("./"):
+                    dir_path = dir_path[2:]  # Remove leading ./
+
+                abs_path = base_dir / dir_path
+                abs_path.mkdir(parents=True, exist_ok=True)
+                result["actions_performed"].append(f"Created directory: {abs_path}")
+
+        return result
+    except Exception as e:
+        result["status"] = "error"
+        result["errors"].append(str(e))
+        return result
+
+
 @pytest.fixture
 def sample_cursor_rule() -> str:
     """Provide a sample cursor rule for testing.
@@ -415,7 +460,7 @@ class TestUtilityFunctions:
         assert (tmp_path / "hack" / "drafts" / "cursor_rules").exists()
 
     def test_prep_workspace(self, mocker: "MockerFixture", tmp_path: Path) -> None:
-        """Test that prep_workspace creates the necessary directories.
+        """Test that prep_workspace returns proper instructions without creating directories.
 
         Args:
             mocker: Pytest fixture for mocking
@@ -425,19 +470,73 @@ class TestUtilityFunctions:
         # Mock the current working directory
         mocker.patch("pathlib.Path.cwd", return_value=tmp_path)
 
+        # Mock Path.exists to return False (directory doesn't exist)
+        mock_exists = mocker.patch.object(Path, "exists", return_value=False)
+
         # Call the function
         result = prep_workspace()
 
-        # Check that the directories were created
-        cursor_rules_dir = tmp_path / "hack" / "drafts" / "cursor_rules"
+        # Verify the function checked if the directory exists
+        mock_exists.assert_called_once()
 
-        # Check the results instead of checking if directories were created
-        # The function only returns instructions, it doesn't create directories
-        assert result["directory_path"] == str(cursor_rules_dir)
-        assert result["directory_exists"] is False
+        # Check the results
+        assert result["status"] == "success"
         assert "mkdir -p" in result["mkdir_command"]
-        # The function uses a relative path in the mkdir command, not the absolute path
         assert "./hack/drafts/cursor_rules" in result["mkdir_command"]
+        assert ".cursor/rules" in result["mkdir_command"]
+        assert result["directory_exists"] is False
+        assert result["workspace_prepared"] is False  # Should be False since we're not creating directories
+
+        # Verify the instructions contain all necessary steps
+        assert "Create the cursor rules directory structure" in result["message"]
+        assert "Ensure the .cursor/rules directory exists" in result["message"]
+        assert "Check if Makefile exists" in result["message"]
+        assert "Update .dockerignore" in result["message"]
+        assert "Write the following mandatory cursor rule files" in result["message"]
+        assert "Update the client repo's .cursor/mcp.json" in result["message"]
+
+        # Verify no directories were created
+        cursor_rules_dir = tmp_path / "hack" / "drafts" / "cursor_rules"
+        assert not cursor_rules_dir.exists()
+
+        # Test with directory already existing
+        mock_exists.return_value = True
+        result = prep_workspace()
+        assert result["directory_exists"] is True
+        assert result["workspace_prepared"] is False  # Still False since we're not creating directories
+
+    def test_helper_execute_prep_workspace_instructions(self, mocker: "MockerFixture", tmp_path: Path) -> None:
+        """Test that the helper function correctly executes prep_workspace instructions.
+
+        Args:
+            mocker: Pytest fixture for mocking
+            tmp_path: Pytest fixture providing a temporary directory path
+
+        """
+        # Mock the current working directory
+        mocker.patch("pathlib.Path.cwd", return_value=tmp_path)
+
+        # Get instructions from prep_workspace
+        instructions = prep_workspace()
+
+        # Verify directories don't exist yet
+        cursor_rules_dir = tmp_path / "hack" / "drafts" / "cursor_rules"
+        cursor_dir = tmp_path / ".cursor" / "rules"
+        assert not cursor_rules_dir.exists()
+        assert not cursor_dir.exists()
+
+        # Execute the instructions
+        result = helper_execute_prep_workspace_instructions(instructions, tmp_path)
+
+        # Verify the execution was successful
+        assert result["status"] == "success"
+        assert len(result["actions_performed"]) == 2  # Two directories should be created
+        assert "Created directory" in result["actions_performed"][0]
+        assert "Created directory" in result["actions_performed"][1]
+
+        # Verify directories were created
+        assert cursor_rules_dir.exists()
+        assert cursor_dir.exists()
 
     def test_create_cursor_rule_files(self, mocker: "MockerFixture", tmp_path: Path) -> None:
         """Test that create_cursor_rule_files creates the specified files.
