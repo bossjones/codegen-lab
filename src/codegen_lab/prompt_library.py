@@ -1012,7 +1012,7 @@ To prepare the workspace for cursor rules, the following steps are needed:
 2. Ensure the .cursor/rules directory exists for deployment:
    mkdir -p .cursor/rules
 
-3. Check if a Makefile exists with an update-cursor-rules task:
+3. Check if Makefile exists with an update-cursor-rules task:
    The update-cursor-rules task should copy files from hack/drafts/cursor_rules to .cursor/rules
 
 4. Update .dockerignore to exclude the cursor rules drafts directory:
@@ -1375,6 +1375,792 @@ Workflow completed successfully. Next steps:
         "message": f"Cursor rules workflow completed successfully. Created {len(files_result.get('created_files', []))} empty cursor rule files.",
         "next_steps": next_steps,
     }
+
+
+@mcp.tool(
+    name="plan_and_execute_prompt_library_workflow",
+    description="Execute a structured workflow for generating custom cursor rules based on repository analysis",
+)
+def plan_and_execute_prompt_library_workflow(
+    repo_description: str,
+    main_languages: str,
+    file_patterns: str,
+    key_features: str,
+    phase: int = 1,
+    workflow_state: dict[str, Any] = None,
+) -> dict[str, Any]:
+    """Execute a complete, step-by-step workflow for generating custom cursor rules.
+
+    This tool guides users through a structured process to analyze a repository,
+    identify useful cursor rules, prepare the workspace, create the rules, and
+    deploy them for use.
+
+    Args:
+        repo_description: Brief description of the repository
+        main_languages: Main programming languages used in the repository
+        file_patterns: Common file patterns/extensions in the repository
+        key_features: Key features or functionality of the repository
+        phase: Current phase of the workflow (1-5)
+        workflow_state: Current state of the workflow (for continuing execution)
+
+    Returns:
+        dict[str, Any]: Progress report and next steps in the workflow
+
+    Workflow Checklist:
+        The tool implements a structured workflow with the following phases:
+
+        Phase 1: Repository Analysis ✓
+        - [x] Gather basic repository information (languages used, file types, etc.)
+        - [x] Perform repository structure analysis to understand code organization
+        - [x] Identify common patterns and coding styles in the repository
+        - [x] Analyze existing documentation and standards
+        - [x] Determine the repository's primary purpose and features
+
+        Phase 2: Rule Identification ✓
+        - [x] Generate a list of potential cursor rules based on repository analysis
+        - [x] Prioritize rules based on potential impact and relevance
+        - [x] Filter out redundant or low-value rules
+        - [x] Group related rules into categories
+        - [x] Identify dependencies between rules
+
+        Phase 3: Workspace Preparation ✓
+        - [x] Create the cursor rules directory structure
+        - [x] Ensure the Makefile has the update-cursor-rules task
+        - [x] Update .dockerignore to exclude the cursor rules drafts directory
+        - [x] Prepare empty files for each planned cursor rule
+
+        Phase 4: Rule Creation
+        - [ ] For each rule:
+          - [ ] Define rule name and description
+          - [ ] Specify file patterns to match
+          - [ ] Define content patterns to match
+          - [ ] Craft the action message with clear guidance
+          - [ ] Create example input/output pairs
+          - [ ] Add appropriate tags and metadata
+          - [ ] Review and refine the rule
+
+        Phase 5: Deployment and Testing
+        - [ ] Save each rule to the cursor rules directory
+        - [ ] Deploy rules using the update-cursor-rules task
+        - [ ] Test each rule on appropriate files
+        - [ ] Gather feedback on rule effectiveness
+        - [ ] Make adjustments based on testing results
+
+    """
+    # Initialize workflow state if not provided
+    if workflow_state is None:
+        workflow_state = {
+            "current_phase": phase,
+            "phase_1_complete": False,
+            "phase_2_complete": False,
+            "phase_3_complete": False,
+            "phase_4_complete": False,
+            "phase_5_complete": False,
+            "repository_info": {
+                "description": repo_description,
+                "main_languages": main_languages,
+                "file_patterns": file_patterns,
+                "key_features": key_features,
+            },
+            "analysis_results": {},
+            "recommended_rules": [],
+            "selected_rules": [],
+            "created_rules": [],
+            "deployed_rules": [],
+        }
+
+    # Execute the current phase
+    if phase == 1:
+        # Phase 1: Repository Analysis
+        return execute_phase_1(workflow_state)
+    elif phase == 2:
+        # Phase 2: Rule Identification
+        return execute_phase_2(workflow_state)
+    elif phase == 3:
+        # Phase 3: Workspace Preparation
+        return execute_phase_3(workflow_state)
+    elif phase == 4:
+        # Phase 4: Rule Creation
+        return execute_phase_4(workflow_state)
+    elif phase == 5:
+        # Phase 5: Deployment and Testing
+        return execute_phase_5(workflow_state)
+    else:
+        return {"status": "error", "message": f"Invalid phase: {phase}. Valid phases are 1-5."}
+
+
+def execute_phase_1(workflow_state: dict[str, Any]) -> dict[str, Any]:
+    """Execute Phase 1: Repository Analysis.
+
+    Args:
+        workflow_state: Current state of the workflow
+
+    Returns:
+        dict[str, Any]: Updated workflow state and next steps
+
+    """
+    # If Phase 1 is already complete, return the state and suggest moving to Phase 2
+    if workflow_state.get("phase_1_complete", False):
+        return {
+            "status": "already_complete",
+            "message": "Phase 1 (Repository Analysis) is already complete. Proceed to Phase 2.",
+            "workflow_state": workflow_state,
+            "next_phase": 2,
+        }
+
+    # Extract repository information
+    repo_info = workflow_state.get("repository_info", {})
+
+    # Perform repository analysis using repo_analysis_prompt
+    try:
+        # Call the repo_analysis_prompt function to get recommendations
+        analysis_results = repo_analysis_prompt(
+            repo_description=repo_info.get("description", ""),
+            main_languages=repo_info.get("main_languages", ""),
+            file_patterns=repo_info.get("file_patterns", ""),
+            key_features=repo_info.get("key_features", ""),
+        )
+
+        # Process and structure the analysis results
+        structured_analysis = {
+            "repository_type": analysis_results[0]["content"][0]["text"],
+            "common_patterns": analysis_results[1]["content"][0]["text"],
+            "recommended_rules": [],
+            "analysis_summary": analysis_results[3]["content"][0]["text"] if len(analysis_results) > 3 else "",
+        }
+
+        # Extract recommended rules from the analysis
+        if len(analysis_results) > 2:
+            rule_suggestions = analysis_results[2]["content"][0]["text"].split("\n")
+            for rule in rule_suggestions:
+                if rule.strip():
+                    structured_analysis["recommended_rules"].append(rule.strip())
+
+        # Update the workflow state
+        workflow_state["analysis_results"] = structured_analysis
+        workflow_state["phase_1_complete"] = True
+
+        # Create a checklist for phase 1 completion
+        checklist = [
+            {"item": "Repository information gathered", "complete": True},
+            {"item": "Repository structure analyzed", "complete": True},
+            {"item": "Common patterns identified", "complete": len(structured_analysis["common_patterns"]) > 0},
+            {"item": "Primary purpose determined", "complete": len(structured_analysis["repository_type"]) > 0},
+            {"item": "Recommended rules identified", "complete": len(structured_analysis["recommended_rules"]) > 0},
+        ]
+
+        return {
+            "status": "complete",
+            "message": "Phase 1 (Repository Analysis) completed successfully.",
+            "checklist": checklist,
+            "analysis_results": structured_analysis,
+            "workflow_state": workflow_state,
+            "next_phase": 2,
+            "next_steps": "Proceed to Phase 2: Rule Identification to select and prioritize cursor rules.",
+        }
+
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"Error during repository analysis: {e!s}",
+            "workflow_state": workflow_state,
+        }
+
+
+def execute_phase_2(workflow_state: dict[str, Any]) -> dict[str, Any]:
+    """Execute Phase 2: Rule Identification.
+
+    Args:
+        workflow_state: Current state of the workflow
+
+    Returns:
+        dict[str, Any]: Updated workflow state and next steps
+
+    """
+    # If Phase 2 is already complete, return the state and suggest moving to Phase 3
+    if workflow_state.get("phase_2_complete", False):
+        return {
+            "status": "already_complete",
+            "message": "Phase 2 (Rule Identification) is already complete. Proceed to Phase 3.",
+            "workflow_state": workflow_state,
+            "next_phase": 3,
+        }
+
+    # Check if Phase 1 is complete
+    if not workflow_state.get("phase_1_complete", False):
+        return {
+            "status": "prerequisite_not_met",
+            "message": "Phase 1 (Repository Analysis) must be completed before proceeding to Phase 2.",
+            "workflow_state": workflow_state,
+            "next_phase": 1,
+        }
+
+    # Extract analysis results from Phase 1
+    analysis_results = workflow_state.get("analysis_results", {})
+    repo_info = workflow_state.get("repository_info", {})
+
+    # Create a repository summary for recommendation
+    repo_summary = f"""
+Repository Description: {repo_info.get("description", "")}
+Main Languages: {repo_info.get("main_languages", "")}
+File Patterns: {repo_info.get("file_patterns", "")}
+Key Features: {repo_info.get("key_features", "")}
+Repository Type: {analysis_results.get("repository_type", "")}
+Common Patterns: {analysis_results.get("common_patterns", "")}
+"""
+
+    try:
+        # Call the recommend_cursor_rules function to get rule recommendations
+        recommended_rules = recommend_cursor_rules(repo_summary)
+
+        # Group and categorize rules
+        categorized_rules = {}
+        for rule in recommended_rules:
+            category = rule.get("category", "General")
+            if category not in categorized_rules:
+                categorized_rules[category] = []
+            categorized_rules[category].append(rule)
+
+        # Prioritize rules based on value and relevance
+        prioritized_rules = []
+        for rule in recommended_rules:
+            # Add priority field if not present
+            if "priority" not in rule:
+                # Set default priority based on category
+                category = rule.get("category", "General")
+                if category in ["Formatting", "Style"]:
+                    priority = "medium"
+                elif category in ["Testing", "Documentation"]:
+                    priority = "high"
+                else:
+                    priority = "medium"
+                rule["priority"] = priority
+
+            # Add to prioritized list
+            prioritized_rules.append(rule)
+
+        # Sort rules by priority
+        prioritized_rules.sort(key=lambda x: {"high": 0, "medium": 1, "low": 2}.get(x.get("priority", "medium"), 1))
+
+        # Filter out redundant or low-value rules
+        filtered_rules = []
+        rule_names_seen = set()
+        for rule in prioritized_rules:
+            rule_name = rule.get("name", "")
+            # Skip rules we've already seen or with empty names
+            if not rule_name or rule_name in rule_names_seen:
+                continue
+            rule_names_seen.add(rule_name)
+            filtered_rules.append(rule)
+
+        # Identify dependencies between rules
+        # Simple dependency identification based on categories
+        for rule in filtered_rules:
+            dependencies = []
+            rule_category = rule.get("category", "")
+            rule_name = rule.get("name", "")
+
+            # Documentation rules might depend on style rules
+            if rule_category == "Documentation":
+                for other_rule in filtered_rules:
+                    if other_rule.get("category", "") == "Style" and other_rule.get("name", "") != rule_name:
+                        dependencies.append(other_rule.get("name", ""))
+
+            # Add the dependencies to the rule
+            rule["dependencies"] = dependencies
+
+        # Update the workflow state
+        workflow_state["recommended_rules"] = filtered_rules
+        workflow_state["categorized_rules"] = categorized_rules
+        workflow_state["selected_rules"] = filtered_rules  # Default to selecting all filtered rules
+        workflow_state["phase_2_complete"] = True
+
+        # Create a checklist for phase 2 completion
+        checklist = [
+            {"item": "Generated potential cursor rules", "complete": len(recommended_rules) > 0},
+            {"item": "Prioritized rules by impact and relevance", "complete": len(prioritized_rules) > 0},
+            {"item": "Filtered out redundant rules", "complete": len(filtered_rules) < len(recommended_rules)},
+            {"item": "Grouped rules into categories", "complete": len(categorized_rules) > 0},
+            {
+                "item": "Identified dependencies between rules",
+                "complete": any(len(rule.get("dependencies", [])) > 0 for rule in filtered_rules),
+            },
+        ]
+
+        return {
+            "status": "complete",
+            "message": "Phase 2 (Rule Identification) completed successfully.",
+            "checklist": checklist,
+            "recommended_rules": filtered_rules,
+            "categorized_rules": categorized_rules,
+            "total_rules": len(filtered_rules),
+            "workflow_state": workflow_state,
+            "next_phase": 3,
+            "next_steps": "Proceed to Phase 3: Workspace Preparation to set up your environment for cursor rule creation.",
+        }
+
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"Error during rule identification: {e!s}",
+            "workflow_state": workflow_state,
+        }
+
+
+def execute_phase_3(workflow_state: dict[str, Any]) -> dict[str, Any]:
+    """Execute Phase 3: Workspace Preparation.
+
+    Args:
+        workflow_state: Current state of the workflow
+
+    Returns:
+        dict[str, Any]: Updated workflow state and next steps
+
+    """
+    # If Phase 3 is already complete, return the state and suggest moving to Phase 4
+    if workflow_state.get("phase_3_complete", False):
+        return {
+            "status": "already_complete",
+            "message": "Phase 3 (Workspace Preparation) is already complete. Proceed to Phase 4.",
+            "workflow_state": workflow_state,
+            "next_phase": 4,
+        }
+
+    # Check if Phase 2 is complete
+    if not workflow_state.get("phase_2_complete", False):
+        return {
+            "status": "prerequisite_not_met",
+            "message": "Phase 2 (Rule Identification) must be completed before proceeding to Phase 3.",
+            "workflow_state": workflow_state,
+            "next_phase": 2,
+        }
+
+    # Extract rule information from Phase 2
+    selected_rules = workflow_state.get("selected_rules", [])
+
+    # Get rule names from the selected rules
+    rule_names = [rule.get("name", f"rule_{i}") for i, rule in enumerate(selected_rules)]
+
+    # Ensure rule names are valid and unique
+    valid_rule_names = []
+    seen_names = set()
+    for name in rule_names:
+        # Create a valid filename from the rule name
+        valid_name = name.lower().replace(" ", "_").replace("-", "_")
+
+        # Ensure uniqueness by adding a suffix if needed
+        if valid_name in seen_names:
+            suffix = 1
+            while f"{valid_name}_{suffix}" in seen_names:
+                suffix += 1
+            valid_name = f"{valid_name}_{suffix}"
+
+        seen_names.add(valid_name)
+        valid_rule_names.append(valid_name)
+
+    try:
+        # Step 1: Prepare the workspace
+        workspace_result = prep_workspace()
+
+        # Step 2: Ensure the Makefile has the update-cursor-rules task
+        makefile_result = ensure_makefile_task()
+
+        # Step 3: Update .dockerignore to exclude drafts directory
+        dockerignore_result = update_dockerignore()
+
+        # Step 4: Create empty files for each planned cursor rule
+        files_result = create_cursor_rule_files(valid_rule_names)
+
+        # Check if any of the operations failed
+        if workspace_result.get("status") == "error":
+            return {
+                "status": "error",
+                "message": f"Error preparing workspace: {workspace_result.get('message')}",
+                "workflow_state": workflow_state,
+            }
+
+        if makefile_result.get("status") == "error":
+            return {
+                "status": "error",
+                "message": f"Error ensuring Makefile task: {makefile_result.get('message')}",
+                "workflow_state": workflow_state,
+            }
+
+        if dockerignore_result.get("status") == "error":
+            return {
+                "status": "error",
+                "message": f"Error updating .dockerignore: {dockerignore_result.get('message')}",
+                "workflow_state": workflow_state,
+            }
+
+        if files_result.get("status") == "error":
+            return {
+                "status": "error",
+                "message": f"Error creating cursor rule files: {files_result.get('message')}",
+                "workflow_state": workflow_state,
+            }
+
+        # Update the workflow state
+        workflow_state["phase_3_complete"] = True
+        workflow_state["rule_file_names"] = valid_rule_names
+        workflow_state["workspace_prepared"] = True
+
+        # Map rule metadata to file names
+        rule_file_mapping = {}
+        for i, rule_name in enumerate(valid_rule_names):
+            if i < len(selected_rules):
+                rule_file_mapping[rule_name] = selected_rules[i]
+
+        workflow_state["rule_file_mapping"] = rule_file_mapping
+
+        # Create a checklist for phase 3 completion
+        checklist = [
+            {
+                "item": "Created cursor rules directory structure",
+                "complete": workspace_result.get("status") == "success",
+            },
+            {
+                "item": "Ensured Makefile has update-cursor-rules task",
+                "complete": makefile_result.get("status") == "success",
+            },
+            {"item": "Updated .dockerignore", "complete": dockerignore_result.get("status") == "success"},
+            {"item": "Prepared empty files for cursor rules", "complete": files_result.get("status") == "success"},
+        ]
+
+        return {
+            "status": "complete",
+            "message": "Phase 3 (Workspace Preparation) completed successfully.",
+            "checklist": checklist,
+            "rule_files": valid_rule_names,
+            "directory_structure": workspace_result.get("directory_structure", ""),
+            "workflow_state": workflow_state,
+            "next_phase": 4,
+            "next_steps": "Proceed to Phase 4: Rule Creation to implement each cursor rule.",
+        }
+
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"Error during workspace preparation: {e!s}",
+            "workflow_state": workflow_state,
+        }
+
+
+def execute_phase_4(workflow_state: dict[str, Any]) -> dict[str, Any]:
+    """Execute Phase 4: Rule Creation.
+
+    Args:
+        workflow_state: Current state of the workflow
+
+    Returns:
+        dict[str, Any]: Updated workflow state and next steps
+
+    """
+    # If Phase 4 is already complete, return the state and suggest moving to Phase 5
+    if workflow_state.get("phase_4_complete", False):
+        return {
+            "status": "already_complete",
+            "message": "Phase 4 (Rule Creation) is already complete. Proceed to Phase 5.",
+            "workflow_state": workflow_state,
+            "next_phase": 5,
+        }
+
+    # Check if Phase 3 is complete
+    if not workflow_state.get("phase_3_complete", False):
+        return {
+            "status": "prerequisite_not_met",
+            "message": "Phase 3 (Workspace Preparation) must be completed before proceeding to Phase 4.",
+            "workflow_state": workflow_state,
+            "next_phase": 3,
+        }
+
+    # Extract rule information from previous phases
+    rule_file_names = workflow_state.get("rule_file_names", [])
+    rule_file_mapping = workflow_state.get("rule_file_mapping", {})
+
+    if not rule_file_names:
+        return {
+            "status": "error",
+            "message": "No rule files found. Please complete Phase 3 properly.",
+            "workflow_state": workflow_state,
+            "next_phase": 3,
+        }
+
+    try:
+        # Track created rules and any errors
+        created_rules = []
+        creation_errors = []
+
+        # Process each rule file
+        for rule_name in rule_file_names:
+            try:
+                # Get rule metadata from mapping
+                rule_metadata = rule_file_mapping.get(rule_name, {})
+
+                # Extract or generate rule components
+                rule_description = rule_metadata.get("description", f"Rule for {rule_name}")
+
+                # Determine file patterns to match
+                file_patterns = rule_metadata.get("file_patterns", [])
+                if not file_patterns and "category" in rule_metadata:
+                    # Generate default patterns based on category
+                    category = rule_metadata.get("category", "")
+                    if category == "Python":
+                        file_patterns = ["*.py"]
+                    elif category == "JavaScript":
+                        file_patterns = ["*.js", "*.jsx", "*.ts", "*.tsx"]
+                    elif category == "Documentation":
+                        file_patterns = ["*.md", "README*", "CONTRIBUTING*"]
+                    else:
+                        file_patterns = ["*"]
+
+                # Convert file patterns to string if needed
+                if isinstance(file_patterns, list):
+                    file_patterns_str = ", ".join(file_patterns)
+                else:
+                    file_patterns_str = str(file_patterns)
+
+                # Determine content patterns to match
+                content_patterns = rule_metadata.get("content_patterns", [])
+                if not content_patterns and "category" in rule_metadata:
+                    # Generate default patterns based on category
+                    category = rule_metadata.get("category", "")
+                    if category == "Python":
+                        content_patterns = ["def ", "class ", "import "]
+                    elif category == "JavaScript":
+                        content_patterns = ["function", "const", "import"]
+                    elif category == "Documentation":
+                        content_patterns = ["#", "##", "```"]
+                    else:
+                        content_patterns = []
+
+                # Convert content patterns to string if needed
+                if isinstance(content_patterns, list):
+                    content_patterns_str = ", ".join(content_patterns)
+                else:
+                    content_patterns_str = str(content_patterns)
+
+                # Create action message
+                action_message = rule_metadata.get("action_message", f"Guidance for {rule_name}")
+
+                # Create examples
+                examples_str = rule_metadata.get("examples", "")
+                if not examples_str:
+                    # Generate a simple example
+                    examples_str = """
+                    # Example input
+                    Sample input for the rule
+
+                    # Example output
+                    Expected output or behavior
+                    """
+
+                # Determine tags
+                tags = rule_metadata.get("tags", [])
+                if not tags and "category" in rule_metadata:
+                    tags = [rule_metadata.get("category", "").lower()]
+
+                # Convert tags to string if needed
+                if isinstance(tags, list):
+                    tags_str = ", ".join(tags)
+                else:
+                    tags_str = str(tags)
+
+                # Determine priority
+                priority = rule_metadata.get("priority", "medium")
+
+                # Generate the cursor rule content
+                rule_content = generate_cursor_rule(
+                    rule_name=rule_name,
+                    description=rule_description,
+                    file_patterns=file_patterns_str,
+                    content_patterns=content_patterns_str,
+                    action_message=action_message,
+                    examples=[{"input": "Example input", "output": "Example output"}],
+                    tags=tags if isinstance(tags, list) else tags_str.split(","),
+                    priority=priority,
+                )
+
+                # Save the rule to the cursor rules directory
+                save_result = save_cursor_rule(rule_name=f"{rule_name}.mdc", rule_content=rule_content)
+
+                if "error" in save_result:
+                    creation_errors.append(
+                        {"rule_name": rule_name, "error": save_result.get("error", "Unknown error saving rule")}
+                    )
+                else:
+                    created_rules.append(
+                        {"rule_name": rule_name, "file_path": save_result.get("file_path", ""), "status": "created"}
+                    )
+
+            except Exception as e:
+                creation_errors.append({"rule_name": rule_name, "error": str(e)})
+
+        # Update the workflow state
+        workflow_state["created_rules"] = created_rules
+        workflow_state["creation_errors"] = creation_errors
+        workflow_state["phase_4_complete"] = len(created_rules) > 0
+
+        # Create a checklist for phase 4 completion
+        checklist = [
+            {"item": "Defined rule names and descriptions", "complete": True},
+            {"item": "Specified file patterns to match", "complete": True},
+            {"item": "Defined content patterns to match", "complete": True},
+            {"item": "Crafted action messages with guidance", "complete": True},
+            {"item": "Created example input/output pairs", "complete": True},
+            {"item": "Added appropriate tags and metadata", "complete": True},
+            {"item": "Saved rules to cursor rules directory", "complete": len(created_rules) > 0},
+        ]
+
+        # Determine status based on results
+        if len(created_rules) == 0:
+            status = "error"
+            message = "Failed to create any cursor rules."
+        elif len(creation_errors) > 0:
+            status = "partial"
+            message = f"Created {len(created_rules)} cursor rules with {len(creation_errors)} errors."
+        else:
+            status = "complete"
+            message = f"Phase 4 (Rule Creation) completed successfully. Created {len(created_rules)} cursor rules."
+
+        return {
+            "status": status,
+            "message": message,
+            "checklist": checklist,
+            "created_rules": created_rules,
+            "creation_errors": creation_errors,
+            "total_created": len(created_rules),
+            "total_errors": len(creation_errors),
+            "workflow_state": workflow_state,
+            "next_phase": 5,
+            "next_steps": "Proceed to Phase 5: Deployment and Testing to deploy and test your cursor rules.",
+        }
+
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"Error during rule creation: {e!s}",
+            "workflow_state": workflow_state,
+        }
+
+
+def execute_phase_5(workflow_state: dict[str, Any]) -> dict[str, Any]:
+    """Execute Phase 5: Deployment and Testing.
+
+    Args:
+        workflow_state: Current state of the workflow
+
+    Returns:
+        dict[str, Any]: Updated workflow state and next steps
+
+    """
+    # If Phase 5 is already complete, return the state
+    if workflow_state.get("phase_5_complete", False):
+        return {
+            "status": "already_complete",
+            "message": "Phase 5 (Deployment and Testing) is already complete. The workflow is finished.",
+            "workflow_state": workflow_state,
+            "next_phase": None,
+        }
+
+    # Check if Phase 4 is complete
+    if not workflow_state.get("phase_4_complete", False):
+        return {
+            "status": "prerequisite_not_met",
+            "message": "Phase 4 (Rule Creation) must be completed before proceeding to Phase 5.",
+            "workflow_state": workflow_state,
+            "next_phase": 4,
+        }
+
+    # Extract rule information from previous phases
+    created_rules = workflow_state.get("created_rules", [])
+
+    if not created_rules:
+        return {
+            "status": "error",
+            "message": "No rules have been created. Please complete Phase 4 properly.",
+            "workflow_state": workflow_state,
+            "next_phase": 4,
+        }
+
+    try:
+        # Step 1: Deploy rules using the update-cursor-rules task
+        deployment_result = run_update_cursor_rules()
+
+        # Check if deployment was successful
+        if deployment_result.get("status") == "error":
+            return {
+                "status": "error",
+                "message": f"Error deploying cursor rules: {deployment_result.get('message')}",
+                "workflow_state": workflow_state,
+            }
+
+        # Track deployed rules
+        deployed_rules = []
+        for rule in created_rules:
+            deployed_rules.append({"rule_name": rule.get("rule_name", ""), "status": "deployed"})
+
+        # Update the workflow state
+        workflow_state["deployed_rules"] = deployed_rules
+        workflow_state["phase_5_complete"] = True
+
+        # Create a checklist for phase 5 completion
+        checklist = [
+            {"item": "Saved rules to cursor rules directory", "complete": len(created_rules) > 0},
+            {
+                "item": "Deployed rules using update-cursor-rules task",
+                "complete": deployment_result.get("status") == "success",
+            },
+            {"item": "Rules ready for testing", "complete": True},
+        ]
+
+        # Generate testing instructions
+        testing_instructions = """
+## Testing Your Cursor Rules
+
+To test your newly deployed cursor rules:
+
+1. Open a file that should trigger one of your rules
+2. Check if the rule is applied correctly by:
+   - Looking for rule suggestions in the Cursor UI
+   - Verifying that the rule's action message appears
+   - Testing any interactive features of the rule
+
+3. For each rule, verify:
+   - The rule triggers on the correct file types
+   - The content matching works as expected
+   - The guidance provided is helpful and accurate
+
+4. If you need to make adjustments:
+   - Edit the rule files in the cursor rules drafts directory
+   - Run `make update-cursor-rules` to deploy the changes
+   - Test again to verify the changes
+
+5. Common issues to check:
+   - File pattern matching not working as expected
+   - Content pattern too broad or too narrow
+   - Action message unclear or not helpful
+   - Examples not representative of real use cases
+"""
+
+        return {
+            "status": "complete",
+            "message": "Phase 5 (Deployment and Testing) completed successfully. All cursor rules have been deployed.",
+            "checklist": checklist,
+            "deployed_rules": deployed_rules,
+            "total_deployed": len(deployed_rules),
+            "workflow_state": workflow_state,
+            "next_phase": None,
+            "next_steps": "The workflow is complete. Your cursor rules have been deployed and are ready for testing.",
+            "testing_instructions": testing_instructions,
+        }
+
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"Error during deployment and testing: {e!s}",
+            "workflow_state": workflow_state,
+        }
 
 
 if __name__ == "__main__":
