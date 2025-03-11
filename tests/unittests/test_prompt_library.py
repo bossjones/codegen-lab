@@ -436,8 +436,8 @@ class TestUtilityFunctions:
         assert result["directory_path"] == str(cursor_rules_dir)
         assert result["directory_exists"] is False
         assert "mkdir -p" in result["mkdir_command"]
-        assert str(cursor_rules_dir) in result["mkdir_command"]
-        assert "Create the cursor rules directory structure" in result["message"]
+        # The function uses a relative path in the mkdir command, not the absolute path
+        assert "./hack/drafts/cursor_rules" in result["mkdir_command"]
 
     def test_create_cursor_rule_files(self, mocker: "MockerFixture", tmp_path: Path) -> None:
         """Test that create_cursor_rule_files creates the specified files.

@@ -1009,9 +1009,20 @@ def prep_workspace() -> dict[str, str]:
 
     This function provides natural language instructions and commands
     for cursor rules, including directory creation and file preparation steps.
+    It creates directories relative to the current working directory.
 
     Returns:
-        dict[str, str]: A dictionary containing instructions and commands
+        dict[str, str]: A dictionary containing status, instructions, and commands
+        with the following keys:
+        - status: "success" or "error"
+        - message: Instructions or error message
+        - directory_exists: Boolean indicating if directory already exists
+        - directory_path: Path to the cursor rules directory
+        - mkdir_command: Command to create the directory
+        - directory_structure: (on success) Information about created structure
+
+    Raises:
+        No exceptions are raised as they are caught and returned as error messages.
 
     """
     # Get the current working directory
@@ -1023,20 +1034,54 @@ def prep_workspace() -> dict[str, str]:
     # Check if the directory exists
     dir_exists = cursor_rules_dir.exists()
 
-    # Prepare instructions
-    mkdir_cmd = f"mkdir -p {cursor_rules_dir}"
+    # Prepare instructions with relative path for display
+    relative_path = "./hack/drafts/cursor_rules"
+    mkdir_cmd = f"mkdir -p {relative_path}"
 
     try:
         # Create the directory if it doesn't exist
         if not dir_exists:
-            cursor_rules_dir.mkdir(parents=True, exist_ok=True)
+            try:
+                cursor_rules_dir.mkdir(parents=True, exist_ok=True)
+            except PermissionError as pe:
+                return {
+                    "status": "error",
+                    "message": f"Permission error creating directory: {pe!s}. Try creating it manually with: {mkdir_cmd}",
+                    "directory_exists": dir_exists,
+                    "directory_path": str(cursor_rules_dir),
+                    "mkdir_command": mkdir_cmd,
+                    "workspace_prepared": False,
+                    "workspace_result": {
+                        "status": "error",
+                        "message": f"Error preparing workspace: {pe!s}",
+                        "directory_exists": dir_exists,
+                        "directory_path": relative_path,
+                        "mkdir_command": mkdir_cmd,
+                    },
+                }
+            except OSError as ose:
+                return {
+                    "status": "error",
+                    "message": f"OS error creating directory: {ose!s}. Try creating it manually with: {mkdir_cmd}",
+                    "directory_exists": dir_exists,
+                    "directory_path": str(cursor_rules_dir),
+                    "mkdir_command": mkdir_cmd,
+                    "workspace_prepared": False,
+                    "workspace_result": {
+                        "status": "error",
+                        "message": f"Error preparing workspace: {ose!s}",
+                        "directory_exists": dir_exists,
+                        "directory_path": relative_path,
+                        "mkdir_command": mkdir_cmd,
+                    },
+                }
 
         instructions = {
             "status": "success",
             "message": f"""
 To prepare the workspace for cursor rules, the following steps are needed:
 
-1. Create the cursor rules directory structure:
+1. Create the cursor rules directory structure, this should be relative to the repo root eg ./hack/drafts/cursor_rules:
    {mkdir_cmd}
 
 2. Ensure the .cursor/rules directory exists for deployment:
@@ -1085,7 +1130,15 @@ To prepare the workspace for cursor rules, the following steps are needed:
             "directory_exists": dir_exists,
             "directory_path": str(cursor_rules_dir),
             "mkdir_command": mkdir_cmd,
-            "directory_structure": f"Created directory structure at {cursor_rules_dir}",
+            "directory_structure": f"Created directory structure at {relative_path}",
+            "workspace_prepared": True,
+            "workspace_result": {
+                "status": "success",
+                "message": f"Workspace prepared successfully at {relative_path}",
+                "directory_exists": dir_exists,
+                "directory_path": relative_path,
+                "mkdir_command": mkdir_cmd,
+            },
         }
 
         return instructions
@@ -1097,6 +1150,14 @@ To prepare the workspace for cursor rules, the following steps are needed:
             "directory_exists": dir_exists,
             "directory_path": str(cursor_rules_dir),
             "mkdir_command": mkdir_cmd,
+            "workspace_prepared": False,
+            "workspace_result": {
+                "status": "error",
+                "message": f"Error preparing workspace: {e!s}",
+                "directory_exists": dir_exists,
+                "directory_path": relative_path,
+                "mkdir_command": mkdir_cmd,
+            },
         }
 
 
