@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Script to detect objects or tweet content in images and draw bounding boxes.
 
@@ -20,7 +19,8 @@ import argparse
 import sys
 import re
 import functools
-from typing import Dict, List, Union, Optional, Any, Tuple, Set, Callable, TypeVar, cast
+from typing import Dict, List, Union, Optional, Any, Tuple, Set, TypeVar, cast
+from collections.abc import Callable
 import logging
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -102,9 +102,9 @@ settings = Settings()
 
 # Define the retry mechanism for Gemini API calls
 def gemini_retry(
-    max_retries: Optional[int] = None,
-    min_wait: Optional[float] = None,
-    max_wait: Optional[float] = None
+    max_retries: int | None = None,
+    min_wait: float | None = None,
+    max_wait: float | None = None
 ) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """
     Retry decorator specifically for Gemini API calls.
@@ -155,7 +155,7 @@ def gemini_retry(
 @gemini_retry()
 def generate_gemini_content(
     model: genai.GenerativeModel,
-    prompt_parts: List[Union[Dict[str, Union[str, bytes]], str]]
+    prompt_parts: list[dict[str, str | bytes] | str]
 ) -> Any:
     """
     Make a call to the Gemini API with retry mechanism.
@@ -286,7 +286,7 @@ def is_valid_image(file_path: str) -> bool:
         return False
 
     # Valid image extensions
-    valid_extensions: Set[str] = {'.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'}
+    valid_extensions: set[str] = {'.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'}
 
     # Check file extension
     file_ext = os.path.splitext(file_path)[1].lower()
@@ -304,11 +304,11 @@ def is_valid_image(file_path: str) -> bool:
 
 def process_path(
     path: str,
-    output_path: Optional[str] = None,
+    output_path: str | None = None,
     mode: str = "tweet",
     box_color: str = "red",
     box_width: int = 4,
-    label: Optional[str] = None,
+    label: str | None = None,
     autocrop: bool = False,
     crop_percent: float = 100.0,
     resize: bool = False,
@@ -404,7 +404,7 @@ def process_single_image(
     mode: str = "tweet",
     box_color: str = "red",
     box_width: int = 4,
-    label: Optional[str] = None,
+    label: str | None = None,
     autocrop: bool = False,
     crop_percent: float = 100.0,
     resize: bool = False,
@@ -563,7 +563,7 @@ def detect_tweet_content(
     output_path: str = "tweet_with_box.jpg",
     box_color: str = "red",
     box_width: int = 4,
-    label: Optional[str] = None,
+    label: str | None = None,
     autocrop: bool = False,
     crop_percent: float = 92.0,
     resize: bool = False,
@@ -608,9 +608,9 @@ def detect_tweet_content(
         img_byte_arr = img_byte_arr.getvalue()
         logger.debug(f"Image loaded and converted, size: {len(img_byte_arr)} bytes")
 
-        img_part: Dict[str, Union[str, bytes]] = {"mime_type": "image/jpeg", "data": img_byte_arr}
+        img_part: dict[str, str | bytes] = {"mime_type": "image/jpeg", "data": img_byte_arr}
 
-        prompt_parts: List[Union[Dict[str, Union[str, bytes]], str]] = [
+        prompt_parts: list[dict[str, str | bytes] | str] = [
             img_part,
             """You're looking at a screenshot of a tweet. Create a precise bounding box around the MAIN TWEET CONTENT ONLY.
 
@@ -665,7 +665,7 @@ def detect_tweet_content(
             json_string = re.sub(r'\[\s*(\d+)\s*\]', r'\1', json_string)
             logger.debug(f"Cleaned JSON: {json_string}")
 
-            tweet_box: Dict[str, Any] = json.loads(json_string)
+            tweet_box: dict[str, Any] = json.loads(json_string)
         except json.JSONDecodeError:
             logger.error(f"Invalid JSON response from Gemini: {json_string}")
             print(f"Error: Invalid JSON response from Gemini: {json_string}")
@@ -836,9 +836,9 @@ def detect_objects_and_draw_boxes(
         img_byte_arr = img_byte_arr.getvalue()
         logger.debug(f"Image loaded and converted, size: {len(img_byte_arr)} bytes")
 
-        img_part: Dict[str, Union[str, bytes]] = {"mime_type": "image/jpeg", "data": img_byte_arr}
+        img_part: dict[str, str | bytes] = {"mime_type": "image/jpeg", "data": img_byte_arr}
 
-        prompt_parts: List[Union[Dict[str, Union[str, bytes]], str]] = [
+        prompt_parts: list[dict[str, str | bytes] | str] = [
             img_part,
             "Identify and provide bounding box coordinates for all objects in the image. Return the results in JSON format. Each object should have 'label', 'xmin', 'ymin', 'xmax', and 'ymax' fields. The coordinates should be NORMALIZED to a range of 0-1000, where 0 represents the left/top edge and 1000 represents the right/bottom edge of the image. If there are no objects, return an empty JSON array. Example: [{'label': 'dog', 'xmin': 100, 'ymin': 200, 'xmax': 400, 'ymax': 600}, {'label': 'cat', 'xmin': 500, 'ymin': 300, 'xmax': 800, 'ymax': 700}]"
         ]
@@ -856,7 +856,7 @@ def detect_objects_and_draw_boxes(
             json_string = re.sub(r'\[\s*(\d+)\s*\]', r'\1', json_string)
             logger.debug(f"Cleaned JSON data: {json_string}")
 
-            object_data: List[Dict[str, Any]] = json.loads(json_string)
+            object_data: list[dict[str, Any]] = json.loads(json_string)
             logger.debug(f"Parsed JSON data with {len(object_data)} objects")
         except json.JSONDecodeError:
             logger.error(f"Invalid JSON response from Gemini: {json_string}")
@@ -876,10 +876,10 @@ def detect_objects_and_draw_boxes(
                 draw = PIL.ImageDraw.Draw(img)
 
             for i, obj in enumerate(object_data):
-                xmin: Optional[float] = obj.get('xmin')
-                ymin: Optional[float] = obj.get('ymin')
-                xmax: Optional[float] = obj.get('xmax')
-                ymax: Optional[float] = obj.get('ymax')
+                xmin: float | None = obj.get('xmin')
+                ymin: float | None = obj.get('ymin')
+                xmax: float | None = obj.get('xmax')
+                ymax: float | None = obj.get('ymax')
                 label: str = obj.get('label', 'Object')  # Default label if not present
 
                 logger.debug(f"Processing object: {label} at coordinates: xmin={xmin}, ymin={ymin}, xmax={xmax}, ymax={ymax}")

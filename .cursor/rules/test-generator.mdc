@@ -1,3 +1,9 @@
+---
+description: Identify missing tests and generate appropriate test cases for the codebase
+globs: *
+alwaysApply: false
+---
+
 # Test Generator
 
 This rule helps identify missing tests and generate appropriate test cases for the codebase.

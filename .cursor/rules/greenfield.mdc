@@ -1,6 +1,7 @@
 ---
 description: Greenfield Development Workflow
-globs: *.{py,js,ts,jsx,tsx,rs,go,cpp,java}
+globs: *.py, *.js, *.ts, *.jsx, *.tsx, *.rs, *.go, *.cpp, *.java
+alwaysApply: false
 ---
 # Greenfield Development Workflow
 

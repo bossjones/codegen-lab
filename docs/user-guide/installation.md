@@ -28,6 +28,23 @@ source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 uv sync --frozen
 ```
 
+### Working with UV Workspace
+
+Codegen Lab is structured as a UV workspace, allowing management of multiple packages within a single repository.
+
+```bash
+# Install dependencies for the workspace root
+make uv-workspace-sync
+
+# Install dependencies for a specific package
+make uv-workspace-package-sync package=cursor-rules-mcp-server
+
+# Run a command in context of a specific package
+make uv-workspace-run package=cursor-rules-mcp-server cmd="python -m cursor_rules_mcp_server"
+```
+
+For detailed information about UV workspace management, refer to the [UV Workspace documentation](../tools/uv-workspace.md).
+
 ### Method 2: Using pip
 
 While UV is recommended, you can also use pip for installation.

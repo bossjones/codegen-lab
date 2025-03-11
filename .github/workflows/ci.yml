@@ -1,0 +1,176 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "**"
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        description: Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)
+        required: false
+        default: "false"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+env:
+  COLUMNS: 150
+  UV_FROZEN: true
+  FORCE_COLOR: 1
+
+jobs:
+  test:
+    name: Test ${{ matrix.os }} / Python ${{ matrix.python-version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python-version: ["3.12"]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up UV and Python ${{ matrix.python-version }}
+        id: setup-uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          enable-cache: true
+          cache-dependency-glob: |
+            **/requirements*.txt
+            **/pyproject.toml
+            **/uv.lock
+
+      # Setup tmate session for debugging when requested
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled == 'true' }}
+        with:
+          limit-access-to-actor: true
+
+      - name: Install dependencies
+        run: uv sync --dev
+
+      - name: Run pytest
+        run: uv run pytest --diff-width=60 --diff-symbols --cov-append --cov-report=term-missing --cov-report=xml:cov.xml --cov-report=html:htmlcov --junitxml=junit/test-results.xml --cov=.
+
+      - name: Display UV and Python versions
+        run: |
+          echo "UV version: $(uv --version)"
+          echo "Python version: $(uv run python --version)"
+          echo "Cache hit: ${{ steps.setup-uv.outputs.cache-hit }}"
+
+      # Upload test results and coverage reports as artifacts
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.os }}-${{ matrix.python-version }}
+          path: |
+            junit/
+            cov.xml
+            htmlcov/
+
+  macos-extended:
+    name: Extended macOS Tests
+    runs-on: macos-14
+    needs: test
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
+
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up UV and Python
+        id: setup-uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+          enable-cache: true
+          cache-dependency-glob: |
+            **/requirements*.txt
+            **/pyproject.toml
+            **/uv.lock
+
+      - name: Install dependencies
+        run: uv sync --dev
+
+      # Setup tmate session for debugging when requested
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled == 'true' }}
+        with:
+          limit-access-to-actor: true
+
+      - name: Install additional macOS dependencies
+        run: |
+          brew tap schniz/tap || true
+          brew install wget curl kadwanev/brew/retry go || true
+
+          # Add local bin directories to path
+          echo "$HOME/bin" >> $GITHUB_PATH
+          echo "$HOME/.bin" >> $GITHUB_PATH
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Run extended tests
+        run: |
+          uv run pytest --diff-width=60 --diff-symbols --cov-append --cov-report=term-missing --cov-report=xml:cov.xml --cov-report=html:htmlcov --junitxml=junit/test-results-extended.xml --cov=.
+
+      - name: Upload extended test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-macos-extended
+          path: |
+            junit/
+            cov.xml
+            htmlcov/
+
+  notify:
+    name: Notify on completion
+    runs-on: ubuntu-latest
+    needs: [test, macos-extended]
+    if: always()
+
+    steps:
+      - name: Check build status
+        id: check
+        run: |
+          if [[ "${{ needs.test.result }}" == "success" && "${{ needs.macos-extended.result }}" == "success" ]]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Notify on success
+        if: steps.check.outputs.status == 'success'
+        run: |
+          echo "All tests passed successfully!"
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            osascript -e 'display notification "All CI tests passed successfully!" with title "CI Success"'
+          fi
+
+      - name: Notify on failure
+        if: steps.check.outputs.status == 'failure'
+        run: |
+          echo "Some tests failed. Check the logs for details."
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            osascript -e 'display notification "Some CI tests failed. Check the logs for details." with title "CI Failure"'
+          fi

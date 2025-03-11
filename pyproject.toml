@@ -12,6 +12,16 @@ dependencies = [
     "bpython>=0.25",
     "files-to-prompt>=0.4",
     "google-generativeai>=0.8.4",
+    "langchain>=0.3.20",
+    "langchain-anthropic>=0.3.9",
+    "langchain-aws>=0.2.15",
+    "langchain-community>=0.3.19",
+    "langchain-core>=0.3.43",
+    "langchain-openai>=0.3.8",
+    "langchain-pinecone>=0.0.1",
+    "langchain-text-splitters>=0.3.6",
+    "langgraph>=0.3.5",
+    "langsmith>=0.3.13",
     "llm>=0.19",
     "llm-anthropic>=0.12",
     "llm-cmd>=0.2a0",
@@ -19,11 +29,13 @@ dependencies = [
     "llm-perplexity>=2025.2.0",
     "llm-python>=0.1",
     "llm-sentence-transformers>=0.2",
+    "mcp[cli]>=1.3.0",
     "pillow>=11.1.0",
     "psutil>=5.9.5",
     "pydantic-settings>=2.8.1",
     "pytz>=2025.1",
     "rich>=13.9.4",
+    "spacy>=3.8.4",
     "tenacity>=9.0.0",
     "ttok>=0.3",
     "tzlocal>=5.2",
@@ -36,6 +48,14 @@ clctl = "codegen_lab.cli:main"
 [build-system]
 requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
+
+# UV Workspace Configuration
+[tool.uv.workspace]
+members = ["packages/*"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["codegen_lab"]
 
 [dependency-groups]
 dev = [
@@ -81,3 +101,240 @@ dev = [
 
 [tool.uv.sources]
 pytest-freezegun = { git = "https://github.com/bossjones/pytest-freezegun" }
+cursor-rules-mcp-server = { workspace = true }
+
+# Basic settings
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+include = ["*.py", "*.pyi", "*.ipynb"]
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
+src = ["src", "tests", "packages"]
+
+# Linting settings
+[tool.ruff.lint]
+# Existing configuration
+select = [
+    "D", "E", "F", "UP", "B", "I", "S", "YTT", "A",
+    "C4", "T10", "SIM", "C90", "W", "PGH", "RUF"
+]
+ignore = [
+    # Existing ignores
+    "B008", "D417", "E501", "UP006", "UP007", "S101", "N812",
+    # New ignores from errors
+    "D100", "D104", "D107", "D200", "D205", "D211", "D213", "D400", "D401", "D415", "D203",
+    "UP035", "C901", "RUF013", "RUF015", "S603", "S607", "E722",
+    "S110", "SIM102", "SIM118", "PGH003", "B904", "F841", "F401", "SIM108"
+]
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+# Add per-file configurations
+[tool.ruff.lint.per-file-ignores]
+# Init files
+"**/__init__.py" = ["F401", "D104"]
+# Server/complex files
+"**/fserver.py" = ["C901", "D205", "D200", "D400", "D415"]
+"**/server.py" = ["B904", "PGH003"]
+# Repository analysis
+"**/repository_analyzer.py" = ["SIM102", "C901"]
+# Template handling
+"**/import_templates.py" = ["C901", "D401"]
+
+# ===========================[ COVERAGE CONFIGURATION ]========================
+[tool.coverage.run]
+branch = true
+parallel = true
+concurrency = ["thread", "greenlet", "multiprocessing"]
+source = ["src"]
+data_file = ".coverage"
+relative_files = true
+
+[tool.coverage.report]
+skip_empty = true
+fail_under = 33
+omit = [
+    "*/test/*",
+    "*/tests/*",
+    "*/studio/*",
+]
+exclude_lines = [
+    '\(Protocol\):$',
+    '\s*\.\.\.$',
+    "@(abc.)?abstractmethod",
+    "@overload",
+    "@typing.overload",
+    "assert_never",
+    "def __repr__",
+    "def __str__",
+    "except ImportError:",
+    "if __name__ == .__main__.:",
+    "if not _PANDAS_AVAILABLE:",
+    "if self.debug",
+    "if settings.DEBUG",
+    "if TYPE_CHECKING:",
+    "if TYPE_CHECKING",
+    "if typing.TYPE_CHECKING:",
+    "pragma: $TEST_PLATFORM no cover",
+    "pragma: no cover",
+    "pragma: py$PYTHON_VERSION no cover",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "return NotImplemented",
+    "typing.assert_never",
+]
+
+# Additional regexes for lines to exclude from consideration
+exclude_also = [
+    # Don't complain about missing debug-only code:
+    "def __repr__",
+    "if self\\.debug",
+
+    # Don't complain if tests don't hit defensive assertion code:
+    "raise AssertionError",
+    "raise NotImplementedError",
+
+    # Don't complain if non-runnable code isn't run:
+    "if 0:",
+    "if __name__ == .__main__.:",
+
+    # Don't complain about abstract methods, they aren't run:
+    "@(abc\\.)?abstractmethod",
+
+    # Exclude specific exception clauses:
+    "except ValueError:\\n\\s*assume\\(False\\)",
+    # Comments to turn coverage on and off:
+    "no cover: start(?s:.)*?no cover: stop",
+    # A pragma comment that excludes an entire file:
+    "\\A(?s:.*# pragma: exclude file.*)\\Z",
+]
+
+# Ignore source code that can't be found, emitting a warning instead of an exception
+ignore_errors = false
+# When running a summary report, show missing lines
+show_missing = true
+# Don't report files that are 100% covered
+skip_covered = false
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+[tool.coverage.xml]
+output = "cov.xml"
+
+[tool.coverage.paths]
+# The first path is the path on the local filesystem
+# The second path is the path as it appears within the Docker container
+source = [
+    "src/",
+    "/usr/src/python-app",
+]
+
+[tool.pytest.ini_options]
+structlog_keep=["add_logger_name", "StackInfoRenderer", "TimeStamper", "ConsoleRenderer"]
+testpaths = ["tests"]
+
+filterwarnings = [
+    'ignore:configuration option "asyncio_default_fixture_loop_scope" is unset',
+    "ignore::DeprecationWarning:.venv.*:",
+    "ignore::pydantic.warnings.PydanticDeprecatedSince20:.venv.*:",
+    "ignore::DeprecationWarning:discord.*:",
+    "ignore::pydantic.warnings.PydanticDeprecatedSince20:pydantic.*:",
+    "ignore::pydantic.warnings.PydanticDeprecatedSince20:fireworks.*:",
+    "ignore::DeprecationWarning:audioop:",
+    "default::DeprecationWarning:democracy_exe.*:",
+    "default::pydantic.warnings.PydanticDeprecatedSince20:democracy_exe.*:",
+    "ignore::ResourceWarning:anyio.streams.memory",
+    "ignore::ResourceWarning:anyio.streams.stapled",
+    "ignore::ResourceWarning:anyio.abc",
+    "ignore::ResourceWarning:asyncio",
+    "ignore::ResourceWarning:aiohttp",
+    "ignore::ResourceWarning:pytest_asyncio"
+]
+
+pythonpath = "."
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+addopts = [
+    # Print runtimes of the slowest tests.
+    '--durations=10',
+    '--durations-min=0.05',
+    '--junitxml=junit/test-results.xml',
+    # Coverage reporting options
+    '--cov=src',
+    '--cov-report=term-missing',
+    '--cov-report=xml:cov.xml',
+    '--cov-report=html:htmlcov',
+    '--cov-report=annotate:cov_annotate',
+    '--cov-branch',
+]
+
+log_cli = false
+log_cli_level = "DEBUG"
+# log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
+# log_cli_format = "%(asctime)s [%(levelname)8s] %(module)s.%(funcName)s:%(lineno)d - %(message)s"
+log_cli_format = "%(asctime)s [%(levelname)8s] [%(threadName)s] %(name)s - %(module)s.%(funcName)s (%(filename)s:%(lineno)d) - %(message)s"
+log_cli_date_format = "%Y-%m-%d %H:%M:%S"
+
+# Enable live logging to a file when needed (very useful when debugging evals)
+log_file = "pytest-accuracy-debug.log"
+log_file_date_format = "%Y-%m-%d %H:%M:%S"
+log_file_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
+log_file_level = "DEBUG"
+
+markers = [
+    "cogs: marks tests that run code that utilizes the cogs module (deselect with '-m \"not cogs\"')",
+    "configonly: marks tests that run code that utilizes the config module (deselect with '-m \"not configonly\"')",
+    "e2e: marks tests dealing with e2e testing (deselect with '-m \"not e2e\"')",
+    "evals: marks tests as evals (run with '-m evals')",
+    "fast: marks tests as fast (run with '-m fast')",
+    "httpclientonly: marks tests that run code that utilizes the http_client module (deselect with '-m \"not httpclientonly\"')",
+    "imgops: marks tests as imgops (run with '-m imgops')",
+    "integration: marks tests dealing with integration testing (deselect with '-m \"not integration\"')",
+    "onboardingonly: marks tests that run code that utilizes the new_dev_onboarding_tool module (deselect with '-m \"not onboardingonly\"')",
+    "utilsonly: marks tests that run code that utilizes any utils module (deselect with '-m \"not utilsonly\"')",
+    "retryonly: marks tests that run code that utilizes the retry module (deselect with '-m \"not retryonly\"')",
+    "skip_in_parallel: marks tests that should be run in serial only (deselect with '-m \"not skip_in_parallel\"')",
+    "slow: marks tests as slow (run with '-m slow')",
+    "toolonly: marks tests that run code that utilizes a Custom Langchain tool module in the tools directory (deselect with '-m \"not toolonly\"')",
+    "unittest: marks tests dealing with unittest (deselect with '-m \"not unittest\"')",
+    "vectorstoronly: marks tests that run code that utilizes the flex_vector_store_tool module (deselect with '-m \"not vectorstoronly\"')",
+    "visiontoolonly: marks tests that run code that utilizes vision_tool.py (deselect with '-m \"not visiontoolonly\"')",
+    "webpagetoolonly: marks tests that run code that utilizes the fetch_webpage_tool module (deselect with '-m \"not webpagetoolonly\"')",
+    "vcronly: marks tests that run code that utilizes the vcr module (deselect with '-m \"not vcronly\"')",
+    "vcrcanary: marks tests that run code that utilizes the vcr test canary module (deselect with '-m \"not vcrcanary\"')",
+    "pgvectoronly: marks tests that run code that utilizes the pgvector module (deselect with '-m \"not pgvectoronly\"')",
+    "services: marks tests that run code that belongs to the services module  (deselect with '-m \"not services\"')",
+    "slower: marks tests that run code that belongs to the slower calls at end of pytest run module  (deselect with '-m \"not slower\"')",
+    "discordonly: marks tests that run code that belongs to the discordonly calls at end of pytest run module  (deselect with '-m \"not discordonly\"')",
+    "cursorgenerated: marks tests that are cursor generated (deselect with '-m \"not cursorgenerated\"')",
+    "aidergenerated: marks tests that are aider generated (deselect with '-m \"not aidergenerated\"')",
+    "asynciotyper: marks tests that are asyncio typer generated (deselect with '-m \"not asynciotyper\"')",
+    "cli: marks tests that are cli generated (deselect with '-m \"not cli\"')",
+    "dropboxonly: marks tests that run code that utilizes the dropbox module (deselect with '-m \"not dropboxonly\"')",
+    "gallerydlonly: marks tests that run code that utilizes the gallery-dl module (deselect with '-m \"not gallerydlonly\"')",
+    "logsonly: marks tests that run code that utilizes the logs module (deselect with '-m \"not logsonly\"')",
+    "chatbotonly: marks tests that run code that utilizes the chatbot module (deselect with '-m \"not chatbotonly\"')",
+    "agenticonly: marks tests that run code that utilizes the agentic module (deselect with '-m \"not agenticonly\"')",
+]

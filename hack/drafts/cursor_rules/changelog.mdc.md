@@ -1,6 +1,7 @@
 ---
 description: Changelog Management Guidelines for Codegen Lab
 globs: docs/changelog.md,*.md
+alwaysApply: false
 ---
 # Changelog Management Guidelines
 

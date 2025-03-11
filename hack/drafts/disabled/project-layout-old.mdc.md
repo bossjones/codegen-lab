@@ -28,12 +28,17 @@ globs: ["**/*.md", "**/*.py", "**/*.mdc"]
         "pytest",
         "black",
         "isort"
+    ],
+    "package_management": [
+        "uv",
+        "uv workspace"
     ]
 }
 
 @structure {
     "primary_components": [
         "src",
+        "packages",
         "tests",
         "hack",
         "docs"
@@ -43,6 +48,12 @@ globs: ["**/*.md", "**/*.py", "**/*.mdc"]
             "description": "Python source code",
             "subdirectories": {
                 "goob_ai": "Core application code"
+            }
+        },
+        "packages": {
+            "description": "UV workspace packages",
+            "subdirectories": {
+                "cursor-rules-mcp-server": "Cursor rules MCP server package"
             }
         },
         "tests": {
@@ -75,24 +86,30 @@ This repository implements the Greenfield development methodology for AI-augment
 - **Execution Best Practices:** Standards for implementing code with LLM assistance
 - **Python Best Practices:** Type hints, comprehensive docstrings, and thorough testing
 - **Cursor Rules Management:** System for organizing and implementing AI behavior rules
+- **UV Workspace Management:** Package organization using UV workspace structure
 
 ## Current Directory Structure
 
 ```
 .
-├── .cursor/                 # Active cursor rules directory
-│   └── rules/               # Production cursor rules
-├── Makefile                 # Build automation
-├── README.md                # Project overview and setup instructions
-├── hack/                    # Development tooling
-│   └── drafts/              # Work-in-progress resources
-│       └── cursor_rules/    # Staging area for cursor rules
-├── src/                     # Python source code
-│   └── goob_ai/             # Core application modules
-├── tests/                   # Test suites
-│   ├── integration/         # Integration tests
-│   └── unittests/           # Unit tests
-└── docs/                    # Project documentation
+├── .cursor/                     # Active cursor rules directory
+│   └── rules/                   # Production cursor rules
+├── Makefile                     # Build automation
+├── README.md                    # Project overview and setup instructions
+├── hack/                        # Development tooling
+│   └── drafts/                  # Work-in-progress resources
+│       └── cursor_rules/        # Staging area for cursor rules
+├── packages/                    # UV workspace packages
+│   └── cursor-rules-mcp-server/ # Cursor rules MCP server package
+│       ├── pyproject.toml       # Package configuration
+│       └── src/                 # Package source code
+│           └── cursor_rules_mcp_server/ # Package code
+├── src/                         # Python source code
+│   └── goob_ai/                 # Core application modules
+├── tests/                       # Test suites
+│   ├── integration/             # Integration tests
+│   └── unittests/               # Unit tests
+└── docs/                        # Project documentation
 ```
 
 ## Component Overview
@@ -111,6 +128,20 @@ This repository implements the Greenfield development methodology for AI-augment
     </description>
     <structure>
         - goob_ai/: Core application modules
+    </structure>
+</component>
+
+### Workspace Packages
+
+<component name="packages">
+    <description>
+        Modular packages organized in a UV workspace structure, allowing for independent
+        versioning, development, and reuse.
+    </description>
+    <structure>
+        - cursor-rules-mcp-server/: Cursor rules MCP server package
+          - src/cursor_rules_mcp_server/: Package source code
+          - pyproject.toml: Package configuration
     </structure>
 </component>
 
@@ -162,6 +193,12 @@ This repository implements the Greenfield development methodology for AI-augment
             "Include comprehensive docstrings",
             "Write unit tests",
             "Use consistent code style"
+        ],
+        "workspace": [
+            "Organize related components into packages",
+            "Use UV workspace for dependency management",
+            "Maintain separate pyproject.toml for each package",
+            "Follow consistent package structure"
         ]
     }
 }
@@ -195,6 +232,17 @@ This repository implements the Greenfield development methodology for AI-augment
             },
             "deployment": "Use 'make update-cursor-rules' to deploy"
         }
+    },
+    "workspace_packages": {
+        "structure": {
+            "format": "UV workspace with src layout",
+            "location": "packages/<package-name>/",
+            "required_files": [
+                "pyproject.toml",
+                "src/<package_name>/__init__.py"
+            ],
+            "management": "Use Makefile targets for workspace operations"
+        }
     }
 }
 
@@ -207,7 +255,8 @@ This repository implements the Greenfield development methodology for AI-augment
         "All code must have corresponding tests",
         "Tests must have type annotations",
         "Each major directory must have a README.md",
-        "Cursor rules must follow proper MDC format"
+        "Cursor rules must follow proper MDC format",
+        "Workspace packages must follow src layout"
     ],
     "code_quality": {
         "linters": "Use ruff for comprehensive linting",
@@ -222,6 +271,10 @@ This repository implements the Greenfield development methodology for AI-augment
         "testing": {
             "pytest": "Test framework for Python components",
             "coverage": "Track test coverage metrics"
+        },
+        "package_management": {
+            "uv": "Fast Python package installer and environment manager",
+            "uv_workspace": "Manage multiple packages in a single repository"
         }
     }
 }
@@ -255,6 +308,11 @@ This repository implements the Greenfield development methodology for AI-augment
         "cursor_rules": {
             "development": "Create and refine in hack/drafts/cursor_rules/",
             "deployment": "Use 'make update-cursor-rules' to deploy to .cursor/rules/"
+        },
+        "workspace_management": {
+            "new_packages": "Use 'make uv-workspace-init-package name=<package-name>' to create",
+            "dependencies": "Use 'make uv-workspace-add-dep package=<package-name>' to add dependencies",
+            "updates": "Use 'make uv-workspace-lock' to update lockfile"
         }
     }
 }
@@ -288,6 +346,22 @@ This repository implements the Greenfield development methodology for AI-augment
                 "examples",
                 "metadata"
             ]
+        }
+    },
+    "workspace_packages": {
+        "format": {
+            "style": "src layout with pyproject.toml",
+            "required_sections": [
+                "name",
+                "version",
+                "dependencies",
+                "development dependencies"
+            ]
+        },
+        "management": {
+            "tools": "UV workspace commands via Makefile",
+            "dependency_resolution": "Central requirements.lock",
+            "version_control": "Individual package versioning"
         }
     }
 }
@@ -353,14 +427,18 @@ This repository implements the Greenfield development methodology for AI-augment
         "index": {
             "file": "greenfield-index.mdc.md",
             "purpose": "Entry point and overview of all Greenfield rules"
+        },
+        "uv_workspace": {
+            "file": "uv-workspace.mdc.md",
+            "purpose": "Guidelines for managing UV workspace packages"
         }
     }
 }
 
 <implementation>
 
-@version "1.0.0"
-@last_updated "2024-08-13"
+@version "1.1.0"
+@last_updated "2024-08-16"
 
 </implementation>
 
@@ -390,6 +468,28 @@ globs: ["**/*.py"]
     "testing": "pytest with type annotations"
 }
 """
+    },
+    "uv_workspace_rules": {
+        "file": ".cursor/rules/uv-workspace.mdc",
+        "content": """
+---
+description: UV workspace management guidelines
+globs: ["pyproject.toml", "packages/**/pyproject.toml"]
+---
+
+@context {
+    "type": "workspace_management",
+    "tool": "uv",
+    "version": ">=0.1.0"
+}
+
+@standards {
+    "structure": "src layout",
+    "package_naming": "Hyphenated (e.g., my-package)",
+    "module_naming": "Underscore (e.g., my_package)",
+    "dependency_management": "Central requirements.lock"
+}
+"""
     }
 }
 
@@ -406,5 +506,12 @@ globs: ["**/*.py"]
         "Ability to refine rules before deployment",
         "Consistent rule format and structure",
         "Support for Greenfield development workflow"
+    ],
+    "workspace_migration": [
+        "Move standalone packages to packages/ directory",
+        "Create package-specific pyproject.toml",
+        "Update workspace root pyproject.toml to include package",
+        "Run 'make uv-workspace-lock' to update lockfile",
+        "Run 'make uv-workspace-sync' to install dependencies"
     ]
 }

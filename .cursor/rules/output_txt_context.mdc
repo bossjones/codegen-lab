@@ -1,6 +1,7 @@
 ---
 description: Guidelines for extracting context from output.txt files
-globs: "**/output.txt"
+globs: **/output.txt
+alwaysApply: false
 ---
 # Extracting Context from output.txt Files
 

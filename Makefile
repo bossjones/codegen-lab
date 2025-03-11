@@ -62,7 +62,7 @@ docs: ## Build and serve the documentation
 	@uv run mkdocs serve
 
 # UV Package Management Tasks
-.PHONY: uv-sync-all uv-sync-dev uv-sync-group uv-check-lock uv-verify uv-verify-dry-run uv-upgrade-dry-run uv-upgrade-all uv-upgrade-package uv-reinstall-all uv-reinstall-package uv-outdated uv-clean-cache uv-export-requirements uv-export-requirements-resolution
+.PHONY: uv-sync-all uv-sync-dev uv-sync-group uv-check-lock uv-verify uv-verify-dry-run uv-upgrade-dry-run uv-upgrade-all uv-upgrade-package uv-reinstall-all uv-reinstall-package uv-outdated uv-clean-cache uv-export-requirements uv-export-requirements-resolution uv-workspace-lock uv-workspace-sync uv-workspace-package-sync uv-workspace-run uv-workspace-init-package uv-workspace-add-dep
 
 uv-sync-all: ## Sync all dependencies with frozen lockfile
 	@echo "🚀 Syncing all dependencies with frozen lockfile"
@@ -75,6 +75,39 @@ uv-sync-dev: ## Sync only development dependencies
 uv-sync-group: ## Sync dependencies for a specific group
 	@echo "🚀 Syncing dependencies for group: $(group)"
 	@uv sync --frozen --group $(group)
+
+# UV Workspace Management Tasks
+uv-workspace-lock: ## Update lockfile for the entire workspace
+	@echo "🚀 Updating lockfile for the entire workspace"
+	@uv lock
+
+uv-workspace-sync: ## Install dependencies for the workspace root
+	@echo "🚀 Installing dependencies for the workspace root"
+	@uv sync
+
+uv-workspace-package-sync: ## Install dependencies for a specific package (usage: make uv-workspace-package-sync package=cursor-rules-mcp-server)
+	@echo "🚀 Installing dependencies for package: $(package)"
+	@uv sync --package $(package)
+
+uv-workspace-run: ## Run a command in a specific package (usage: make uv-workspace-run package=cursor-rules-mcp-server cmd="python -m cursor_rules_mcp_server")
+	@echo "🚀 Running command in package: $(package)"
+	@uv run --package $(package) $(cmd)
+
+uv-workspace-add-dep: ## Add a workspace package as a dependency to the root pyproject.toml (usage: make uv-workspace-add-dep package=cursor-rules-mcp-server)
+	@if [ -z "$(package)" ]; then echo "Please provide a package name with package=package-name"; exit 1; fi
+	@echo "🚀 Adding $(package) as a workspace dependency"
+	@if grep -q "$(package).*workspace = true" pyproject.toml; then \
+		echo "$(package) is already a workspace dependency"; \
+	else \
+		awk '/\[tool.uv.sources\]/{found=1} found==1 && /}$$/{print "$(package) = { workspace = true }"; found=0} {print}' pyproject.toml > pyproject.toml.tmp && \
+		mv pyproject.toml.tmp pyproject.toml && \
+		echo "Added $(package) as a workspace dependency. Now run: make uv-workspace-lock"; \
+	fi
+
+uv-workspace-init-package: ## Initialize a new package in the workspace (usage: make uv-workspace-init-package name=new-package)
+	@if [ -z "$(name)" ]; then echo "Please provide a package name with name=package-name"; exit 1; fi
+	@echo "🚀 Initializing new package: $(name)"
+	@./scripts/uv-workspace-init-package.sh "$(name)"
 
 uv-check-lock: ## Check lockfile consistency (prevents updates)
 	@echo "🚀 Checking lockfile consistency"
@@ -116,9 +149,10 @@ uv-clean-cache: ## Clean UV cache
 	@echo "🚀 Cleaning UV cache"
 	@uv cache clean
 
-uv-export-requirements: ## Export requirements without hashes
-	@echo "🚀 Exporting requirements to requirements.txt"
-	@uv pip export --without-hashes pyproject.toml -o requirements.txt
+# Export requirements without hashes
+uv-export-requirements:
+	@echo "🚀 Exporting requirements.txt"
+	@uv export --no-hashes --format requirements-txt -o requirements.txt
 
 uv-export-requirements-resolution: ## Export with specific resolution strategy (usage: make uv-export-requirements-resolution strategy=highest)
 	@echo "🚀 Exporting requirements with $(strategy) resolution strategy"
@@ -135,7 +169,10 @@ update-cursor-rules:  ## Update cursor rules from prompts/drafts/cursor_rules
 	# Note: at the time of writing, cursor does not support generating .mdc files via Composer Agent.s
 	mkdir -p .cursor/rules || true
 	# Copy files from prompts/drafts/cursor_rules to .cursor/rules and change extension to .mdc
-	find hack/drafts/cursor_rules -type f -name "*.md" -exec sh -c 'for file; do target=$${file%.md}; cp -a "$$file" ".cursor/rules/$$(basename "$$target")"; done' sh {} +
+	# Exclude README.md files from being copied
+	find hack/drafts/cursor_rules -type f -name "*.md" ! -name "README.md" -exec sh -c 'for file; do target=$${file%.md}; cp -a "$$file" ".cursor/rules/$$(basename "$$target")"; done' sh {} +
+
+
 
 # Documentation targets
 .PHONY: docs-serve docs-build docs-deploy docs-clean
@@ -203,4 +240,72 @@ copy-global-taskfile:
 	@echo "🚀 Copying global Taskfile.yml to ~/Taskfile.yml"
 	@cp -av Taskfile.yml ~/Taskfile.yml
 
+quick-fmt:
+	@git ls-files '*.py' '*.ipynb' "Dockerfile" "Dockerfile.*" | xargs uv run pre-commit run --files
+
+aider:
+	uv run aider --sonnet --architect --map-tokens 2048 --cache-prompts --edit-format diff
+
+inspect-fserver:
+	@npx @modelcontextprotocol/inspector uv run python -m packages.cursor_rules_mcp_server.src.cursor_rules_mcp_server.fserver
+
+.PHONY: relint relint-cursor-rules
+relint: ## Run relint via pre-commit on specified files (usage: make relint FILES="file1 file2")
+	@echo "🚀 Running relint on specified files"
+	@if [ -z "$(FILES)" ]; then \
+		echo "Please provide files to check with FILES=\"file1 file2\""; \
+	else \
+		echo $(FILES) | xargs uv run pre-commit run relint --files; \
+	fi
+
+relint-cursor-rules: ## Run relint via pre-commit on all cursor rule files tracked by git
+	@echo "🚀 Running relint on cursor rule files"
+	@git ls-files 'hack/drafts/cursor_rules/*.mdc.md' 'hack/drafts/cursor_rules/*.mdc' '.cursor/rules/*.mdc' | xargs uv run pre-commit run relint --files
+
 .DEFAULT_GOAL := help
+
+.PHONY: unittests
+unittests: ## Run unittests
+	uv run pytest tests/unittests/test_prompt_library.py -v -k "test_repo_analysis_prompt or test_generate_cursor_rule_prompt"
+
+
+.PHONY: run-prompt-library-mcp
+run-prompt-library-mcp: ## Run the prompt_library MCP server
+	@echo "🚀 Starting prompt_library MCP server"
+	@uv run --with 'mcp[cli]' mcp run src/codegen_lab/prompt_library.py
+
+.PHONY: install-prompt-library-mcp
+install-prompt-library-mcp: ## Install the prompt_library MCP server
+	@echo "🚀 Installing prompt_library MCP server"
+	@uv run --with 'mcp[cli]' mcp install src/codegen_lab/prompt_library.py
+
+.PHONY: run-prompt-library-mcp-dev
+run-prompt-library-mcp-dev: ## Run the prompt_library MCP server in development mode
+	@echo "🚀 Starting prompt_library MCP server in development mode"
+	@uv run --with 'mcp[cli]' mcp dev src/codegen_lab/prompt_library.py
+
+.PHONY: run-mcp-dev
+run-mcp-dev: ## Run any MCP script in development mode (usage: make run-mcp-dev script=path/to/script.py)
+	@if [ -z "$(script)" ]; then \
+		echo "Please provide a script path with script=path/to/script.py"; \
+		exit 1; \
+	fi
+	@echo "🚀 Starting MCP server in development mode: $(script)"
+	@uv run --with 'mcp[cli]' mcp dev $(script)
+
+.PHONY: run-mcp-dev-with
+run-mcp-dev-with: ## Run any MCP script in development mode with additional dependencies (usage: make run-mcp-dev-with script=path/to/script.py deps="pandas numpy")
+	@if [ -z "$(script)" ]; then \
+		echo "Please provide a script path with script=path/to/script.py"; \
+		exit 1; \
+	fi
+	@if [ -z "$(deps)" ]; then \
+		echo "Please provide dependencies with deps=\"package1 package2\""; \
+		exit 1; \
+	fi
+	@echo "🚀 Starting MCP server in development mode with dependencies: $(script)"
+	@uv run --with 'mcp[cli]' mcp dev $(script) --with $(deps)
+
+.PHONY: local-open-coverage
+local-open-coverage: ## open coverage report in browser
+	./scripts/open-browser.py file://${PWD}/htmlcov/index.html

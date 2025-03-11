@@ -1,6 +1,7 @@
 ---
 description: UV Package Manager and Environment Management Guidelines
-globs: *.py,pyproject.toml,Makefile,*.mk
+globs: *.py, pyproject.toml, Makefile, *.mk
+alwaysApply: false
 ---
 # UV Package Manager Guidelines
 
