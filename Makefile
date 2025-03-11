@@ -305,3 +305,7 @@ run-mcp-dev-with: ## Run any MCP script in development mode with additional depe
 	fi
 	@echo "🚀 Starting MCP server in development mode with dependencies: $(script)"
 	@uv run --with 'mcp[cli]' mcp dev $(script) --with $(deps)
+
+.PHONY: local-open-coverage
+local-open-coverage: ## open coverage report in browser
+	./scripts/open-browser.py file://${PWD}/htmlcov/index.html
