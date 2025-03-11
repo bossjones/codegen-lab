@@ -25,6 +25,7 @@ from codegen_lab.prompt_library import (
     get_static_cursor_rules,
     mcp,
     parse_cursor_rule,
+    plan_and_execute_prompt_library_workflow,
     prep_workspace,
     read_cursor_rule,
     run_update_cursor_rules,
@@ -773,3 +774,345 @@ class TestWorkflowFunctions:
         assert len(result["created_files"]) == len(rule_names)
         assert "message" in result
         assert "next_steps" in result
+
+
+class TestPlanAndExecuteWorkflow:
+    """Tests for the plan_and_execute_prompt_library_workflow function.
+
+    This test class verifies that the plan_and_execute_prompt_library_workflow function
+    correctly orchestrates the cursor rule workflow, including planning, creating,
+    and deploying cursor rules.
+    """
+
+    def test_plan_and_execute_workflow_success(self, mocker: "MockerFixture") -> None:
+        """Test that plan_and_execute_prompt_library_workflow successfully executes the workflow.
+
+        This test verifies that the workflow correctly:
+        1. Processes the repository information
+        2. Calls the necessary component functions
+        3. Returns a successful result with the expected data
+
+        Args:
+            mocker: Pytest fixture for mocking
+
+        """
+        # Mock the component functions
+        mock_repo_analysis = mocker.patch(
+            "codegen_lab.prompt_library.repo_analysis_prompt",
+            return_value=[
+                {"content": [{"text": "Python API"}]},
+                {"content": [{"text": "Common patterns"}]},
+                {"content": [{"text": "rule-1\nrule-2"}]},
+                {"content": [{"text": "Analysis summary"}]},
+            ],
+        )
+
+        mock_recommend = mocker.patch(
+            "codegen_lab.prompt_library.recommend_cursor_rules",
+            return_value=[
+                {"name": "test-rule-1", "category": "Testing", "priority": "high"},
+                {"name": "test-rule-2", "category": "Style", "priority": "medium"},
+            ],
+        )
+
+        mock_prep_workspace = mocker.patch(
+            "codegen_lab.prompt_library.prep_workspace",
+            return_value={"status": "success", "directory_structure": "structure"},
+        )
+
+        mock_ensure_makefile = mocker.patch(
+            "codegen_lab.prompt_library.ensure_makefile_task", return_value={"status": "success"}
+        )
+
+        mock_update_dockerignore = mocker.patch(
+            "codegen_lab.prompt_library.update_dockerignore", return_value={"status": "success"}
+        )
+
+        mock_create_files = mocker.patch(
+            "codegen_lab.prompt_library.create_cursor_rule_files",
+            return_value={"status": "success", "created_files": ["test_rule_1.mdc.md", "test_rule_2.mdc.md"]},
+        )
+
+        # First call with phase 1 to set up the workflow state
+        phase1_result = plan_and_execute_prompt_library_workflow(
+            repo_description="Test repository",
+            main_languages="Python",
+            file_patterns="*.py",
+            key_features="API, Database",
+            phase=1,
+        )
+
+        # Verify that repo_analysis_prompt was called
+        mock_repo_analysis.assert_called_once()
+
+        # Now call with phase 2 to test recommend_cursor_rules
+        result = plan_and_execute_prompt_library_workflow(
+            repo_description="Test repository",
+            main_languages="Python",
+            file_patterns="*.py",
+            key_features="API, Database",
+            phase=2,
+            workflow_state=phase1_result["workflow_state"],
+        )
+
+        # Verify that recommend_cursor_rules was called
+        mock_recommend.assert_called_once()
+
+        # Verify the result
+        assert result["status"] == "complete"
+        assert "recommended_rules" in result
+        assert "next_phase" in result
+        assert result["next_phase"] == 3
+
+    def test_plan_and_execute_workflow_empty_rules(self, mocker: "MockerFixture") -> None:
+        """Test workflow execution when no cursor rules are recommended.
+
+        This test verifies that the workflow handles the case where the repository
+        analysis doesn't recommend any cursor rules to create.
+
+        Args:
+            mocker: Pytest fixture for mocking
+
+        """
+        # Mock the component functions
+        mock_repo_analysis = mocker.patch(
+            "codegen_lab.prompt_library.repo_analysis_prompt",
+            return_value=[
+                {"content": [{"text": "Python API"}]},
+                {"content": [{"text": "Common patterns"}]},
+                {"content": [{"text": ""}]},  # Empty rules list
+                {"content": [{"text": "Analysis summary"}]},
+            ],
+        )
+
+        mock_recommend = mocker.patch(
+            "codegen_lab.prompt_library.recommend_cursor_rules",
+            return_value=[],  # No recommended rules
+        )
+
+        # First call with phase 1 to set up the workflow state
+        phase1_result = plan_and_execute_prompt_library_workflow(
+            repo_description="Test repository",
+            main_languages="Python",
+            file_patterns="*.py",
+            key_features="API, Database",
+            phase=1,
+        )
+
+        # Verify that repo_analysis_prompt was called
+        mock_repo_analysis.assert_called_once()
+
+        # Now call with phase 2 to test recommend_cursor_rules
+        result = plan_and_execute_prompt_library_workflow(
+            repo_description="Test repository",
+            main_languages="Python",
+            file_patterns="*.py",
+            key_features="API, Database",
+            phase=2,
+            workflow_state=phase1_result["workflow_state"],
+        )
+
+        # Verify that recommend_cursor_rules was called
+        mock_recommend.assert_called_once()
+
+        # Verify the result
+        assert result["status"] == "complete"
+        assert "recommended_rules" in result
+        assert len(result["recommended_rules"]) == 0
+
+    def test_plan_and_execute_workflow_failure(self, mocker: "MockerFixture") -> None:
+        """Test workflow execution when a component function fails.
+
+        This test verifies that the workflow correctly handles and reports errors
+        when a component function fails.
+
+        Args:
+            mocker: Pytest fixture for mocking
+
+        """
+        # Mock repo_analysis_prompt to raise an exception
+        mock_repo_analysis = mocker.patch(
+            "codegen_lab.prompt_library.repo_analysis_prompt", side_effect=Exception("Failed to analyze repository")
+        )
+
+        # Call the function with required arguments
+        result = plan_and_execute_prompt_library_workflow(
+            repo_description="Test repository",
+            main_languages="Python",
+            file_patterns="*.py",
+            key_features="API, Database",
+        )
+
+        # Verify that the component function was called
+        mock_repo_analysis.assert_called_once()
+
+        # Verify the result
+        assert result["status"] == "error"
+        assert "Error during repository analysis" in result["message"]
+
+    def test_get_cursor_rule_names(self, mocker: "MockerFixture", tmp_path: Path) -> None:
+        """Test that get_cursor_rule_names correctly retrieves cursor rule names.
+
+        Args:
+            mocker: Pytest fixture for mocking
+            tmp_path: Pytest fixture providing a temporary directory path
+
+        """
+        # Mock the current working directory
+        mocker.patch("pathlib.Path.cwd", return_value=tmp_path)
+
+        # Create a mock cursor rules directory with some files
+        cursor_rules_dir = tmp_path / "hack" / "drafts" / "cursor_rules"
+        cursor_rules_dir.mkdir(parents=True, exist_ok=True)
+
+        # Create some test files
+        (cursor_rules_dir / "test-rule-1.mdc.md").touch()
+        (cursor_rules_dir / "test-rule-2.mdc.md").touch()
+        (cursor_rules_dir / "not-a-rule.txt").touch()  # Should be ignored
+
+        # Call the function
+        result = get_cursor_rule_names()
+
+        # Verify the result
+        assert isinstance(result, list)
+        assert len(result) == 2
+        assert "test-rule-1" in result
+        assert "test-rule-2" in result
+        assert "not-a-rule" not in result
+
+    def test_get_cursor_rule_names_empty_directory(self, mocker: "MockerFixture", tmp_path: Path) -> None:
+        """Test that get_cursor_rule_names handles empty directories correctly.
+
+        Args:
+            mocker: Pytest fixture for mocking
+            tmp_path: Pytest fixture providing a temporary directory path
+
+        """
+        # Mock the current working directory
+        mocker.patch("pathlib.Path.cwd", return_value=tmp_path)
+
+        # Create an empty cursor rules directory
+        cursor_rules_dir = tmp_path / "hack" / "drafts" / "cursor_rules"
+        cursor_rules_dir.mkdir(parents=True, exist_ok=True)
+
+        # Call the function
+        result = get_cursor_rule_names()
+
+        # Verify the result
+        assert isinstance(result, list)
+        assert len(result) == 0
+
+    def test_get_cursor_rule_names_nonexistent_directory(self, mocker: "MockerFixture", tmp_path: Path) -> None:
+        """Test that get_cursor_rule_names handles nonexistent directories correctly.
+
+        Args:
+            mocker: Pytest fixture for mocking
+            tmp_path: Pytest fixture providing a temporary directory path
+
+        """
+        # Mock the current working directory
+        mocker.patch("pathlib.Path.cwd", return_value=tmp_path)
+
+        # Don't create the cursor rules directory
+
+        # Call the function
+        result = get_cursor_rule_names()
+
+        # Verify the result
+        assert isinstance(result, list)
+        assert len(result) == 0
+
+    def test_read_cursor_rule_existing(self, mocker: "MockerFixture", tmp_path: Path) -> None:
+        """Test that read_cursor_rule correctly reads an existing cursor rule.
+
+        Args:
+            mocker: Pytest fixture for mocking
+            tmp_path: Pytest fixture providing a temporary directory path
+
+        """
+        # Mock the current working directory
+        mocker.patch("pathlib.Path.cwd", return_value=tmp_path)
+
+        # Create a mock cursor rules directory with a test file
+        cursor_rules_dir = tmp_path / "hack" / "drafts" / "cursor_rules"
+        cursor_rules_dir.mkdir(parents=True, exist_ok=True)
+
+        # Create a test rule file
+        rule_content = "# Test Rule\n\nThis is a test rule."
+        rule_file = cursor_rules_dir / "test-rule.mdc.md"
+        rule_file.write_text(rule_content)
+
+        # Call the function
+        result = read_cursor_rule("test-rule")
+
+        # Verify the result
+        assert result == rule_content
+
+    def test_read_cursor_rule_nonexistent(self, mocker: "MockerFixture", tmp_path: Path) -> None:
+        """Test that read_cursor_rule handles nonexistent rules correctly.
+
+        Args:
+            mocker: Pytest fixture for mocking
+            tmp_path: Pytest fixture providing a temporary directory path
+
+        """
+        # Mock the current working directory
+        mocker.patch("pathlib.Path.cwd", return_value=tmp_path)
+
+        # Create a mock cursor rules directory without the test file
+        cursor_rules_dir = tmp_path / "hack" / "drafts" / "cursor_rules"
+        cursor_rules_dir.mkdir(parents=True, exist_ok=True)
+
+        # Call the function
+        result = read_cursor_rule("nonexistent-rule")
+
+        # Verify the result
+        assert result is None
+
+    @pytest.mark.anyio
+    async def test_recommend_cursor_rules(self, mocker: "MockerFixture") -> None:
+        """Test that the recommend_cursor_rules tool generates recommendations.
+
+        Args:
+            mocker: Pytest fixture for mocking
+
+        """
+        # Mock the Context object
+        mock_context = mocker.MagicMock()
+        mocker.patch("codegen_lab.prompt_library.Context", return_value=mock_context)
+
+        async with client_session(mcp._mcp_server) as client:
+            result = await client.call_tool(
+                "recommend_cursor_rules",
+                {"repo_summary": "A Python project with FastAPI, SQLAlchemy, and React frontend."},
+            )
+
+            # Verify the result
+            assert len(result.content) > 0
+            content = result.content[0]
+            assert isinstance(content, TextContent)
+            assert "recommendations" in content.text.lower()
+            assert "fastapi" in content.text.lower()
+            assert "sqlalchemy" in content.text.lower()
+            assert "react" in content.text.lower()
+
+    @pytest.mark.anyio
+    async def test_recommend_cursor_rules_empty_summary(self, mocker: "MockerFixture") -> None:
+        """Test that the recommend_cursor_rules tool handles empty summaries.
+
+        Args:
+            mocker: Pytest fixture for mocking
+
+        """
+        # Mock the Context object
+        mock_context = mocker.MagicMock()
+        mocker.patch("codegen_lab.prompt_library.Context", return_value=mock_context)
+
+        async with client_session(mcp._mcp_server) as client:
+            result = await client.call_tool("recommend_cursor_rules", {"repo_summary": ""})
+
+            # Verify the result
+            assert len(result.content) > 0
+            content = result.content[0]
+            assert isinstance(content, TextContent)
+            assert "empty" in content.text.lower() or "insufficient" in content.text.lower()
