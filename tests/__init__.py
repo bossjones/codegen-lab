@@ -1,1 +1,1 @@
-"""Tests for the project."""
+"""Test suite for FastMCP server implementations."""

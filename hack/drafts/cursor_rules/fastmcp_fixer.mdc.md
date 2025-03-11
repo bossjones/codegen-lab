@@ -238,6 +238,131 @@ actions:
 
       When `requires_result` is set to `True`, the client should apply the operations and then provide the results to the model to continue the conversation.
 
+      ## Error Handling in MCP Tools
+
+      According to MCP best practices, tool errors should be reported within the result object, not as protocol-level errors. This allows the LLM to see and potentially handle the error.
+
+      ### Error Handling in Operation Results
+
+      When an operation fails, include error information in the return structure:
+
+      ```python
+      @mcp.tool()
+      def perform_risky_operation(file_path: str) -> dict[str, Any]:
+          """Attempt an operation that might fail."""
+          try:
+              # Perform validation or preparation
+              if not file_path.endswith('.txt'):
+                  return {
+                      "isError": True,
+                      "content": [
+                          {
+                              "type": "text",
+                              "text": "Error: Only .txt files are supported"
+                          }
+                      ],
+                      "message": "Operation failed due to invalid file type"
+                  }
+
+              # Return successful operations
+              return {
+                  "operations": [
+                      {
+                          "type": "read_file",
+                          "path": file_path,
+                          "options": {"encoding": "utf-8"}
+                      }
+                  ],
+                  "requires_result": True,
+                  "message": f"Instructions to process file {file_path}"
+              }
+          except Exception as e:
+              # Handle unexpected errors
+              return {
+                  "isError": True,
+                  "content": [
+                      {
+                          "type": "text",
+                          "text": f"Error: {str(e)}"
+                      }
+                  ],
+                  "message": "Operation failed due to an unexpected error"
+              }
+      ```
+
+      ### Client-Side Error Handling
+
+      When implementing a client that processes operation instructions:
+
+      ```python
+      def process_tool_result(result: dict[str, Any]) -> Any:
+          """Process a tool result from an MCP server."""
+          # Check for server-reported errors
+          if result.get("isError"):
+              # Extract error message from content
+              error_messages = [
+                  content["text"] for content in result.get("content", [])
+                  if content.get("type") == "text"
+              ]
+              error_text = " ".join(error_messages) or "Unknown error occurred"
+              print(f"Tool error: {error_text}")
+              return {"error": error_text}
+
+          # Process operations
+          operations = result.get("operations", [])
+          if not operations:
+              return result
+
+          try:
+              # Apply operations
+              operation_results = apply_operations(operations)
+
+              # Return results if required
+              if result.get("requires_result"):
+                  return operation_results
+              else:
+                  return {"success": True, "message": result.get("message")}
+          except Exception as e:
+              # Handle client-side errors
+              return {
+                  "error": f"Failed to execute operations: {str(e)}",
+                  "operations": operations
+              }
+      ```
+
+      ### Testing Error Handling
+
+      Test both successful operations and error conditions:
+
+      ```python
+      def test_tool_error_handling() -> None:
+          """Test that tools properly handle and report errors."""
+          # Test with invalid input
+          result = perform_risky_operation(file_path="data.csv")
+
+          # Verify error structure
+          assert "isError" in result
+          assert result["isError"] is True
+          assert "content" in result
+          assert len(result["content"]) > 0
+          assert result["content"][0]["type"] == "text"
+          assert "Error" in result["content"][0]["text"]
+
+          # Test with valid input
+          valid_result = perform_risky_operation(file_path="data.txt")
+          assert "isError" not in valid_result
+          assert "operations" in valid_result
+      ```
+
+      ### MCP Error Handling Best Practices
+
+      1. **Use Content Array**: Always return error details in the `content` array with `isError: true`
+      2. **Descriptive Messages**: Provide clear, actionable error messages
+      3. **Error Types**: Consider including error type information for categorization
+      4. **Security**: Don't expose sensitive system details in error messages
+      5. **Recovery Hints**: When possible, include suggestions on how to fix the issue
+      6. **Logging**: Log detailed errors server-side while returning sanitized messages to clients
+
 examples:
   - input: |
       # This MCP tool performs direct file operations
