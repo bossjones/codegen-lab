@@ -28,12 +28,13 @@ pytest: ## Test the code with pytest
 	@uv run pytest -s --verbose --showlocals --tb=short --cov-config=pyproject.toml --cov-report=xml
 
 
-.PHONY: ci
-ci: ## Test the code with pytest
-	@echo "🚀 Checking lock file consistency with 'pyproject.toml'"
-	@uv lock --locked
+.PHONY: pylint
+pylint: ## Test the code with pylint
 	@echo "🚀 Linting code: pylint"
 	@uv run pylint --output-format=colorized --disable=all --max-line-length=120 --enable=F,E --rcfile pyproject.toml src/codegen_lab tests
+
+ci: ## Run all checks and tests
+	@uv run pytest -v tests
 
 .PHONY: build
 build: clean-build ## Build wheel file

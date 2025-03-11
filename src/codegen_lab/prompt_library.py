@@ -1182,13 +1182,17 @@ def create_cursor_rule_files(
         rule_names: A list of cursor rule names to create (without file extensions)
 
     Returns:
-        dict[str, Any]: A dictionary containing the results and next steps
+        dict[str, Any]: A dictionary containing file operation instructions and next steps
 
     """
     try:
-        # Create the cursor rules directory if it doesn't exist
-        cursor_rules_dir = Path("hack/drafts/cursor_rules")
-        cursor_rules_dir.mkdir(parents=True, exist_ok=True)
+        # Define the cursor rules directory path
+        cursor_rules_dir_path = "hack/drafts/cursor_rules"
+
+        # Prepare operations list
+        operations = [
+            {"type": "create_directory", "path": cursor_rules_dir_path, "options": {"parents": True, "exist_ok": True}}
+        ]
 
         created_files = []
         for rule_name in rule_names:
@@ -1196,24 +1200,22 @@ def create_cursor_rule_files(
             file_name = f"{rule_name}.mdc.md" if not rule_name.endswith(".mdc.md") else rule_name
 
             # Create the file path
-            file_path = cursor_rules_dir / file_name
+            file_path = f"{cursor_rules_dir_path}/{file_name}"
 
-            # Create an empty file
-            file_path.touch()
+            # Add operation to create an empty file
+            operations.append(
+                {
+                    "type": "write_file",
+                    "path": file_path,
+                    "content": "",  # Empty content for now
+                    "options": {"mode": "w"},
+                }
+            )
 
             created_files.append(file_name)
 
-        # Check if Makefile exists and contains update-cursor-rules target
-        makefile_path = Path("Makefile")
-        has_makefile = makefile_path.exists()
-        has_update_task = False
-
-        if has_makefile:
-            makefile_content = makefile_path.read_text()
-            has_update_task = "update-cursor-rules" in makefile_content
-
         # Prepare touch command for display
-        touch_cmd = f"touch {' '.join([str(cursor_rules_dir / f) for f in created_files])}"
+        touch_cmd = f"touch {' '.join([cursor_rules_dir_path + '/' + f for f in created_files])}"
 
         # Prepare next steps
         next_steps = """
@@ -1225,12 +1227,11 @@ Next steps:
 
         return {
             "success": True,
+            "operations": operations,
             "created_files": created_files,
             "touch_command": touch_cmd,
-            "has_makefile": has_makefile,
-            "has_update_task": has_update_task,
             "next_steps": next_steps,
-            "message": f"Created {len(created_files)} empty cursor rule files in {cursor_rules_dir}. {next_steps}",
+            "message": f"Instructions to create {len(created_files)} empty cursor rule files in {cursor_rules_dir_path}. {next_steps}",
         }
     except Exception as e:
         return {

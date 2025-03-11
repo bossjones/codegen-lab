@@ -433,7 +433,7 @@ class TestUtilityFunctions:
         assert "</rule>" in result
 
     def test_save_cursor_rule(self, mocker: "MockerFixture", tmp_path: Path) -> None:
-        """Test that the save_cursor_rule function saves files relative to the current working directory.
+        """Test that the save_cursor_rule function returns proper file operation instructions.
 
         Args:
             mocker: Pytest fixture for mocking
@@ -448,16 +448,26 @@ class TestUtilityFunctions:
         rule_content = "# Test Rule\n\nThis is a test rule."
         result = save_cursor_rule(rule_name, rule_content)
 
-        # Check that the file was saved in the correct location
-        expected_path = tmp_path / "hack" / "drafts" / "cursor_rules" / f"{rule_name}.mdc.md"
-        assert expected_path.exists()
-        assert expected_path.read_text() == rule_content
-        assert f"Cursor rule saved to {expected_path}" in result
+        # Check that the result contains the expected operations
+        assert "operations" in result
+        assert isinstance(result["operations"], list)
+        assert len(result["operations"]) == 2
 
-        # Check that the directory structure was created
-        assert (tmp_path / "hack").exists()
-        assert (tmp_path / "hack" / "drafts").exists()
-        assert (tmp_path / "hack" / "drafts" / "cursor_rules").exists()
+        # Check directory creation operation
+        assert result["operations"][0]["type"] == "create_directory"
+        assert result["operations"][0]["path"] == "hack/drafts/cursor_rules"
+        assert result["operations"][0]["options"]["parents"] is True
+        assert result["operations"][0]["options"]["exist_ok"] is True
+
+        # Check file write operation
+        assert result["operations"][1]["type"] == "write_file"
+        assert result["operations"][1]["path"] == "hack/drafts/cursor_rules/test-rule.mdc.md"
+        assert result["operations"][1]["content"] == rule_content
+        assert result["operations"][1]["options"]["mode"] == "w"
+
+        # Check message
+        assert "message" in result
+        assert "Instructions to save cursor rule" in result["message"]
 
     def test_prep_workspace(self, mocker: "MockerFixture", tmp_path: Path) -> None:
         """Test that prep_workspace returns proper instructions without creating directories.
@@ -539,67 +549,46 @@ class TestUtilityFunctions:
         assert cursor_dir.exists()
 
     def test_create_cursor_rule_files(self, mocker: "MockerFixture", tmp_path: Path) -> None:
-        """Test that create_cursor_rule_files creates the specified files.
+        """Test that create_cursor_rule_files returns proper file operation instructions.
 
         Args:
             mocker: Pytest fixture for mocking
             tmp_path: Pytest fixture providing a temporary directory path
 
         """
-        # Mock Path.mkdir and Path.touch to avoid actual file creation
-        mkdir_mock = mocker.patch("pathlib.Path.mkdir")
-        touch_mock = mocker.patch("pathlib.Path.touch")
-        exists_mock = mocker.patch("pathlib.Path.exists", return_value=False)
-        read_text_mock = mocker.patch("pathlib.Path.read_text", return_value="")
+        # Define some test rules (just names)
+        rule_names = ["test-rule-1", "test-rule-2"]
 
-        # Mock Path constructor to return a path relative to tmp_path
-        orig_path_init = Path.__new__
+        # Call the function
+        result = create_cursor_rule_files(rule_names)
 
-        def mock_path_init(cls, *args, **kwargs):
-            path_str = str(args[0]) if args else ""
-            if path_str == "hack/drafts/cursor_rules":
-                return orig_path_init(cls, tmp_path / "hack" / "drafts" / "cursor_rules")
-            return orig_path_init(cls, *args, **kwargs)
+        # Check the results dictionary
+        assert result["success"] is True
+        assert "operations" in result
+        assert isinstance(result["operations"], list)
 
-        mocker.patch.object(Path, "__new__", mock_path_init)
+        # Should have 1 directory creation operation and 2 file write operations
+        assert len(result["operations"]) == 3
 
-        try:
-            # Define some test rules (just names)
-            rule_names = ["test-rule-1", "test-rule-2"]
+        # Check directory creation operation
+        assert result["operations"][0]["type"] == "create_directory"
+        assert result["operations"][0]["path"] == "hack/drafts/cursor_rules"
+        assert result["operations"][0]["options"]["parents"] is True
+        assert result["operations"][0]["options"]["exist_ok"] is True
 
-            # Call the function
-            result = create_cursor_rule_files(rule_names)
+        # Check file write operations
+        for i, rule_name in enumerate(rule_names):
+            assert result["operations"][i + 1]["type"] == "write_file"
+            assert result["operations"][i + 1]["path"] == f"hack/drafts/cursor_rules/{rule_name}.mdc.md"
+            assert result["operations"][i + 1]["content"] == ""
+            assert result["operations"][i + 1]["options"]["mode"] == "w"
 
-            # Verify mkdir was called
-            mkdir_mock.assert_called_once_with(parents=True, exist_ok=True)
-
-            # Verify touch was called for each rule
-            assert touch_mock.call_count == len(rule_names)
-
-            # Check the results dictionary
-            assert result["success"] is True
-            assert len(result["created_files"]) == len(rule_names)
-            for rule_name in rule_names:
-                assert f"{rule_name}.mdc.md" in result["created_files"]
-        finally:
-            # Cleanup step: Remove any test files and directories created during the test
-            cursor_rules_dir = tmp_path / "hack" / "drafts" / "cursor_rules"
-            if cursor_rules_dir.exists():
-                # Remove test files
-                for rule_name in ["test-rule-1", "test-rule-2"]:
-                    file_path = cursor_rules_dir / f"{rule_name}.mdc.md"
-                    if file_path.exists():
-                        file_path.unlink()
-
-                # Clean up directories
-                if cursor_rules_dir.exists():
-                    try:
-                        cursor_rules_dir.rmdir()
-                        (tmp_path / "hack" / "drafts").rmdir()
-                        (tmp_path / "hack").rmdir()
-                    except OSError:
-                        # Directory might not be empty or might not exist, which is fine
-                        pass
+        # Check other result fields
+        assert "created_files" in result
+        assert len(result["created_files"]) == len(rule_names)
+        assert "touch_command" in result
+        assert "next_steps" in result
+        assert "message" in result
 
     def test_ensure_makefile_task(self, mocker: "MockerFixture", tmp_path: Path) -> None:
         """Test that ensure_makefile_task adds or verifies the update-cursor-rules task.
