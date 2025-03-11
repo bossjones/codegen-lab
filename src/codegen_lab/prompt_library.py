@@ -1048,7 +1048,7 @@ def prep_workspace() -> dict[str, str]:
                     "status": "error",
                     "message": f"Permission error creating directory: {pe!s}. Try creating it manually with: {mkdir_cmd}",
                     "directory_exists": dir_exists,
-                    "directory_path": str(cursor_rules_dir),
+                    "directory_path": relative_path,
                     "mkdir_command": mkdir_cmd,
                     "workspace_prepared": False,
                     "workspace_result": {
