@@ -577,6 +577,51 @@ def get_cursor_rule_raw(name: str) -> str:
 
 
 @mcp.tool(
+    name="instruct_repo_analysis",
+    description="Run a repository analysis to gather information for cursor rule creation",
+)
+def instruct_repo_analysis() -> dict[str, Any]:
+    """Run a repository analysis to gather information for cursor rule creation."""
+    payload = {}
+    payload["content"] = []
+    payload["content"].append(
+        {
+            "type": "text",
+            "text": {
+                "status": "success",
+                "message": "Repository Analysis Instructions:1. Invoke the Cursor rule for repository analysis:   Using the repo_analyzer.mdc rule located at ./cursor/rules/repo_analyzer.mdc to perform a comprehensive code base analysis.2. Utilize the sequential thinking MCP server:   The sequentialthinking MCP server will be used to generate a detailed, structured report of the entire codebase.3. Generate and save a comprehensive report:   The analysis will be written to disk as ai_report.md for future reference and parameter population.4. Structure requirements for the report:   The markdown report should be structured to support extraction of the following parameters at minimum:   - Main languages used in the repository   - Frameworks and packages utilized   - Development packages and dependencies   - Testing frameworks and methodologies   - Other relevant code organization information5. Command to execute:   Run the repo_analyzer.mdc rule with the sequentialthinking processor to generate the comprehensive report6. Output validation:   Verify that ai_report.md has been created with proper markdown structure that facilitates parameter extraction7. Next steps:   Once generated, the ai_report.md file will be used as a source for populating project configuration parameters and documentation.",
+                "repository_analysis": True,
+                "analysis_rule": "./cursor/rules/repo_analyzer.mdc",
+                "processing_method": "sequentialthinking",
+                "output_file": "ai_report.md",
+                "required_parameters": ["main_languages", "frameworks", "packages", "dev_packages", "testing"],
+                "analysis_status": {
+                    "status": "pending",
+                    "message": "Ready to execute repository analysis using Cursor rules and sequential thinking processor",
+                    "rule_exists": True,
+                    "rule_path": "./cursor/rules/repo_analyzer.mdc",
+                    "output_destination": "ai_report.md",
+                },
+            },
+        }
+    )
+    payload["isError"] = False
+
+    return payload
+
+
+#     {
+#   "content": [
+#     {
+#       "type": "text",
+#       "text": "{\"status\": \"success\", \"message\": \"\\nRepository Analysis Instructions:\\n\\n1. Invoke the Cursor rule for repository analysis:\\n   Using the repo_analyzer.mdc rule located at ./cursor/rules/repo_analyzer.mdc to perform a comprehensive code base analysis.\\n\\n2. Utilize the sequential thinking MCP server:\\n   The sequentialthinking MCP server will be used to generate a detailed, structured report of the entire codebase.\\n\\n3. Generate and save a comprehensive report:\\n   The analysis will be written to disk as ai_report.md for future reference and parameter population.\\n\\n4. Structure requirements for the report:\\n   The markdown report should be structured to support extraction of the following parameters at minimum:\\n   - Main languages used in the repository\\n   - Frameworks and packages utilized\\n   - Development packages and dependencies\\n   - Testing frameworks and methodologies\\n   - Other relevant code organization information\\n\\n5. Command to execute:\\n   Run the repo_analyzer.mdc rule with the sequentialthinking processor to generate the comprehensive report\\n\\n6. Output validation:\\n   Verify that ai_report.md has been created with proper markdown structure that facilitates parameter extraction\\n\\n7. Next steps:\\n   Once generated, the ai_report.md file will be used as a source for populating project configuration parameters and documentation.\", \"repository_analysis\": true, \"analysis_rule\": \"./cursor/rules/repo_analyzer.mdc\", \"processing_method\": \"sequentialthinking\", \"output_file\": \"ai_report.md\", \"required_parameters\": [\"main_languages\", \"frameworks\", \"packages\", \"dev_packages\", \"testing\"], \"analysis_status\": {\"status\": \"pending\", \"message\": \"Ready to execute repository analysis using Cursor rules and sequential thinking processor\", \"rule_exists\": true, \"rule_path\": \"./cursor/rules/repo_analyzer.mdc\", \"output_destination\": \"ai_report.md\"}}"
+#     }
+#   ],
+#   "isError": false
+# }
+
+
+@mcp.tool(
     name="run_repo_analysis",
     description="Run a repository analysis to gather information for cursor rule creation",
 )

@@ -80,11 +80,11 @@ Ok, here's a breakdown of the `plan_and_execute_prompt_library_workflow` tool's 
 
 ### save_cursor_rule
 
-```
+```json
 {"method":"tools/call","params":{"name":"save_cursor_rule","arguments":{"rule_name":"bossjones","rule_content":"# Python Best Practices\\n\\nWhen writing Python code, follow these guidelines:\\n\\n1. Use type hints\\n2. Write docstrings\\n3. Follow PEP 8"},"_meta":{"progressToken":3}}}
 ```
 
-```
+```json
 {"content":[{"type":"text","text":"{\"operations\": [{\"type\": \"create_directory\", \"path\": \"hack/drafts/cursor_rules\", \"options\": {\"parents\": true, \"exist_ok\": true}}, {\"type\": \"write_file\", \"path\": \"hack/drafts/cursor_rules/bossjones.mdc.md\", \"content\": \"# Python Best Practices\\\\n\\\\nWhen writing Python code, follow these guidelines:\\\\n\\\\n1. Use type hints\\\\n2. Write docstrings\\\\n3. Follow PEP 8\", \"options\": {\"mode\": \"w\"}}], \"message\": \"Instructions to save cursor rule to hack/drafts/cursor_rules/bossjones.mdc.md\"}"}],"isError":false}
 ```
 

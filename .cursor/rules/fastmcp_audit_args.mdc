@@ -495,3 +495,172 @@ osascript -e 'display notification "Completed audit of prompt_library.py" with t
 ```
 
 This provides clear feedback on progress and helps track the overall improvement of the codebase.
+
+## Sample Audit Results
+
+The following are examples of completed audits from the `prompt_library.py` file:
+
+### list_cursor_rules (Lines 486-527)
+
+**Audit Status**: Completed ✅
+
+**Findings**:
+
+1. Basic Configuration:
+   - ✅ Has descriptive name via `name` parameter: "list_cursor_rules"
+   - ✅ Has comprehensive description in the decorator: "List all available cursor rules with their names and descriptions"
+   - ✅ Return type annotation uses Union for error/success returns: `list[dict[str, str]] | dict[str, Any]`
+   - ✅ Has detailed docstring explaining purpose and behavior
+
+2. Function Arguments:
+   - ✅ No parameters required
+   - ✅ Context parameter not used (N/A)
+
+3. Docstring Quality:
+   - ✅ Follows PEP 257 convention
+   - ✅ Includes summary line
+   - ✅ Includes detailed description
+   - ✅ No Args section needed (no parameters)
+   - ✅ Includes Returns section explaining both success and error structures
+   - ✅ Includes Raises section documenting exception handling
+
+4. Error Handling:
+   - ✅ Returns structured error objects (not raising exceptions)
+   - ✅ Error objects follow MCP format
+   - ✅ No input validation needed (no parameters)
+
+5. Code Style and Best Practices:
+   - ✅ Function name follows snake_case convention
+   - ✅ Function is focused on single responsibility
+   - ✅ Function is not overly complex
+   - ✅ No Context used (N/A)
+
+### get_static_cursor_rules (Lines 613-667)
+
+**Audit Status**: Completed ✅
+
+**Findings**:
+
+1. Basic Configuration:
+   - ✅ Has descriptive name via `name` parameter: "get_static_cursor_rules"
+   - ✅ Has comprehensive description in the decorator: "Get multiple static cursor rule files to be written to the caller's .cursor/rules directory"
+   - ✅ Has proper return type annotation: `dict[str, list[dict[str, str | bool | list[dict[str, str]]]]]`
+   - ✅ Has docstring that explains its purpose and behavior
+
+2. Function Arguments:
+   - ✅ All arguments have type annotations: `rule_names: list[str]`
+   - ✅ All arguments have Field() with descriptions
+   - ✅ Complex arguments have examples provided: `examples=[["python-best-practices", "react-patterns"], ["error-handling"]]`
+   - ✅ Default values are provided where appropriate
+   - ✅ Arguments have appropriate validation: `min_items=1`
+
+3. Docstring Quality:
+   - ✅ Docstring follows PEP 257 convention
+   - ✅ Docstring includes a summary line
+   - ✅ Docstring includes detailed description of functionality
+   - ✅ Docstring includes Args section with all parameters documented
+   - ✅ Docstring includes Returns section explaining return value
+   - ✅ Docstring includes Examples section with error handling examples
+   - ✅ Docstring explains both success and error return structures
+
+4. Error Handling:
+   - ✅ Function handles potential errors appropriately
+   - ✅ Error messages are descriptive and helpful
+   - ✅ Uses structured MCP error objects (`{"isError": True, "content": [...]}`)
+   - ✅ Function validates inputs before processing
+   - ✅ Added additional validation for rule name format
+
+5. Code Style and Best Practices:
+   - ✅ Function name follows snake_case convention
+   - ✅ Function is focused on a single responsibility
+   - ✅ Function is not overly complex
+   - ✅ Added metadata in the return value to provide additional context
+
+**Implemented Improvements**:
+- Added an optional `ignore_missing` parameter to allow skipping missing rules
+- Enhanced input validation for rule names
+- Added tracking of valid rule count in the results
+- Added specialized error handling for when all rules are missing
+- Improved docstring with more examples
+
+### save_cursor_rule (Lines 798-837)
+
+**Audit Status**: Completed ✅
+
+**Findings**:
+
+1. Basic Configuration:
+   - ✅ Has descriptive name: "save_cursor_rule"
+   - ✅ Has comprehensive description in the decorator: "Save a cursor rule to the cursor rules directory in the project"
+   - ❌ Return type annotation was too generic: `dict[str, Any]`
+   - ❌ Docstring was minimal and lacked detailed explanation
+
+2. Function Arguments:
+   - ✅ All arguments have type annotations: `rule_name: str`, `rule_content: str`
+   - ✅ All arguments have Field() with descriptions
+   - ✅ Complex arguments have examples provided
+   - ✅ Default values are provided where appropriate
+   - ✅ Arguments have appropriate validation: `min_length`, `pattern` for rule_name
+
+3. Docstring Quality:
+   - ✅ Docstring follows PEP 257 convention
+   - ✅ Docstring includes a summary line
+   - ❌ Docstring lacked detailed description of functionality
+   - ✅ Docstring includes Args section with all parameters documented
+   - ❌ Docstring Returns section was too generic
+   - ❌ Docstring did not include Examples section
+   - ❌ Docstring did not explain both success and error return structures
+
+4. Error Handling:
+   - ❌ Function did not handle potential errors
+   - ❌ No error messages for potential failure scenarios
+   - ❌ Didn't use structured MCP error objects for error cases
+   - ❌ No input validation beyond Field decorators
+
+5. Code Style and Best Practices:
+   - ✅ Function name follows snake_case convention
+   - ✅ Function is focused on a single responsibility
+   - ✅ Function is not overly complex
+
+**Implemented Improvements**:
+- Enhanced return type annotation to be more specific
+- Added comprehensive docstring with detailed description
+- Improved parameter documentation in the Args section
+- Added detailed Returns section explaining both success and error structures
+- Added Examples section with error handling examples
+- Added additional input validation beyond Field decorators
+- Implemented error handling with try/except
+- Added structured MCP error objects for error reporting
+- Added validation for markdown content format
+
+## Patterns and Best Practices Identified
+
+Based on the audits conducted, we've identified several patterns and best practices for FastMCP tool and resource functions:
+
+1. **Comprehensive Error Handling**:
+   - Always return structured error objects instead of raising exceptions
+   - Use the format `{"isError": True, "content": [{"type": "text", "text": "Error message"}]}`
+   - Provide specific, actionable error messages
+   - Use try/except blocks to catch potential exceptions
+
+2. **Detailed Return Type Annotations**:
+   - Use specific type annotations that accurately describe the return structure
+   - For functions that return either success or error data, use Union types
+   - Document the exact return structure in the docstring
+
+3. **Input Validation**:
+   - Validate inputs both through Field parameters and additional code checks
+   - Return descriptive error messages for invalid inputs
+   - Check for edge cases like empty strings, improper formats, etc.
+
+4. **Comprehensive Docstrings**:
+   - Follow PEP 257 convention
+   - Include a summary line and detailed description
+   - Document all parameters in the Args section
+   - Provide a detailed Returns section that explains both success and error structures
+   - Include Examples section showing both success and error scenarios
+
+5. **Consistent Function Structure**:
+   - Begin with input validation
+   - Implement core functionality in a try/except block
+   - Return structured results or error objects
