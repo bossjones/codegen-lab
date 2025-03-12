@@ -130,3 +130,74 @@ Ok, here's a breakdown of the `plan_and_execute_prompt_library_workflow` tool's 
 ```
 {"content":[{"type":"text","text":"{\"operations\": [{\"type\": \"check_file_exists\", \"path\": \"Makefile\"}, {\"type\": \"read_file\", \"path\": \"Makefile\", \"options\": {\"encoding\": \"utf-8\"}}], \"requires_result\": true, \"message\": \"Instructions to check Makefile and update if needed\", \"update_task_content\": \"\\n# Cursor Rules\\n.PHONY: update-cursor-rules\\nupdate-cursor-rules:  ## Update cursor rules from prompts/drafts/cursor_rules\\n\\t# Create .cursor/rules directory if it doesn't exist.\\n\\t# Note: at the time of writing, cursor does not support generating .mdc files via Composer Agent.s\\n\\tmkdir -p .cursor/rules || true\\n\\t# Copy files from hack/prompts/drafts/cursor_rules to .cursor/rules and change extension to .mdc\\n\\t# Exclude README.md files from being copied\\n\\tfind hack/drafts/cursor_rules -type f -name \\\"*.md\\\" ! -name \\\"README.md\\\" -exec sh -c 'for file; do target=$${file%.md}; cp -a \\\"$$file\\\" \\\".cursor/rules/$$(basename \\\"$$target\\\")\\\"; done' sh {} +\\n\", \"next_steps\": \"After applying these operations, you'll need to check if the Makefile exists and contains the update-cursor-rules task, then update or create it accordingly.\"}"}],"isError":false}
 ```
+
+
+### instruct_custom_repo_rules_generation
+
+```json
+{
+  "repo_summary": "A Python web application built with FastAPI framework, using Python 3.12+. The project follows a modular structure with routers and internal components, suggesting a well-organized API service. The project uses modern Python tooling including uv for dependency management and includes Docker support for containerization. The application appears to be designed with a focus on API development and follows FastAPI's recommended project structure."
+}
+```
+
+```json
+{
+  "content": [
+    {
+      "type": "text",
+      "text": {
+        "status": "success",
+        "message": "Cursor Rules Generation Instructions:1. Analyze repository structure and codebase:   Using the provided repository summary to identify languages, frameworks, and patterns used.2. Generate recommended cursor rules:   Invoke the recommend_cursor_rules tool with the repository summary to generate a list of tailored cursor rules.3. Prepare the staging directory:   Run `touch hack/drafts/cursor_rules/{rule-name}.mdc.md` for each rule name to ensure cursor creates the files properly.4. Implement cursor rules systematically:   Create each cursor rule in the hack/drafts/cursor_rules directory with proper formatting and structure.5. Format requirements for cursor rules:   Each cursor rule must include:   - Proper filename with .mdc.md extension (e.g., rule-name.mdc.md)   - Frontmatter with description, globs, and alwaysApply configuration   - Rule content with name, description, filters, actions, examples, and metadata6. Implementation process:   For each rule recommended by recommend_cursor_rules:   - Create the rule file in hack/drafts/cursor_rules/   - Implement the rule with proper structure and formatting   - Ensure the rule includes appropriate filters and actions   - Add relevant examples and metadata7. Verification:   Confirm each rule has been properly formatted with:   - Descriptive name and purpose   - Appropriate glob patterns based on file types identified in the summary   - Correct alwaysApply setting (typically false)   - Comprehensive rule content with examples8. Audit generated files:   For each rule file created, run `head -10 hack/drafts/cursor_rules/{rule-name}.mdc.md | cat` to validate that frontmatter is present and properly formatted.9. Deploy to production:   Run `make update-cursor-rules` to move the rules from the staging directory to production.10. Next steps:   The rules should now be available in the .cursor/rules directory for production use.   Consider using sequentialthinking for complex rules that require detailed reasoning and step-by-step analysis.",
+        "cursor_rules_generation": true,
+        "analysis_method": "repository_summary",
+        "repo_summary": "A Python web application built with FastAPI framework, using Python 3.12+. The project follows a modular structure with routers and internal components, suggesting a well-organized API service. The project uses modern Python tooling including uv for dependency management and includes Docker support for containerization. The application appears to be designed with a focus on API development and follows FastAPI's recommended project structure.",
+        "output_directory": "hack/drafts/cursor_rules",
+        "rule_format": {
+          "filename": "{rule-name}.mdc.md",
+          "frontmatter": {
+            "description": "Brief description of the rule's purpose",
+            "globs": "File patterns the rule applies to (e.g., *.py)",
+            "alwaysApply": "Boolean value (typically false)"
+          },
+          "rule_structure": {
+            "name": "rule-name",
+            "description": "Detailed description of the rule",
+            "filters": "Conditions for when the rule applies",
+            "actions": "Suggestions or requirements provided by the rule",
+            "examples": "Example inputs and outputs",
+            "metadata": "Priority, version, and tags"
+          }
+        },
+        "rule_example_template": {
+          "frontmatter": "---\ndescription: Brief description of the rule\nglobs: *.py  # File patterns to match\nalwaysApply: false  # Whether to always apply the rule\n---",
+          "title_and_introduction": "# Rule Title\nBrief description of what the rule covers.",
+          "rule_definition": "<rule>\nname: rule_name\ndescription: Concise description of the rule\nfilters:\n  # Match specific file types\n  - type: file_extension\n    pattern: \"\\\\.py$\"\n  # Match specific paths\n  - type: file_path\n    pattern: \"tests?/\"\n  # Match specific content\n  - type: content\n    pattern: \"(?i)(relevant|terms|to|match)\"\nactions:\n  - type: suggest\n    message: |\n      # Main Heading\n      Explanation of the rule and its purpose.\n      ## Subheading\n      Detailed guidance with code examples:\n      ```python\n      # Example code\n      def example_function():\n          return \"example\"\n      ```\n      ## Another Subheading\n      More detailed information and best practices.\nexamples:\n  - input: |\n      # User query example\n      I want to do X with Y\n    output: |\n      Here's how to do X with Y:\n      \n      ```python\n      # Solution code\n      ```\nmetadata:\n  priority: high\n  version: 1.0\n  tags:\n    - relevant\n    - tags\n    - here\n</rule>"
+        },
+        "key_components_explanation": {
+          "frontmatter": "YAML metadata at the top",
+          "title_and_introduction": "Markdown heading and description",
+          "rule_definition": "Enclosed in <rule> tags with basic properties, filters, actions, examples, and metadata"
+        },
+        "multishot_prompting_strategy": "Use the template as a basis for creating multiple examples that show different rule variations tailored to specific language features, frameworks, or coding patterns identified in the repository",
+        "generation_status": {
+          "status": "ready",
+          "message": "Ready to generate cursor rules based on repository summary",
+          "input_source": "recommend_cursor_rules tool",
+          "output_destination": "hack/drafts/cursor_rules",
+          "production_destination": ".cursor/rules"
+        },
+        "deployment_commands": {
+          "prepare_files": "touch hack/drafts/cursor_rules/{rule-name}.mdc.md",
+          "audit_files": "head -10 hack/drafts/cursor_rules/{rule-name}.mdc.md | cat",
+          "deploy_to_production": "make update-cursor-rules"
+        },
+        "processing_tools": {
+          "rule_recommendation": "recommend_cursor_rules",
+          "complex_reasoning": "sequentialthinking"
+        }
+      }
+    }
+  ],
+  "isError": false
+}
+```
