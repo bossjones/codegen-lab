@@ -579,14 +579,21 @@ def get_cursor_rule_raw(name: str) -> str:
     name="get_static_cursor_rule",
     description="Get a static cursor rule file by name to be written to the caller's .cursor/rules directory",
 )
-def get_static_cursor_rule(rule_name: str) -> dict[str, str | bool | list[dict[str, str]]]:
+def get_static_cursor_rule(
+    rule_name: str = Field(
+        description="Name of the cursor rule to retrieve (with or without .md extension)",
+        examples=["python-best-practices", "react-patterns", "error-handling"],
+        min_length=1,
+    ),
+) -> dict[str, str | bool | list[dict[str, str]]]:
     """Get a static cursor rule file by name.
 
     This tool returns the content of a specific cursor rule file so it can be
     written to the calling repository's .cursor/rules directory.
 
     Args:
-        rule_name: The name of the cursor rule to retrieve (without .md extension)
+        rule_name: Name of the cursor rule to retrieve (with or without .md extension).
+            Must be at least 1 character long.
 
     Returns:
         dict[str, Union[str, bool, list[dict[str, str]]]]: A dictionary containing either:

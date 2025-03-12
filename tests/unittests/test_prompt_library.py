@@ -816,7 +816,16 @@ class TestUtilityFunctions:
         assert "Error: Static cursor rule 'nonexistent_rule' not found" in result["content"][0]["text"]
 
     def test_get_static_cursor_rules(self, mocker: "MockerFixture", sample_cursor_rule: str) -> None:
-        """Test get_static_cursor_rules function."""
+        """Test get_static_cursor_rules function.
+
+        This test verifies that the get_static_cursor_rules function correctly handles both
+        existing and non-existent rules, with and without the ignore_missing flag.
+
+        Args:
+            mocker: Pytest mocker fixture for mocking dependencies
+            sample_cursor_rule: Sample cursor rule content fixture
+
+        """
         # Setup
         rule_names = ["rule1", "rule2", "nonexistent_rule"]
 
@@ -828,24 +837,46 @@ class TestUtilityFunctions:
 
         mocker.patch("codegen_lab.prompt_library.read_cursor_rule", side_effect=mock_read_cursor_rule)
 
-        # Execute
+        # Execute - with ignore_missing=False (default)
         results = get_static_cursor_rules(rule_names)
 
         # Assert
         assert "rules" in results
-        assert len(results["rules"]) == 3
-
-        # Check first two rules have content
+        assert len(results["rules"]) == 2  # Only successful rules are included
+        # Check successful rules
         assert results["rules"][0]["rule_name"] == "rule1.md"
         assert results["rules"][0]["content"] == sample_cursor_rule
         assert results["rules"][1]["rule_name"] == "rule2.md"
         assert results["rules"][1]["content"] == sample_cursor_rule
+        assert "valid_rule_count" in results
+        assert results["valid_rule_count"] == 2
 
-        # Check nonexistent rule has error information
-        assert results["rules"][2]["isError"] is True
-        assert isinstance(results["rules"][2]["content"], list)
-        assert results["rules"][2]["content"][0]["type"] == "text"
-        assert "Error: Static cursor rule 'nonexistent_rule' not found" in results["rules"][2]["content"][0]["text"]
+        # Now test with ignore_missing=True
+        results = get_static_cursor_rules(rule_names, ignore_missing=True)
+
+        # Assert
+        assert "rules" in results
+        assert len(results["rules"]) == 2  # Only the valid rules
+        assert results["rules"][0]["rule_name"] == "rule1.md"
+        assert results["rules"][0]["content"] == sample_cursor_rule
+        assert results["rules"][1]["rule_name"] == "rule2.md"
+        assert results["rules"][1]["content"] == sample_cursor_rule
+        assert "valid_rule_count" in results
+        assert results["valid_rule_count"] == 2
+
+        # Test with empty rule_names list
+        empty_results = get_static_cursor_rules([])
+        assert "rules" in empty_results
+        assert len(empty_results["rules"]) == 1
+        assert empty_results["rules"][0]["isError"] is True
+        assert "Error: Empty rule_names list provided" in empty_results["rules"][0]["content"][0]["text"]
+
+        # Test with all missing rules and ignore_missing=True
+        all_missing_results = get_static_cursor_rules(["nonexistent1", "nonexistent2"], ignore_missing=True)
+        assert "rules" in all_missing_results
+        assert len(all_missing_results["rules"]) == 1
+        assert all_missing_results["rules"][0]["isError"] is True
+        assert "Error: None of the requested rules" in all_missing_results["rules"][0]["content"][0]["text"]
 
 
 class TestWorkflowFunctions:
