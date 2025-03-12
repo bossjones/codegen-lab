@@ -577,6 +577,180 @@ def get_cursor_rule_raw(name: str) -> str:
 
 
 @mcp.tool(
+    name="run_repo_analysis",
+    description="Run a repository analysis to gather information for cursor rule creation",
+)
+def run_repo_analysis(
+    repo_description: str, main_languages: str, file_patterns: str, key_features: str, ctx: Context | None = None
+) -> dict[str, Any]:
+    """Run a repository analysis to gather information for cursor rule creation.
+
+    This tool returns JSON instructions for invoking the repo analyzer cursor rule.
+    It formats the repository information provided by the user into a structured
+    format that can be used to analyze the repository and suggest cursor rules.
+
+    Args:
+        repo_description: Description of the repository and its purpose
+        main_languages: Main programming languages used in the repository
+        file_patterns: Common file patterns in the repository
+        key_features: Key features or components of the repository
+        ctx: The MCP context (optional)
+
+    Returns:
+        dict[str, Any]: A dictionary containing instructions for repository analysis
+        with the following structure:
+            - "instructions": List of analysis steps to perform
+            - "repo_info": Repository information provided by the user
+            - "commands": Suggested commands to run for analysis
+            - "rule_name": Name of the cursor rule to invoke
+
+    Examples:
+        >>> result = run_repo_analysis(
+        ...     "A Python web application using FastAPI",
+        ...     "Python, JavaScript",
+        ...     "*.py, *.js",
+        ...     "API endpoints, database models, authentication"
+        ... )
+        >>> print(result["rule_name"])
+        >>> 'repo_analyzer'
+
+    """
+    try:
+        # Parse inputs
+        languages = [lang.strip() for lang in main_languages.split(",") if lang.strip()]
+        patterns = [pattern.strip() for pattern in file_patterns.split(",") if pattern.strip()]
+        features = [feature.strip() for feature in key_features.split(",") if feature.strip()]
+
+        # Generate analysis commands based on repository information
+        analysis_commands = []
+
+        # Basic repository structure analysis
+        analysis_commands.append(
+            {
+                "name": "Repository Structure",
+                "command": 'tree -L 7 -I "*.pyc|__pycache__|.git|.pytest_cache|.ruff_cache|.mypy_cache|.coverage|htmlcov|.venv|.env|*.egg-info|build|dist|node_modules|.DS_Store|images"',
+                "description": "Get a comprehensive view of the repository structure",
+            }
+        )
+
+        # Language-specific analysis commands
+        for language in languages:
+            if language.lower() == "python":
+                analysis_commands.append(
+                    {
+                        "name": "Python Files",
+                        "command": 'find . -name "*.py" | grep -v "__pycache__" | sort',
+                        "description": "List all Python files in the repository",
+                    }
+                )
+                analysis_commands.append(
+                    {
+                        "name": "Python Functions",
+                        "command": 'grep -r "def " --include="*.py" . | grep -v "__pycache__"',
+                        "description": "Find Python function definitions",
+                    }
+                )
+                analysis_commands.append(
+                    {
+                        "name": "Python Classes",
+                        "command": 'grep -r "class " --include="*.py" . | grep -v "__pycache__"',
+                        "description": "Find Python class definitions",
+                    }
+                )
+            elif language.lower() in ["javascript", "js"]:
+                analysis_commands.append(
+                    {
+                        "name": "JavaScript Files",
+                        "command": 'find . -name "*.js" -o -name "*.jsx" | grep -v "node_modules" | sort',
+                        "description": "List all JavaScript files in the repository",
+                    }
+                )
+                analysis_commands.append(
+                    {
+                        "name": "JavaScript Functions",
+                        "command": 'grep -r "function " --include="*.js" --include="*.jsx" . | grep -v "node_modules"',
+                        "description": "Find JavaScript function definitions",
+                    }
+                )
+            elif language.lower() in ["typescript", "ts"]:
+                analysis_commands.append(
+                    {
+                        "name": "TypeScript Files",
+                        "command": 'find . -name "*.ts" -o -name "*.tsx" | grep -v "node_modules" | sort',
+                        "description": "List all TypeScript files in the repository",
+                    }
+                )
+                analysis_commands.append(
+                    {
+                        "name": "TypeScript Interfaces",
+                        "command": 'grep -r "interface " --include="*.ts" --include="*.tsx" . | grep -v "node_modules"',
+                        "description": "Find TypeScript interface definitions",
+                    }
+                )
+
+        # Feature-specific analysis commands
+        for feature in features:
+            feature_lower = feature.lower()
+            if "api" in feature_lower or "endpoint" in feature_lower:
+                analysis_commands.append(
+                    {
+                        "name": "API Endpoints",
+                        "command": 'grep -r "@app.route\\|@app.get\\|@app.post\\|router.get\\|router.post" --include="*.py" --include="*.js" --include="*.ts" .',
+                        "description": "Find API endpoint definitions",
+                    }
+                )
+            elif "database" in feature_lower or "model" in feature_lower:
+                analysis_commands.append(
+                    {
+                        "name": "Database Models",
+                        "command": 'grep -r "class.*Model\\|class.*db.Model\\|mongoose.model\\|sequelize.define" --include="*.py" --include="*.js" --include="*.ts" .',
+                        "description": "Find database model definitions",
+                    }
+                )
+            elif "auth" in feature_lower:
+                analysis_commands.append(
+                    {
+                        "name": "Authentication",
+                        "command": 'grep -r "auth\\|login\\|authenticate\\|password" --include="*.py" --include="*.js" --include="*.ts" .',
+                        "description": "Find authentication-related code",
+                    }
+                )
+
+        # Create analysis instructions
+        analysis_instructions = [
+            "1. Run the repository structure command to get an overview of the codebase",
+            "2. Identify key components based on the directory structure",
+            "3. Run language-specific commands to find relevant code definitions",
+            "4. Run feature-specific commands to locate implementation details",
+            "5. Analyze the results to understand the repository architecture",
+            "6. Identify patterns and conventions used in the codebase",
+            "7. Determine which cursor rules would be most beneficial",
+        ]
+
+        # Create a structured response
+        return {
+            "rule_name": "repo_analyzer",
+            "instructions": analysis_instructions,
+            "repo_info": {
+                "description": repo_description,
+                "languages": languages,
+                "file_patterns": patterns,
+                "key_features": features,
+            },
+            "commands": analysis_commands,
+            "message": "Repository analysis instructions generated successfully. Use these commands to analyze the repository structure and identify key components for cursor rule creation.",
+        }
+    except Exception as e:
+        if ctx:
+            ctx.error(f"Error generating repository analysis instructions: {e}")
+
+        return {
+            "isError": True,
+            "content": [{"type": "text", "text": f"Error generating repository analysis instructions: {e!s}"}],
+        }
+
+
+@mcp.tool(
     name="get_static_cursor_rule",
     description="Get a static cursor rule file by name to be written to the caller's .cursor/rules directory",
 )

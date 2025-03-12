@@ -33,6 +33,7 @@ from codegen_lab.prompt_library import (
     process_makefile_result,
     process_update_cursor_rules_result,
     read_cursor_rule,
+    run_repo_analysis,
     run_update_cursor_rules,
     save_cursor_rule,
     update_dockerignore,
@@ -359,82 +360,184 @@ class TestUtilityFunctions:
             sample_cursor_rule: Sample cursor rule fixture
 
         """
-        result = parse_cursor_rule(sample_cursor_rule)
+        # Parse the sample cursor rule
+        parsed = parse_cursor_rule(sample_cursor_rule)
 
-        assert isinstance(result, dict)
-        assert "frontmatter" in result
-        assert "title" in result
-        assert "description" in result
-        assert "rule" in result
+        # Check that the parsed rule has the expected structure
+        assert isinstance(parsed, dict)
+        assert "frontmatter" in parsed
+        assert "title" in parsed
+        assert "description" in parsed
+        assert "rule" in parsed
 
-        assert result["title"] == "Sample Rule"
-        assert result["description"] == "This is a sample rule."
-        assert result["rule"]["name"] == "sample-rule"
-        assert result["rule"]["description"] == "This is a sample rule"
-        assert "filters" in result["rule"]
-        assert "actions" in result["rule"]
-        assert "examples" in result["rule"]
-        assert "metadata" in result["rule"]
+        # Check frontmatter
+        assert parsed["frontmatter"]["description"] == "Sample Rule"
+        assert parsed["frontmatter"]["globs"] == "*.py"
+        assert parsed["frontmatter"]["alwaysApply"] == "false"
 
-        assert len(result["rule"]["filters"]) == 1
-        assert result["rule"]["filters"][0]["type"] == "file_extension"
-        assert result["rule"]["filters"][0]["pattern"] == "\\.py$"
+        # Check title and description
+        assert parsed["title"] == "Sample Rule"
+        assert parsed["description"] == "This is a sample rule."
 
-        assert len(result["rule"]["actions"]) == 1
-        assert result["rule"]["actions"][0]["type"] == "suggest"
-        assert "This is a sample message." in result["rule"]["actions"][0]["message"]
+        # Check rule content
+        rule = parsed["rule"]
+        assert rule["name"] == "sample-rule"
+        assert rule["description"] == "This is a sample rule"
 
-        assert len(result["rule"]["examples"]) == 1
-        assert "# Sample input" in result["rule"]["examples"][0]["input"]
-        assert result["rule"]["examples"][0]["output"] == "Sample output"
+        # Check filters
+        assert "filters" in rule
+        assert len(rule["filters"]) == 1
+        assert rule["filters"][0]["type"] == "file_extension"
+        assert rule["filters"][0]["pattern"] == "\\.py$"
 
-        assert result["rule"]["metadata"]["priority"] == "high"
-        assert result["rule"]["metadata"]["version"] == "1.0"
-        assert "sample" in result["rule"]["metadata"]["tags"]
-        assert "test" in result["rule"]["metadata"]["tags"]
+        # Check actions
+        assert "actions" in rule
+        assert len(rule["actions"]) == 1
+        assert rule["actions"][0]["type"] == "suggest"
+        assert "This is a sample message." in rule["actions"][0]["message"]
 
-    def test_generate_cursor_rule(self) -> None:
-        """Test that the generate_cursor_rule function correctly generates a cursor rule."""
-        result = generate_cursor_rule(
-            rule_name="test-rule",
-            description="A test rule",
-            file_patterns=["*.py", "*.js"],
-            content_patterns=["test", "example"],
-            action_message="This is a test message.",
-            examples=[{"input": "# Test input", "output": "Test output"}],
-            tags=["test", "example"],
-            priority="high",
+        # Check examples
+        assert "examples" in rule
+        assert len(rule["examples"]) == 1
+        assert "# Sample input" in rule["examples"][0]["input"]
+        assert rule["examples"][0]["output"] == "Sample output"
+
+        # Check metadata
+        assert "metadata" in rule
+        assert rule["metadata"]["priority"] == "high"
+        assert rule["metadata"]["version"] == "1.0"
+        assert "tags" in rule["metadata"]
+        assert "sample" in rule["metadata"]["tags"]
+        assert "test" in rule["metadata"]["tags"]
+
+    def test_run_repo_analysis(self) -> None:
+        """Test that the run_repo_analysis function returns the expected structure."""
+        # Call the function with test data
+        result = run_repo_analysis(
+            repo_description="A Python web application using FastAPI",
+            main_languages="Python, JavaScript",
+            file_patterns="*.py, *.js",
+            key_features="API endpoints, database models, authentication",
         )
 
-        assert isinstance(result, str)
-        assert "---" in result
-        assert "description: A test rule" in result
-        assert "globs: *.py, *.js" in result
-        assert "# Test Rule" in result
-        assert "A test rule" in result
-        assert "<rule>" in result
-        assert "name: test-rule" in result
-        assert "description: A test rule" in result
-        assert "filters:" in result
-        assert "file_extension" in result
-        assert "*.py|*.js" in result
+        # Check that the result has the expected structure
+        assert isinstance(result, dict)
+        assert "rule_name" in result
+        assert "instructions" in result
+        assert "repo_info" in result
+        assert "commands" in result
+        assert "message" in result
+
+        # Check rule name
+        assert result["rule_name"] == "repo_analyzer"
+
+        # Check instructions
+        assert isinstance(result["instructions"], list)
+        assert len(result["instructions"]) > 0
+        assert all(isinstance(instruction, str) for instruction in result["instructions"])
+
+        # Check repo_info
+        assert isinstance(result["repo_info"], dict)
+        assert "description" in result["repo_info"]
+        assert "languages" in result["repo_info"]
+        assert "file_patterns" in result["repo_info"]
+        assert "key_features" in result["repo_info"]
+
+        # Check that languages were parsed correctly
+        assert result["repo_info"]["languages"] == ["Python", "JavaScript"]
+
+        # Check file patterns
+        assert result["repo_info"]["file_patterns"] == ["*.py", "*.js"]
+
+        # Check key features
+        assert result["repo_info"]["key_features"] == ["API endpoints", "database models", "authentication"]
+
+        # Check commands
+        assert isinstance(result["commands"], list)
+        assert len(result["commands"]) > 0
+
+        # Verify that each command has the expected structure
+        for command in result["commands"]:
+            assert isinstance(command, dict)
+            assert "name" in command
+            assert "command" in command
+            assert "description" in command
+
+        # Check that language-specific commands were generated
+        python_commands = [cmd for cmd in result["commands"] if "Python" in cmd["name"]]
+        js_commands = [cmd for cmd in result["commands"] if "JavaScript" in cmd["name"]]
+        assert len(python_commands) > 0
+        assert len(js_commands) > 0
+
+        # Check that feature-specific commands were generated
+        api_commands = [cmd for cmd in result["commands"] if "API" in cmd["name"]]
+        db_commands = [cmd for cmd in result["commands"] if "Database" in cmd["name"]]
+        auth_commands = [cmd for cmd in result["commands"] if "Authentication" in cmd["name"]]
+        assert len(api_commands) > 0
+        assert len(db_commands) > 0
+        assert len(auth_commands) > 0
+
+    def test_run_repo_analysis_error_handling(self) -> None:
+        """Test that the run_repo_analysis function handles errors gracefully."""
+        # Call the function with invalid input (None values)
+        result = run_repo_analysis(
+            repo_description=None,  # type: ignore
+            main_languages=None,  # type: ignore
+            file_patterns=None,  # type: ignore
+            key_features=None,  # type: ignore
+        )
+
+        # Check that the result indicates an error
+        assert isinstance(result, dict)
+        assert "isError" in result
+        assert result["isError"] is True
         assert "content" in result
-        assert "(?s)(test|example)" in result
-        assert "actions:" in result
-        assert "type: suggest" in result
-        assert "message: |" in result
-        assert "This is a test message." in result
-        assert "examples:" in result
-        assert "input: |" in result
-        assert "# Test input" in result
-        assert 'output: "Test output"' in result
-        assert "metadata:" in result
-        assert "priority: high" in result
-        assert "version: 1.0" in result
-        assert "tags:" in result
-        assert "- test" in result
-        assert "- example" in result
-        assert "</rule>" in result
+        assert isinstance(result["content"], list)
+        assert len(result["content"]) > 0
+        assert "text" in result["content"][0]
+        assert "Error" in result["content"][0]["text"]
+
+    def test_generate_cursor_rule(self) -> None:
+        """Test that the generate_cursor_rule function generates a valid cursor rule."""
+        # Generate a cursor rule
+        rule = generate_cursor_rule(
+            rule_name="test-rule",
+            description="Test rule description",
+            file_patterns=["*.py", "*.js"],
+            content_patterns=["def ", "function "],
+            action_message="This is a test action message.",
+            examples=[{"input": "Test input", "output": "Test output"}],
+            tags=["test", "example"],
+            priority="medium",
+        )
+
+        # Check that the generated rule is a string
+        assert isinstance(rule, str)
+
+        # Check that the rule contains the expected content
+        assert "---" in rule
+        assert "description: Test rule description" in rule
+        assert "# Test Rule" in rule
+        assert "<rule>" in rule
+        assert "name: test-rule" in rule
+        assert "description: Test rule description" in rule
+        assert "filters:" in rule
+        assert 'pattern: "*.py|*.js"' in rule
+        assert 'pattern: "(?s)(def |function )"' in rule
+        assert "actions:" in rule
+        assert "type: suggest" in rule
+        assert "This is a test action message." in rule
+        assert "examples:" in rule
+        assert "input: |" in rule
+        assert "Test input" in rule
+        assert 'output: "Test output"' in rule
+        assert "metadata:" in rule
+        assert "priority: medium" in rule
+        assert "version: 1.0" in rule
+        assert "tags:" in rule
+        assert "- test" in rule
+        assert "- example" in rule
+        assert "</rule>" in rule
 
     def test_save_cursor_rule(self, mocker: "MockerFixture", tmp_path: Path) -> None:
         """Test that the save_cursor_rule function returns proper file operation instructions.
