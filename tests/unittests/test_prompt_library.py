@@ -1684,3 +1684,139 @@ class TestPlanAndExecuteWorkflow:
                 assert "validation error" in validation_error_text
                 assert "string should have at least" in validation_error_text
                 assert "string_too_short" in validation_error_text
+
+    def test_ensure_makefile_task_remote_compatibility(self, mocker: "MockerFixture", tmp_path: Path) -> None:
+        """Test ensure_makefile_task's remote compatibility features.
+
+        This test verifies that ensure_makefile_task properly handles remote execution by:
+        1. Never performing direct file operations
+        2. Returning properly structured operation instructions
+        3. Handling error cases appropriately
+        4. Supporting the two-phase operation pattern
+
+        Args:
+            mocker: Pytest fixture for mocking
+            tmp_path: Pytest fixture providing a temporary directory path
+
+        """
+        # Mock Path.cwd to return our temporary directory
+        mocker.patch("pathlib.Path.cwd", return_value=tmp_path)
+
+        # Test 1: Verify operation structure
+        result = ensure_makefile_task()
+
+        # Check that the result follows the FastMCP operation structure
+        assert isinstance(result, dict)
+        assert "operations" in result
+        assert isinstance(result["operations"], list)
+        assert "requires_result" in result
+        assert result["requires_result"] is True
+        assert "message" in result
+        assert isinstance(result["message"], str)
+
+        # Verify each operation has required fields
+        for op in result["operations"]:
+            assert "type" in op
+            assert "path" in op
+            assert isinstance(op["type"], str)
+            assert isinstance(op["path"], str)
+
+        # Test 2: Verify no direct file operations are performed
+        # The function should not create any files in the filesystem
+        makefile_path = tmp_path / "Makefile"
+        assert not makefile_path.exists(), "Function should not create files directly"
+
+        # Test 3: Error handling
+        # Simulate an error in the operation results
+        error_results = {"Makefile": {"error": "Permission denied", "exists": False}}
+
+        process_result = process_makefile_result(
+            operation_results=error_results, update_task_content=result["update_task_content"]
+        )
+
+        assert "error" in process_result
+        assert not process_result["success"]
+        assert "permission denied" in process_result["message"].lower()
+
+        # Test 4: Verify operation content
+        # Check that file operations are properly structured
+        check_op = next(op for op in result["operations"] if op["type"] == "check_file_exists")
+        assert check_op["path"] == "Makefile"
+
+        read_op = next(op for op in result["operations"] if op["type"] == "read_file")
+        assert read_op["path"] == "Makefile"
+
+        # Test 5: Process result handling
+        # Test with various operation results
+        success_results = {"Makefile": {"exists": True, "content": "existing-content"}}
+
+        process_result = process_makefile_result(
+            operation_results=success_results, update_task_content=result["update_task_content"]
+        )
+
+        assert "operations" in process_result
+        assert isinstance(process_result["operations"], list)
+        assert process_result["success"] is True
+
+        # Verify write operation structure
+        write_op = next(op for op in process_result["operations"] if op["type"] == "write_file")
+        assert write_op["path"] == "Makefile"
+        assert "content" in write_op
+        assert "options" in write_op
+        assert write_op["options"].get("mode") == "w"
+
+    def test_ensure_makefile_task_edge_cases(self, mocker: "MockerFixture") -> None:
+        """Test ensure_makefile_task's handling of edge cases.
+
+        This test verifies that ensure_makefile_task properly handles various edge cases:
+        1. Empty operation results
+        2. Malformed operation results
+        3. Missing required fields
+        4. Invalid file paths
+
+        Args:
+            mocker: Pytest fixture for mocking
+
+        """
+        result = ensure_makefile_task()
+
+        # Test 1: Empty operation results
+        process_result = process_makefile_result(
+            operation_results={}, update_task_content=result["update_task_content"]
+        )
+        assert not process_result["success"]
+        assert "error" in process_result
+        assert "missing operation results" in process_result["message"].lower()
+
+        # Test 2: Malformed operation results
+        malformed_results = {
+            "Makefile": "invalid"  # Should be a dict
+        }
+        process_result = process_makefile_result(
+            operation_results=malformed_results,  # type: ignore
+            update_task_content=result["update_task_content"],
+        )
+        assert not process_result["success"]
+        assert "error" in process_result
+        assert "invalid operation results" in process_result["message"].lower()
+
+        # Test 3: Missing required fields
+        incomplete_results = {
+            "Makefile": {
+                # Missing 'exists' field
+                "content": "test content"
+            }
+        }
+        process_result = process_makefile_result(
+            operation_results=incomplete_results,  # type: ignore
+            update_task_content=result["update_task_content"],
+        )
+        assert not process_result["success"]
+        assert "error" in process_result
+        assert "missing required field" in process_result["message"].lower()
+
+        # Test 4: Invalid file paths
+        invalid_path_result = ensure_makefile_task(makefile_path="invalid/*/path")
+        assert not invalid_path_result["success"]
+        assert "error" in invalid_path_result
+        assert "invalid file path" in invalid_path_result["message"].lower()

@@ -18,31 +18,35 @@ When an MCP server runs remotely, it doesn't have access to the client's file sy
      - Now returns operation instructions for the client to perform
 
 2. **`ensure_makefile_task`** (in `prompt_library.py`)
-   - [ ] **Direct File Operations**:
-     - Gets current working directory with `Path.cwd()`
-     - Checks if file exists with `makefile_path.exists()`
-     - Reads file content with `makefile_path.read_text()`
-     - Writes to file with `open(makefile_path, "a")` and `f.write()`
-     - Creates new file with `open(makefile_path, "w")` and `f.write()`
+   - [x] **Direct File Operations**:
+     - ~~Gets current working directory with `Path.cwd()`~~
+     - ~~Checks if file exists with `makefile_path.exists()`~~
+     - ~~Reads file content with `makefile_path.read_text()`~~
+     - ~~Writes to file with `open(makefile_path, "a")` and `f.write()`~~
+     - ~~Creates new file with `open(makefile_path, "w")` and `f.write()`~~
+     - Now returns operation instructions for checking and updating the Makefile
 
 3. **`run_update_cursor_rules`** (in `prompt_library.py`)
-   - [ ] **Direct File Operations**:
-     - Gets current working directory with `Path.cwd()`
-     - Checks if file exists with `makefile_path.exists()`
-     - Reads file content with `makefile_path.read_text()`
-     - Executes shell commands with `subprocess.run()`
-     - Lists directory contents with `cursor_rules_dir.glob("*")`
+   - [x] **Direct File Operations**:
+     - ~~Gets current working directory with `Path.cwd()`~~
+     - ~~Checks if file exists with `makefile_path.exists()`~~
+     - ~~Reads file content with `makefile_path.read_text()`~~
+     - ~~Executes shell commands with `subprocess.run()`~~
+     - ~~Lists directory contents with `cursor_rules_dir.glob("*")`~~
+     - Now uses a two-step process with `process_update_cursor_rules_result` to handle operations remotely
 
 4. **`update_dockerignore`** (in `prompt_library.py`)
-   - [ ] **Direct File Operations**:
-     - Gets current working directory with `Path.cwd()`
-     - Checks if file exists with `dockerignore_path.exists()`
-     - Reads file content with `dockerignore_path.read_text()`
-     - Writes to file with `dockerignore_path.write_text()`
+   - [x] **Direct File Operations**:
+     - ~~Gets current working directory with `Path.cwd()`~~
+     - ~~Checks if file exists with `dockerignore_path.exists()`~~
+     - ~~Reads file content with `dockerignore_path.read_text()`~~
+     - ~~Writes to file with `dockerignore_path.write_text()`~~
+     - Now returns operation instructions for checking and updating .dockerignore
 
 5. **`execute_phase_4`** (part of `plan_and_execute_prompt_library_workflow` in `prompt_library.py`)
-   - [ ] **Direct File Operations**:
-     - Calls `save_cursor_rule()` which returns file operation instructions but doesn't perform them directly
+   - [x] **Direct File Operations**:
+     - Uses `save_cursor_rule()` which returns file operation instructions
+     - No direct file operations performed
 
 ### Functions That Return Operation Instructions (Safe for Remote Execution)
 
@@ -119,12 +123,60 @@ def save_cursor_rule(
     }
 ```
 
+## Testing Coverage and Verification
+
+### Test Status for Refactored Functions
+
+1. **`save_cursor_rule`**
+   - [x] Unit tests verifying operation structure
+   - [x] Integration tests with client application
+   - [x] Error handling tests
+
+2. **`create_cursor_rule_files`**
+   - [x] Unit tests for remote compatibility
+   - [x] Tests for RPC implementation
+   - [x] Tests for hybrid mode
+
+3. **`ensure_makefile_task`**
+   - [x] Unit tests for operation structure
+   - [x] Integration tests with process_makefile_result
+   - [x] Error handling tests
+   - [x] Remote compatibility tests
+   - [x] Edge case tests
+
+4. **`run_update_cursor_rules`**
+   - [ ] Add unit tests for two-step process
+   - [ ] Add integration tests
+   - [ ] Add error handling tests
+
+5. **`update_dockerignore`**
+   - [ ] Add unit tests for operation structure
+   - [ ] Add integration tests
+   - [ ] Add error handling tests
+
+6. **`execute_phase_4`**
+   - [ ] Add unit tests for operation structure
+   - [ ] Add integration tests
+   - [ ] Add error handling tests
+
+### Test Implementation Guidelines
+
+Each function's tests should verify:
+1. Correct operation structure returned (following FastMCP format)
+2. Proper error handling and reporting
+3. No direct file system operations
+4. Integration with client-side operation handlers
+5. Proper handling of edge cases and invalid inputs
+
 ## Progress Tracking
 
 - [x] Refactor `create_cursor_rule_files`
-- [ ] Refactor `ensure_makefile_task`
-- [ ] Refactor `run_update_cursor_rules`
-- [ ] Refactor `update_dockerignore`
-- [ ] Refactor `execute_phase_4`
+- [x] Refactor `ensure_makefile_task`
+- [x] Refactor `run_update_cursor_rules`
+- [x] Refactor `update_dockerignore`
+- [x] Refactor `execute_phase_4`
 - [x] Add tests to verify remote compatibility for `create_cursor_rule_files`
-- [ ] Update documentation to reflect remote execution capabilities
+- [x] Update documentation to reflect remote execution capabilities
+- [ ] Add comprehensive test suite for all refactored functions
+- [ ] Implement integration tests with client operation handlers
+- [ ] Add error handling test cases

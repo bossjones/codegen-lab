@@ -1245,17 +1245,29 @@ Next steps:
     name="ensure_makefile_task",
     description="Ensure the Makefile has the update-cursor-rules task",
 )
-def ensure_makefile_task() -> dict[str, Any]:
+def ensure_makefile_task(makefile_path: str = "Makefile") -> dict[str, Any]:
     """Ensure the Makefile has the update-cursor-rules task.
 
     This function checks if the Makefile exists and contains the update-cursor-rules task.
     If the task doesn't exist, it returns instructions to add it to the Makefile.
     If the Makefile doesn't exist, it returns instructions to create one with the task.
 
+    Args:
+        makefile_path: Path to the Makefile, defaults to "Makefile"
+
     Returns:
         dict[str, Any]: A dictionary containing operations to perform and additional information
 
     """
+    # Check if the makefile path is valid
+    if "*" in str(makefile_path) or "?" in str(makefile_path):
+        return {
+            "success": False,
+            "error": "Invalid file path",
+            "message": "Invalid file path: wildcards are not allowed",
+            "next_steps": "Please provide a valid file path without wildcards.",
+        }
+
     # The update-cursor-rules task content
     update_task_content = """
 # Cursor Rules
@@ -1271,8 +1283,8 @@ update-cursor-rules:  ## Update cursor rules from prompts/drafts/cursor_rules
 
     # Define the operations to check if Makefile exists and contains the task
     operations = [
-        {"type": "check_file_exists", "path": "Makefile"},
-        {"type": "read_file", "path": "Makefile", "options": {"encoding": "utf-8"}},
+        {"type": "check_file_exists", "path": makefile_path},
+        {"type": "read_file", "path": makefile_path, "options": {"encoding": "utf-8"}},
     ]
 
     # Return operations with instructions for the client
@@ -1303,11 +1315,70 @@ def process_makefile_result(
         dict[str, Any]: A dictionary containing operations to perform and additional information
 
     """
+    # Check for empty operation results
+    if not operation_results:
+        return {
+            "success": False,
+            "error": "Missing operation results",
+            "message": "Missing operation results",
+            "next_steps": "Please ensure the file operations were executed correctly.",
+        }
+
+    # Check for malformed operation results
+    if not isinstance(operation_results, dict):
+        return {
+            "success": False,
+            "error": "Invalid operation results",
+            "message": "Invalid operation results format",
+            "next_steps": "Please ensure the operation results are in the correct format.",
+        }
+
+    makefile_result = operation_results.get("Makefile", {})
+    if not isinstance(makefile_result, dict):
+        return {
+            "success": False,
+            "error": "Invalid operation results",
+            "message": "Invalid operation results format",
+            "next_steps": "Please ensure the operation results are in the correct format.",
+        }
+
+    # Check for required fields in Makefile result
+    if "exists" not in makefile_result:
+        return {
+            "success": False,
+            "error": "Invalid operation results",
+            "message": "Invalid operation results format: missing required field 'exists'",
+            "next_steps": "Please ensure the operation results contain all required fields.",
+        }
+
     # Extract results
-    makefile_exists = operation_results.get("Makefile", {}).get("exists", False)
+    makefile_exists = makefile_result.get("exists", False)
     makefile_content = ""
-    if makefile_exists and "Makefile" in operation_results:
-        makefile_content = operation_results.get("Makefile", {}).get("content", "")
+    if makefile_exists:
+        if "error" in makefile_result:
+            return {
+                "success": False,
+                "error": makefile_result["error"],
+                "message": f"Error accessing Makefile: {makefile_result['error']}",
+                "next_steps": "Please check file permissions and try again.",
+            }
+        if "content" not in makefile_result:
+            return {
+                "success": False,
+                "error": "Invalid operation results",
+                "message": "Invalid operation results format: missing required field 'content'",
+                "next_steps": "Please ensure the operation results contain all required fields.",
+            }
+        makefile_content = makefile_result.get("content", "")
+    elif "error" in makefile_result:
+        # Handle permission denied or other errors
+        error = makefile_result["error"]
+        return {
+            "success": False,
+            "error": error,
+            "message": f"Error accessing Makefile: {error}",
+            "next_steps": "Please check file permissions and try again.",
+        }
 
     # Check if the update-cursor-rules task exists
     has_update_task = "update-cursor-rules" in makefile_content
@@ -1606,23 +1677,17 @@ def cursor_rules_workflow(
         dict[str, Any]: A dictionary containing operations to perform and additional information
 
     """
-    # Return operations to execute the workflow steps
-    operations = [
-        {"type": "execute_function", "function": "prep_workspace", "args": {}, "result_key": "workspace_result"},
-        {
-            "type": "execute_function",
-            "function": "create_cursor_rule_files",
-            "args": {"rule_names": rule_names},
-            "result_key": "files_result",
-        },
-        {"type": "execute_function", "function": "ensure_makefile_task", "args": {}, "result_key": "makefile_result"},
-        {
-            "type": "execute_function",
-            "function": "update_dockerignore",
-            "args": {},
-            "result_key": "dockerignore_result",
-        },
-    ]
+    # First call prep_workspace directly
+    workspace_result = prep_workspace()
+
+    # Call create_cursor_rule_files directly
+    files_result = create_cursor_rule_files(rule_names)
+
+    # Call ensure_makefile_task directly
+    makefile_result = ensure_makefile_task()
+
+    # Call update_dockerignore directly
+    dockerignore_result = update_dockerignore()
 
     # Prepare next steps message
     next_steps = """
@@ -1642,10 +1707,14 @@ Workflow completed successfully. Next steps:
 """
 
     return {
-        "operations": operations,
-        "requires_result": True,
+        "success": True,
         "message": f"Instructions to execute the cursor rules workflow for {len(rule_names)} rule(s): {', '.join(rule_names)}",
         "next_steps": next_steps,
+        "workspace_result": workspace_result,
+        "files_result": files_result,
+        "makefile_result": makefile_result,
+        "dockerignore_result": dockerignore_result,
+        "created_files": files_result.get("created_files", []),
     }
 
 
