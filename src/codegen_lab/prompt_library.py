@@ -610,6 +610,73 @@ def instruct_repo_analysis() -> dict[str, Any]:
     return payload
 
 
+@mcp.tool(
+    name="instruct_cursor_rules_generation",
+    description="Run a cursor rules generation process based on repository analysis",
+)
+def instruct_cursor_rules_generation(
+    repo_summary: str = Field(
+        description="A summary description of the repository, including technologies, frameworks, and key features",
+        examples=[
+            "A Python web application using FastAPI, SQLAlchemy, and React for the frontend. Includes authentication, API endpoints, and database models.",
+            "A TypeScript library for data visualization with React components. Uses webpack for bundling and Jest for testing.",
+        ],
+        min_length=20,
+    ),
+) -> dict[str, Any]:
+    """Run a cursor rules generation process based on repository analysis."""
+    payload = {}
+    payload["content"] = []
+    payload["content"].append(
+        {
+            "type": "text",
+            "text": {
+                "status": "success",
+                "message": "Cursor Rules Generation Instructions:1. Analyze repository structure and codebase:   Using the provided repository summary to identify languages, frameworks, and patterns used.2. Generate recommended cursor rules:   Invoke the recommend_cursor_rules tool with the repository summary to generate a list of tailored cursor rules.3. Prepare the staging directory:   Run `touch hack/drafts/cursor_rules/{rule-name}.mdc.md` for each rule name to ensure cursor creates the files properly.4. Implement cursor rules systematically:   Create each cursor rule in the hack/drafts/cursor_rules directory with proper formatting and structure.5. Format requirements for cursor rules:   Each cursor rule must include:   - Proper filename with .mdc.md extension (e.g., rule-name.mdc.md)   - Frontmatter with description, globs, and alwaysApply configuration   - Rule content with name, description, filters, actions, examples, and metadata6. Implementation process:   For each rule recommended by recommend_cursor_rules:   - Create the rule file in hack/drafts/cursor_rules/   - Implement the rule with proper structure and formatting   - Ensure the rule includes appropriate filters and actions   - Add relevant examples and metadata7. Verification:   Confirm each rule has been properly formatted with:   - Descriptive name and purpose   - Appropriate glob patterns based on file types identified in the summary   - Correct alwaysApply setting (typically false)   - Comprehensive rule content with examples8. Audit generated files:   For each rule file created, run `head -10 hack/drafts/cursor_rules/{rule-name}.mdc.md | cat` to validate that frontmatter is present and properly formatted.9. Deploy to production:   Run `make update-cursor-rules` to move the rules from the staging directory to production.10. Next steps:   The rules should now be available in the .cursor/rules directory for production use.   Consider using sequentialthinking for complex rules that require detailed reasoning and step-by-step analysis.",
+                "cursor_rules_generation": True,
+                "analysis_method": "repository_summary",
+                "repo_summary": repo_summary,
+                "output_directory": "hack/drafts/cursor_rules",
+                "rule_format": {
+                    "filename": "{rule-name}.mdc.md",
+                    "frontmatter": {
+                        "description": "Brief description of the rule's purpose",
+                        "globs": "File patterns the rule applies to (e.g., *.py)",
+                        "alwaysApply": "Boolean value (typically false)",
+                    },
+                    "rule_structure": {
+                        "name": "rule-name",
+                        "description": "Detailed description of the rule",
+                        "filters": "Conditions for when the rule applies",
+                        "actions": "Suggestions or requirements provided by the rule",
+                        "examples": "Example inputs and outputs",
+                        "metadata": "Priority, version, and tags",
+                    },
+                },
+                "generation_status": {
+                    "status": "ready",
+                    "message": "Ready to generate cursor rules based on repository summary",
+                    "input_source": "recommend_cursor_rules tool",
+                    "output_destination": "hack/drafts/cursor_rules",
+                    "production_destination": ".cursor/rules",
+                },
+                "deployment_commands": {
+                    "prepare_files": "touch hack/drafts/cursor_rules/{rule-name}.mdc.md",
+                    "audit_files": "head -10 hack/drafts/cursor_rules/{rule-name}.mdc.md | cat",
+                    "deploy_to_production": "make update-cursor-rules",
+                },
+                "processing_tools": {
+                    "rule_recommendation": "recommend_cursor_rules",
+                    "complex_reasoning": "sequentialthinking",
+                },
+            },
+        }
+    )
+    payload["isError"] = False
+
+    return payload
+
+
 # @mcp.tool(
 #     name="run_repo_analysis",
 #     description="Run a repository analysis to gather information for cursor rule creation",
