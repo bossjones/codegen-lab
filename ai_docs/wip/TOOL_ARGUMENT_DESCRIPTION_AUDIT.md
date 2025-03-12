@@ -1,15 +1,15 @@
-# MCP Tool Decorator Argument Description Audit for prompt_library.py
+# MCP Tool and Resource Decorator Argument Description Audit for prompt_library.py
 
-This checklist is designed to audit functions decorated with `@mcp.tool` in the `prompt_library.py` file to ensure they have proper descriptions, argument annotations, and follow best practices.
+This checklist is designed to audit functions decorated with `@mcp.tool` or `@mcp.resource` in the `prompt_library.py` file to ensure they have proper descriptions, argument annotations, and follow best practices.
 
-## Tool Decorator Checklist for prompt_library.py
+## Tool and Resource Decorator Checklist for prompt_library.py
 
-### Basic Tool Configuration
+### Basic Configuration
 
-- [ ] Tool has a descriptive name (either via `name` parameter or function name)
-- [ ] Tool has a comprehensive description in the decorator or docstring
-- [ ] Tool has a proper return type annotation
-- [ ] Tool has a docstring that explains its purpose and behavior
+- [ ] Has a descriptive name (either via `name` parameter or function name)
+- [ ] Has a comprehensive description in the decorator or docstring
+- [ ] Has a proper return type annotation (using Union for error/success return types)
+- [ ] Has a docstring that explains its purpose and behavior
 
 ### Function Arguments
 
@@ -27,12 +27,14 @@ This checklist is designed to audit functions decorated with `@mcp.tool` in the 
 - [ ] Docstring includes detailed description of functionality
 - [ ] Docstring includes Args section with all parameters documented
 - [ ] Docstring includes Returns section explaining return value
-- [ ] Docstring includes any relevant Examples (optional but recommended)
+- [ ] Docstring explains both success and error return structures
+- [ ] Docstring includes Examples section with error handling examples (if applicable)
 
 ### Error Handling
 
 - [ ] Function handles potential errors appropriately
 - [ ] Error messages are descriptive and helpful
+- [ ] Uses structured MCP error objects (`{"isError": True, "content": [...]}`)
 - [ ] Function validates inputs before processing
 
 ### Code Style and Best Practices
@@ -75,33 +77,34 @@ def get_static_cursor_rules(rule_names: list[str]) -> dict[str, Any]:
     return {"rules": results}
 ```
 
-## Common Issues Found in prompt_library.py Tool Decorators
+## Common Issues Found in prompt_library.py Decorators
 
 - Missing descriptions in the decorator
 - Missing Field() descriptions for arguments
 - Incomplete or missing docstrings
-- Missing type annotations
+- Missing or imprecise type annotations (especially for error returns)
 - No validation for user inputs
 - No examples for complex arguments
 - Inconsistent naming conventions
-- Missing error handling
+- Missing error handling or using exceptions instead of MCP error objects
 - Overly complex functions with multiple responsibilities
+- No explanation of both success and error return structures in docstrings
 
 ## Audit Process for prompt_library.py
 
-1. Identify all functions with `@mcp.tool` decorators in prompt_library.py
+1. Identify all functions with `@mcp.tool` or `@mcp.resource` decorators in prompt_library.py
 2. Check each function against the checklist items
 3. Document any issues found
 4. Prioritize fixes based on severity and usage frequency
-5. Implement fixes to ensure all tools are properly documented
+5. Implement fixes to ensure all tools and resources are properly documented
 
-## Tools to Audit in prompt_library.py
+## Tools and Resources to Audit in prompt_library.py
 
-The following tools should be audited:
+The following tools and resources should be audited:
 
 - [x] Line 558-562: `get_static_cursor_rule`
 - [x] Line 591-595: `get_static_cursor_rules`
-- [ ] Line 490: `list_cursor_rules`
+- [x] Line 490: `list_cursor_rules`
 - [ ] Line 204: `read_cursor_rule`
 - [ ] Line 321: `generate_cursor_rule`
 - [ ] Line 753-754: `save_cursor_rule`
@@ -131,7 +134,7 @@ Note: The functions `update_cursor_rule`, `delete_cursor_rule`, `search_cursor_r
 
 **Findings**:
 
-1. Basic Tool Configuration:
+1. Basic Configuration:
    - ✅ Has descriptive name via `name` parameter
    - ✅ Has comprehensive description in the decorator
    - ⚠️ Return type annotation using Python 3.10+ Union operator (`|`) instead of `Union` from typing
@@ -237,7 +240,7 @@ def get_static_cursor_rule(
 
 **Findings**:
 
-1. Basic Tool Configuration:
+1. Basic Configuration:
    - ✅ Has descriptive name via `name` parameter
    - ✅ Has comprehensive description in the decorator
    - ⚠️ Return type annotation is vague using `Any` and not properly documenting return structure
@@ -328,4 +331,98 @@ def get_static_cursor_rules(
 
     # Return a single JSON object with the results array
     return {"rules": results}
+```
+
+### list_cursor_rules (Line 490)
+
+**Audit Status**: Completed ✅
+
+**Findings**:
+
+1. Basic Configuration:
+   - ✅ Has descriptive name via `name` parameter
+   - ✅ Has comprehensive description in the decorator
+   - ✅ Has proper return type annotation using Union for error/success returns
+   - ✅ Has detailed docstring explaining purpose and behavior
+
+2. Function Arguments:
+   - ✅ No arguments required (function takes no parameters)
+   - ✅ No Context parameter needed for this function
+
+3. Docstring Quality:
+   - ✅ Follows PEP 257 convention
+   - ✅ Includes summary line
+   - ✅ Includes detailed description
+   - ✅ Args section not applicable (no parameters)
+   - ✅ Includes Returns section explaining both success and error structures
+   - ✅ Includes Examples section showing how to check for errors
+
+4. Error Handling:
+   - ✅ Uses structured MCP error objects
+   - ✅ Returns descriptive error messages
+   - ✅ Properly catches and handles exceptions with try/except
+   - ✅ Returns errors in a consistent format
+
+5. Code Style and Best Practices:
+   - ✅ Function name follows snake_case convention
+   - ✅ Function is focused on single responsibility
+   - ✅ Function is not overly complex
+   - ✅ No logging needed for this function
+
+**Implemented Improvements**:
+- Updated return type annotation to use Union for success/error returns
+- Enhanced docstring to explicitly document both success and error return structures
+- Added proper error handling with structured MCP error objects
+- Added examples showing how to check for errors
+
+**Code Sample with Improvements**:
+```python
+@mcp.resource(
+    "cursor-rules://list",
+    name="list_cursor_rules",
+    description="List all available cursor rules with their names and descriptions",
+)
+def list_cursor_rules() -> Union[list[dict[str, str]], dict[str, Any]]:
+    """List all available cursor rules.
+
+    This resource retrieves all available cursor rules and returns them as a list
+    of dictionaries containing the rule name, description, and title.
+
+    Returns:
+        Union[list[dict[str, str]], dict[str, Any]]: Either:
+            - On success: List of cursor rules with the following structure:
+                - "name": The rule name (without extension)
+                - "description": The rule description (empty string if not found)
+                - "title": The rule title (empty string if not found)
+            - On error: Error object with the following structure:
+                - "isError": True
+                - "content": List of content objects with error message
+
+    Examples:
+        >>> rules = list_cursor_rules()
+        >>> if not isinstance(rules, dict) or not rules.get("isError"):
+        >>>     print(rules[0]["name"])
+        >>>     'example-rule'
+        >>> else:
+        >>>     print(f"Error: {rules['content'][0]['text']}")
+    """
+    try:
+        rules = []
+        for rule_name in get_cursor_rule_names():
+            content = read_cursor_rule(rule_name)
+            if content:
+                parsed = parse_cursor_rule(content)
+                rules.append(
+                    {
+                        "name": rule_name,
+                        "description": parsed.get("description", ""),
+                        "title": parsed.get("title", "")
+                    }
+                )
+        return rules
+    except Exception as e:
+        return {
+            "isError": True,
+            "content": [{"type": "text", "text": f"Error retrieving cursor rules: {str(e)}"}]
+        }
 ```
