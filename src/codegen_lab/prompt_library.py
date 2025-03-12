@@ -653,6 +653,17 @@ def instruct_cursor_rules_generation(
                         "metadata": "Priority, version, and tags",
                     },
                 },
+                "rule_example_template": {
+                    "frontmatter": "---\ndescription: Brief description of the rule\nglobs: *.py  # File patterns to match\nalwaysApply: false  # Whether to always apply the rule\n---",
+                    "title_and_introduction": "# Rule Title\nBrief description of what the rule covers.",
+                    "rule_definition": '<rule>\nname: rule_name\ndescription: Concise description of the rule\nfilters:\n  # Match specific file types\n  - type: file_extension\n    pattern: "\\\\.py$"\n  # Match specific paths\n  - type: file_path\n    pattern: "tests?/"\n  # Match specific content\n  - type: content\n    pattern: "(?i)(relevant|terms|to|match)"\nactions:\n  - type: suggest\n    message: |\n      # Main Heading\n      Explanation of the rule and its purpose.\n      ## Subheading\n      Detailed guidance with code examples:\n      ```python\n      # Example code\n      def example_function():\n          return "example"\n      ```\n      ## Another Subheading\n      More detailed information and best practices.\nexamples:\n  - input: |\n      # User query example\n      I want to do X with Y\n    output: |\n      Here\'s how to do X with Y:\n      \n      ```python\n      # Solution code\n      ```\nmetadata:\n  priority: high\n  version: 1.0\n  tags:\n    - relevant\n    - tags\n    - here\n</rule>',
+                },
+                "key_components_explanation": {
+                    "frontmatter": "YAML metadata at the top",
+                    "title_and_introduction": "Markdown heading and description",
+                    "rule_definition": "Enclosed in <rule> tags with basic properties, filters, actions, examples, and metadata",
+                },
+                "multishot_prompting_strategy": "Use the template as a basis for creating multiple examples that show different rule variations tailored to specific language features, frameworks, or coding patterns identified in the repository",
                 "generation_status": {
                     "status": "ready",
                     "message": "Ready to generate cursor rules based on repository summary",
