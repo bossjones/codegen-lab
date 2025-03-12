@@ -25,6 +25,8 @@ When an MCP server runs remotely, it doesn't have access to the client's file sy
      - ~~Writes to file with `open(makefile_path, "a")` and `f.write()`~~
      - ~~Creates new file with `open(makefile_path, "w")` and `f.write()`~~
      - Now returns operation instructions for checking and updating the Makefile
+     - Added improved error handling for invalid file paths and edge cases
+     - Enhanced validation of input parameters
 
 3. **`run_update_cursor_rules`** (in `prompt_library.py`)
    - [x] **Direct File Operations**:
@@ -143,6 +145,8 @@ def save_cursor_rule(
    - [x] Error handling tests
    - [x] Remote compatibility tests
    - [x] Edge case tests
+   - [x] Invalid file path handling tests
+   - [x] Input parameter validation tests
 
 4. **`run_update_cursor_rules`**
    - [ ] Add unit tests for two-step process
@@ -177,6 +181,8 @@ Each function's tests should verify:
 - [x] Refactor `execute_phase_4`
 - [x] Add tests to verify remote compatibility for `create_cursor_rule_files`
 - [x] Update documentation to reflect remote execution capabilities
+- [x] Add error handling for invalid file paths in `ensure_makefile_task`
+- [x] Add input validation tests for `ensure_makefile_task`
 - [ ] Add comprehensive test suite for all refactored functions
 - [ ] Implement integration tests with client operation handlers
-- [ ] Add error handling test cases
+- [ ] Add error handling test cases for remaining functions
