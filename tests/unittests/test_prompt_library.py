@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
+from mcp.types import TextContent
 from pytest_mock import MockerFixture
 
 from codegen_lab.prompt_library import (
@@ -45,7 +46,7 @@ if TYPE_CHECKING:
     from pytest_mock.plugin import MockerFixture
 
 from mcp.shared.memory import create_connected_server_and_client_session as client_session
-from mcp.types import TextContent, TextResourceContents
+from mcp.types import TextResourceContents
 from pydantic import AnyUrl
 
 
@@ -349,6 +350,120 @@ class TestPrompts:
             assert "This is a sample rule" in message_text
 
 
+class TestInstructCursorRulesGeneration:
+    """Tests for the instruct_cursor_rules_generation function."""
+
+    @pytest.mark.anyio
+    async def test_instruct_cursor_rules_generation(self, mocker: "MockerFixture") -> None:
+        """Test that the instruct_cursor_rules_generation function returns the expected structure.
+
+        This test verifies that the function returns a properly structured dictionary
+        with instructions for cursor rules generation.
+
+        Args:
+            mocker: Pytest fixture for mocking
+
+        """
+        # Mock the Context object if needed
+        mock_context = mocker.MagicMock()
+        mocker.patch("codegen_lab.prompt_library.Context", return_value=mock_context)
+
+        from mcp.shared.memory import create_connected_server_and_client_session as client_session
+
+        from codegen_lab.prompt_library import mcp
+
+        async with client_session(mcp._mcp_server) as client:
+            # Call the function with a sample repository summary
+            repo_summary = "A Python web application using FastAPI, SQLAlchemy, and React for the frontend. Includes authentication, API endpoints, and database models."
+            result = await client.call_tool("instruct_cursor_rules_generation", {"repo_summary": repo_summary})
+
+            # Verify the result structure
+            assert result is not None
+            assert len(result.content) > 0
+            content = result.content[0]
+            assert isinstance(content, TextContent)
+
+            # Parse the text content - it's a JSON string, not a dict
+            text_data_str = content.text
+            assert isinstance(text_data_str, str)
+
+            # Parse the JSON string into a dictionary
+            parsed_data = json.loads(text_data_str)
+            assert isinstance(parsed_data, dict)
+
+            # Extract the content from the parsed data
+            assert "content" in parsed_data
+            assert len(parsed_data["content"]) > 0
+            assert parsed_data["content"][0]["type"] == "text"
+
+            # Get the actual data from the content
+            text_data = parsed_data["content"][0]["text"]
+            assert isinstance(text_data, dict)
+
+            # Verify the expected fields are present
+            assert "status" in text_data
+            assert text_data["status"] == "success"
+
+            assert "message" in text_data
+            assert "Cursor Rules Generation Instructions" in text_data["message"]
+
+            assert "cursor_rules_generation" in text_data
+            assert text_data["cursor_rules_generation"] is True
+
+            assert "analysis_method" in text_data
+            assert text_data["analysis_method"] == "repository_summary"
+
+            assert "repo_summary" in text_data
+            assert text_data["repo_summary"] == repo_summary
+
+            assert "output_directory" in text_data
+            assert text_data["output_directory"] == "hack/drafts/cursor_rules"
+
+            assert "rule_format" in text_data
+            assert isinstance(text_data["rule_format"], dict)
+            assert "filename" in text_data["rule_format"]
+            assert "frontmatter" in text_data["rule_format"]
+            assert "rule_structure" in text_data["rule_format"]
+
+            assert "rule_example_template" in text_data
+            assert isinstance(text_data["rule_example_template"], dict)
+            assert "frontmatter" in text_data["rule_example_template"]
+            assert "title_and_introduction" in text_data["rule_example_template"]
+            assert "rule_definition" in text_data["rule_example_template"]
+
+            assert "key_components_explanation" in text_data
+            assert isinstance(text_data["key_components_explanation"], dict)
+            assert "frontmatter" in text_data["key_components_explanation"]
+            assert "title_and_introduction" in text_data["key_components_explanation"]
+            assert "rule_definition" in text_data["key_components_explanation"]
+
+            assert "multishot_prompting_strategy" in text_data
+            assert isinstance(text_data["multishot_prompting_strategy"], str)
+
+            assert "generation_status" in text_data
+            assert isinstance(text_data["generation_status"], dict)
+            assert "status" in text_data["generation_status"]
+            assert text_data["generation_status"]["status"] == "ready"
+            assert "message" in text_data["generation_status"]
+            assert "input_source" in text_data["generation_status"]
+            assert "output_destination" in text_data["generation_status"]
+            assert "production_destination" in text_data["generation_status"]
+
+            assert "deployment_commands" in text_data
+            assert isinstance(text_data["deployment_commands"], dict)
+            assert "prepare_files" in text_data["deployment_commands"]
+            assert "audit_files" in text_data["deployment_commands"]
+            assert "deploy_to_production" in text_data["deployment_commands"]
+
+            assert "processing_tools" in text_data
+            assert isinstance(text_data["processing_tools"], dict)
+            assert "rule_recommendation" in text_data["processing_tools"]
+            assert "complex_reasoning" in text_data["processing_tools"]
+
+            # Verify isError is False
+            assert not result.isError
+
+
 class TestUtilityFunctions:
     """Tests for utility functions."""
 
@@ -408,93 +523,6 @@ class TestUtilityFunctions:
         assert "tags" in rule["metadata"]
         assert "sample" in rule["metadata"]["tags"]
         assert "test" in rule["metadata"]["tags"]
-
-    # def test_run_repo_analysis(self) -> None:
-    #     """Test that the run_repo_analysis function returns the expected structure."""
-    #     # Call the function with test data
-    #     result = run_repo_analysis(
-    #         repo_description="A Python web application using FastAPI",
-    #         main_languages="Python, JavaScript",
-    #         file_patterns="*.py, *.js",
-    #         key_features="API endpoints, database models, authentication",
-    #     )
-
-    #     # Check that the result has the expected structure
-    #     assert isinstance(result, dict)
-    #     assert "rule_name" in result
-    #     assert "instructions" in result
-    #     assert "repo_info" in result
-    #     assert "commands" in result
-    #     assert "message" in result
-
-    #     # Check rule name
-    #     assert result["rule_name"] == "repo_analyzer"
-
-    #     # Check instructions
-    #     assert isinstance(result["instructions"], list)
-    #     assert len(result["instructions"]) > 0
-    #     assert all(isinstance(instruction, str) for instruction in result["instructions"])
-
-    #     # Check repo_info
-    #     assert isinstance(result["repo_info"], dict)
-    #     assert "description" in result["repo_info"]
-    #     assert "languages" in result["repo_info"]
-    #     assert "file_patterns" in result["repo_info"]
-    #     assert "key_features" in result["repo_info"]
-
-    #     # Check that languages were parsed correctly
-    #     assert result["repo_info"]["languages"] == ["Python", "JavaScript"]
-
-    #     # Check file patterns
-    #     assert result["repo_info"]["file_patterns"] == ["*.py", "*.js"]
-
-    #     # Check key features
-    #     assert result["repo_info"]["key_features"] == ["API endpoints", "database models", "authentication"]
-
-    #     # Check commands
-    #     assert isinstance(result["commands"], list)
-    #     assert len(result["commands"]) > 0
-
-    #     # Verify that each command has the expected structure
-    #     for command in result["commands"]:
-    #         assert isinstance(command, dict)
-    #         assert "name" in command
-    #         assert "command" in command
-    #         assert "description" in command
-
-    #     # Check that language-specific commands were generated
-    #     python_commands = [cmd for cmd in result["commands"] if "Python" in cmd["name"]]
-    #     js_commands = [cmd for cmd in result["commands"] if "JavaScript" in cmd["name"]]
-    #     assert len(python_commands) > 0
-    #     assert len(js_commands) > 0
-
-    #     # Check that feature-specific commands were generated
-    #     api_commands = [cmd for cmd in result["commands"] if "API" in cmd["name"]]
-    #     db_commands = [cmd for cmd in result["commands"] if "Database" in cmd["name"]]
-    #     auth_commands = [cmd for cmd in result["commands"] if "Authentication" in cmd["name"]]
-    #     assert len(api_commands) > 0
-    #     assert len(db_commands) > 0
-    #     assert len(auth_commands) > 0
-
-    # def test_run_repo_analysis_error_handling(self) -> None:
-    #     """Test that the run_repo_analysis function handles errors gracefully."""
-    #     # Call the function with invalid input (None values)
-    #     result = run_repo_analysis(
-    #         repo_description=None,  # type: ignore
-    #         main_languages=None,  # type: ignore
-    #         file_patterns=None,  # type: ignore
-    #         key_features=None,  # type: ignore
-    #     )
-
-    #     # Check that the result indicates an error
-    #     assert isinstance(result, dict)
-    #     assert "isError" in result
-    #     assert result["isError"] is True
-    #     assert "content" in result
-    #     assert isinstance(result["content"], list)
-    #     assert len(result["content"]) > 0
-    #     assert "text" in result["content"][0]
-    #     assert "Error" in result["content"][0]["text"]
 
     def test_generate_cursor_rule(self) -> None:
         """Test that the generate_cursor_rule function generates a valid cursor rule."""
