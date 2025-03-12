@@ -11,10 +11,11 @@ When an MCP server runs remotely, it doesn't have access to the client's file sy
 ### Functions with Direct File Operations
 
 1. **`create_cursor_rule_files`** (in `prompt_library.py`)
-   - [ ] **Direct File Operations**:
-     - Creates directories with `cursor_rules_dir.mkdir(parents=True, exist_ok=True)`
-     - Creates empty files with `file_path.touch()`
-     - Reads file content with `makefile_path.read_text()`
+   - [x] **Direct File Operations**:
+     - ~~Creates directories with `cursor_rules_dir.mkdir(parents=True, exist_ok=True)`~~
+     - ~~Creates empty files with `file_path.touch()`~~
+     - ~~Reads file content with `makefile_path.read_text()`~~
+     - Now returns operation instructions for the client to perform
 
 2. **`ensure_makefile_task`** (in `prompt_library.py`)
    - [ ] **Direct File Operations**:
@@ -52,6 +53,13 @@ When an MCP server runs remotely, it doesn't have access to the client's file sy
 2. **`prep_workspace`** (in `prompt_library.py`)
    - [x] **Safe Implementation**: Returns instructions for workspace preparation without actually creating directories
    - Sets `workspace_prepared` to `False` to indicate no direct operations were performed
+
+3. **`create_cursor_rule_files`** (in `prompt_library.py`)
+   - [x] **Safe Implementation**: Returns a dictionary with file operation instructions instead of performing them directly
+   - Returns operations for directory creation and file writing that the client should perform
+   - Added alternative implementations:
+     - `create_cursor_rule_files_rpc`: Uses an RPC pattern for remote execution
+     - `create_cursor_rule_files_hybrid`: Detects environment and adapts behavior accordingly
 
 ## Recommended Refactoring Pattern
 
@@ -113,10 +121,10 @@ def save_cursor_rule(
 
 ## Progress Tracking
 
-- [ ] Refactor `create_cursor_rule_files`
+- [x] Refactor `create_cursor_rule_files`
 - [ ] Refactor `ensure_makefile_task`
 - [ ] Refactor `run_update_cursor_rules`
 - [ ] Refactor `update_dockerignore`
 - [ ] Refactor `execute_phase_4`
-- [ ] Add tests to verify remote compatibility
+- [x] Add tests to verify remote compatibility for `create_cursor_rule_files`
 - [ ] Update documentation to reflect remote execution capabilities
