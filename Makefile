@@ -36,6 +36,9 @@ pylint: ## Test the code with pylint
 ci: ## Run all checks and tests
 	@uv run pytest -v tests
 
+ci-debug: ## Run all checks and tests
+	@uv run pytest -v --pdb --pdbcls bpdb:BPdb --showlocals --tb=short tests
+
 .PHONY: build
 build: clean-build ## Build wheel file
 	@echo "🚀 Creating wheel file"

@@ -104,7 +104,7 @@ async def test_get_static_cursor_rule_integration() -> None:
         # Verify the response structure
         assert "rule_name" in response_data
         assert "content" in response_data
-        assert response_data["rule_name"] == "tree.md"
+        assert response_data["rule_name"] == "tree.mdc.md"
 
         # Verify the content contains the expected tree command
         assert "tree -L 7 -I" in response_data["content"]
@@ -161,12 +161,12 @@ async def test_get_static_cursor_rules_integration() -> None:
         assert len(response_data["rules"]) == 2
 
         # Check the first rule (tree)
-        assert response_data["rules"][0]["rule_name"] == "tree.md"
+        assert response_data["rules"][0]["rule_name"] == "tree.mdc.md"
         assert "tree -L 7 -I" in response_data["rules"][0]["content"]
         assert "Display repository structure" in response_data["rules"][0]["content"]
 
         # Check the second rule (notify)
-        assert response_data["rules"][1]["rule_name"] == "notify.md"
+        assert response_data["rules"][1]["rule_name"] == "notify.mdc.md"
         assert "At the end of any task" in response_data["rules"][1]["content"]
 
         # Test with a mix of existing and non-existent rules
@@ -189,7 +189,7 @@ async def test_get_static_cursor_rules_integration() -> None:
         assert len(mixed_response_data["rules"]) == 2
 
         # Check the first rule (tree)
-        assert mixed_response_data["rules"][0]["rule_name"] == "tree.md"
+        assert mixed_response_data["rules"][0]["rule_name"] == "tree.mdc.md"
         assert "tree -L 7 -I" in mixed_response_data["rules"][0]["content"]
 
         # Check the non-existent rule - should have isError and content fields

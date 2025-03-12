@@ -800,12 +800,14 @@ class TestUtilityFunctions:
         result = get_static_cursor_rule(rule_name)
 
         # Assert
-        assert result["rule_name"] == "test_rule.md"
+        assert result["rule_name"] == "test_rule.mdc.md"
         assert result["content"] == sample_cursor_rule
 
+        # import bpdb
+        # bpdb.set_trace()
         # Test with .md extension already in the name
-        result = get_static_cursor_rule("test_rule.md")
-        assert result["rule_name"] == "test_rule.md"
+        result = get_static_cursor_rule("test_rule")
+        assert result["rule_name"] == "test_rule.mdc.md"
 
         # Test not found case
         mocker.patch("codegen_lab.prompt_library.read_cursor_rule", return_value=None)
@@ -844,9 +846,9 @@ class TestUtilityFunctions:
         assert "rules" in results
         assert len(results["rules"]) == 2  # Only successful rules are included
         # Check successful rules
-        assert results["rules"][0]["rule_name"] == "rule1.md"
+        assert results["rules"][0]["rule_name"] == "rule1.mdc.md"
         assert results["rules"][0]["content"] == sample_cursor_rule
-        assert results["rules"][1]["rule_name"] == "rule2.md"
+        assert results["rules"][1]["rule_name"] == "rule2.mdc.md"
         assert results["rules"][1]["content"] == sample_cursor_rule
         assert "valid_rule_count" in results
         assert results["valid_rule_count"] == 2
@@ -857,9 +859,9 @@ class TestUtilityFunctions:
         # Assert
         assert "rules" in results
         assert len(results["rules"]) == 2  # Only the valid rules
-        assert results["rules"][0]["rule_name"] == "rule1.md"
+        assert results["rules"][0]["rule_name"] == "rule1.mdc.md"
         assert results["rules"][0]["content"] == sample_cursor_rule
-        assert results["rules"][1]["rule_name"] == "rule2.md"
+        assert results["rules"][1]["rule_name"] == "rule2.mdc.md"
         assert results["rules"][1]["content"] == sample_cursor_rule
         assert "valid_rule_count" in results
         assert results["valid_rule_count"] == 2

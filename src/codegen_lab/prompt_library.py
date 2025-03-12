@@ -42,8 +42,11 @@ Plan of Action:
 
 import glob
 import json
+import logging
+import logging.handlers
 import os
 import re
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, TypedDict, Union
 
@@ -51,52 +54,51 @@ from mcp.server.fastmcp import FastMCP
 from mcp.server.fastmcp.server import Context
 from pydantic import Field
 
-# import logging
-# import logging.handlers
-# from datetime import datetime
 
-# # Configure JSON logger
-# class JsonFormatter(logging.Formatter):
-#     """Custom JSON formatter for logging.
+# Configure JSON logger
+class JsonFormatter(logging.Formatter):
+    """Custom JSON formatter for logging.
 
-#     This formatter outputs log records in JSON format with timestamp, level,
-#     and message fields.
-#     """
+    This formatter outputs log records in JSON format with timestamp, level,
+    and message fields.
+    """
 
-#     def format(self, record: logging.LogRecord) -> str:
-#         """Format the log record as JSON.
+    def format(self, record: logging.LogRecord) -> str:
+        """Format the log record as JSON.
 
-#         Args:
-#             record: The log record to format
+        Args:
+            record: The log record to format
 
-#         Returns:
-#             str: JSON formatted log string
-#         """
-#         log_obj = {
-#             "timestamp": datetime.fromtimestamp(record.created).isoformat(),
-#             "level": record.levelname,
-#             "message": record.getMessage(),
-#             "logger": record.name
-#         }
+        Returns:
+            str: JSON formatted log string
 
-#         if record.exc_info:
-#             log_obj["exc_info"] = self.formatException(record.exc_info)
+        """
+        log_obj = {
+            "timestamp": datetime.fromtimestamp(record.created).isoformat(),
+            "level": record.levelname,
+            "message": record.getMessage(),
+            "logger": record.name,
+        }
 
-#         return json.dumps(log_obj)
+        if record.exc_info:
+            log_obj["exc_info"] = self.formatException(record.exc_info)
 
-# # Set up file handler with JSON formatter
-# file_handler = logging.handlers.RotatingFileHandler(
-#     filename="mcpserver.log",
-#     maxBytes=10485760,  # 10MB
-#     backupCount=5,
-#     encoding="utf-8"
-# )
-# file_handler.setFormatter(JsonFormatter())
+        return json.dumps(log_obj)
 
-# # Configure root logger
-# logger = logging.getLogger("prompt_library")
-# logger.setLevel(logging.INFO)
-# logger.addHandler(file_handler)
+
+# Set up file handler with JSON formatter
+file_handler = logging.handlers.RotatingFileHandler(
+    filename="mcpserver.log",
+    maxBytes=10485760,  # 10MB
+    backupCount=5,
+    encoding="utf-8",
+)
+file_handler.setFormatter(JsonFormatter())
+
+# Configure root logger
+logger = logging.getLogger("prompt_library")
+logger.setLevel(logging.INFO)
+logger.addHandler(file_handler)
 
 
 # Define types for cursor rule components
@@ -605,7 +607,8 @@ def get_static_cursor_rule(
 
     """
     # Add .md extension if not already present
-    full_rule_name = rule_name if rule_name.endswith(".md") else f"{rule_name}.md"
+    full_rule_name = rule_name if rule_name.endswith("mdc.md") else f"{rule_name}.mdc.md"
+    logger.debug(f"full_rule_name: {full_rule_name}")
 
     content = read_cursor_rule(rule_name.replace(".md", ""))
     if not content:
@@ -626,7 +629,7 @@ def get_static_cursor_rules(
     rule_names: list[str] = Field(
         description="List of cursor rule names to retrieve (with or without .md extension)",
         examples=[["python-best-practices", "react-patterns"], ["error-handling"]],
-        min_items=1,
+        min_length=1,
     ),
     ignore_missing: bool = Field(
         description="If True, missing rules will be skipped instead of returning errors",
@@ -681,6 +684,8 @@ def get_static_cursor_rules(
 
         # Get the rule data using get_static_cursor_rule
         rule_data = get_static_cursor_rule(rule_name)
+
+        logger.debug(f"rule_data: {rule_data}")
 
         # Check if the rule was found
         if rule_data.get("isError") and ignore_missing:
