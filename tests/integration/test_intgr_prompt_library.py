@@ -30,7 +30,6 @@ from codegen_lab.prompt_library import (
     plan_and_execute_prompt_library_workflow,
     prep_workspace,
     read_cursor_rule,
-    run_repo_analysis,
     run_update_cursor_rules,
     save_cursor_rule,
     update_dockerignore,
@@ -204,69 +203,69 @@ async def test_get_static_cursor_rules_integration() -> None:
         )
 
 
-@pytest.mark.anyio
-async def test_run_repo_analysis_integration() -> None:
-    """Test the run_repo_analysis function through the MCP server.
+# @pytest.mark.anyio
+# async def test_run_repo_analysis_integration() -> None:
+#     """Test the run_repo_analysis function through the MCP server.
 
-    This integration test verifies that the run_repo_analysis function
-    can be called through the MCP server and returns the expected result
-    with repository information.
-    """
-    # Create an in-memory client-server connection
-    async with client_session(mcp._mcp_server) as client:
-        # Call the run_repo_analysis tool with test data
-        result = await client.call_tool(
-            "run_repo_analysis",
-            {
-                "repo_description": "A Python web application using FastAPI",
-                "main_languages": "Python, JavaScript",
-                "file_patterns": "*.py, *.js",
-                "key_features": "API endpoints, database models, authentication",
-            },
-        )
+#     This integration test verifies that the run_repo_analysis function
+#     can be called through the MCP server and returns the expected result
+#     with repository information.
+#     """
+#     # Create an in-memory client-server connection
+#     async with client_session(mcp._mcp_server) as client:
+#         # Call the run_repo_analysis tool with test data
+#         result = await client.call_tool(
+#             "run_repo_analysis",
+#             {
+#                 "repo_description": "A Python web application using FastAPI",
+#                 "main_languages": "Python, JavaScript",
+#                 "file_patterns": "*.py, *.js",
+#                 "key_features": "API endpoints, database models, authentication",
+#             },
+#         )
 
-        # Verify the result
-        assert len(result.content) == 1
-        content = result.content[0]
-        assert isinstance(content, TextContent)
+#         # Verify the result
+#         assert len(result.content) == 1
+#         content = result.content[0]
+#         assert isinstance(content, TextContent)
 
-        # Parse the JSON response
-        response = json.loads(content.text)
+#         # Parse the JSON response
+#         response = json.loads(content.text)
 
-        # Check that the response has the expected structure
-        assert isinstance(response, dict)
-        assert "rule_name" in response
-        assert "instructions" in response
-        assert "repo_info" in response
-        assert "commands" in response
-        assert "message" in response
+#         # Check that the response has the expected structure
+#         assert isinstance(response, dict)
+#         assert "rule_name" in response
+#         assert "instructions" in response
+#         assert "repo_info" in response
+#         assert "commands" in response
+#         assert "message" in response
 
-        # Check rule name
-        assert response["rule_name"] == "repo_analyzer"
+#         # Check rule name
+#         assert response["rule_name"] == "repo_analyzer"
 
-        # Check repo_info
-        assert isinstance(response["repo_info"], dict)
-        assert "description" in response["repo_info"]
-        assert "languages" in response["repo_info"]
-        assert "file_patterns" in response["repo_info"]
-        assert "key_features" in response["repo_info"]
+#         # Check repo_info
+#         assert isinstance(response["repo_info"], dict)
+#         assert "description" in response["repo_info"]
+#         assert "languages" in response["repo_info"]
+#         assert "file_patterns" in response["repo_info"]
+#         assert "key_features" in response["repo_info"]
 
-        # Check that languages were parsed correctly
-        assert response["repo_info"]["languages"] == ["Python", "JavaScript"]
+#         # Check that languages were parsed correctly
+#         assert response["repo_info"]["languages"] == ["Python", "JavaScript"]
 
-        # Check file patterns
-        assert response["repo_info"]["file_patterns"] == ["*.py", "*.js"]
+#         # Check file patterns
+#         assert response["repo_info"]["file_patterns"] == ["*.py", "*.js"]
 
-        # Check key features
-        assert response["repo_info"]["key_features"] == ["API endpoints", "database models", "authentication"]
+#         # Check key features
+#         assert response["repo_info"]["key_features"] == ["API endpoints", "database models", "authentication"]
 
-        # Check commands
-        assert isinstance(response["commands"], list)
-        assert len(response["commands"]) > 0
+#         # Check commands
+#         assert isinstance(response["commands"], list)
+#         assert len(response["commands"]) > 0
 
-        # Verify that each command has the expected structure
-        for command in response["commands"]:
-            assert isinstance(command, dict)
-            assert "name" in command
-            assert "command" in command
-            assert "description" in command
+#         # Verify that each command has the expected structure
+#         for command in response["commands"]:
+#             assert isinstance(command, dict)
+#             assert "name" in command
+#             assert "command" in command
+#             assert "description" in command

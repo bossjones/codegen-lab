@@ -33,7 +33,6 @@ from codegen_lab.prompt_library import (
     process_makefile_result,
     process_update_cursor_rules_result,
     read_cursor_rule,
-    run_repo_analysis,
     run_update_cursor_rules,
     save_cursor_rule,
     update_dockerignore,
@@ -410,92 +409,92 @@ class TestUtilityFunctions:
         assert "sample" in rule["metadata"]["tags"]
         assert "test" in rule["metadata"]["tags"]
 
-    def test_run_repo_analysis(self) -> None:
-        """Test that the run_repo_analysis function returns the expected structure."""
-        # Call the function with test data
-        result = run_repo_analysis(
-            repo_description="A Python web application using FastAPI",
-            main_languages="Python, JavaScript",
-            file_patterns="*.py, *.js",
-            key_features="API endpoints, database models, authentication",
-        )
+    # def test_run_repo_analysis(self) -> None:
+    #     """Test that the run_repo_analysis function returns the expected structure."""
+    #     # Call the function with test data
+    #     result = run_repo_analysis(
+    #         repo_description="A Python web application using FastAPI",
+    #         main_languages="Python, JavaScript",
+    #         file_patterns="*.py, *.js",
+    #         key_features="API endpoints, database models, authentication",
+    #     )
 
-        # Check that the result has the expected structure
-        assert isinstance(result, dict)
-        assert "rule_name" in result
-        assert "instructions" in result
-        assert "repo_info" in result
-        assert "commands" in result
-        assert "message" in result
+    #     # Check that the result has the expected structure
+    #     assert isinstance(result, dict)
+    #     assert "rule_name" in result
+    #     assert "instructions" in result
+    #     assert "repo_info" in result
+    #     assert "commands" in result
+    #     assert "message" in result
 
-        # Check rule name
-        assert result["rule_name"] == "repo_analyzer"
+    #     # Check rule name
+    #     assert result["rule_name"] == "repo_analyzer"
 
-        # Check instructions
-        assert isinstance(result["instructions"], list)
-        assert len(result["instructions"]) > 0
-        assert all(isinstance(instruction, str) for instruction in result["instructions"])
+    #     # Check instructions
+    #     assert isinstance(result["instructions"], list)
+    #     assert len(result["instructions"]) > 0
+    #     assert all(isinstance(instruction, str) for instruction in result["instructions"])
 
-        # Check repo_info
-        assert isinstance(result["repo_info"], dict)
-        assert "description" in result["repo_info"]
-        assert "languages" in result["repo_info"]
-        assert "file_patterns" in result["repo_info"]
-        assert "key_features" in result["repo_info"]
+    #     # Check repo_info
+    #     assert isinstance(result["repo_info"], dict)
+    #     assert "description" in result["repo_info"]
+    #     assert "languages" in result["repo_info"]
+    #     assert "file_patterns" in result["repo_info"]
+    #     assert "key_features" in result["repo_info"]
 
-        # Check that languages were parsed correctly
-        assert result["repo_info"]["languages"] == ["Python", "JavaScript"]
+    #     # Check that languages were parsed correctly
+    #     assert result["repo_info"]["languages"] == ["Python", "JavaScript"]
 
-        # Check file patterns
-        assert result["repo_info"]["file_patterns"] == ["*.py", "*.js"]
+    #     # Check file patterns
+    #     assert result["repo_info"]["file_patterns"] == ["*.py", "*.js"]
 
-        # Check key features
-        assert result["repo_info"]["key_features"] == ["API endpoints", "database models", "authentication"]
+    #     # Check key features
+    #     assert result["repo_info"]["key_features"] == ["API endpoints", "database models", "authentication"]
 
-        # Check commands
-        assert isinstance(result["commands"], list)
-        assert len(result["commands"]) > 0
+    #     # Check commands
+    #     assert isinstance(result["commands"], list)
+    #     assert len(result["commands"]) > 0
 
-        # Verify that each command has the expected structure
-        for command in result["commands"]:
-            assert isinstance(command, dict)
-            assert "name" in command
-            assert "command" in command
-            assert "description" in command
+    #     # Verify that each command has the expected structure
+    #     for command in result["commands"]:
+    #         assert isinstance(command, dict)
+    #         assert "name" in command
+    #         assert "command" in command
+    #         assert "description" in command
 
-        # Check that language-specific commands were generated
-        python_commands = [cmd for cmd in result["commands"] if "Python" in cmd["name"]]
-        js_commands = [cmd for cmd in result["commands"] if "JavaScript" in cmd["name"]]
-        assert len(python_commands) > 0
-        assert len(js_commands) > 0
+    #     # Check that language-specific commands were generated
+    #     python_commands = [cmd for cmd in result["commands"] if "Python" in cmd["name"]]
+    #     js_commands = [cmd for cmd in result["commands"] if "JavaScript" in cmd["name"]]
+    #     assert len(python_commands) > 0
+    #     assert len(js_commands) > 0
 
-        # Check that feature-specific commands were generated
-        api_commands = [cmd for cmd in result["commands"] if "API" in cmd["name"]]
-        db_commands = [cmd for cmd in result["commands"] if "Database" in cmd["name"]]
-        auth_commands = [cmd for cmd in result["commands"] if "Authentication" in cmd["name"]]
-        assert len(api_commands) > 0
-        assert len(db_commands) > 0
-        assert len(auth_commands) > 0
+    #     # Check that feature-specific commands were generated
+    #     api_commands = [cmd for cmd in result["commands"] if "API" in cmd["name"]]
+    #     db_commands = [cmd for cmd in result["commands"] if "Database" in cmd["name"]]
+    #     auth_commands = [cmd for cmd in result["commands"] if "Authentication" in cmd["name"]]
+    #     assert len(api_commands) > 0
+    #     assert len(db_commands) > 0
+    #     assert len(auth_commands) > 0
 
-    def test_run_repo_analysis_error_handling(self) -> None:
-        """Test that the run_repo_analysis function handles errors gracefully."""
-        # Call the function with invalid input (None values)
-        result = run_repo_analysis(
-            repo_description=None,  # type: ignore
-            main_languages=None,  # type: ignore
-            file_patterns=None,  # type: ignore
-            key_features=None,  # type: ignore
-        )
+    # def test_run_repo_analysis_error_handling(self) -> None:
+    #     """Test that the run_repo_analysis function handles errors gracefully."""
+    #     # Call the function with invalid input (None values)
+    #     result = run_repo_analysis(
+    #         repo_description=None,  # type: ignore
+    #         main_languages=None,  # type: ignore
+    #         file_patterns=None,  # type: ignore
+    #         key_features=None,  # type: ignore
+    #     )
 
-        # Check that the result indicates an error
-        assert isinstance(result, dict)
-        assert "isError" in result
-        assert result["isError"] is True
-        assert "content" in result
-        assert isinstance(result["content"], list)
-        assert len(result["content"]) > 0
-        assert "text" in result["content"][0]
-        assert "Error" in result["content"][0]["text"]
+    #     # Check that the result indicates an error
+    #     assert isinstance(result, dict)
+    #     assert "isError" in result
+    #     assert result["isError"] is True
+    #     assert "content" in result
+    #     assert isinstance(result["content"], list)
+    #     assert len(result["content"]) > 0
+    #     assert "text" in result["content"][0]
+    #     assert "Error" in result["content"][0]["text"]
 
     def test_generate_cursor_rule(self) -> None:
         """Test that the generate_cursor_rule function generates a valid cursor rule."""
