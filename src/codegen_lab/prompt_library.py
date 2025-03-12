@@ -1306,12 +1306,12 @@ To prepare the workspace for cursor rules, the following steps are needed:
 4. Update .dockerignore to exclude the cursor rules drafts directory:
    Add 'hack/drafts/cursor_rules' to .dockerignore if it exists
 
-5. Write the following mandatory cursor rule files to the client repo's cursor rules stage directory one at a time, using the get_static_cursor_rules function to retrieve each file. when saving the file ensure the file has extension .mdc.md, eg tree.mdc becomes tree.mdc.md:
-   - tree.mdc: A rule for displaying repository structure
-   - repo_analyzer.mdc: A rule for analyzing repository structure and locating code definitions
-   - notify.mdc: A rule for notification at the end of tasks
-   - repomix.mdc: A rule for repository summarization and packaging for LLM consumption
-   - cursor_rules_location.mdc: A rule for locating the cursor rules directory and how to write them
+5. Write the following mandatory cursor rule files to the client repo's cursor rules stage directory one at a time, using the get_static_cursor_rules function to retrieve each file. when saving the file ensure the file has extension .mdc.md, eg tree.mdc becomes tree.mdc.md. use these as rule_names arguments to the get_static_cursor_rules function:
+   - tree: A rule for displaying repository structure
+   - repo_analyzer: A rule for analyzing repository structure and locating code definitions
+   - notify: A rule for notification at the end of tasks
+   - repomix: A rule for repository summarization and packaging for LLM consumption
+   - cursor_rules_location: A rule for locating the cursor rules directory and how to write them
 
 6. Update the client repo's .cursor/mcp.json file to include new entries if they don't already exist:
    Ensure the .cursor/mcp.json file contains entries for prompt_library and sequentialthinking:
