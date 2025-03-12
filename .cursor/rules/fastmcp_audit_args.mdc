@@ -4,44 +4,44 @@ globs: *.py
 alwaysApply: false
 ---
 
-# FastMCP Tool Argument Audit Guide
+# FastMCP Tool and Resource Argument Audit Guide
 
-This rule provides a systematic approach for auditing, improving, and maintaining FastMCP tool decorators with proper argument descriptions and validation.
+This rule provides a systematic approach for auditing, improving, and maintaining FastMCP tool and resource decorators with proper argument descriptions, return type annotations, and error handling.
 
 <rule>
 name: fastmcp-tool-argument-audit
-description: Guidelines for auditing and improving FastMCP tool decorator arguments with proper descriptions, validation, and documentation
+description: Guidelines for auditing and improving FastMCP tool and resource decorator arguments with proper descriptions, validation, documentation, and error handling
 filters:
   # Match Python files
   - type: file_extension
     pattern: "\\.py$"
-  # Match FastMCP tool-related content
+  # Match FastMCP tool and resource-related content
   - type: content
-    pattern: "@mcp\\.tool|from mcp\\.server\\.fastmcp import|FastMCP\\("
+    pattern: "@mcp\\.(tool|resource)|from mcp\\.server\\.fastmcp import|FastMCP\\("
 
 actions:
   - type: suggest
     message: |
-      # FastMCP Tool Argument Audit Process
+      # FastMCP Tool and Resource Argument Audit Process
 
-      When auditing FastMCP tool decorators, follow this systematic process to ensure comprehensive argument descriptions, proper type annotations, and robust validation:
+      When auditing FastMCP tool and resource decorators, follow this systematic process to ensure comprehensive argument descriptions, proper type annotations, and robust validation:
 
       ## 1. Preparation Phase
 
       1. **Create an Audit Checklist**:
          ```markdown
-         # MCP Tool Decorator Argument Description Audit for [filename].py
+         # MCP Tool/Resource Decorator Argument Description Audit for [filename].py
 
-         This checklist is designed to audit functions decorated with `@mcp.tool` in the `[filename].py` file to ensure they have proper descriptions, argument annotations, and follow best practices.
+         This checklist is designed to audit functions decorated with `@mcp.tool` or `@mcp.resource` in the `[filename].py` file to ensure they have proper descriptions, argument annotations, and follow best practices.
 
-         ## Tool Decorator Checklist for [filename].py
+         ## Tool/Resource Decorator Checklist for [filename].py
 
-         ### Basic Tool Configuration
+         ### Basic Configuration
 
-         - [ ] Tool has a descriptive name (either via `name` parameter or function name)
-         - [ ] Tool has a comprehensive description in the decorator or docstring
-         - [ ] Tool has a proper return type annotation
-         - [ ] Tool has a docstring that explains its purpose and behavior
+         - [ ] Has descriptive name (either via `name` parameter or function name)
+         - [ ] Has comprehensive description in the decorator or docstring
+         - [ ] Has proper return type annotation (using Union for error/success return types)
+         - [ ] Has docstring that explains its purpose and behavior
 
          ### Function Arguments
 
@@ -59,12 +59,14 @@ actions:
          - [ ] Docstring includes detailed description of functionality
          - [ ] Docstring includes Args section with all parameters documented
          - [ ] Docstring includes Returns section explaining return value
-         - [ ] Docstring includes any relevant Examples (optional but recommended)
+         - [ ] Docstring includes Examples section with error handling examples
+         - [ ] Docstring explains both success and error return structures
 
          ### Error Handling
 
          - [ ] Function handles potential errors appropriately
          - [ ] Error messages are descriptive and helpful
+         - [ ] Uses structured MCP error objects (`{"isError": True, "content": [...]}`)
          - [ ] Function validates inputs before processing
 
          ### Code Style and Best Practices
@@ -74,27 +76,27 @@ actions:
          - [ ] Function is not overly complex (consider breaking down if needed)
          - [ ] Function has appropriate logging if using Context
 
-         ## Tools to Audit in [filename].py
+         ## Tools/Resources to Audit in [filename].py
 
-         The following tools should be audited:
+         The following tools/resources should be audited:
 
-         - [ ] Tool at line X
-         - [ ] Tool at line Y
-         - [ ] Tool at line Z
+         - [ ] Tool/Resource at line X
+         - [ ] Tool/Resource at line Y
+         - [ ] Tool/Resource at line Z
          ```
 
-      2. **Identify All Tools**: Scan the target file to identify all `@mcp.tool` decorated functions and their locations.
+      2. **Identify All Tools and Resources**: Scan the target file to identify all `@mcp.tool` and `@mcp.resource` decorated functions and their locations.
 
       ## 2. Iterative Audit Process
 
-      For each tool, perform this iterative audit:
+      For each tool or resource, perform this iterative audit:
 
       ### a. Analysis Phase
 
-      1. **Basic Tool Configuration**:
-         - Check if tool has a descriptive name (via `name` parameter or function name)
-         - Verify tool has a comprehensive description
-         - Confirm proper return type annotation is present
+      1. **Basic Configuration**:
+         - Check if it has a descriptive name (via `name` parameter or function name)
+         - Verify it has a comprehensive description
+         - Confirm proper return type annotation is present (using Union types for success/error returns)
          - Ensure docstring explains purpose and behavior
 
       2. **Function Arguments**:
@@ -110,12 +112,12 @@ actions:
          - Verify presence of summary line
          - Check for detailed description
          - Ensure Args section documents all parameters
-         - Verify Returns section explains return value
-         - Look for Examples section (optional)
+         - Verify Returns section explains both success and error return structures
+         - Look for Examples section with error handling examples
 
       4. **Error Handling**:
-         - Check if function handles errors appropriately
-         - Verify error messages are descriptive
+         - Check if function returns structured error objects instead of raising exceptions
+         - Verify error objects follow MCP format: `{"isError": True, "content": [{"type": "text", "text": "Error message"}]}`
          - Ensure input validation occurs before processing
 
       5. **Code Style and Best Practices**:
@@ -135,10 +137,10 @@ actions:
 
       **Findings**:
 
-      1. Basic Tool Configuration:
+      1. Basic Configuration:
          - ✅/❌/⚠️ Has descriptive name via `name` parameter
          - ✅/❌/⚠️ Has comprehensive description in the decorator
-         - ✅/❌/⚠️ Return type annotation
+         - ✅/❌/⚠️ Return type annotation uses Union for error/success returns
          - ✅/❌/⚠️ Has detailed docstring explaining purpose and behavior
 
       2. Function Arguments:
@@ -154,12 +156,12 @@ actions:
          - ✅/❌/⚠️ Includes summary line
          - ✅/❌/⚠️ Includes detailed description
          - ✅/❌/⚠️ Includes Args section documenting parameters
-         - ✅/❌/⚠️ Includes Returns section explaining return value
-         - ✅/❌/⚠️ Includes Examples section (optional)
+         - ✅/❌/⚠️ Includes Returns section explaining both success and error structures
+         - ✅/❌/⚠️ Includes Examples section with error handling
 
       4. Error Handling:
-         - ✅/❌/⚠️ Properly handles potential errors
-         - ✅/❌/⚠️ Returns descriptive error messages
+         - ✅/❌/⚠️ Returns structured error objects (not raising exceptions)
+         - ✅/❌/⚠️ Error objects follow MCP format
          - ✅/❌/⚠️ Validates inputs before processing
 
       5. Code Style and Best Practices:
@@ -175,53 +177,19 @@ actions:
 
       **Code Sample with Suggested Improvements**:
       ```python
-      @mcp.tool(
-          name="example_tool",
-          description="Comprehensive description of what the tool does"
-      )
-      def example_tool(
-          param1: str = Field(
-              description="Description of parameter 1",
-              examples=["example1", "example2"],
-              min_length=3,
-              pattern="^[a-z0-9-]+$"
-          ),
-          param2: int = Field(
-              description="Description of parameter 2",
-              examples=[1, 42, 100],
-              ge=0
-          )
-      ) -> dict[str, Any]:
-          """Detailed description of the tool's functionality.
-
-          Args:
-              param1: Detailed explanation of parameter 1
-              param2: Detailed explanation of parameter 2
-
-          Returns:
-              dict[str, Any]: Description of the return value structure
-
-          Raises:
-              ValueError: When parameters are invalid
-
-          Examples:
-              >>> result = example_tool("test", 42)
-              >>> print(result["key"])
-              'value'
-          """
-          # Implementation
+      # Code sample with improvements
       ```
       ```
 
       ### c. Improvement Phase
 
       1. **Implement Improvements**: Create an improved version of the function with:
-         - Proper type annotations
+         - Proper type annotations using Union for success/error returns
          - Field() with descriptions for all arguments
          - Examples for complex arguments
          - Appropriate validation rules
          - Complete docstring following PEP 257
-         - Proper error handling
+         - Proper error handling with structured MCP error objects
 
       2. **Code Review**: Review the improved version to ensure it meets all requirements.
 
@@ -249,12 +217,13 @@ actions:
          osascript -e 'display notification "Completed audit of [filename].py" with title "FastMCP Audit Complete"'
          ```
 
-      ## Best Practices for FastMCP Tool Arguments
+      ## Best Practices for FastMCP Tool and Resource Arguments
 
       1. **Type Annotations**:
-         - Use `dict[str, Any]` for complex return types
-         - Use `Union[type1, type2]` instead of `type1 | type2` for better compatibility
+         - Use `Union[success_type, dict[str, Any]]` for functions that might return either success data or error objects
+         - Use `Union[type1, type2]` instead of `type1 | type2` for broader Python version compatibility
          - Include proper type annotations for all parameters
+         - For resources that might return errors: `Union[list[dict[str, str]], dict[str, Any]]`
 
       2. **Field Descriptions**:
          - Make descriptions clear and concise
@@ -271,14 +240,14 @@ actions:
          - Return structured error objects instead of raising exceptions
          - Format error responses with `{"isError": True, "content": [{"type": "text", "text": "Error message"}]}`
          - Provide specific, actionable error messages
+         - Use try/except blocks to catch potential exceptions and convert them to MCP error objects
 
       5. **Docstring Format**:
          - Follow PEP 257 conventions
          - Include a summary line and detailed description
          - Document all parameters in the Args section
-         - Explain return value structure in Returns section
-         - Document raised exceptions in Raises section (if applicable)
-         - Include examples when helpful
+         - Explain both success and error return structures in Returns section
+         - Include examples that show how to check for and handle errors
 
 examples:
   - input: |
@@ -306,6 +275,7 @@ examples:
       3. Return type uses Python 3.10+ Union operator instead of typing.Union
       4. Return value description is too vague
       5. No validation for rule_name
+      6. No error handling guidance in docstring
 
       Here's an improved version:
 
@@ -337,65 +307,106 @@ examples:
 
           Examples:
               >>> result = get_static_cursor_rule("python-best-practices")
-              >>> print(result["rule_name"])
-              'python-best-practices.md'
+              >>> if not result.get("isError"):
+              >>>     print(result["rule_name"])
+              >>>     'python-best-practices.md'
+              >>> else:
+              >>>     print(f"Error: {result['content'][0]['text']}")
           """
-          # Implementation
+          try:
+              # Implementation
+              return {"rule_name": rule_name, "content": "Rule content here"}
+          except Exception as e:
+              return {
+                  "isError": True,
+                  "content": [{"type": "text", "text": f"Error retrieving cursor rule: {str(e)}"}]
+              }
       ```
 
   - input: |
-      # Looking at a FastMCP tool that returns errors instead of raising exceptions
+      # Looking at a FastMCP resource without proper error handling
 
-      @mcp.tool()
-      def check_config_file(config_path: str) -> dict[str, Any]:
-          """Check if a configuration file exists."""
-          if not os.path.exists(config_path):
-              return {
-                  "isError": True,
-                  "content": [{"type": "text", "text": f"Error: Config file not found at {config_path}"}]
-              }
-          # Implementation
+      @mcp.resource(
+          "cursor-rules://list",
+          name="list_cursor_rules",
+          description="List all available cursor rules",
+      )
+      def list_cursor_rules() -> list[dict[str, str]]:
+          """List all available cursor rules.
+
+          Returns:
+              list[dict[str, str]]: List of cursor rules with name, description, and title
+          """
+          rules = []
+          for rule_name in get_cursor_rule_names():
+              content = read_cursor_rule(rule_name)
+              if content:
+                  parsed = parse_cursor_rule(content)
+                  rules.append({
+                      "name": rule_name,
+                      "description": parsed.get("description", ""),
+                      "title": parsed.get("title", "")
+                  })
+          return rules
     output: |
-      This tool follows the best practice of returning structured error objects instead of raising exceptions, but has several areas for improvement:
+      This resource needs improvement in several areas:
 
-      1. Missing name and description in the decorator
-      2. Missing Field() for the config_path parameter
-      3. Incomplete docstring
-      4. Return type lacks specificity
+      1. Return type doesn't account for potential errors
+      2. No error handling for exceptions
+      3. Docstring doesn't explain error returns
+      4. No examples showing how to handle potential errors
 
       Here's an improved version:
 
       ```python
-      @mcp.tool(
-          name="check_config_file",
-          description="Check if a configuration file exists and return its contents if found",
+      @mcp.resource(
+          "cursor-rules://list",
+          name="list_cursor_rules",
+          description="List all available cursor rules with their names and descriptions",
       )
-      def check_config_file(
-          config_path: str = Field(
-              description="Path to the configuration file to check",
-              examples=["config.json", "settings.yaml", "/path/to/config.toml"],
-              min_length=1,
-          )
-      ) -> dict[str, Union[str, bool, list[dict[str, str]]]]:
-          """Check if a configuration file exists and return its contents if found.
+      def list_cursor_rules() -> Union[list[dict[str, str]], dict[str, Any]]:
+          """List all available cursor rules.
 
-          This tool validates that a configuration file exists at the specified path
-          and returns either its contents or an error if not found.
-
-          Args:
-              config_path: Path to the configuration file to check
+          This resource retrieves all available cursor rules and returns them as a list
+          of dictionaries containing the rule name, description, and title.
 
           Returns:
-              dict[str, Union[str, bool, list[dict[str, str]]]]: A dictionary containing either:
-                  - On success: {"content": str, "path": str}
-                  - On error: {"isError": bool, "content": list[dict[str, str]]}
+              Union[list[dict[str, str]], dict[str, Any]]: Either:
+                  - On success: List of cursor rules with the following structure:
+                      - "name": The rule name (without extension)
+                      - "description": The rule description (empty string if not found)
+                      - "title": The rule title (empty string if not found)
+                  - On error: Error object with the following structure:
+                      - "isError": True
+                      - "content": List of content objects with error message
+
+          Examples:
+              >>> rules = list_cursor_rules()
+              >>> if not isinstance(rules, dict) or not rules.get("isError"):
+              >>>     print(rules[0]["name"])
+              >>>     'example-rule'
+              >>> else:
+              >>>     print(f"Error: {rules['content'][0]['text']}")
           """
-          if not os.path.exists(config_path):
+          try:
+              rules = []
+              for rule_name in get_cursor_rule_names():
+                  content = read_cursor_rule(rule_name)
+                  if content:
+                      parsed = parse_cursor_rule(content)
+                      rules.append(
+                          {
+                              "name": rule_name,
+                              "description": parsed.get("description", ""),
+                              "title": parsed.get("title", "")
+                          }
+                      )
+              return rules
+          except Exception as e:
               return {
                   "isError": True,
-                  "content": [{"type": "text", "text": f"Error: Config file not found at {config_path}"}]
+                  "content": [{"type": "text", "text": f"Error retrieving cursor rules: {str(e)}"}]
               }
-          # Implementation
       ```
 
 metadata:
@@ -411,18 +422,61 @@ metadata:
 
 ## Reflection on Iterative Audit Process
 
-The iterative audit process for FastMCP tool arguments follows a structured approach:
+The iterative audit process for FastMCP tool and resource arguments follows a structured approach:
 
-1. **Identify Tools**: Locate all `@mcp.tool` decorated functions in the codebase
-2. **Analyze Each Tool**: Systematically evaluate each tool against the checklist
+1. **Identify Tools and Resources**: Locate all `@mcp.tool` and `@mcp.resource` decorated functions in the codebase
+2. **Analyze Each Function**: Systematically evaluate each against the checklist
 3. **Document Findings**: Record detailed observations about current state and needed improvements
 4. **Implement Improvements**: Create enhanced versions with proper descriptions, validation, and documentation
 5. **Verify Improvements**: Run code quality checks to confirm improvements meet standards
 6. **Update Documentation**: Mark tasks as completed and document progress
 
-This process ensures consistent quality across all FastMCP tools and promotes maintainable, well-documented code that follows best practices.
+This process ensures consistent quality across all FastMCP tools and resources, promoting maintainable, well-documented code that follows best practices.
 
-### Running Code Quality Checks
+## Error Handling Options
+
+When implementing error handling in FastMCP tools and resources, choose from these options:
+
+### Option 1: Return Structured Error Object (Recommended)
+
+```python
+try:
+    # Implementation code
+    return success_result
+except Exception as e:
+    return {
+        "isError": True,
+        "content": [{"type": "text", "text": f"Error message: {str(e)}"}]
+    }
+```
+
+This approach:
+- Follows MCP protocol conventions
+- Provides structured, parseable errors
+- Makes error handling predictable for clients
+- Avoids exceptions bubbling up to FastMCP's global handler
+
+### Option 2: Let Exceptions Bubble Up to FastMCP Handler
+
+If the function might raise exceptions, document them properly:
+
+```python
+def function_name() -> return_type:
+    """Function description.
+
+    Returns:
+        return_type: Description of return value
+
+    Raises:
+        ValueError: When input is invalid
+        FileNotFoundError: When resource cannot be found
+    """
+    # Implementation that might raise exceptions
+```
+
+This approach is less preferred as it relies on FastMCP's error handling, which may be less customized.
+
+## Running Code Quality Checks
 
 After implementing improvements, always validate your changes:
 
@@ -432,7 +486,7 @@ make ci
 
 This will run linters, type checkers, and other code quality tools to ensure your improvements haven't introduced any issues.
 
-### Notifying on Completion
+## Checking for Completion
 
 When you've completed an audit cycle, update the checklist document and send a notification:
 

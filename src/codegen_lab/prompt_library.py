@@ -488,22 +488,41 @@ TECHNOLOGY_PATTERNS = {
     name="list_cursor_rules",
     description="List all available cursor rules with their names and descriptions",
 )
-def list_cursor_rules() -> list[dict[str, str]]:
+def list_cursor_rules() -> list[dict[str, str]] | dict[str, Any]:
     """List all available cursor rules.
 
+    This resource retrieves all available cursor rules and returns them as a list
+    of dictionaries containing the rule name, description, and title.
+
     Returns:
-        List[Dict[str, str]]: List of cursor rules with name and description
+        Union[list[dict[str, str]], dict[str, Any]]: Either:
+            - On success: List of cursor rules with the following structure:
+                - "name": The rule name (without extension)
+                - "description": The rule description (empty string if not found)
+                - "title": The rule title (empty string if not found)
+            - On error: Error object with the following structure:
+                - "isError": True
+                - "content": List of content objects with error message
+
+    Examples:
+        >>> rules = list_cursor_rules()
+        >>> if not isinstance(rules, dict) or not rules.get("isError"):
+        >>>     print(rules[0]["name"])
+        >>>     'example-rule'
 
     """
-    rules = []
-    for rule_name in get_cursor_rule_names():
-        content = read_cursor_rule(rule_name)
-        if content:
-            parsed = parse_cursor_rule(content)
-            rules.append(
-                {"name": rule_name, "description": parsed.get("description", ""), "title": parsed.get("title", "")}
-            )
-    return rules
+    try:
+        rules = []
+        for rule_name in get_cursor_rule_names():
+            content = read_cursor_rule(rule_name)
+            if content:
+                parsed = parse_cursor_rule(content)
+                rules.append(
+                    {"name": rule_name, "description": parsed.get("description", ""), "title": parsed.get("title", "")}
+                )
+        return rules
+    except Exception as e:
+        return {"isError": True, "content": [{"type": "text", "text": f"Error retrieving cursor rules: {e!s}"}]}
 
 
 @mcp.resource(
