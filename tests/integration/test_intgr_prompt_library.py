@@ -104,7 +104,7 @@ async def test_get_static_cursor_rule_integration() -> None:
         # Verify the response structure
         assert "rule_name" in response_data
         assert "content" in response_data
-        assert response_data["rule_name"] == "tree.md"
+        assert response_data["rule_name"] == "tree.mdc.md"
 
         # Verify the content contains the expected tree command
         assert "tree -L 7 -I" in response_data["content"]
@@ -161,12 +161,12 @@ async def test_get_static_cursor_rules_integration() -> None:
         assert len(response_data["rules"]) == 2
 
         # Check the first rule (tree)
-        assert response_data["rules"][0]["rule_name"] == "tree.md"
+        assert response_data["rules"][0]["rule_name"] == "tree.mdc.md"
         assert "tree -L 7 -I" in response_data["rules"][0]["content"]
         assert "Display repository structure" in response_data["rules"][0]["content"]
 
         # Check the second rule (notify)
-        assert response_data["rules"][1]["rule_name"] == "notify.md"
+        assert response_data["rules"][1]["rule_name"] == "notify.mdc.md"
         assert "At the end of any task" in response_data["rules"][1]["content"]
 
         # Test with a mix of existing and non-existent rules
@@ -189,7 +189,7 @@ async def test_get_static_cursor_rules_integration() -> None:
         assert len(mixed_response_data["rules"]) == 2
 
         # Check the first rule (tree)
-        assert mixed_response_data["rules"][0]["rule_name"] == "tree.md"
+        assert mixed_response_data["rules"][0]["rule_name"] == "tree.mdc.md"
         assert "tree -L 7 -I" in mixed_response_data["rules"][0]["content"]
 
         # Check the non-existent rule - should have isError and content fields
@@ -201,3 +201,71 @@ async def test_get_static_cursor_rules_integration() -> None:
             "Error: Static cursor rule 'nonexistent_rule' not found"
             in mixed_response_data["rules"][1]["content"][0]["text"]
         )
+
+
+# @pytest.mark.anyio
+# async def test_run_repo_analysis_integration() -> None:
+#     """Test the run_repo_analysis function through the MCP server.
+
+#     This integration test verifies that the run_repo_analysis function
+#     can be called through the MCP server and returns the expected result
+#     with repository information.
+#     """
+#     # Create an in-memory client-server connection
+#     async with client_session(mcp._mcp_server) as client:
+#         # Call the run_repo_analysis tool with test data
+#         result = await client.call_tool(
+#             "run_repo_analysis",
+#             {
+#                 "repo_description": "A Python web application using FastAPI",
+#                 "main_languages": "Python, JavaScript",
+#                 "file_patterns": "*.py, *.js",
+#                 "key_features": "API endpoints, database models, authentication",
+#             },
+#         )
+
+#         # Verify the result
+#         assert len(result.content) == 1
+#         content = result.content[0]
+#         assert isinstance(content, TextContent)
+
+#         # Parse the JSON response
+#         response = json.loads(content.text)
+
+#         # Check that the response has the expected structure
+#         assert isinstance(response, dict)
+#         assert "rule_name" in response
+#         assert "instructions" in response
+#         assert "repo_info" in response
+#         assert "commands" in response
+#         assert "message" in response
+
+#         # Check rule name
+#         assert response["rule_name"] == "repo_analyzer"
+
+#         # Check repo_info
+#         assert isinstance(response["repo_info"], dict)
+#         assert "description" in response["repo_info"]
+#         assert "languages" in response["repo_info"]
+#         assert "file_patterns" in response["repo_info"]
+#         assert "key_features" in response["repo_info"]
+
+#         # Check that languages were parsed correctly
+#         assert response["repo_info"]["languages"] == ["Python", "JavaScript"]
+
+#         # Check file patterns
+#         assert response["repo_info"]["file_patterns"] == ["*.py", "*.js"]
+
+#         # Check key features
+#         assert response["repo_info"]["key_features"] == ["API endpoints", "database models", "authentication"]
+
+#         # Check commands
+#         assert isinstance(response["commands"], list)
+#         assert len(response["commands"]) > 0
+
+#         # Verify that each command has the expected structure
+#         for command in response["commands"]:
+#             assert isinstance(command, dict)
+#             assert "name" in command
+#             assert "command" in command
+#             assert "description" in command

@@ -42,18 +42,17 @@ Plan of Action:
 
 import glob
 import json
+import logging
+import logging.handlers
 import os
 import re
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, TypedDict, Union
 
 from mcp.server.fastmcp import FastMCP
 from mcp.server.fastmcp.server import Context
 from pydantic import Field
-
-# import logging
-# import logging.handlers
-# from datetime import datetime
 
 # # Configure JSON logger
 # class JsonFormatter(logging.Formatter):
@@ -71,12 +70,13 @@ from pydantic import Field
 
 #         Returns:
 #             str: JSON formatted log string
+
 #         """
 #         log_obj = {
 #             "timestamp": datetime.fromtimestamp(record.created).isoformat(),
 #             "level": record.levelname,
 #             "message": record.getMessage(),
-#             "logger": record.name
+#             "logger": record.name,
 #         }
 
 #         if record.exc_info:
@@ -84,12 +84,13 @@ from pydantic import Field
 
 #         return json.dumps(log_obj)
 
+
 # # Set up file handler with JSON formatter
 # file_handler = logging.handlers.RotatingFileHandler(
 #     filename="mcpserver.log",
 #     maxBytes=10485760,  # 10MB
 #     backupCount=5,
-#     encoding="utf-8"
+#     encoding="utf-8",
 # )
 # file_handler.setFormatter(JsonFormatter())
 
@@ -488,22 +489,41 @@ TECHNOLOGY_PATTERNS = {
     name="list_cursor_rules",
     description="List all available cursor rules with their names and descriptions",
 )
-def list_cursor_rules() -> list[dict[str, str]]:
+def list_cursor_rules() -> list[dict[str, str]] | dict[str, Any]:
     """List all available cursor rules.
 
+    This resource retrieves all available cursor rules and returns them as a list
+    of dictionaries containing the rule name, description, and title.
+
     Returns:
-        List[Dict[str, str]]: List of cursor rules with name and description
+        Union[list[dict[str, str]], dict[str, Any]]: Either:
+            - On success: List of cursor rules with the following structure:
+                - "name": The rule name (without extension)
+                - "description": The rule description (empty string if not found)
+                - "title": The rule title (empty string if not found)
+            - On error: Error object with the following structure:
+                - "isError": True
+                - "content": List of content objects with error message
+
+    Examples:
+        >>> rules = list_cursor_rules()
+        >>> if not isinstance(rules, dict) or not rules.get("isError"):
+        >>>     print(rules[0]["name"])
+        >>>     'example-rule'
 
     """
-    rules = []
-    for rule_name in get_cursor_rule_names():
-        content = read_cursor_rule(rule_name)
-        if content:
-            parsed = parse_cursor_rule(content)
-            rules.append(
-                {"name": rule_name, "description": parsed.get("description", ""), "title": parsed.get("title", "")}
-            )
-    return rules
+    try:
+        rules = []
+        for rule_name in get_cursor_rule_names():
+            content = read_cursor_rule(rule_name)
+            if content:
+                parsed = parse_cursor_rule(content)
+                rules.append(
+                    {"name": rule_name, "description": parsed.get("description", ""), "title": parsed.get("title", "")}
+                )
+        return rules
+    except Exception as e:
+        return {"isError": True, "content": [{"type": "text", "text": f"Error retrieving cursor rules: {e!s}"}]}
 
 
 @mcp.resource(
@@ -557,26 +577,245 @@ def get_cursor_rule_raw(name: str) -> str:
 
 
 @mcp.tool(
+    name="instruct_repo_analysis",
+    description="Run a repository analysis to gather information for cursor rule creation",
+)
+def instruct_repo_analysis() -> dict[str, Any]:
+    """Run a repository analysis to gather information for cursor rule creation."""
+    payload = {}
+    payload["content"] = []
+    payload["content"].append(
+        {
+            "type": "text",
+            "text": {
+                "status": "success",
+                "message": "Repository Analysis Instructions:1. Invoke the Cursor rule for repository analysis:   Using the repo_analyzer.mdc rule located at ./cursor/rules/repo_analyzer.mdc to perform a comprehensive code base analysis.2. Utilize the sequential thinking MCP server:   The sequentialthinking MCP server will be used to generate a detailed, structured report of the entire codebase.3. Generate and save a comprehensive report:   The analysis will be written to disk as ai_report.md for future reference and parameter population.4. Structure requirements for the report:   The markdown report should be structured to support extraction of the following parameters at minimum:   - Main languages used in the repository   - Frameworks and packages utilized   - Development packages and dependencies   - Testing frameworks and methodologies   - Other relevant code organization information5. Command to execute:   Run the repo_analyzer.mdc rule with the sequentialthinking processor to generate the comprehensive report6. Output validation:   Verify that ai_report.md has been created with proper markdown structure that facilitates parameter extraction7. Next steps:   Once generated, the ai_report.md file will be used as a source for populating project configuration parameters and documentation.",
+                "repository_analysis": True,
+                "analysis_rule": "./cursor/rules/repo_analyzer.mdc",
+                "processing_method": "sequentialthinking",
+                "output_file": "ai_report.md",
+                "required_parameters": ["main_languages", "frameworks", "packages", "dev_packages", "testing"],
+                "analysis_status": {
+                    "status": "pending",
+                    "message": "Ready to execute repository analysis using Cursor rules and sequential thinking processor",
+                    "rule_exists": True,
+                    "rule_path": "./cursor/rules/repo_analyzer.mdc",
+                    "output_destination": "ai_report.md",
+                },
+            },
+        }
+    )
+    payload["isError"] = False
+
+    return payload
+
+
+# @mcp.tool(
+#     name="run_repo_analysis",
+#     description="Run a repository analysis to gather information for cursor rule creation",
+# )
+# def run_repo_analysis(
+#     repo_description: str, main_languages: str, file_patterns: str, key_features: str, ctx: Context | None = None
+# ) -> dict[str, Any]:
+#     """Run a repository analysis to gather information for cursor rule creation.
+
+#     This tool returns JSON instructions for invoking the repo analyzer cursor rule.
+#     It formats the repository information provided by the user into a structured
+#     format that can be used to analyze the repository and suggest cursor rules.
+
+#     Args:
+#         repo_description: Description of the repository and its purpose
+#         main_languages: Main programming languages used in the repository
+#         file_patterns: Common file patterns in the repository
+#         key_features: Key features or components of the repository
+#         ctx: The MCP context (optional)
+
+#     Returns:
+#         dict[str, Any]: A dictionary containing instructions for repository analysis
+#         with the following structure:
+#             - "instructions": List of analysis steps to perform
+#             - "repo_info": Repository information provided by the user
+#             - "commands": Suggested commands to run for analysis
+#             - "rule_name": Name of the cursor rule to invoke
+
+#     Examples:
+#         >>> result = run_repo_analysis(
+#         ...     "A Python web application using FastAPI",
+#         ...     "Python, JavaScript",
+#         ...     "*.py, *.js",
+#         ...     "API endpoints, database models, authentication"
+#         ... )
+#         >>> print(result["rule_name"])
+#         >>> 'repo_analyzer'
+
+#     """
+#     try:
+#         # Parse inputs
+#         languages = [lang.strip() for lang in main_languages.split(",") if lang.strip()]
+#         patterns = [pattern.strip() for pattern in file_patterns.split(",") if pattern.strip()]
+#         features = [feature.strip() for feature in key_features.split(",") if feature.strip()]
+
+#         # Generate analysis commands based on repository information
+#         analysis_commands = []
+
+#         # Basic repository structure analysis
+#         analysis_commands.append(
+#             {
+#                 "name": "Repository Structure",
+#                 "command": 'tree -L 7 -I "*.pyc|__pycache__|.git|.pytest_cache|.ruff_cache|.mypy_cache|.coverage|htmlcov|.venv|.env|*.egg-info|build|dist|node_modules|.DS_Store|images"',
+#                 "description": "Get a comprehensive view of the repository structure",
+#             }
+#         )
+
+#         # Language-specific analysis commands
+#         for language in languages:
+#             if language.lower() == "python":
+#                 analysis_commands.append(
+#                     {
+#                         "name": "Python Files",
+#                         "command": 'find . -name "*.py" | grep -v "__pycache__" | sort',
+#                         "description": "List all Python files in the repository",
+#                     }
+#                 )
+#                 analysis_commands.append(
+#                     {
+#                         "name": "Python Functions",
+#                         "command": 'grep -r "def " --include="*.py" . | grep -v "__pycache__"',
+#                         "description": "Find Python function definitions",
+#                     }
+#                 )
+#                 analysis_commands.append(
+#                     {
+#                         "name": "Python Classes",
+#                         "command": 'grep -r "class " --include="*.py" . | grep -v "__pycache__"',
+#                         "description": "Find Python class definitions",
+#                     }
+#                 )
+#             elif language.lower() in ["javascript", "js"]:
+#                 analysis_commands.append(
+#                     {
+#                         "name": "JavaScript Files",
+#                         "command": 'find . -name "*.js" -o -name "*.jsx" | grep -v "node_modules" | sort',
+#                         "description": "List all JavaScript files in the repository",
+#                     }
+#                 )
+#                 analysis_commands.append(
+#                     {
+#                         "name": "JavaScript Functions",
+#                         "command": 'grep -r "function " --include="*.js" --include="*.jsx" . | grep -v "node_modules"',
+#                         "description": "Find JavaScript function definitions",
+#                     }
+#                 )
+#             elif language.lower() in ["typescript", "ts"]:
+#                 analysis_commands.append(
+#                     {
+#                         "name": "TypeScript Files",
+#                         "command": 'find . -name "*.ts" -o -name "*.tsx" | grep -v "node_modules" | sort',
+#                         "description": "List all TypeScript files in the repository",
+#                     }
+#                 )
+#                 analysis_commands.append(
+#                     {
+#                         "name": "TypeScript Interfaces",
+#                         "command": 'grep -r "interface " --include="*.ts" --include="*.tsx" . | grep -v "node_modules"',
+#                         "description": "Find TypeScript interface definitions",
+#                     }
+#                 )
+
+#         # Feature-specific analysis commands
+#         for feature in features:
+#             feature_lower = feature.lower()
+#             if "api" in feature_lower or "endpoint" in feature_lower:
+#                 analysis_commands.append(
+#                     {
+#                         "name": "API Endpoints",
+#                         "command": 'grep -r "@app.route\\|@app.get\\|@app.post\\|router.get\\|router.post" --include="*.py" --include="*.js" --include="*.ts" .',
+#                         "description": "Find API endpoint definitions",
+#                     }
+#                 )
+#             elif "database" in feature_lower or "model" in feature_lower:
+#                 analysis_commands.append(
+#                     {
+#                         "name": "Database Models",
+#                         "command": 'grep -r "class.*Model\\|class.*db.Model\\|mongoose.model\\|sequelize.define" --include="*.py" --include="*.js" --include="*.ts" .',
+#                         "description": "Find database model definitions",
+#                     }
+#                 )
+#             elif "auth" in feature_lower:
+#                 analysis_commands.append(
+#                     {
+#                         "name": "Authentication",
+#                         "command": 'grep -r "auth\\|login\\|authenticate\\|password" --include="*.py" --include="*.js" --include="*.ts" .',
+#                         "description": "Find authentication-related code",
+#                     }
+#                 )
+
+#         # Create analysis instructions
+#         analysis_instructions = [
+#             "1. Run the repository structure command to get an overview of the codebase",
+#             "2. Identify key components based on the directory structure",
+#             "3. Run language-specific commands to find relevant code definitions",
+#             "4. Run feature-specific commands to locate implementation details",
+#             "5. Analyze the results to understand the repository architecture",
+#             "6. Identify patterns and conventions used in the codebase",
+#             "7. Determine which cursor rules would be most beneficial",
+#         ]
+
+#         # Create a structured response
+#         return {
+#             "rule_name": "repo_analyzer",
+#             "instructions": analysis_instructions,
+#             "repo_info": {
+#                 "description": repo_description,
+#                 "languages": languages,
+#                 "file_patterns": patterns,
+#                 "key_features": features,
+#             },
+#             "commands": analysis_commands,
+#             "message": "Repository analysis instructions generated successfully. Use these commands to analyze the repository structure and identify key components for cursor rule creation.",
+#         }
+#     except Exception as e:
+#         if ctx:
+#             ctx.error(f"Error generating repository analysis instructions: {e}")
+
+#         return {
+#             "isError": True,
+#             "content": [{"type": "text", "text": f"Error generating repository analysis instructions: {e!s}"}],
+#         }
+
+
+@mcp.tool(
     name="get_static_cursor_rule",
     description="Get a static cursor rule file by name to be written to the caller's .cursor/rules directory",
 )
-def get_static_cursor_rule(rule_name: str) -> dict[str, str | bool | list[dict[str, str]]]:
+def get_static_cursor_rule(
+    rule_name: str = Field(
+        description="Name of the cursor rule to retrieve (with or without .md extension)",
+        examples=["python-best-practices", "react-patterns", "error-handling"],
+        min_length=1,
+    ),
+) -> dict[str, str | bool | list[dict[str, str]]]:
     """Get a static cursor rule file by name.
 
     This tool returns the content of a specific cursor rule file so it can be
     written to the calling repository's .cursor/rules directory.
 
     Args:
-        rule_name: The name of the cursor rule to retrieve (without .md extension)
+        rule_name: Name of the cursor rule to retrieve (with or without .md extension).
+            Must be at least 1 character long.
 
     Returns:
-        dict[str, str | bool | list[dict[str, str]]]: A dictionary containing either:
+        dict[str, Union[str, bool, list[dict[str, str]]]]: A dictionary containing either:
             - On success: {"rule_name": str, "content": str}
             - On error: {"isError": bool, "content": list[dict[str, str]]}
 
+    Raises:
+        No exceptions are raised; errors are returned in the result object.
+
     """
     # Add .md extension if not already present
-    full_rule_name = rule_name if rule_name.endswith(".md") else f"{rule_name}.md"
+    full_rule_name = rule_name if rule_name.endswith("mdc.md") else f"{rule_name}.mdc.md"
+    # logger.debug(f"full_rule_name: {full_rule_name}")
 
     content = read_cursor_rule(rule_name.replace(".md", ""))
     if not content:
@@ -593,30 +832,96 @@ def get_static_cursor_rule(rule_name: str) -> dict[str, str | bool | list[dict[s
     name="get_static_cursor_rules",
     description="Get multiple static cursor rule files to be written to the caller's .cursor/rules directory",
 )
-def get_static_cursor_rules(rule_names: list[str]) -> dict[str, Any]:
+def get_static_cursor_rules(
+    rule_names: list[str] = Field(
+        description="List of cursor rule names to retrieve (with or without .md extension)",
+        examples=[["python-best-practices", "react-patterns"], ["error-handling"]],
+        min_length=1,
+    ),
+    ignore_missing: bool = Field(
+        description="If True, missing rules will be skipped instead of returning errors",
+        default=False,
+    ),
+) -> dict[str, list[dict[str, str | bool | list[dict[str, str]]]]]:
     """Get multiple static cursor rule files by name.
 
     This tool returns the content of specific cursor rule files so they can be
     written to the calling repository's .cursor/rules directory.
 
     Args:
-        rule_names: List of cursor rule names to retrieve (without .md extension)
+        rule_names: List of cursor rule names to retrieve (with or without .md extension)
+        ignore_missing: If True, missing rules will be skipped instead of returning errors
 
     Returns:
-        dict[str, Any]: A dictionary containing a list of rule data objects
+        dict[str, list[dict[str, Union[str, bool, list[dict[str, str]]]]]]: A dictionary containing:
+            - "rules": A list of rule data objects, each with either:
+                - On success: {"rule_name": str, "content": str}
+                - On error: {"isError": bool, "content": list[dict[str, str]]}
+
+    Raises:
+        No exceptions are raised; errors are returned in the result objects.
+
+    Examples:
+        >>> result = get_static_cursor_rules(["python-best-practices", "react-patterns"])
+        >>> print(len(result["rules"]))
+        2
+        >>> # With ignore_missing=True
+        >>> result = get_static_cursor_rules(["existing-rule", "non-existent-rule"], ignore_missing=True)
+        >>> # Only includes the existing rule
 
     """
+    # Validate input
+    if not rule_names:
+        return {
+            "rules": [{"isError": True, "content": [{"type": "text", "text": "Error: Empty rule_names list provided"}]}]
+        }
+
     results = []
+    valid_rule_count = 0
 
     for rule_name in rule_names:
+        # Basic validation of rule name format
+        if not rule_name or not isinstance(rule_name, str):
+            error_result = {
+                "isError": True,
+                "content": [{"type": "text", "text": f"Error: Invalid rule name format: {rule_name}"}],
+            }
+            results.append(error_result)
+            continue
+
         # Get the rule data using get_static_cursor_rule
         rule_data = get_static_cursor_rule(rule_name)
 
+        # logger.debug(f"rule_data: {rule_data}")
+
+        # Check if the rule was found
+        if rule_data.get("isError") and ignore_missing:
+            # Skip adding this rule to results if ignore_missing is True
+            continue
+
         # Add the result to our list
         results.append(rule_data)
+        if not rule_data.get("isError"):
+            valid_rule_count += 1
 
-    # Return a single JSON object with the results array
-    return {"rules": results}
+    # If all rules were missing and ignore_missing is True, provide a helpful message
+    if ignore_missing and len(results) == 0:
+        return {
+            "rules": [
+                {
+                    "isError": True,
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": f"Error: None of the requested rules ({', '.join(rule_names)}) were found",
+                        }
+                    ],
+                }
+            ]
+        }
+
+    # Return a single JSON object with the results array and metadata
+    return {"rules": results, "valid_rule_count": valid_rule_count}
 
 
 # Prompt endpoints
@@ -766,29 +1071,79 @@ def save_cursor_rule(
         ],
         min_length=10,
     ),
-) -> dict[str, Any]:
-    """Save a cursor rule to the cursor rules directory.
+) -> dict[str, list[dict[str, str | dict[str, bool | str]]] | str]:
+    r"""Save a cursor rule to the cursor rules directory.
+
+    This tool writes a cursor rule to the designated draft directory for cursor rules in the project.
+    It performs basic validation of the rule name and content before creating the necessary directory
+    structure and writing the file. The function returns a dictionary with file operation
+    instructions for the client to execute.
 
     Args:
-        rule_name: The name of the cursor rule file (without extension)
-        rule_content: The complete content of the cursor rule in mdc.md format
+        rule_name: The name of the cursor rule file (without extension).
+                   Must be lowercase with hyphens (no spaces) and at least 3 characters.
+        rule_content: The complete content of the cursor rule in mdc.md format.
+                      Should contain valid markdown and be at least 10 characters long.
 
     Returns:
-        dict: Dictionary containing file operation instructions
+        dict[str, list[dict[str, str | dict[str, bool | str]]] | str]: Dictionary containing:
+            - On success: {
+                "operations": [
+                    {"type": "create_directory", "path": str, "options": {"parents": bool, "exist_ok": bool}},
+                    {"type": "write_file", "path": str, "content": str, "options": {"mode": str}}
+                ],
+                "message": str
+              }
+            - On error: {
+                "isError": True,
+                "content": [{"type": "text", "text": str}]
+              }
+
+    Examples:
+        >>> result = save_cursor_rule("python-best-practices", "# Python Best Practices\\n\\nUse type hints...")
+        >>> print("operations" in result)
+        True
+
+        >>> # Example with invalid rule name
+        >>> result = save_cursor_rule("Invalid Name", "Some content")
+        >>> print(result.get("isError"))
+        True
 
     """
-    # Define the path for the cursor rules directory
-    cursor_rules_dir_path = "hack/drafts/cursor_rules"
-    rule_file_path = f"{cursor_rules_dir_path}/{rule_name}.mdc.md"
+    # Additional validation beyond Field decorators
+    if not rule_name:
+        return {"isError": True, "content": [{"type": "text", "text": "Error: Rule name cannot be empty"}]}
 
-    # Return operations for the client to perform
-    return {
-        "operations": [
-            {"type": "create_directory", "path": cursor_rules_dir_path, "options": {"parents": True, "exist_ok": True}},
-            {"type": "write_file", "path": rule_file_path, "content": rule_content, "options": {"mode": "w"}},
-        ],
-        "message": f"Instructions to save cursor rule to {rule_file_path}",
-    }
+    if not rule_content:
+        return {"isError": True, "content": [{"type": "text", "text": "Error: Rule content cannot be empty"}]}
+
+    # Check if content appears to be valid markdown
+    if not rule_content.startswith("#"):
+        return {
+            "isError": True,
+            "content": [{"type": "text", "text": "Error: Rule content should start with a markdown heading (#)"}],
+        }
+
+    try:
+        # Define the path for the cursor rules directory
+        cursor_rules_dir_path = "hack/drafts/cursor_rules"
+        rule_file_path = f"{cursor_rules_dir_path}/{rule_name}.mdc.md"
+
+        # Return operations for the client to perform
+        return {
+            "operations": [
+                {
+                    "type": "create_directory",
+                    "path": cursor_rules_dir_path,
+                    "options": {"parents": True, "exist_ok": True},
+                },
+                {"type": "write_file", "path": rule_file_path, "content": rule_content, "options": {"mode": "w"}},
+            ],
+            "message": f"Instructions to save cursor rule to {rule_file_path}",
+        }
+    except Exception as e:
+        # Handle any unexpected errors
+        return {"isError": True, "content": [{"type": "text", "text": f"Error saving cursor rule: {e!s}"}]}
 
 
 @mcp.tool(
@@ -804,239 +1159,299 @@ def recommend_cursor_rules(
         ],
         min_length=20,
     ),
-) -> list[dict[str, str | list[str]]]:
-    """Recommend cursor rules to generate based on a repository summary.
+) -> list[dict[str, str | list[str]]] | dict[str, bool | list[dict[str, str]]]:
+    """Analyze a repository summary and recommend cursor rules to generate.
 
     This tool analyzes a summary of a repository and suggests cursor rules
     that would be beneficial to generate based on the technologies, patterns,
-    and features identified in the repository.
+    and features identified in the repository. It matches keywords in the summary
+    against a predefined set of technology patterns and returns corresponding
+    rule recommendations.
 
     Args:
         repo_summary: A summary description of the repository, including
-                     technologies, frameworks, and key features
+                      technologies, frameworks, and key features. Should be at
+                      least 20 characters and contain meaningful information.
 
     Returns:
-        list[dict[str, Union[str, list[str]]]]: A list of recommended cursor rules, each containing
-                             'name', 'description', and 'reason' fields, and potentially 'dependencies'
-                             as a list of strings
+        Union[list[dict[str, Union[str, list[str]]]], dict[str, Union[bool, list[dict[str, str]]]]]:
+            - On success: A list of recommended cursor rules, each containing:
+                - 'name': The name of the rule (string)
+                - 'description': A description of the rule (string)
+                - 'reason': Why this rule is recommended for the repository (string)
+                - 'dependencies': (optional) List of other rules this depends on (list[str])
+            - On error: An error object with the structure:
+                - {'isError': True, 'content': [{'type': 'text', 'text': 'Error message'}]}
+
+    Examples:
+        >>> # Example with Python and React
+        >>> result = recommend_cursor_rules("A Python web app with React frontend")
+        >>> print(len(result) > 2)  # Should have Python and React related rules
+        True
+
+        >>> # Example with error handling
+        >>> try:
+        ...     result = recommend_cursor_rules("")
+        ... except Exception as e:
+        ...     print("Error handled")
+        ... else:
+        ...     print("isError" in result)
+        True
 
     """
-    # Define technology/feature patterns and corresponding rule recommendations
-    rule_recommendations = {
-        # Web frameworks
-        "fastapi": [
-            {
-                "name": "fastapi-best-practices",
-                "description": "Best practices for FastAPI development",
-                "reason": "Repository uses FastAPI framework",
-            },
-            {
-                "name": "fastapi-security",
-                "description": "Security considerations for FastAPI applications",
-                "reason": "Ensure secure API development with FastAPI",
-            },
-            {
-                "name": "fastapi-testing",
-                "description": "Testing strategies for FastAPI endpoints",
-                "reason": "Help with writing comprehensive tests for FastAPI endpoints",
-            },
-        ],
-        "flask": [
-            {
-                "name": "flask-best-practices",
-                "description": "Best practices for Flask development",
-                "reason": "Repository uses Flask framework",
-            },
-            {
-                "name": "flask-security",
-                "description": "Security considerations for Flask applications",
-                "reason": "Ensure secure web application development with Flask",
-            },
-        ],
-        "django": [
-            {
-                "name": "django-best-practices",
-                "description": "Best practices for Django development",
-                "reason": "Repository uses Django framework",
-            },
-            {
-                "name": "django-orm",
-                "description": "Effective use of Django ORM",
-                "reason": "Optimize database interactions in Django applications",
-            },
-        ],
-        # Frontend frameworks
-        "react": [
-            {
-                "name": "react-component-patterns",
-                "description": "Patterns for React component development",
-                "reason": "Repository uses React framework",
-            },
-            {
-                "name": "react-hooks",
-                "description": "Best practices for React hooks",
-                "reason": "Optimize React hooks usage",
-            },
-        ],
-        "vue": [
-            {
-                "name": "vue-component-patterns",
-                "description": "Patterns for Vue component development",
-                "reason": "Repository uses Vue.js framework",
-            }
-        ],
-        # Database technologies
-        "sql": [
-            {
-                "name": "sql-query-optimization",
-                "description": "SQL query optimization techniques",
-                "reason": "Repository uses SQL database queries",
-            },
-            {
-                "name": "sql-injection-prevention",
-                "description": "Preventing SQL injection vulnerabilities",
-                "reason": "Ensure secure database interactions",
-            },
-        ],
-        "mongodb": [
-            {
-                "name": "mongodb-best-practices",
-                "description": "Best practices for MongoDB schema design and queries",
-                "reason": "Repository uses MongoDB database",
-            }
-        ],
-        # Testing frameworks
-        "pytest": [
-            {
-                "name": "pytest-patterns",
-                "description": "Effective pytest patterns and fixtures",
-                "reason": "Repository uses pytest for testing",
-            }
-        ],
-        "jest": [
-            {
-                "name": "jest-testing-patterns",
-                "description": "Effective Jest testing patterns",
-                "reason": "Repository uses Jest for testing",
-            }
-        ],
-        # DevOps and infrastructure
-        "docker": [
-            {
-                "name": "dockerfile-best-practices",
-                "description": "Best practices for writing Dockerfiles",
-                "reason": "Repository uses Docker for containerization",
-            }
-        ],
-        "kubernetes": [
-            {
-                "name": "kubernetes-configuration",
-                "description": "Best practices for Kubernetes configuration",
-                "reason": "Repository uses Kubernetes for orchestration",
-            }
-        ],
-        # General software patterns
-        "api": [
-            {
-                "name": "api-security",
-                "description": "Security considerations for API development",
-                "reason": "Repository implements APIs",
-            },
-            {
-                "name": "api-documentation",
-                "description": "Best practices for API documentation",
-                "reason": "Improve API documentation",
-            },
-        ],
-        "authentication": [
-            {
-                "name": "auth-security",
-                "description": "Security best practices for authentication systems",
-                "reason": "Repository implements authentication",
-            }
-        ],
-        "microservice": [
-            {
-                "name": "microservice-patterns",
-                "description": "Design patterns for microservice architecture",
-                "reason": "Repository uses microservice architecture",
-            }
-        ],
-        # Language-specific patterns
-        "python": [
-            {
-                "name": "python-type-hints",
-                "description": "Best practices for Python type annotations",
-                "reason": "Improve type safety in Python code",
-            },
-            {
-                "name": "python-docstrings",
-                "description": "Standards for Python docstring documentation",
-                "reason": "Enhance code documentation in Python",
-            },
-        ],
-        "typescript": [
-            {
-                "name": "typescript-patterns",
-                "description": "Effective TypeScript patterns and practices",
-                "reason": "Repository uses TypeScript",
-            }
-        ],
-        "javascript": [
-            {
-                "name": "javascript-best-practices",
-                "description": "Modern JavaScript best practices",
-                "reason": "Repository uses JavaScript",
-            }
-        ],
-        # Data science and ML
-        "machine learning": [
-            {
-                "name": "ml-code-organization",
-                "description": "Best practices for organizing machine learning code",
-                "reason": "Repository contains machine learning components",
-            }
-        ],
-        "data science": [
-            {
-                "name": "data-processing-patterns",
-                "description": "Patterns for effective data processing pipelines",
-                "reason": "Repository contains data science components",
-            }
-        ],
-    }
+    # Validate input beyond Field decorator
+    if not repo_summary:
+        return {"isError": True, "content": [{"type": "text", "text": "Error: Repository summary cannot be empty"}]}
 
-    # Always recommend these general rules
-    recommended_rules = [
-        {
-            "name": "code-documentation",
-            "description": "Standards for code documentation and comments",
-            "reason": "Improve overall code documentation",
-        },
-        {
-            "name": "error-handling",
-            "description": "Best practices for error handling and logging",
-            "reason": "Enhance application reliability with proper error handling",
-        },
-    ]
+    if len(repo_summary) < 20:
+        return {
+            "isError": True,
+            "content": [
+                {
+                    "type": "text",
+                    "text": f"Error: Repository summary too short ({len(repo_summary)} chars). Please provide at least 20 characters.",
+                }
+            ],
+        }
 
-    # Convert summary to lowercase for case-insensitive matching
-    summary_lower = repo_summary.lower()
+    try:
+        # Define technology/feature patterns and corresponding rule recommendations
+        rule_recommendations = {
+            # Web frameworks
+            "fastapi": [
+                {
+                    "name": "fastapi-best-practices",
+                    "description": "Best practices for FastAPI development",
+                    "reason": "Repository uses FastAPI framework",
+                },
+                {
+                    "name": "fastapi-security",
+                    "description": "Security considerations for FastAPI applications",
+                    "reason": "Ensure secure API development with FastAPI",
+                },
+                {
+                    "name": "fastapi-testing",
+                    "description": "Testing strategies for FastAPI endpoints",
+                    "reason": "Help with writing comprehensive tests for FastAPI endpoints",
+                },
+            ],
+            "flask": [
+                {
+                    "name": "flask-best-practices",
+                    "description": "Best practices for Flask development",
+                    "reason": "Repository uses Flask framework",
+                },
+                {
+                    "name": "flask-security",
+                    "description": "Security considerations for Flask applications",
+                    "reason": "Ensure secure web application development with Flask",
+                },
+            ],
+            "django": [
+                {
+                    "name": "django-best-practices",
+                    "description": "Best practices for Django development",
+                    "reason": "Repository uses Django framework",
+                },
+                {
+                    "name": "django-orm",
+                    "description": "Effective use of Django ORM",
+                    "reason": "Optimize database interactions in Django applications",
+                },
+            ],
+            # Frontend frameworks
+            "react": [
+                {
+                    "name": "react-component-patterns",
+                    "description": "Patterns for React component development",
+                    "reason": "Repository uses React framework",
+                },
+                {
+                    "name": "react-hooks",
+                    "description": "Best practices for React hooks",
+                    "reason": "Optimize React hooks usage",
+                },
+            ],
+            "vue": [
+                {
+                    "name": "vue-component-patterns",
+                    "description": "Patterns for Vue component development",
+                    "reason": "Repository uses Vue.js framework",
+                }
+            ],
+            # Database technologies
+            "sql": [
+                {
+                    "name": "sql-query-optimization",
+                    "description": "SQL query optimization techniques",
+                    "reason": "Repository uses SQL database queries",
+                },
+                {
+                    "name": "sql-injection-prevention",
+                    "description": "Preventing SQL injection vulnerabilities",
+                    "reason": "Ensure secure database interactions",
+                },
+            ],
+            "mongodb": [
+                {
+                    "name": "mongodb-best-practices",
+                    "description": "Best practices for MongoDB schema design and queries",
+                    "reason": "Repository uses MongoDB database",
+                }
+            ],
+            # Testing frameworks
+            "pytest": [
+                {
+                    "name": "pytest-patterns",
+                    "description": "Effective pytest patterns and fixtures",
+                    "reason": "Repository uses pytest for testing",
+                }
+            ],
+            "jest": [
+                {
+                    "name": "jest-testing-patterns",
+                    "description": "Effective Jest testing patterns",
+                    "reason": "Repository uses Jest for testing",
+                }
+            ],
+            # DevOps and infrastructure
+            "docker": [
+                {
+                    "name": "dockerfile-best-practices",
+                    "description": "Best practices for writing Dockerfiles",
+                    "reason": "Repository uses Docker for containerization",
+                }
+            ],
+            "kubernetes": [
+                {
+                    "name": "kubernetes-configuration",
+                    "description": "Best practices for Kubernetes configuration",
+                    "reason": "Repository uses Kubernetes for orchestration",
+                }
+            ],
+            # General software patterns
+            "api": [
+                {
+                    "name": "api-security",
+                    "description": "Security considerations for API development",
+                    "reason": "Repository implements APIs",
+                },
+                {
+                    "name": "api-documentation",
+                    "description": "Best practices for API documentation",
+                    "reason": "Improve API documentation",
+                },
+            ],
+            "authentication": [
+                {
+                    "name": "auth-security",
+                    "description": "Security best practices for authentication systems",
+                    "reason": "Repository implements authentication",
+                }
+            ],
+            "microservice": [
+                {
+                    "name": "microservice-patterns",
+                    "description": "Design patterns for microservice architecture",
+                    "reason": "Repository uses microservice architecture",
+                }
+            ],
+            # Language-specific patterns
+            "python": [
+                {
+                    "name": "python-type-hints",
+                    "description": "Best practices for Python type annotations",
+                    "reason": "Improve type safety in Python code",
+                },
+                {
+                    "name": "python-docstrings",
+                    "description": "Standards for Python docstring documentation",
+                    "reason": "Enhance code documentation in Python",
+                },
+            ],
+            "typescript": [
+                {
+                    "name": "typescript-patterns",
+                    "description": "Effective TypeScript patterns and practices",
+                    "reason": "Repository uses TypeScript",
+                }
+            ],
+            "javascript": [
+                {
+                    "name": "javascript-best-practices",
+                    "description": "Modern JavaScript best practices",
+                    "reason": "Repository uses JavaScript",
+                }
+            ],
+            # Data science and ML
+            "machine learning": [
+                {
+                    "name": "ml-code-organization",
+                    "description": "Best practices for organizing machine learning code",
+                    "reason": "Repository contains machine learning components",
+                }
+            ],
+            "data science": [
+                {
+                    "name": "data-processing-patterns",
+                    "description": "Patterns for effective data processing pipelines",
+                    "reason": "Repository contains data science components",
+                }
+            ],
+        }
 
-    # Find matches in the repository summary
-    for keyword, rules in rule_recommendations.items():
-        if keyword.lower() in summary_lower:
-            recommended_rules.extend(rules)
+        # Always recommend these general rules
+        recommended_rules = [
+            {
+                "name": "code-documentation",
+                "description": "Standards for code documentation and comments",
+                "reason": "Improve overall code documentation",
+            },
+            {
+                "name": "error-handling",
+                "description": "Best practices for error handling and logging",
+                "reason": "Enhance application reliability with proper error handling",
+            },
+        ]
 
-    # Remove duplicates while preserving order
-    seen_names = set()
-    unique_recommendations = []
-    for rule in recommended_rules:
-        if rule["name"] not in seen_names:
-            seen_names.add(rule["name"])
-            unique_recommendations.append(rule)
+        # Convert summary to lowercase for case-insensitive matching
+        summary_lower = repo_summary.lower()
 
-    return unique_recommendations
+        # Track matched keywords for better explanation
+        matched_keywords = []
+
+        # Find matches in the repository summary
+        for keyword, rules in rule_recommendations.items():
+            if keyword.lower() in summary_lower:
+                recommended_rules.extend(rules)
+                matched_keywords.append(keyword)
+
+        # If no technology-specific matches were found, provide a helpful message
+        if not matched_keywords and len(recommended_rules) <= 2:  # Only the default recommendations
+            return {
+                "isError": False,
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "No specific technologies were identified in the repository summary. Consider providing more details about the technologies, frameworks, and features used in the repository.",
+                    }
+                ],
+                "default_recommendations": recommended_rules,
+            }
+
+        # Remove duplicates while preserving order
+        seen_names = set()
+        unique_recommendations = []
+        for rule in recommended_rules:
+            if rule["name"] not in seen_names:
+                seen_names.add(rule["name"])
+                unique_recommendations.append(rule)
+
+        return unique_recommendations
+
+    except Exception as e:
+        # Handle any unexpected errors
+        return {"isError": True, "content": [{"type": "text", "text": f"Error analyzing repository summary: {e!s}"}]}
 
 
 @mcp.tool(
@@ -1098,12 +1513,12 @@ To prepare the workspace for cursor rules, the following steps are needed:
 4. Update .dockerignore to exclude the cursor rules drafts directory:
    Add 'hack/drafts/cursor_rules' to .dockerignore if it exists
 
-5. Write the following mandatory cursor rule files to the client repo's cursor rules stage directory one at a time, using the get_static_cursor_rules function to retrieve each file. when saving the file ensure the file has extension .mdc.md, eg tree.mdc becomes tree.mdc.md:
-   - tree.mdc: A rule for displaying repository structure
-   - repo_analyzer.mdc: A rule for analyzing repository structure and locating code definitions
-   - notify.mdc: A rule for notification at the end of tasks
-   - repomix.mdc: A rule for repository summarization and packaging for LLM consumption
-   - cursor_rules_location.mdc: A rule for locating the cursor rules directory and how to write them
+5. Write the following mandatory cursor rule files to the client repo's cursor rules stage directory one at a time, using the get_static_cursor_rules function to retrieve each file. when saving the file ensure the file has extension .mdc.md, eg tree.mdc becomes tree.mdc.md. use these as rule_names arguments to the get_static_cursor_rules function:
+   - tree: A rule for displaying repository structure
+   - repo_analyzer: A rule for analyzing repository structure and locating code definitions
+   - notify: A rule for notification at the end of tasks
+   - repomix: A rule for repository summarization and packaging for LLM consumption
+   - cursor_rules_location: A rule for locating the cursor rules directory and how to write them
 
 6. Update the client repo's .cursor/mcp.json file to include new entries if they don't already exist:
    Ensure the .cursor/mcp.json file contains entries for prompt_library and sequentialthinking:
@@ -1245,7 +1660,13 @@ Next steps:
     name="ensure_makefile_task",
     description="Ensure the Makefile has the update-cursor-rules task",
 )
-def ensure_makefile_task(makefile_path: str = "Makefile") -> dict[str, Any]:
+def ensure_makefile_task(
+    makefile_path: str = Field(
+        description="Path to the Makefile file, relative to the project root",
+        examples=["Makefile", "build/Makefile"],
+        default="Makefile",
+    ),
+) -> dict[str, Any]:
     """Ensure the Makefile has the update-cursor-rules task.
 
     This function checks if the Makefile exists and contains the update-cursor-rules task.
@@ -1259,8 +1680,15 @@ def ensure_makefile_task(makefile_path: str = "Makefile") -> dict[str, Any]:
         dict[str, Any]: A dictionary containing operations to perform and additional information
 
     """
+    # Handle the case where makefile_path is a Field object
+    # This is a common pattern when using FastMCP with Field decorators
+    if hasattr(makefile_path, "default"):
+        path_str = makefile_path.default
+    else:
+        path_str = makefile_path
+
     # Check if the makefile path is valid
-    if "*" in str(makefile_path) or "?" in str(makefile_path):
+    if "*" in str(path_str) or "?" in str(path_str):
         return {
             "success": False,
             "error": "Invalid file path",
@@ -1283,8 +1711,8 @@ update-cursor-rules:  ## Update cursor rules from prompts/drafts/cursor_rules
 
     # Define the operations to check if Makefile exists and contains the task
     operations = [
-        {"type": "check_file_exists", "path": makefile_path},
-        {"type": "read_file", "path": makefile_path, "options": {"encoding": "utf-8"}},
+        {"type": "check_file_exists", "path": path_str},
+        {"type": "read_file", "path": path_str, "options": {"encoding": "utf-8"}},
     ]
 
     # Return operations with instructions for the client

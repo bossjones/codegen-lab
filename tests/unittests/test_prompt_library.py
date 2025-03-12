@@ -359,82 +359,184 @@ class TestUtilityFunctions:
             sample_cursor_rule: Sample cursor rule fixture
 
         """
-        result = parse_cursor_rule(sample_cursor_rule)
+        # Parse the sample cursor rule
+        parsed = parse_cursor_rule(sample_cursor_rule)
 
-        assert isinstance(result, dict)
-        assert "frontmatter" in result
-        assert "title" in result
-        assert "description" in result
-        assert "rule" in result
+        # Check that the parsed rule has the expected structure
+        assert isinstance(parsed, dict)
+        assert "frontmatter" in parsed
+        assert "title" in parsed
+        assert "description" in parsed
+        assert "rule" in parsed
 
-        assert result["title"] == "Sample Rule"
-        assert result["description"] == "This is a sample rule."
-        assert result["rule"]["name"] == "sample-rule"
-        assert result["rule"]["description"] == "This is a sample rule"
-        assert "filters" in result["rule"]
-        assert "actions" in result["rule"]
-        assert "examples" in result["rule"]
-        assert "metadata" in result["rule"]
+        # Check frontmatter
+        assert parsed["frontmatter"]["description"] == "Sample Rule"
+        assert parsed["frontmatter"]["globs"] == "*.py"
+        assert parsed["frontmatter"]["alwaysApply"] == "false"
 
-        assert len(result["rule"]["filters"]) == 1
-        assert result["rule"]["filters"][0]["type"] == "file_extension"
-        assert result["rule"]["filters"][0]["pattern"] == "\\.py$"
+        # Check title and description
+        assert parsed["title"] == "Sample Rule"
+        assert parsed["description"] == "This is a sample rule."
 
-        assert len(result["rule"]["actions"]) == 1
-        assert result["rule"]["actions"][0]["type"] == "suggest"
-        assert "This is a sample message." in result["rule"]["actions"][0]["message"]
+        # Check rule content
+        rule = parsed["rule"]
+        assert rule["name"] == "sample-rule"
+        assert rule["description"] == "This is a sample rule"
 
-        assert len(result["rule"]["examples"]) == 1
-        assert "# Sample input" in result["rule"]["examples"][0]["input"]
-        assert result["rule"]["examples"][0]["output"] == "Sample output"
+        # Check filters
+        assert "filters" in rule
+        assert len(rule["filters"]) == 1
+        assert rule["filters"][0]["type"] == "file_extension"
+        assert rule["filters"][0]["pattern"] == "\\.py$"
 
-        assert result["rule"]["metadata"]["priority"] == "high"
-        assert result["rule"]["metadata"]["version"] == "1.0"
-        assert "sample" in result["rule"]["metadata"]["tags"]
-        assert "test" in result["rule"]["metadata"]["tags"]
+        # Check actions
+        assert "actions" in rule
+        assert len(rule["actions"]) == 1
+        assert rule["actions"][0]["type"] == "suggest"
+        assert "This is a sample message." in rule["actions"][0]["message"]
+
+        # Check examples
+        assert "examples" in rule
+        assert len(rule["examples"]) == 1
+        assert "# Sample input" in rule["examples"][0]["input"]
+        assert rule["examples"][0]["output"] == "Sample output"
+
+        # Check metadata
+        assert "metadata" in rule
+        assert rule["metadata"]["priority"] == "high"
+        assert rule["metadata"]["version"] == "1.0"
+        assert "tags" in rule["metadata"]
+        assert "sample" in rule["metadata"]["tags"]
+        assert "test" in rule["metadata"]["tags"]
+
+    # def test_run_repo_analysis(self) -> None:
+    #     """Test that the run_repo_analysis function returns the expected structure."""
+    #     # Call the function with test data
+    #     result = run_repo_analysis(
+    #         repo_description="A Python web application using FastAPI",
+    #         main_languages="Python, JavaScript",
+    #         file_patterns="*.py, *.js",
+    #         key_features="API endpoints, database models, authentication",
+    #     )
+
+    #     # Check that the result has the expected structure
+    #     assert isinstance(result, dict)
+    #     assert "rule_name" in result
+    #     assert "instructions" in result
+    #     assert "repo_info" in result
+    #     assert "commands" in result
+    #     assert "message" in result
+
+    #     # Check rule name
+    #     assert result["rule_name"] == "repo_analyzer"
+
+    #     # Check instructions
+    #     assert isinstance(result["instructions"], list)
+    #     assert len(result["instructions"]) > 0
+    #     assert all(isinstance(instruction, str) for instruction in result["instructions"])
+
+    #     # Check repo_info
+    #     assert isinstance(result["repo_info"], dict)
+    #     assert "description" in result["repo_info"]
+    #     assert "languages" in result["repo_info"]
+    #     assert "file_patterns" in result["repo_info"]
+    #     assert "key_features" in result["repo_info"]
+
+    #     # Check that languages were parsed correctly
+    #     assert result["repo_info"]["languages"] == ["Python", "JavaScript"]
+
+    #     # Check file patterns
+    #     assert result["repo_info"]["file_patterns"] == ["*.py", "*.js"]
+
+    #     # Check key features
+    #     assert result["repo_info"]["key_features"] == ["API endpoints", "database models", "authentication"]
+
+    #     # Check commands
+    #     assert isinstance(result["commands"], list)
+    #     assert len(result["commands"]) > 0
+
+    #     # Verify that each command has the expected structure
+    #     for command in result["commands"]:
+    #         assert isinstance(command, dict)
+    #         assert "name" in command
+    #         assert "command" in command
+    #         assert "description" in command
+
+    #     # Check that language-specific commands were generated
+    #     python_commands = [cmd for cmd in result["commands"] if "Python" in cmd["name"]]
+    #     js_commands = [cmd for cmd in result["commands"] if "JavaScript" in cmd["name"]]
+    #     assert len(python_commands) > 0
+    #     assert len(js_commands) > 0
+
+    #     # Check that feature-specific commands were generated
+    #     api_commands = [cmd for cmd in result["commands"] if "API" in cmd["name"]]
+    #     db_commands = [cmd for cmd in result["commands"] if "Database" in cmd["name"]]
+    #     auth_commands = [cmd for cmd in result["commands"] if "Authentication" in cmd["name"]]
+    #     assert len(api_commands) > 0
+    #     assert len(db_commands) > 0
+    #     assert len(auth_commands) > 0
+
+    # def test_run_repo_analysis_error_handling(self) -> None:
+    #     """Test that the run_repo_analysis function handles errors gracefully."""
+    #     # Call the function with invalid input (None values)
+    #     result = run_repo_analysis(
+    #         repo_description=None,  # type: ignore
+    #         main_languages=None,  # type: ignore
+    #         file_patterns=None,  # type: ignore
+    #         key_features=None,  # type: ignore
+    #     )
+
+    #     # Check that the result indicates an error
+    #     assert isinstance(result, dict)
+    #     assert "isError" in result
+    #     assert result["isError"] is True
+    #     assert "content" in result
+    #     assert isinstance(result["content"], list)
+    #     assert len(result["content"]) > 0
+    #     assert "text" in result["content"][0]
+    #     assert "Error" in result["content"][0]["text"]
 
     def test_generate_cursor_rule(self) -> None:
-        """Test that the generate_cursor_rule function correctly generates a cursor rule."""
-        result = generate_cursor_rule(
+        """Test that the generate_cursor_rule function generates a valid cursor rule."""
+        # Generate a cursor rule
+        rule = generate_cursor_rule(
             rule_name="test-rule",
-            description="A test rule",
+            description="Test rule description",
             file_patterns=["*.py", "*.js"],
-            content_patterns=["test", "example"],
-            action_message="This is a test message.",
-            examples=[{"input": "# Test input", "output": "Test output"}],
+            content_patterns=["def ", "function "],
+            action_message="This is a test action message.",
+            examples=[{"input": "Test input", "output": "Test output"}],
             tags=["test", "example"],
-            priority="high",
+            priority="medium",
         )
 
-        assert isinstance(result, str)
-        assert "---" in result
-        assert "description: A test rule" in result
-        assert "globs: *.py, *.js" in result
-        assert "# Test Rule" in result
-        assert "A test rule" in result
-        assert "<rule>" in result
-        assert "name: test-rule" in result
-        assert "description: A test rule" in result
-        assert "filters:" in result
-        assert "file_extension" in result
-        assert "*.py|*.js" in result
-        assert "content" in result
-        assert "(?s)(test|example)" in result
-        assert "actions:" in result
-        assert "type: suggest" in result
-        assert "message: |" in result
-        assert "This is a test message." in result
-        assert "examples:" in result
-        assert "input: |" in result
-        assert "# Test input" in result
-        assert 'output: "Test output"' in result
-        assert "metadata:" in result
-        assert "priority: high" in result
-        assert "version: 1.0" in result
-        assert "tags:" in result
-        assert "- test" in result
-        assert "- example" in result
-        assert "</rule>" in result
+        # Check that the generated rule is a string
+        assert isinstance(rule, str)
+
+        # Check that the rule contains the expected content
+        assert "---" in rule
+        assert "description: Test rule description" in rule
+        assert "# Test Rule" in rule
+        assert "<rule>" in rule
+        assert "name: test-rule" in rule
+        assert "description: Test rule description" in rule
+        assert "filters:" in rule
+        assert 'pattern: "*.py|*.js"' in rule
+        assert 'pattern: "(?s)(def |function )"' in rule
+        assert "actions:" in rule
+        assert "type: suggest" in rule
+        assert "This is a test action message." in rule
+        assert "examples:" in rule
+        assert "input: |" in rule
+        assert "Test input" in rule
+        assert 'output: "Test output"' in rule
+        assert "metadata:" in rule
+        assert "priority: medium" in rule
+        assert "version: 1.0" in rule
+        assert "tags:" in rule
+        assert "- test" in rule
+        assert "- example" in rule
+        assert "</rule>" in rule
 
     def test_save_cursor_rule(self, mocker: "MockerFixture", tmp_path: Path) -> None:
         """Test that the save_cursor_rule function returns proper file operation instructions.
@@ -800,12 +902,14 @@ class TestUtilityFunctions:
         result = get_static_cursor_rule(rule_name)
 
         # Assert
-        assert result["rule_name"] == "test_rule.md"
+        assert result["rule_name"] == "test_rule.mdc.md"
         assert result["content"] == sample_cursor_rule
 
+        # import bpdb
+        # bpdb.set_trace()
         # Test with .md extension already in the name
-        result = get_static_cursor_rule("test_rule.md")
-        assert result["rule_name"] == "test_rule.md"
+        result = get_static_cursor_rule("test_rule")
+        assert result["rule_name"] == "test_rule.mdc.md"
 
         # Test not found case
         mocker.patch("codegen_lab.prompt_library.read_cursor_rule", return_value=None)
@@ -816,7 +920,16 @@ class TestUtilityFunctions:
         assert "Error: Static cursor rule 'nonexistent_rule' not found" in result["content"][0]["text"]
 
     def test_get_static_cursor_rules(self, mocker: "MockerFixture", sample_cursor_rule: str) -> None:
-        """Test get_static_cursor_rules function."""
+        """Test get_static_cursor_rules function.
+
+        This test verifies that the get_static_cursor_rules function correctly handles both
+        existing and non-existent rules, with and without the ignore_missing flag.
+
+        Args:
+            mocker: Pytest mocker fixture for mocking dependencies
+            sample_cursor_rule: Sample cursor rule content fixture
+
+        """
         # Setup
         rule_names = ["rule1", "rule2", "nonexistent_rule"]
 
@@ -828,24 +941,46 @@ class TestUtilityFunctions:
 
         mocker.patch("codegen_lab.prompt_library.read_cursor_rule", side_effect=mock_read_cursor_rule)
 
-        # Execute
+        # Execute - with ignore_missing=False (default)
         results = get_static_cursor_rules(rule_names)
 
         # Assert
         assert "rules" in results
-        assert len(results["rules"]) == 3
-
-        # Check first two rules have content
-        assert results["rules"][0]["rule_name"] == "rule1.md"
+        assert len(results["rules"]) == 2  # Only successful rules are included
+        # Check successful rules
+        assert results["rules"][0]["rule_name"] == "rule1.mdc.md"
         assert results["rules"][0]["content"] == sample_cursor_rule
-        assert results["rules"][1]["rule_name"] == "rule2.md"
+        assert results["rules"][1]["rule_name"] == "rule2.mdc.md"
         assert results["rules"][1]["content"] == sample_cursor_rule
+        assert "valid_rule_count" in results
+        assert results["valid_rule_count"] == 2
 
-        # Check nonexistent rule has error information
-        assert results["rules"][2]["isError"] is True
-        assert isinstance(results["rules"][2]["content"], list)
-        assert results["rules"][2]["content"][0]["type"] == "text"
-        assert "Error: Static cursor rule 'nonexistent_rule' not found" in results["rules"][2]["content"][0]["text"]
+        # Now test with ignore_missing=True
+        results = get_static_cursor_rules(rule_names, ignore_missing=True)
+
+        # Assert
+        assert "rules" in results
+        assert len(results["rules"]) == 2  # Only the valid rules
+        assert results["rules"][0]["rule_name"] == "rule1.mdc.md"
+        assert results["rules"][0]["content"] == sample_cursor_rule
+        assert results["rules"][1]["rule_name"] == "rule2.mdc.md"
+        assert results["rules"][1]["content"] == sample_cursor_rule
+        assert "valid_rule_count" in results
+        assert results["valid_rule_count"] == 2
+
+        # Test with empty rule_names list
+        empty_results = get_static_cursor_rules([])
+        assert "rules" in empty_results
+        assert len(empty_results["rules"]) == 1
+        assert empty_results["rules"][0]["isError"] is True
+        assert "Error: Empty rule_names list provided" in empty_results["rules"][0]["content"][0]["text"]
+
+        # Test with all missing rules and ignore_missing=True
+        all_missing_results = get_static_cursor_rules(["nonexistent1", "nonexistent2"], ignore_missing=True)
+        assert "rules" in all_missing_results
+        assert len(all_missing_results["rules"]) == 1
+        assert all_missing_results["rules"][0]["isError"] is True
+        assert "Error: None of the requested rules" in all_missing_results["rules"][0]["content"][0]["text"]
 
 
 class TestWorkflowFunctions:

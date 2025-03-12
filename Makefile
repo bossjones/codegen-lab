@@ -36,6 +36,9 @@ pylint: ## Test the code with pylint
 ci: ## Run all checks and tests
 	@uv run pytest -v tests
 
+ci-debug: ## Run all checks and tests
+	@uv run pytest -v --pdb --pdbcls bpdb:BPdb --showlocals --tb=short tests
+
 .PHONY: build
 build: clean-build ## Build wheel file
 	@echo "🚀 Creating wheel file"
@@ -248,7 +251,7 @@ aider:
 	uv run aider --sonnet --architect --map-tokens 2048 --cache-prompts --edit-format diff
 
 inspect-fserver:
-	@npx @modelcontextprotocol/inspector uv run python -m packages.cursor_rules_mcp_server.src.cursor_rules_mcp_server.fserver
+	@npx -y @modelcontextprotocol/inspector uv run python -m packages.cursor_rules_mcp_server.src.cursor_rules_mcp_server.fserver
 
 .PHONY: relint relint-cursor-rules
 relint: ## Run relint via pre-commit on specified files (usage: make relint FILES="file1 file2")
@@ -311,5 +314,6 @@ run-mcp-dev-with: ## Run any MCP script in development mode with additional depe
 local-open-coverage: ## open coverage report in browser
 	./scripts/open-browser.py file://${PWD}/htmlcov/index.html
 
+.PHONY: logs
 logs:
 	tail -f  ~/Library/Logs/Claude/mcp-server-prompt_library.log | ccze -A
