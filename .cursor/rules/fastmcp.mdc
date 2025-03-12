@@ -366,6 +366,220 @@ actions:
           return f"Logged: {message}"
       ```
 
+      ## MCP Error Handling Best Practices
+
+      Proper error handling is critical in MCP servers to provide a good user experience and maintain protocol compliance. The MCP protocol specifies that errors should be returned as structured responses rather than exceptions.
+
+      ### Structured Error Responses
+
+      Instead of raising exceptions that might crash the server or disrupt the client, MCP tools should return structured error responses:
+
+      ```python
+      from typing import Any, Dict, List, Union
+      from mcp.server.fastmcp import FastMCP
+
+      mcp = FastMCP("Error Handling Example")
+
+      @mcp.tool()
+      def fetch_user_data(user_id: str) -> dict[str, Any]:
+          """
+          Fetch user data by ID with proper error handling.
+
+          This demonstrates the MCP-compliant approach to error handling by returning
+          structured error objects instead of raising exceptions.
+          """
+          # Input validation
+          if not user_id or not user_id.strip():
+              return {
+                  "isError": True,
+                  "content": [{"type": "text", "text": "Error: User ID cannot be empty"}]
+              }
+
+          # Simulate database lookup
+          user = find_user_by_id(user_id)
+
+          # Handle "not found" case
+          if user is None:
+              return {
+                  "isError": True,
+                  "content": [{"type": "text", "text": f"Error: User with ID '{user_id}' not found"}]
+              }
+
+          # Handle permission/authorization errors
+          if not user_has_permission(user_id):
+              return {
+                  "isError": True,
+                  "content": [{"type": "text", "text": "Error: Insufficient permissions to access this user data"}]
+              }
+
+          # Success case - return the actual data
+          return {
+              "user_id": user.id,
+              "name": user.name,
+              "email": user.email,
+              "created_at": user.created_at.isoformat()
+          }
+      ```
+
+      ### Error Response Format
+
+      MCP error responses should follow this structure:
+
+      ```python
+      {
+          "isError": True,
+          "content": [
+              {
+                  "type": "text",
+                  "text": "Error message describing the issue"
+              }
+          ]
+      }
+      ```
+
+      This format allows clients to:
+      1. Easily identify errors with the `isError` flag
+      2. Display meaningful error messages to users
+      3. Potentially take remedial actions based on the error
+
+      ### Handling Different Error Types
+
+      Different types of errors should be handled appropriately:
+
+      ```python
+      @mcp.tool()
+      def process_data(data: dict[str, Any]) -> dict[str, Any]:
+          """Process data and return results"""
+          try:
+              # Validation errors
+              if "required_field" not in data:
+                  return {
+                      "isError": True,
+                      "content": [{"type": "text", "text": "Error: Missing required field 'required_field'"}]
+                  }
+
+              # Processing errors
+              result = process(data)
+              if not result.success:
+                  return {
+                      "isError": True,
+                      "content": [{"type": "text", "text": f"Error: Processing failed: {result.error_message}"}]
+                  }
+
+              # Success case
+              return {
+                  "result": result.data,
+                  "status": "success"
+              }
+
+          except Exception as e:
+              # Unexpected errors
+              return {
+                  "isError": True,
+                  "content": [{"type": "text", "text": f"Unexpected error: {str(e)}"}]
+              }
+      ```
+
+      ### Error Handling in Resource Functions
+
+      Resource functions should follow the same pattern:
+
+      ```python
+      @mcp.resource("document://{doc_id}")
+      def get_document(doc_id: str) -> dict[str, Any]:
+          """Get a document by ID"""
+          try:
+              document = find_document(doc_id)
+              if not document:
+                  return {
+                      "isError": True,
+                      "content": [{"type": "text", "text": f"Error: Document '{doc_id}' not found"}]
+                  }
+
+              return {"id": doc_id, "content": document.content}
+
+          except Exception as e:
+              return {
+                  "isError": True,
+                  "content": [{"type": "text", "text": f"Error retrieving document: {str(e)}"}]
+              }
+      ```
+
+      ### Propagating Errors
+
+      When calling other tools or functions that might return errors, propagate them appropriately:
+
+      ```python
+      @mcp.tool()
+      def get_multiple_resources(resource_ids: list[str]) -> dict[str, Any]:
+          """Get multiple resources by their IDs"""
+          results = []
+
+          for resource_id in resource_ids:
+              # Get individual resource
+              resource_data = get_resource(resource_id)
+
+              # Add to results (whether success or error)
+              results.append(resource_data)
+
+          # Return a container with all results
+          return {"resources": results}
+      ```
+
+      ### Error Logging
+
+      Always log errors for debugging purposes:
+
+      ```python
+      import logging
+      logger = logging.getLogger("mcp_server")
+
+      @mcp.tool()
+      def risky_operation(input_data: str) -> dict[str, Any]:
+          """Perform a risky operation"""
+          try:
+              result = perform_operation(input_data)
+              return {"result": result}
+          except Exception as e:
+              # Log the error with traceback
+              logger.exception(f"Error in risky_operation: {str(e)}")
+
+              # Return structured error to client
+              return {
+                  "isError": True,
+                  "content": [{"type": "text", "text": f"Operation failed: {str(e)}"}]
+              }
+      ```
+
+      ### Testing Error Handling
+
+      Always test your error handling paths:
+
+      ```python
+      @pytest.mark.anyio
+      async def test_error_handling():
+          """Test error handling in tools"""
+          from your_module import mcp
+
+          async with client_session(mcp._mcp_server) as client:
+              # Test with invalid input
+              result = await client.call_tool("get_resource", {"resource_id": "nonexistent"})
+
+              # Verify error structure
+              assert len(result.content) == 1
+              content = result.content[0]
+              assert isinstance(content, TextContent)
+
+              # Parse response and check error format
+              response = json.loads(content.text)
+              assert "isError" in response
+              assert response["isError"] is True
+              assert "content" in response
+              assert isinstance(response["content"], list)
+              assert response["content"][0]["type"] == "text"
+              assert "not found" in response["content"][0]["text"]
+      ```
+
       ## Testing FastMCP Servers
 
       Testing FastMCP servers is straightforward with pytest:
@@ -552,6 +766,76 @@ examples:
       - Validate incoming requests against the schema
       - Convert valid JSON to Pydantic model instances
       - Provide helpful error messages for invalid inputs
+
+  - input: |
+      # How should I implement proper error handling in my FastMCP tools?
+      from mcp.server.fastmcp import FastMCP
+    output: |
+      Here's how to implement proper error handling in FastMCP tools:
+
+      ```python
+      from typing import Any, Dict, List, Union
+      from mcp.server.fastmcp import FastMCP
+
+      # Create server
+      mcp = FastMCP("Error Handling Example")
+
+      @mcp.tool()
+      def fetch_user_data(user_id: str) -> dict[str, Any]:
+          """
+          Fetch user data by ID with proper error handling.
+
+          This demonstrates the MCP-compliant approach to error handling by returning
+          structured error objects instead of raising exceptions.
+          """
+          # Input validation
+          if not user_id or not user_id.strip():
+              return {
+                  "isError": True,
+                  "content": [{"type": "text", "text": "Error: User ID cannot be empty"}]
+              }
+
+          # Simulate database lookup
+          user = find_user_by_id(user_id)
+
+          # Handle "not found" case
+          if user is None:
+              return {
+                  "isError": True,
+                  "content": [{"type": "text", "text": f"Error: User with ID '{user_id}' not found"}]
+              }
+
+          # Handle permission/authorization errors
+          if not user_has_permission(user_id):
+              return {
+                  "isError": True,
+                  "content": [{"type": "text", "text": "Error: Insufficient permissions to access this user data"}]
+              }
+
+          # Success case - return the actual data
+          return {
+              "user_id": user.id,
+              "name": user.name,
+              "email": user.email,
+              "created_at": user.created_at.isoformat()
+          }
+      ```
+
+      This approach has several advantages:
+
+      1. **Protocol Compliance**: Returns structured errors that follow the MCP specification
+      2. **Client Friendliness**: Clients can easily detect and handle errors
+      3. **Graceful Degradation**: The server continues running even when errors occur
+      4. **Detailed Error Information**: Provides specific error messages for different failure cases
+      5. **Consistent Response Format**: Maintains a consistent structure for both success and error cases
+
+      When implementing error handling:
+
+      - Use the `isError: True` flag to indicate an error condition
+      - Include a `content` array with at least one text element describing the error
+      - Be specific about what went wrong to help clients troubleshoot
+      - Consider different error categories (validation, not found, permission, etc.)
+      - Log detailed error information server-side for debugging
 
 metadata:
   priority: high

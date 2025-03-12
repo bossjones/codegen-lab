@@ -51,6 +51,53 @@ from mcp.server.fastmcp import FastMCP
 from mcp.server.fastmcp.server import Context
 from pydantic import Field
 
+# import logging
+# import logging.handlers
+# from datetime import datetime
+
+# # Configure JSON logger
+# class JsonFormatter(logging.Formatter):
+#     """Custom JSON formatter for logging.
+
+#     This formatter outputs log records in JSON format with timestamp, level,
+#     and message fields.
+#     """
+
+#     def format(self, record: logging.LogRecord) -> str:
+#         """Format the log record as JSON.
+
+#         Args:
+#             record: The log record to format
+
+#         Returns:
+#             str: JSON formatted log string
+#         """
+#         log_obj = {
+#             "timestamp": datetime.fromtimestamp(record.created).isoformat(),
+#             "level": record.levelname,
+#             "message": record.getMessage(),
+#             "logger": record.name
+#         }
+
+#         if record.exc_info:
+#             log_obj["exc_info"] = self.formatException(record.exc_info)
+
+#         return json.dumps(log_obj)
+
+# # Set up file handler with JSON formatter
+# file_handler = logging.handlers.RotatingFileHandler(
+#     filename="mcpserver.log",
+#     maxBytes=10485760,  # 10MB
+#     backupCount=5,
+#     encoding="utf-8"
+# )
+# file_handler.setFormatter(JsonFormatter())
+
+# # Configure root logger
+# logger = logging.getLogger("prompt_library")
+# logger.setLevel(logging.INFO)
+# logger.addHandler(file_handler)
+
 
 # Define types for cursor rule components
 class CursorRuleMetadata(TypedDict, total=False):
@@ -129,7 +176,7 @@ class CursorRule(TypedDict):
 
 
 # Create server
-mcp = FastMCP("prompt_library")
+mcp = FastMCP("prompt_library", debug=True, log_level="DEBUG")
 
 # Define paths
 CURSOR_RULES_DIR = Path(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../hack/drafts/cursor_rules")))
@@ -513,7 +560,7 @@ def get_cursor_rule_raw(name: str) -> str:
     name="get_static_cursor_rule",
     description="Get a static cursor rule file by name to be written to the caller's .cursor/rules directory",
 )
-def get_static_cursor_rule(rule_name: str) -> dict[str, str]:
+def get_static_cursor_rule(rule_name: str) -> dict[str, str | bool | list[dict[str, str]]]:
     """Get a static cursor rule file by name.
 
     This tool returns the content of a specific cursor rule file so it can be
@@ -523,10 +570,9 @@ def get_static_cursor_rule(rule_name: str) -> dict[str, str]:
         rule_name: The name of the cursor rule to retrieve (without .md extension)
 
     Returns:
-        dict[str, str]: A dictionary containing the rule_name and content
-
-    Raises:
-        FileNotFoundError: If the cursor rule is not found
+        dict[str, str | bool | list[dict[str, str]]]: A dictionary containing either:
+            - On success: {"rule_name": str, "content": str}
+            - On error: {"isError": bool, "content": list[dict[str, str]]}
 
     """
     # Add .md extension if not already present
@@ -534,7 +580,11 @@ def get_static_cursor_rule(rule_name: str) -> dict[str, str]:
 
     content = read_cursor_rule(rule_name.replace(".md", ""))
     if not content:
-        raise FileNotFoundError(f"Static cursor rule '{rule_name}' not found")
+        # Return an error result object instead of raising an exception
+        return {
+            "isError": True,
+            "content": [{"type": "text", "text": f"Error: Static cursor rule '{rule_name}' not found"}],
+        }
 
     return {"rule_name": full_rule_name, "content": content}
 
@@ -543,7 +593,7 @@ def get_static_cursor_rule(rule_name: str) -> dict[str, str]:
     name="get_static_cursor_rules",
     description="Get multiple static cursor rule files to be written to the caller's .cursor/rules directory",
 )
-def get_static_cursor_rules(rule_names: list[str]) -> list[dict[str, str]]:
+def get_static_cursor_rules(rule_names: list[str]) -> dict[str, Any]:
     """Get multiple static cursor rule files by name.
 
     This tool returns the content of specific cursor rule files so they can be
@@ -553,29 +603,20 @@ def get_static_cursor_rules(rule_names: list[str]) -> list[dict[str, str]]:
         rule_names: List of cursor rule names to retrieve (without .md extension)
 
     Returns:
-        list[dict[str, str]]: A list of dictionaries containing rule_name and content
-
-    Raises:
-        FileNotFoundError: If any of the cursor rules is not found
+        dict[str, Any]: A dictionary containing a list of rule data objects
 
     """
     results = []
 
     for rule_name in rule_names:
-        try:
-            rule_data = get_static_cursor_rule(rule_name)
-            results.append(rule_data)
-        except FileNotFoundError as e:
-            # Continue with other rules even if one is not found
-            results.append(
-                {
-                    "rule_name": rule_name if rule_name.endswith(".md") else f"{rule_name}.md",
-                    "error": str(e),
-                    "content": None,
-                }
-            )
+        # Get the rule data using get_static_cursor_rule
+        rule_data = get_static_cursor_rule(rule_name)
 
-    return results
+        # Add the result to our list
+        results.append(rule_data)
+
+    # Return a single JSON object with the results array
+    return {"rules": results}
 
 
 # Prompt endpoints
@@ -725,7 +766,7 @@ def save_cursor_rule(
         ],
         min_length=10,
     ),
-) -> str:
+) -> dict[str, Any]:
     """Save a cursor rule to the cursor rules directory.
 
     Args:
@@ -733,23 +774,21 @@ def save_cursor_rule(
         rule_content: The complete content of the cursor rule in mdc.md format
 
     Returns:
-        str: Success message
+        dict: Dictionary containing file operation instructions
 
     """
-    # Get the current working directory
-    current_dir = Path.cwd()
+    # Define the path for the cursor rules directory
+    cursor_rules_dir_path = "hack/drafts/cursor_rules"
+    rule_file_path = f"{cursor_rules_dir_path}/{rule_name}.mdc.md"
 
-    # Create the cursor rules directory path relative to the current directory
-    local_cursor_rules_dir = current_dir / "hack" / "drafts" / "cursor_rules"
-
-    # Create the directory if it doesn't exist
-    local_cursor_rules_dir.mkdir(parents=True, exist_ok=True)
-
-    # Save the rule to the local cursor rules directory
-    rule_path = local_cursor_rules_dir / f"{rule_name}.mdc.md"
-    rule_path.write_text(rule_content)
-
-    return f"Cursor rule saved to {rule_path}"
+    # Return operations for the client to perform
+    return {
+        "operations": [
+            {"type": "create_directory", "path": cursor_rules_dir_path, "options": {"parents": True, "exist_ok": True}},
+            {"type": "write_file", "path": rule_file_path, "content": rule_content, "options": {"mode": "w"}},
+        ],
+        "message": f"Instructions to save cursor rule to {rule_file_path}",
+    }
 
 
 @mcp.tool(
@@ -1009,7 +1048,8 @@ def prep_workspace() -> dict[str, str]:
 
     This function provides natural language instructions and commands
     for cursor rules, including directory creation and file preparation steps.
-    It creates directories relative to the current working directory.
+    It returns instructions relative to the current working directory without
+    actually creating any directories.
 
     Returns:
         dict[str, str]: A dictionary containing status, instructions, and commands
@@ -1019,62 +1059,25 @@ def prep_workspace() -> dict[str, str]:
         - directory_exists: Boolean indicating if directory already exists
         - directory_path: Path to the cursor rules directory
         - mkdir_command: Command to create the directory
-        - directory_structure: (on success) Information about created structure
+        - directory_structure: Information about the structure to create
 
     Raises:
         No exceptions are raised as they are caught and returned as error messages.
 
     """
-    # Get the current working directory
-    current_dir = Path.cwd()
-
-    # Define the cursor rules directory path
-    cursor_rules_dir = current_dir / "hack" / "drafts" / "cursor_rules"
-
-    # Check if the directory exists
-    dir_exists = cursor_rules_dir.exists()
-
-    # Prepare instructions with relative path for display
-    relative_path = "./hack/drafts/cursor_rules"
-    mkdir_cmd = f"mkdir -p {relative_path}"
-
     try:
-        # Create the directory if it doesn't exist
-        if not dir_exists:
-            try:
-                cursor_rules_dir.mkdir(parents=True, exist_ok=True)
-            except PermissionError as pe:
-                return {
-                    "status": "error",
-                    "message": f"Permission error creating directory: {pe!s}. Try creating it manually with: {mkdir_cmd}",
-                    "directory_exists": dir_exists,
-                    "directory_path": str(cursor_rules_dir),
-                    "mkdir_command": mkdir_cmd,
-                    "workspace_prepared": False,
-                    "workspace_result": {
-                        "status": "error",
-                        "message": f"Error preparing workspace: {pe!s}",
-                        "directory_exists": dir_exists,
-                        "directory_path": relative_path,
-                        "mkdir_command": mkdir_cmd,
-                    },
-                }
-            except OSError as ose:
-                return {
-                    "status": "error",
-                    "message": f"OS error creating directory: {ose!s}. Try creating it manually with: {mkdir_cmd}",
-                    "directory_exists": dir_exists,
-                    "directory_path": str(cursor_rules_dir),
-                    "mkdir_command": mkdir_cmd,
-                    "workspace_prepared": False,
-                    "workspace_result": {
-                        "status": "error",
-                        "message": f"Error preparing workspace: {ose!s}",
-                        "directory_exists": dir_exists,
-                        "directory_path": relative_path,
-                        "mkdir_command": mkdir_cmd,
-                    },
-                }
+        # Get the current working directory
+        current_dir = Path.cwd()
+
+        # Define the cursor rules directory path
+        cursor_rules_dir = current_dir / "hack" / "drafts" / "cursor_rules"
+
+        # Check if the directory exists
+        dir_exists = cursor_rules_dir.exists()
+
+        # Prepare instructions with relative path for display
+        relative_path = "./hack/drafts/cursor_rules"
+        mkdir_cmd = f"mkdir -p {relative_path} .cursor/rules || true"
 
         instructions = {
             "status": "success",
@@ -1086,6 +1089,7 @@ To prepare the workspace for cursor rules, the following steps are needed:
 
 2. Ensure the .cursor/rules directory exists for deployment:
    mkdir -p .cursor/rules
+   mkdir -p ./hack/drafts/cursor_rules
 
 3. Check if Makefile exists with an update-cursor-rules task:
    The update-cursor-rules task should copy files from hack/drafts/cursor_rules to .cursor/rules. This command updates Cursor editor rules by copying rule definitions from a drafts directory into the Cursor configuration folder. It first creates a .cursor/rules directory if it doesn't exist. Then it finds all Markdown (.md) files in the hack/drafts/cursor_rules directory (excluding any README files), copies them to the .cursor/rules directory, and preserves their filenames without the .md extension. The comment notes that Cursor doesn't support generating .mdc files directly through the Composer Agent at the time this was written
@@ -1094,12 +1098,12 @@ To prepare the workspace for cursor rules, the following steps are needed:
 4. Update .dockerignore to exclude the cursor rules drafts directory:
    Add 'hack/drafts/cursor_rules' to .dockerignore if it exists
 
-5. Write the following mandatory cursor rule files to the client repo's cursor rules stage directory one at a time, using the get_static_cursor_rules function to retrieve each file:
-   - tree.mdc.md: A rule for displaying repository structure
-   - repo_analyzer.mdc.md: A rule for analyzing repository structure and locating code definitions
-   - notify.mdc.md: A rule for notification at the end of tasks
-   - repomix.mdc.md: A rule for repository summarization and packaging for LLM consumption
-   - cursor_rules_location.mdc.md: A rule for locating the cursor rules directory and how to write them
+5. Write the following mandatory cursor rule files to the client repo's cursor rules stage directory one at a time, using the get_static_cursor_rules function to retrieve each file. when saving the file ensure the file has extension .mdc.md, eg tree.mdc becomes tree.mdc.md:
+   - tree.mdc: A rule for displaying repository structure
+   - repo_analyzer.mdc: A rule for analyzing repository structure and locating code definitions
+   - notify.mdc: A rule for notification at the end of tasks
+   - repomix.mdc: A rule for repository summarization and packaging for LLM consumption
+   - cursor_rules_location.mdc: A rule for locating the cursor rules directory and how to write them
 
 6. Update the client repo's .cursor/mcp.json file to include new entries if they don't already exist:
    Ensure the .cursor/mcp.json file contains entries for prompt_library and sequentialthinking:
@@ -1128,13 +1132,13 @@ To prepare the workspace for cursor rules, the following steps are needed:
    Note: The path in the prompt_library entry should be adjusted to use the actual project path (PWD) instead of hardcoded paths.
 """,
             "directory_exists": dir_exists,
-            "directory_path": str(cursor_rules_dir),
+            "directory_path": relative_path,
             "mkdir_command": mkdir_cmd,
-            "directory_structure": f"Created directory structure at {relative_path}",
-            "workspace_prepared": True,
+            "directory_structure": f"Directory structure to create at {relative_path}",
+            "workspace_prepared": False,  # Changed to False since we're not creating directories
             "workspace_result": {
                 "status": "success",
-                "message": f"Workspace prepared successfully at {relative_path}",
+                "message": f"Instructions provided for workspace preparation at {relative_path}",
                 "directory_exists": dir_exists,
                 "directory_path": relative_path,
                 "mkdir_command": mkdir_cmd,
@@ -1146,17 +1150,17 @@ To prepare the workspace for cursor rules, the following steps are needed:
     except Exception as e:
         return {
             "status": "error",
-            "message": f"Error preparing workspace: {e!s}",
-            "directory_exists": dir_exists,
-            "directory_path": str(cursor_rules_dir),
-            "mkdir_command": mkdir_cmd,
+            "message": f"Error preparing workspace instructions: {e!s}",
+            "directory_exists": False,
+            "directory_path": "./hack/drafts/cursor_rules",
+            "mkdir_command": "mkdir -p ./hack/drafts/cursor_rules .cursor/rules || true",
             "workspace_prepared": False,
             "workspace_result": {
                 "status": "error",
-                "message": f"Error preparing workspace: {e!s}",
-                "directory_exists": dir_exists,
-                "directory_path": relative_path,
-                "mkdir_command": mkdir_cmd,
+                "message": f"Error preparing workspace instructions: {e!s}",
+                "directory_exists": False,
+                "directory_path": "./hack/drafts/cursor_rules",
+                "mkdir_command": "mkdir -p ./hack/drafts/cursor_rules .cursor/rules || true",
             },
         }
 
@@ -1178,13 +1182,17 @@ def create_cursor_rule_files(
         rule_names: A list of cursor rule names to create (without file extensions)
 
     Returns:
-        dict[str, Any]: A dictionary containing the results and next steps
+        dict[str, Any]: A dictionary containing file operation instructions and next steps
 
     """
     try:
-        # Create the cursor rules directory if it doesn't exist
-        cursor_rules_dir = Path("hack/drafts/cursor_rules")
-        cursor_rules_dir.mkdir(parents=True, exist_ok=True)
+        # Define the cursor rules directory path
+        cursor_rules_dir_path = "hack/drafts/cursor_rules"
+
+        # Prepare operations list
+        operations = [
+            {"type": "create_directory", "path": cursor_rules_dir_path, "options": {"parents": True, "exist_ok": True}}
+        ]
 
         created_files = []
         for rule_name in rule_names:
@@ -1192,24 +1200,22 @@ def create_cursor_rule_files(
             file_name = f"{rule_name}.mdc.md" if not rule_name.endswith(".mdc.md") else rule_name
 
             # Create the file path
-            file_path = cursor_rules_dir / file_name
+            file_path = f"{cursor_rules_dir_path}/{file_name}"
 
-            # Create an empty file
-            file_path.touch()
+            # Add operation to create an empty file
+            operations.append(
+                {
+                    "type": "write_file",
+                    "path": file_path,
+                    "content": "",  # Empty content for now
+                    "options": {"mode": "w"},
+                }
+            )
 
             created_files.append(file_name)
 
-        # Check if Makefile exists and contains update-cursor-rules target
-        makefile_path = Path("Makefile")
-        has_makefile = makefile_path.exists()
-        has_update_task = False
-
-        if has_makefile:
-            makefile_content = makefile_path.read_text()
-            has_update_task = "update-cursor-rules" in makefile_content
-
         # Prepare touch command for display
-        touch_cmd = f"touch {' '.join([str(cursor_rules_dir / f) for f in created_files])}"
+        touch_cmd = f"touch {' '.join([cursor_rules_dir_path + '/' + f for f in created_files])}"
 
         # Prepare next steps
         next_steps = """
@@ -1221,12 +1227,11 @@ Next steps:
 
         return {
             "success": True,
+            "operations": operations,
             "created_files": created_files,
             "touch_command": touch_cmd,
-            "has_makefile": has_makefile,
-            "has_update_task": has_update_task,
             "next_steps": next_steps,
-            "message": f"Created {len(created_files)} empty cursor rule files in {cursor_rules_dir}. {next_steps}",
+            "message": f"Instructions to create {len(created_files)} empty cursor rule files in {cursor_rules_dir_path}. {next_steps}",
         }
     except Exception as e:
         return {
@@ -1240,27 +1245,28 @@ Next steps:
     name="ensure_makefile_task",
     description="Ensure the Makefile has the update-cursor-rules task",
 )
-def ensure_makefile_task() -> dict[str, Any]:
+def ensure_makefile_task(makefile_path: str = "Makefile") -> dict[str, Any]:
     """Ensure the Makefile has the update-cursor-rules task.
 
     This function checks if the Makefile exists and contains the update-cursor-rules task.
-    If the task doesn't exist, it adds it to the Makefile.
-    If the Makefile doesn't exist, it creates one with the task.
+    If the task doesn't exist, it returns instructions to add it to the Makefile.
+    If the Makefile doesn't exist, it returns instructions to create one with the task.
+
+    Args:
+        makefile_path: Path to the Makefile, defaults to "Makefile"
 
     Returns:
-        dict[str, Any]: A dictionary containing the results and next steps
+        dict[str, Any]: A dictionary containing operations to perform and additional information
 
     """
-    # Get the current working directory
-    current_dir = Path.cwd()
-
-    # Define the Makefile path
-    makefile_path = current_dir / "Makefile"
-
-    # Check if Makefile exists
-    has_makefile = makefile_path.exists()
-    has_update_task = False
-    action_taken = "none"
+    # Check if the makefile path is valid
+    if "*" in str(makefile_path) or "?" in str(makefile_path):
+        return {
+            "success": False,
+            "error": "Invalid file path",
+            "message": "Invalid file path: wildcards are not allowed",
+            "next_steps": "Please provide a valid file path without wildcards.",
+        }
 
     # The update-cursor-rules task content
     update_task_content = """
@@ -1275,39 +1281,144 @@ update-cursor-rules:  ## Update cursor rules from prompts/drafts/cursor_rules
 	find hack/drafts/cursor_rules -type f -name "*.md" ! -name "README.md" -exec sh -c 'for file; do target=$${file%.md}; cp -a "$$file" ".cursor/rules/$$(basename "$$target")"; done' sh {} +
 """
 
-    if has_makefile:
-        # Read the Makefile content
-        makefile_content = makefile_path.read_text()
+    # Define the operations to check if Makefile exists and contains the task
+    operations = [
+        {"type": "check_file_exists", "path": makefile_path},
+        {"type": "read_file", "path": makefile_path, "options": {"encoding": "utf-8"}},
+    ]
 
-        # Check if the update-cursor-rules task exists
-        has_update_task = "update-cursor-rules" in makefile_content
+    # Return operations with instructions for the client
+    return {
+        "operations": operations,
+        "requires_result": True,
+        "message": "Instructions to check Makefile and update if needed",
+        "update_task_content": update_task_content,
+        "next_steps": "After applying these operations, you'll need to check if the Makefile exists and contains the update-cursor-rules task, then update or create it accordingly.",
+    }
 
+
+@mcp.tool(
+    name="process_makefile_result",
+    description="Process the results of checking the Makefile and update it if needed",
+)
+def process_makefile_result(
+    operation_results: dict[str, Any] = Field(description="Results from the file operations"),
+    update_task_content: str = Field(description="The update-cursor-rules task content"),
+) -> dict[str, Any]:
+    """Process the results of checking the Makefile and update it if needed.
+
+    Args:
+        operation_results: Results from the file operations
+        update_task_content: The update-cursor-rules task content
+
+    Returns:
+        dict[str, Any]: A dictionary containing operations to perform and additional information
+
+    """
+    # Check for empty operation results
+    if not operation_results:
+        return {
+            "success": False,
+            "error": "Missing operation results",
+            "message": "Missing operation results",
+            "next_steps": "Please ensure the file operations were executed correctly.",
+        }
+
+    # Check for malformed operation results
+    if not isinstance(operation_results, dict):
+        return {
+            "success": False,
+            "error": "Invalid operation results",
+            "message": "Invalid operation results format",
+            "next_steps": "Please ensure the operation results are in the correct format.",
+        }
+
+    makefile_result = operation_results.get("Makefile", {})
+    if not isinstance(makefile_result, dict):
+        return {
+            "success": False,
+            "error": "Invalid operation results",
+            "message": "Invalid operation results format",
+            "next_steps": "Please ensure the operation results are in the correct format.",
+        }
+
+    # Check for required fields in Makefile result
+    if "exists" not in makefile_result:
+        return {
+            "success": False,
+            "error": "Invalid operation results",
+            "message": "Invalid operation results format: missing required field 'exists'",
+            "next_steps": "Please ensure the operation results contain all required fields.",
+        }
+
+    # Extract results
+    makefile_exists = makefile_result.get("exists", False)
+    makefile_content = ""
+    if makefile_exists:
+        if "error" in makefile_result:
+            return {
+                "success": False,
+                "error": makefile_result["error"],
+                "message": f"Error accessing Makefile: {makefile_result['error']}",
+                "next_steps": "Please check file permissions and try again.",
+            }
+        if "content" not in makefile_result:
+            return {
+                "success": False,
+                "error": "Invalid operation results",
+                "message": "Invalid operation results format: missing required field 'content'",
+                "next_steps": "Please ensure the operation results contain all required fields.",
+            }
+        makefile_content = makefile_result.get("content", "")
+    elif "error" in makefile_result:
+        # Handle permission denied or other errors
+        error = makefile_result["error"]
+        return {
+            "success": False,
+            "error": error,
+            "message": f"Error accessing Makefile: {error}",
+            "next_steps": "Please check file permissions and try again.",
+        }
+
+    # Check if the update-cursor-rules task exists
+    has_update_task = "update-cursor-rules" in makefile_content
+    action_taken = "none"
+    operations = []
+
+    if makefile_exists:
         if not has_update_task:
             # Add the update-cursor-rules task to the Makefile
-            with open(makefile_path, "a") as f:
-                f.write(update_task_content)
-
+            operations.append(
+                {
+                    "type": "write_file",
+                    "path": "Makefile",
+                    "content": makefile_content + update_task_content,
+                    "options": {"mode": "w"},
+                }
+            )
             action_taken = "updated"
+            has_update_task = True  # Set to True after adding the task
     else:
         # Create a new Makefile with the update-cursor-rules task
-        with open(makefile_path, "w") as f:
-            f.write(update_task_content)
-
+        operations.append(
+            {"type": "write_file", "path": "Makefile", "content": update_task_content, "options": {"mode": "w"}}
+        )
         action_taken = "created"
-        has_makefile = True
+        makefile_exists = True
         has_update_task = True
 
-    # Prepare next steps
+    # Prepare next steps and message
     if action_taken == "none":
         message = "The Makefile already contains the update-cursor-rules task."
     elif action_taken == "updated":
-        message = "Added the update-cursor-rules task to the existing Makefile."
+        message = "Instructions to add the update-cursor-rules task to the existing Makefile."
     else:
-        message = "Created a new Makefile with the update-cursor-rules task."
+        message = "Instructions to create a new Makefile with the update-cursor-rules task."
 
     return {
+        "operations": operations,
         "success": True,
-        "has_makefile": has_makefile,
+        "has_makefile": makefile_exists,
         "has_update_task": has_update_task,
         "action_taken": action_taken,
         "message": message,
@@ -1322,74 +1433,124 @@ update-cursor-rules:  ## Update cursor rules from prompts/drafts/cursor_rules
 def run_update_cursor_rules() -> dict[str, Any]:
     """Run the update-cursor-rules Makefile task to deploy cursor rules.
 
-    This function executes the update-cursor-rules Makefile task to deploy cursor rules
-    from hack/drafts/cursor_rules to .cursor/rules.
+    This function returns instructions to execute the update-cursor-rules Makefile task
+    to deploy cursor rules from hack/drafts/cursor_rules to .cursor/rules.
+
+    Returns:
+        dict[str, Any]: A dictionary containing operations to perform and additional information
+
+    """
+    # Define the operations to check if Makefile exists and contains the task
+    operations = [
+        {"type": "check_file_exists", "path": "Makefile"},
+        {"type": "read_file", "path": "Makefile", "options": {"encoding": "utf-8"}},
+    ]
+
+    # Return operations with instructions for the client
+    return {
+        "operations": operations,
+        "requires_result": True,
+        "message": "Instructions to check Makefile before running update-cursor-rules task",
+    }
+
+
+@mcp.tool(
+    name="process_update_cursor_rules_result",
+    description="Process the results of checking the Makefile and run the update-cursor-rules task if possible",
+)
+def process_update_cursor_rules_result(
+    operation_results: dict[str, Any] = Field(description="Results from the file operations"),
+) -> dict[str, Any]:
+    """Process the results of checking the Makefile and run the update-cursor-rules task if possible.
+
+    Args:
+        operation_results: Results from the file operations
+
+    Returns:
+        dict[str, Any]: A dictionary containing operations to perform and additional information
+
+    """
+    # Extract results
+    makefile_exists = operation_results.get("Makefile", {}).get("exists", False)
+    makefile_content = ""
+    if makefile_exists and "Makefile" in operation_results:
+        makefile_content = operation_results.get("Makefile", {}).get("content", "")
+
+    # Check if the update-cursor-rules task exists
+    has_update_task = "update-cursor-rules" in makefile_content
+
+    if not makefile_exists:
+        return {
+            "isError": True,
+            "content": [
+                {
+                    "type": "text",
+                    "text": "Error: Makefile not found. Please create a Makefile with the update-cursor-rules task.",
+                }
+            ],
+            "message": "Makefile not found",
+            "next_steps": "Use the ensure_makefile_task tool to create the Makefile.",
+        }
+
+    if not has_update_task:
+        return {
+            "isError": True,
+            "content": [{"type": "text", "text": "Error: The update-cursor-rules task was not found in the Makefile."}],
+            "message": "update-cursor-rules task not found",
+            "next_steps": "Use the ensure_makefile_task tool to add the update-cursor-rules task to the Makefile.",
+        }
+
+    # Return operation to execute the make command
+    return {
+        "operations": [
+            {"type": "execute_command", "command": "make update-cursor-rules", "options": {"cwd": "."}},
+            {"type": "check_file_exists", "path": ".cursor/rules"},
+        ],
+        "requires_result": True,
+        "message": "Instructions to run the update-cursor-rules task and check the results",
+    }
+
+
+@mcp.tool(
+    name="finalize_update_cursor_rules",
+    description="Process the results of running the update-cursor-rules task",
+)
+def finalize_update_cursor_rules(
+    operation_results: dict[str, Any] = Field(description="Results from the command execution"),
+) -> dict[str, Any]:
+    """Process the results of running the update-cursor-rules task.
+
+    Args:
+        operation_results: Results from the command execution
 
     Returns:
         dict[str, Any]: A dictionary containing the results
 
     """
-    import subprocess
+    # Check if the command was executed successfully
+    command_result = operation_results.get("make update-cursor-rules", {})
+    cursor_rules_dir_exists = operation_results.get(".cursor/rules", {}).get("exists", False)
 
-    # Get the current working directory
-    current_dir = Path.cwd()
-
-    # Define the Makefile path
-    makefile_path = current_dir / "Makefile"
-
-    # Check if Makefile exists
-    has_makefile = makefile_path.exists()
-
-    if not has_makefile:
+    if "error" in command_result:
         return {
-            "success": False,
-            "message": "Makefile not found. Please create a Makefile with the update-cursor-rules task.",
-            "next_steps": "Use the ensure_makefile_task tool to create the Makefile.",
+            "isError": True,
+            "content": [
+                {
+                    "type": "text",
+                    "text": f"Error: Failed to run the update-cursor-rules task: {command_result.get('error')}",
+                }
+            ],
+            "message": "Failed to run the update-cursor-rules task",
+            "next_steps": "Check the Makefile and try again.",
         }
 
-    # Check if the update-cursor-rules task exists
-    makefile_content = makefile_path.read_text()
-    has_update_task = "update-cursor-rules" in makefile_content
-
-    if not has_update_task:
-        return {
-            "success": False,
-            "message": "The update-cursor-rules task was not found in the Makefile.",
-            "next_steps": "Use the ensure_makefile_task tool to add the update-cursor-rules task to the Makefile.",
-        }
-
-    try:
-        # Run the update-cursor-rules task
-        result = subprocess.run(
-            ["make", "update-cursor-rules"], cwd=current_dir, capture_output=True, text=True, check=True
-        )
-
-        # Check if the .cursor/rules directory exists and contains files
-        cursor_rules_dir = current_dir / ".cursor" / "rules"
-        deployed_rules = list(cursor_rules_dir.glob("*"))
-
-        return {
-            "success": True,
-            "stdout": result.stdout,
-            "stderr": result.stderr,
-            "deployed_rules": [str(rule) for rule in deployed_rules],
-            "message": "Successfully deployed cursor rules.",
-            "next_steps": "The cursor rules have been deployed to .cursor/rules.",
-        }
-    except subprocess.CalledProcessError as e:
-        return {
-            "success": False,
-            "stdout": e.stdout,
-            "stderr": e.stderr,
-            "message": f"Failed to run the update-cursor-rules task: {e}",
-            "next_steps": "Check the error message and fix any issues with the Makefile.",
-        }
-    except Exception as e:
-        return {
-            "success": False,
-            "message": f"An error occurred: {e!s}",
-            "next_steps": "Check the error message and try again.",
-        }
+    # Return success message
+    return {
+        "success": True,
+        "cursor_rules_dir_exists": cursor_rules_dir_exists,
+        "message": "Successfully deployed cursor rules.",
+        "next_steps": "The cursor rules have been deployed to .cursor/rules.",
+    }
 
 
 @mcp.tool(
@@ -1399,64 +1560,98 @@ def run_update_cursor_rules() -> dict[str, Any]:
 def update_dockerignore() -> dict[str, Any]:
     """Update the .dockerignore file to exclude the cursor rules drafts directory.
 
-    This function checks if the .dockerignore file exists and adds an entry to exclude
-    the cursor rules drafts directory if it doesn't already exist.
+    This function returns instructions to check if the .dockerignore file exists and add an entry
+    to exclude the cursor rules drafts directory if it doesn't already exist.
 
     Returns:
-        dict[str, Any]: A dictionary containing the results
+        dict[str, Any]: A dictionary containing operations to perform and additional information
 
     """
-    # Get the current working directory
-    current_dir = Path.cwd()
-
-    # Define the .dockerignore path
-    dockerignore_path = current_dir / ".dockerignore"
-
     # The entry to add to .dockerignore
     entry = "hack/drafts/cursor_rules"
 
-    # Check if .dockerignore exists
-    has_dockerignore = dockerignore_path.exists()
-    entry_exists = False
+    # Define the operations to check if .dockerignore exists and read its content
+    operations = [
+        {"type": "check_file_exists", "path": ".dockerignore"},
+        {"type": "read_file", "path": ".dockerignore", "options": {"encoding": "utf-8"}},
+    ]
+
+    # Return operations with instructions for the client
+    return {
+        "operations": operations,
+        "requires_result": True,
+        "message": "Instructions to check .dockerignore file",
+        "entry": entry,
+    }
+
+
+@mcp.tool(
+    name="process_dockerignore_result",
+    description="Process the results of checking the .dockerignore file and update it if needed",
+)
+def process_dockerignore_result(
+    operation_results: dict[str, Any] = Field(description="Results from the file operations"),
+    entry: str = Field(description="The entry to add to .dockerignore"),
+) -> dict[str, Any]:
+    """Process the results of checking the .dockerignore file and update it if needed.
+
+    Args:
+        operation_results: Results from the file operations
+        entry: The entry to add to .dockerignore
+
+    Returns:
+        dict[str, Any]: A dictionary containing operations to perform and additional information
+
+    """
+    # Extract results
+    dockerignore_exists = operation_results.get(".dockerignore", {}).get("exists", False)
+    dockerignore_content = ""
+    if dockerignore_exists and ".dockerignore" in operation_results:
+        dockerignore_content = operation_results.get(".dockerignore", {}).get("content", "")
+
+    # Check if the entry already exists
+    entry_exists = entry in dockerignore_content.split("\n") if dockerignore_content else False
     action_taken = "none"
+    operations = []
 
-    if has_dockerignore:
-        # Read the .dockerignore content
-        dockerignore_content = dockerignore_path.read_text()
-
-        # Check if the entry already exists
-        entry_exists = entry in dockerignore_content.split("\n")
-
+    if dockerignore_exists:
         if not entry_exists:
-            # Add the entry to .dockerignore
             # Ensure the file ends with a newline
             if not dockerignore_content.endswith("\n"):
                 dockerignore_content += "\n"
 
             # Add the new entry
             updated_content = dockerignore_content + f"{entry}\n"
-            dockerignore_path.write_text(updated_content)
+
+            operations.append(
+                {"type": "write_file", "path": ".dockerignore", "content": updated_content, "options": {"mode": "w"}}
+            )
 
             action_taken = "updated"
     else:
         # Create a new .dockerignore file with the entry
-        dockerignore_path.write_text(f"{entry}\n")
+        operations.append(
+            {"type": "write_file", "path": ".dockerignore", "content": f"{entry}\n", "options": {"mode": "w"}}
+        )
 
         action_taken = "created"
-        has_dockerignore = True
+        dockerignore_exists = True
         entry_exists = True
 
     # Prepare message
     if action_taken == "none":
         message = "The .dockerignore file already contains an entry for the cursor rules drafts directory."
     elif action_taken == "updated":
-        message = "Added an entry for the cursor rules drafts directory to the existing .dockerignore file."
+        message = (
+            "Instructions to add an entry for the cursor rules drafts directory to the existing .dockerignore file."
+        )
     else:
-        message = "Created a new .dockerignore file with an entry for the cursor rules drafts directory."
+        message = "Instructions to create a new .dockerignore file with an entry for the cursor rules drafts directory."
 
     return {
+        "operations": operations,
         "success": True,
-        "has_dockerignore": has_dockerignore,
+        "has_dockerignore": dockerignore_exists,
         "entry_exists": entry_exists,
         "action_taken": action_taken,
         "message": message,
@@ -1479,20 +1674,82 @@ def cursor_rules_workflow(
         rule_names: A list of cursor rule names to create (without file extensions)
 
     Returns:
-        dict[str, Any]: A dictionary containing the results and next steps
+        dict[str, Any]: A dictionary containing operations to perform and additional information
 
     """
-    # Step 1: Prepare the workspace
+    # First call prep_workspace directly
     workspace_result = prep_workspace()
 
-    # Step 2: Create empty cursor rule files
+    # Call create_cursor_rule_files directly
     files_result = create_cursor_rule_files(rule_names)
 
-    # Step 3: Ensure the Makefile has the update-cursor-rules task
+    # Call ensure_makefile_task directly
     makefile_result = ensure_makefile_task()
 
-    # Step 4: Update the .dockerignore file
+    # Call update_dockerignore directly
     dockerignore_result = update_dockerignore()
+
+    # Prepare next steps message
+    next_steps = """
+Workflow completed successfully. Next steps:
+
+1. Write content to each cursor rule file sequentially:
+   - Edit each file to add the cursor rule content
+   - Save each file after editing
+
+2. Deploy the cursor rules:
+   - Run 'make update-cursor-rules' to deploy the cursor rules to .cursor/rules
+   - Verify the rules are correctly deployed
+
+3. Test the cursor rules:
+   - Open a file that should trigger a cursor rule
+   - Verify that the cursor rule is applied correctly
+"""
+
+    return {
+        "success": True,
+        "message": f"Instructions to execute the cursor rules workflow for {len(rule_names)} rule(s): {', '.join(rule_names)}",
+        "next_steps": next_steps,
+        "workspace_result": workspace_result,
+        "files_result": files_result,
+        "makefile_result": makefile_result,
+        "dockerignore_result": dockerignore_result,
+        "created_files": files_result.get("created_files", []),
+    }
+
+
+@mcp.tool(
+    name="process_cursor_rules_workflow_result",
+    description="Process the results of executing the cursor rules workflow",
+)
+def process_cursor_rules_workflow_result(
+    operation_results: dict[str, Any] = Field(description="Results from the workflow operations"),
+) -> dict[str, Any]:
+    """Process the results of executing the cursor rules workflow.
+
+    Args:
+        operation_results: Results from the workflow operations
+
+    Returns:
+        dict[str, Any]: A dictionary containing the workflow results and next steps
+
+    """
+    # Extract results from each operation
+    workspace_result = operation_results.get("workspace_result", {})
+    files_result = operation_results.get("files_result", {})
+    makefile_result = operation_results.get("makefile_result", {})
+    dockerignore_result = operation_results.get("dockerignore_result", {})
+
+    # Check if all operations were successful
+    all_successful = (
+        workspace_result.get("success", False)
+        and files_result.get("success", False)
+        and makefile_result.get("success", False)
+        and dockerignore_result.get("success", False)
+    )
+
+    # Get the list of created files
+    created_files = files_result.get("created_files", [])
 
     # Prepare next steps
     next_steps = """
@@ -1512,13 +1769,13 @@ Workflow completed successfully. Next steps:
 """
 
     return {
-        "success": True,
+        "success": all_successful,
         "workspace_result": workspace_result,
         "files_result": files_result,
         "makefile_result": makefile_result,
         "dockerignore_result": dockerignore_result,
-        "created_files": files_result.get("created_files", []),
-        "message": f"Cursor rules workflow completed successfully. Created {len(files_result.get('created_files', []))} empty cursor rule files.",
+        "created_files": created_files,
+        "message": f"Cursor rules workflow completed successfully. Created {len(created_files)} empty cursor rule files.",
         "next_steps": next_steps,
     }
 
@@ -1532,6 +1789,7 @@ def plan_and_execute_prompt_library_workflow(
     main_languages: str = Field(description="Main programming languages used in the repository (comma-separated)"),
     file_patterns: str = Field(description="Common file patterns/extensions in the repository (comma-separated)"),
     key_features: str = Field(description="Key features or functionality of the repository (comma-separated)"),
+    client_repo_root: str = Field(description="Absolute path to the client's repository root directory", default=""),
     phase: int = Field(description="Current phase of the workflow (1-5)", default=1),
     workflow_state: dict[str, Any] = Field(
         description="Current state of the workflow for continuing execution", default=None
@@ -1554,6 +1812,7 @@ def plan_and_execute_prompt_library_workflow(
         main_languages: Main programming languages used in the repository (comma-separated)
         file_patterns: Common file patterns/extensions in the repository (comma-separated)
         key_features: Key features or functionality of the repository (comma-separated)
+        client_repo_root: Absolute path to the client's repository root directory
         phase: Current phase of the workflow (1-5)
         workflow_state: Current state of the workflow for continuing execution
 
@@ -1573,6 +1832,7 @@ def plan_and_execute_prompt_library_workflow(
                 "main_languages": main_languages.split(","),
                 "file_patterns": file_patterns.split(","),
                 "key_features": key_features.split(","),
+                "repo_root": client_repo_root,
             },
             "recommended_rules": [],
             "created_rules": [],

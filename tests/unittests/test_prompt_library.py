@@ -20,6 +20,7 @@ from codegen_lab.prompt_library import (
     create_cursor_rule_files,
     cursor_rules_workflow,
     ensure_makefile_task,
+    finalize_update_cursor_rules,
     generate_cursor_rule,
     get_cursor_rule_names,
     get_static_cursor_rule,
@@ -28,6 +29,9 @@ from codegen_lab.prompt_library import (
     parse_cursor_rule,
     plan_and_execute_prompt_library_workflow,
     prep_workspace,
+    process_dockerignore_result,
+    process_makefile_result,
+    process_update_cursor_rules_result,
     read_cursor_rule,
     run_update_cursor_rules,
     save_cursor_rule,
@@ -43,6 +47,51 @@ if TYPE_CHECKING:
 from mcp.shared.memory import create_connected_server_and_client_session as client_session
 from mcp.types import TextContent, TextResourceContents
 from pydantic import AnyUrl
+
+
+# Helper function to mimic LLM actions based on prep_workspace instructions
+def helper_execute_prep_workspace_instructions(instructions: dict[str, Any], base_dir: Path) -> dict[str, Any]:
+    """Execute the instructions returned by prep_workspace.
+
+    This helper function mimics what an LLM would do after receiving instructions
+    from the prep_workspace tool. It creates the necessary directories based on
+    the instructions.
+
+    Args:
+        instructions: The instructions dictionary returned by prep_workspace
+        base_dir: The base directory where directories should be created
+
+    Returns:
+        Dict[str, Any]: A dictionary with the results of executing the instructions
+
+    """
+    result = {"status": "success", "actions_performed": [], "errors": []}
+
+    try:
+        # Extract the mkdir command
+        mkdir_cmd = instructions.get("mkdir_command", "")
+
+        # Parse the command to get directory paths
+        if "mkdir -p" in mkdir_cmd:
+            # Extract directory paths from the command
+            cmd_parts = mkdir_cmd.split("mkdir -p")[1].strip().split("||")[0].strip()
+            dir_paths = [p.strip() for p in cmd_parts.split() if p.strip()]
+
+            # Create each directory
+            for dir_path in dir_paths:
+                # Convert relative path to absolute path based on base_dir
+                if dir_path.startswith("./"):
+                    dir_path = dir_path[2:]  # Remove leading ./
+
+                abs_path = base_dir / dir_path
+                abs_path.mkdir(parents=True, exist_ok=True)
+                result["actions_performed"].append(f"Created directory: {abs_path}")
+
+        return result
+    except Exception as e:
+        result["status"] = "error"
+        result["errors"].append(str(e))
+        return result
 
 
 @pytest.fixture
@@ -388,7 +437,7 @@ class TestUtilityFunctions:
         assert "</rule>" in result
 
     def test_save_cursor_rule(self, mocker: "MockerFixture", tmp_path: Path) -> None:
-        """Test that the save_cursor_rule function saves files relative to the current working directory.
+        """Test that the save_cursor_rule function returns proper file operation instructions.
 
         Args:
             mocker: Pytest fixture for mocking
@@ -403,19 +452,29 @@ class TestUtilityFunctions:
         rule_content = "# Test Rule\n\nThis is a test rule."
         result = save_cursor_rule(rule_name, rule_content)
 
-        # Check that the file was saved in the correct location
-        expected_path = tmp_path / "hack" / "drafts" / "cursor_rules" / f"{rule_name}.mdc.md"
-        assert expected_path.exists()
-        assert expected_path.read_text() == rule_content
-        assert f"Cursor rule saved to {expected_path}" in result
+        # Check that the result contains the expected operations
+        assert "operations" in result
+        assert isinstance(result["operations"], list)
+        assert len(result["operations"]) == 2
 
-        # Check that the directory structure was created
-        assert (tmp_path / "hack").exists()
-        assert (tmp_path / "hack" / "drafts").exists()
-        assert (tmp_path / "hack" / "drafts" / "cursor_rules").exists()
+        # Check directory creation operation
+        assert result["operations"][0]["type"] == "create_directory"
+        assert result["operations"][0]["path"] == "hack/drafts/cursor_rules"
+        assert result["operations"][0]["options"]["parents"] is True
+        assert result["operations"][0]["options"]["exist_ok"] is True
+
+        # Check file write operation
+        assert result["operations"][1]["type"] == "write_file"
+        assert result["operations"][1]["path"] == "hack/drafts/cursor_rules/test-rule.mdc.md"
+        assert result["operations"][1]["content"] == rule_content
+        assert result["operations"][1]["options"]["mode"] == "w"
+
+        # Check message
+        assert "message" in result
+        assert "Instructions to save cursor rule" in result["message"]
 
     def test_prep_workspace(self, mocker: "MockerFixture", tmp_path: Path) -> None:
-        """Test that prep_workspace creates the necessary directories.
+        """Test that prep_workspace returns proper instructions without creating directories.
 
         Args:
             mocker: Pytest fixture for mocking
@@ -425,82 +484,115 @@ class TestUtilityFunctions:
         # Mock the current working directory
         mocker.patch("pathlib.Path.cwd", return_value=tmp_path)
 
+        # Mock Path.exists to return False (directory doesn't exist)
+        mock_exists = mocker.patch.object(Path, "exists", return_value=False)
+
         # Call the function
         result = prep_workspace()
 
-        # Check that the directories were created
-        cursor_rules_dir = tmp_path / "hack" / "drafts" / "cursor_rules"
+        # Verify the function checked if the directory exists
+        mock_exists.assert_called_once()
 
-        # Check the results instead of checking if directories were created
-        # The function only returns instructions, it doesn't create directories
-        assert result["directory_path"] == str(cursor_rules_dir)
-        assert result["directory_exists"] is False
+        # Check the results
+        assert result["status"] == "success"
         assert "mkdir -p" in result["mkdir_command"]
-        # The function uses a relative path in the mkdir command, not the absolute path
         assert "./hack/drafts/cursor_rules" in result["mkdir_command"]
+        assert ".cursor/rules" in result["mkdir_command"]
+        assert result["directory_exists"] is False
+        assert result["workspace_prepared"] is False  # Should be False since we're not creating directories
 
-    def test_create_cursor_rule_files(self, mocker: "MockerFixture", tmp_path: Path) -> None:
-        """Test that create_cursor_rule_files creates the specified files.
+        # Verify the instructions contain all necessary steps
+        assert "Create the cursor rules directory structure" in result["message"]
+        assert "Ensure the .cursor/rules directory exists" in result["message"]
+        assert "Check if Makefile exists" in result["message"]
+        assert "Update .dockerignore" in result["message"]
+        assert "Write the following mandatory cursor rule files" in result["message"]
+        assert "Update the client repo's .cursor/mcp.json" in result["message"]
+
+        # Verify no directories were created
+        cursor_rules_dir = tmp_path / "hack" / "drafts" / "cursor_rules"
+        assert not cursor_rules_dir.exists()
+
+        # Test with directory already existing
+        mock_exists.return_value = True
+        result = prep_workspace()
+        assert result["directory_exists"] is True
+        assert result["workspace_prepared"] is False  # Still False since we're not creating directories
+
+    def test_helper_execute_prep_workspace_instructions(self, mocker: "MockerFixture", tmp_path: Path) -> None:
+        """Test that the helper function correctly executes prep_workspace instructions.
 
         Args:
             mocker: Pytest fixture for mocking
             tmp_path: Pytest fixture providing a temporary directory path
 
         """
-        # Mock Path.mkdir and Path.touch to avoid actual file creation
-        mkdir_mock = mocker.patch("pathlib.Path.mkdir")
-        touch_mock = mocker.patch("pathlib.Path.touch")
-        exists_mock = mocker.patch("pathlib.Path.exists", return_value=False)
-        read_text_mock = mocker.patch("pathlib.Path.read_text", return_value="")
+        # Mock the current working directory
+        mocker.patch("pathlib.Path.cwd", return_value=tmp_path)
 
-        # Mock Path constructor to return a path relative to tmp_path
-        orig_path_init = Path.__new__
+        # Get instructions from prep_workspace
+        instructions = prep_workspace()
 
-        def mock_path_init(cls, *args, **kwargs):
-            path_str = str(args[0]) if args else ""
-            if path_str == "hack/drafts/cursor_rules":
-                return orig_path_init(cls, tmp_path / "hack" / "drafts" / "cursor_rules")
-            return orig_path_init(cls, *args, **kwargs)
+        # Verify directories don't exist yet
+        cursor_rules_dir = tmp_path / "hack" / "drafts" / "cursor_rules"
+        cursor_dir = tmp_path / ".cursor" / "rules"
+        assert not cursor_rules_dir.exists()
+        assert not cursor_dir.exists()
 
-        mocker.patch.object(Path, "__new__", mock_path_init)
+        # Execute the instructions
+        result = helper_execute_prep_workspace_instructions(instructions, tmp_path)
 
-        try:
-            # Define some test rules (just names)
-            rule_names = ["test-rule-1", "test-rule-2"]
+        # Verify the execution was successful
+        assert result["status"] == "success"
+        assert len(result["actions_performed"]) == 2  # Two directories should be created
+        assert "Created directory" in result["actions_performed"][0]
+        assert "Created directory" in result["actions_performed"][1]
 
-            # Call the function
-            result = create_cursor_rule_files(rule_names)
+        # Verify directories were created
+        assert cursor_rules_dir.exists()
+        assert cursor_dir.exists()
 
-            # Verify mkdir was called
-            mkdir_mock.assert_called_once_with(parents=True, exist_ok=True)
+    def test_create_cursor_rule_files(self, mocker: "MockerFixture", tmp_path: Path) -> None:
+        """Test that create_cursor_rule_files returns proper file operation instructions.
 
-            # Verify touch was called for each rule
-            assert touch_mock.call_count == len(rule_names)
+        Args:
+            mocker: Pytest fixture for mocking
+            tmp_path: Pytest fixture providing a temporary directory path
 
-            # Check the results dictionary
-            assert result["success"] is True
-            assert len(result["created_files"]) == len(rule_names)
-            for rule_name in rule_names:
-                assert f"{rule_name}.mdc.md" in result["created_files"]
-        finally:
-            # Cleanup step: Remove any test files and directories created during the test
-            cursor_rules_dir = tmp_path / "hack" / "drafts" / "cursor_rules"
-            if cursor_rules_dir.exists():
-                # Remove test files
-                for rule_name in ["test-rule-1", "test-rule-2"]:
-                    file_path = cursor_rules_dir / f"{rule_name}.mdc.md"
-                    if file_path.exists():
-                        file_path.unlink()
+        """
+        # Define some test rules (just names)
+        rule_names = ["test-rule-1", "test-rule-2"]
 
-                # Clean up directories
-                if cursor_rules_dir.exists():
-                    try:
-                        cursor_rules_dir.rmdir()
-                        (tmp_path / "hack" / "drafts").rmdir()
-                        (tmp_path / "hack").rmdir()
-                    except OSError:
-                        # Directory might not be empty or might not exist, which is fine
-                        pass
+        # Call the function
+        result = create_cursor_rule_files(rule_names)
+
+        # Check the results dictionary
+        assert result["success"] is True
+        assert "operations" in result
+        assert isinstance(result["operations"], list)
+
+        # Should have 1 directory creation operation and 2 file write operations
+        assert len(result["operations"]) == 3
+
+        # Check directory creation operation
+        assert result["operations"][0]["type"] == "create_directory"
+        assert result["operations"][0]["path"] == "hack/drafts/cursor_rules"
+        assert result["operations"][0]["options"]["parents"] is True
+        assert result["operations"][0]["options"]["exist_ok"] is True
+
+        # Check file write operations
+        for i, rule_name in enumerate(rule_names):
+            assert result["operations"][i + 1]["type"] == "write_file"
+            assert result["operations"][i + 1]["path"] == f"hack/drafts/cursor_rules/{rule_name}.mdc.md"
+            assert result["operations"][i + 1]["content"] == ""
+            assert result["operations"][i + 1]["options"]["mode"] == "w"
+
+        # Check other result fields
+        assert "created_files" in result
+        assert len(result["created_files"]) == len(rule_names)
+        assert "touch_command" in result
+        assert "next_steps" in result
+        assert "message" in result
 
     def test_ensure_makefile_task(self, mocker: "MockerFixture", tmp_path: Path) -> None:
         """Test that ensure_makefile_task adds or verifies the update-cursor-rules task.
@@ -522,132 +614,181 @@ class TestUtilityFunctions:
         # Test
         result = ensure_makefile_task()
 
-        # Verify
-        assert result["success"] is True
-        assert result["has_makefile"] is True
-        assert result["has_update_task"] is True
-        assert result["action_taken"] == "created"
-        assert "Created a new Makefile" in result["message"]
-        assert makefile_path.exists()
-        assert "update-cursor-rules" in makefile_path.read_text()
+        # Verify the result structure follows the new MCP pattern
+        assert "operations" in result
+        assert "requires_result" in result
+        assert result["requires_result"] is True
+        assert "message" in result
+        assert "update_task_content" in result
+        assert "next_steps" in result
 
-        # Case 2: Makefile exists but lacks the task
-        # Setup: create a makefile without the task
-        makefile_path.write_text("""
-.PHONY: test
-test:
-	pytest
-""")
+        # Verify operations
+        operations = result["operations"]
+        assert len(operations) == 2
+        assert operations[0]["type"] == "check_file_exists"
+        assert operations[0]["path"] == "Makefile"
+        assert operations[1]["type"] == "read_file"
+        assert operations[1]["path"] == "Makefile"
 
-        # Mock open to check what's written
-        mock_open = mocker.patch("builtins.open", mocker.mock_open())
+        # Now test the process_makefile_result function with a non-existent Makefile
+        operation_results = {"Makefile": {"exists": False}}
 
-        # Test
-        result = ensure_makefile_task()
+        process_result = process_makefile_result(
+            operation_results=operation_results, update_task_content=result["update_task_content"]
+        )
 
-        # Verify
-        assert result["success"] is True
-        assert result["has_makefile"] is True
-        assert result["has_update_task"] is False
-        assert result["action_taken"] == "updated"
-        assert "Added the update-cursor-rules task" in result["message"]
+        # Verify process result
+        assert "operations" in process_result
+        assert "success" in process_result
+        assert process_result["success"] is True
+        assert process_result["has_makefile"] is True
+        assert process_result["has_update_task"] is True
+        assert process_result["action_taken"] == "created"
+        assert (
+            "create a new makefile" in process_result["message"].lower()
+            or "create a new Makefile" in process_result["message"]
+        )
+
+        # Case 2: Makefile exists but doesn't have the task
+        # Create a Makefile without the update-cursor-rules task
+        makefile_path.write_text("test: echo test")
+
+        # Test with existing Makefile
+        operation_results = {"Makefile": {"exists": True, "content": "test: echo test"}}
+
+        process_result = process_makefile_result(
+            operation_results=operation_results, update_task_content=result["update_task_content"]
+        )
+
+        # Verify process result
+        assert process_result["success"] is True
+        assert process_result["has_makefile"] is True
+        assert process_result["has_update_task"] is True
+        assert process_result["action_taken"] == "updated"
+        assert "add" in process_result["message"].lower()
 
         # Case 3: Makefile exists and has the task
-        # Setup: create a makefile with the task
-        makefile_content_with_task = """
-.PHONY: test update-cursor-rules
-test:
-	pytest
+        operation_results = {"Makefile": {"exists": True, "content": "test: echo test\nupdate-cursor-rules: cp files"}}
 
-update-cursor-rules:
-	cp hack/drafts/cursor_rules/*.mdc.md .cursor/rules/
-"""
-        makefile_path.write_text(makefile_content_with_task)
+        process_result = process_makefile_result(
+            operation_results=operation_results, update_task_content=result["update_task_content"]
+        )
 
-        # Test
-        result = ensure_makefile_task()
-
-        # Verify
-        assert result["success"] is True
-        assert result["has_makefile"] is True
-        assert result["has_update_task"] is True
-        assert result["action_taken"] == "none"
-        assert "already contains" in result["message"]
+        # Verify process result
+        assert process_result["success"] is True
+        assert process_result["has_makefile"] is True
+        assert process_result["has_update_task"] is True
+        assert process_result["action_taken"] == "none"
+        assert "already contains" in process_result["message"].lower()
 
     def test_run_update_cursor_rules(self, mocker: "MockerFixture") -> None:
-        """Test that run_update_cursor_rules executes the make command.
+        """Test that run_update_cursor_rules returns operations to execute the make command.
 
         Args:
             mocker: Pytest fixture for mocking
 
         """
-        # Mock Path.cwd to return a predictable path
-        cwd_mock = mocker.patch("pathlib.Path.cwd")
-        test_path = Path("/test/path")
-        cwd_mock.return_value = test_path
-
-        # Mock exists and read_text to simulate Makefile existing with update-cursor-rules
-        mocker.patch("pathlib.Path.exists", return_value=True)
-        mocker.patch("pathlib.Path.read_text", return_value="update-cursor-rules: cp files")
-        mocker.patch("pathlib.Path.glob", return_value=[])
-
-        # Mock the subprocess.run function
-        mock_run = mocker.patch(
-            "subprocess.run", return_value=mocker.MagicMock(returncode=0, stdout="Deployment successful", stderr="")
-        )
-
         # Call the function
         result = run_update_cursor_rules()
 
-        # Check that subprocess.run was called with the correct command and cwd parameter
-        mock_run.assert_called_once_with(
-            ["make", "update-cursor-rules"], cwd=test_path, check=True, capture_output=True, text=True
-        )
+        # Verify the result structure follows the new MCP pattern
+        assert "operations" in result
+        assert "requires_result" in result
+        assert result["requires_result"] is True
+        assert "message" in result
 
-        # Check that the result indicates success
-        assert result["success"] is True
-        assert "Successfully deployed cursor rules" in result["message"]
-
-        # Test error handling
-        mock_run.side_effect = subprocess.CalledProcessError(
-            returncode=1, cmd=["make", "update-cursor-rules"], output="", stderr="Command failed"
-        )
-
-        # Call the function again
-        result = run_update_cursor_rules()
-
-        # Check that the result indicates failure
-        assert result["success"] is False
-        assert "Failed to run the update-cursor-rules task" in result["message"]
+        # Verify operations
+        operations = result["operations"]
+        assert len(operations) == 2
+        assert operations[0]["type"] == "check_file_exists"
+        assert operations[0]["path"] == "Makefile"
+        assert operations[1]["type"] == "read_file"
+        assert operations[1]["path"] == "Makefile"
 
     def test_update_dockerignore(self, mocker: "MockerFixture", tmp_path: Path) -> None:
         """Test update_dockerignore function.
 
-        This test verifies that the update_dockerignore function correctly updates
-        the .dockerignore file by adding the cursor rules drafts directory.
+        This test verifies that the update_dockerignore function correctly returns
+        operations to update the .dockerignore file.
 
         Args:
             mocker: MockerFixture for patching
             tmp_path: Pytest fixture providing a temporary directory path
 
         """
-        # Create a mock .dockerignore file in the tmp_path
-        dockerignore_path = tmp_path / ".dockerignore"
-        dockerignore_path.write_text("node_modules\n.env\n")
-
-        # Patch Path.cwd() to return our tmp_path instead of the real cwd
-        mocker.patch("pathlib.Path.cwd", return_value=tmp_path)
-
-        # Execute the function
+        # Call the function
         result = update_dockerignore()
 
-        # Assert
-        assert result["success"] is True
-        assert result["action_taken"] == "updated"
+        # Verify the result structure follows the new MCP pattern
+        assert "operations" in result
+        assert "requires_result" in result
+        assert result["requires_result"] is True
+        assert "message" in result
+        assert "entry" in result
 
-        # Verify the file was updated correctly
-        updated_content = dockerignore_path.read_text()
-        assert updated_content == "node_modules\n.env\nhack/drafts/cursor_rules\n"
+        # Verify operations
+        operations = result["operations"]
+        assert len(operations) == 2
+        assert operations[0]["type"] == "check_file_exists"
+        assert operations[0]["path"] == ".dockerignore"
+        assert operations[1]["type"] == "read_file"
+        assert operations[1]["path"] == ".dockerignore"
+
+        # Now test the process_dockerignore_result function with an existing .dockerignore
+        operation_results = {".dockerignore": {"exists": True, "content": "node_modules\n.env\n"}}
+
+        process_result = process_dockerignore_result(
+            operation_results=operation_results, entry="hack/drafts/cursor_rules"
+        )
+
+        # Verify process result
+        assert "operations" in process_result
+        assert "success" in process_result
+        assert process_result["success"] is True
+        assert process_result["has_dockerignore"] is True
+        assert process_result["entry_exists"] is False
+        assert process_result["action_taken"] == "updated"
+
+        # Verify the operations include writing the updated file
+        operations = process_result["operations"]
+        assert len(operations) == 1
+        assert operations[0]["type"] == "write_file"
+        assert operations[0]["path"] == ".dockerignore"
+        assert "node_modules\n.env\nhack/drafts/cursor_rules\n" in operations[0]["content"]
+
+        # Test with a .dockerignore that already has the entry
+        operation_results = {
+            ".dockerignore": {"exists": True, "content": "node_modules\n.env\nhack/drafts/cursor_rules\n"}
+        }
+
+        process_result = process_dockerignore_result(
+            operation_results=operation_results, entry="hack/drafts/cursor_rules"
+        )
+
+        # Verify process result
+        assert "operations" in process_result
+        assert "success" in process_result
+        assert process_result["success"] is True
+        assert process_result["has_dockerignore"] is True
+        assert process_result["entry_exists"] is True
+        assert process_result["action_taken"] == "none"
+        assert "already contains" in process_result["message"]
+
+        # Test with no .dockerignore
+        operation_results = {".dockerignore": {"exists": False}}
+
+        process_result = process_dockerignore_result(
+            operation_results=operation_results, entry="hack/drafts/cursor_rules"
+        )
+
+        # Verify process result
+        assert "operations" in process_result
+        assert "success" in process_result
+        assert process_result["success"] is True
+        assert process_result["has_dockerignore"] is True
+        assert process_result["entry_exists"] is True
+        assert process_result["action_taken"] == "created"
+        assert "create a new" in process_result["message"].lower()
 
     def test_get_static_cursor_rule(self, mocker: "MockerFixture", sample_cursor_rule: str) -> None:
         """Test get_static_cursor_rule function."""
@@ -668,8 +809,11 @@ update-cursor-rules:
 
         # Test not found case
         mocker.patch("codegen_lab.prompt_library.read_cursor_rule", return_value=None)
-        with pytest.raises(FileNotFoundError):
-            get_static_cursor_rule("nonexistent_rule")
+        result = get_static_cursor_rule("nonexistent_rule")
+        assert result["isError"] is True
+        assert isinstance(result["content"], list)
+        assert result["content"][0]["type"] == "text"
+        assert "Error: Static cursor rule 'nonexistent_rule' not found" in result["content"][0]["text"]
 
     def test_get_static_cursor_rules(self, mocker: "MockerFixture", sample_cursor_rule: str) -> None:
         """Test get_static_cursor_rules function."""
@@ -688,18 +832,20 @@ update-cursor-rules:
         results = get_static_cursor_rules(rule_names)
 
         # Assert
-        assert len(results) == 3
+        assert "rules" in results
+        assert len(results["rules"]) == 3
 
         # Check first two rules have content
-        assert results[0]["rule_name"] == "rule1.md"
-        assert results[0]["content"] == sample_cursor_rule
-        assert results[1]["rule_name"] == "rule2.md"
-        assert results[1]["content"] == sample_cursor_rule
+        assert results["rules"][0]["rule_name"] == "rule1.md"
+        assert results["rules"][0]["content"] == sample_cursor_rule
+        assert results["rules"][1]["rule_name"] == "rule2.md"
+        assert results["rules"][1]["content"] == sample_cursor_rule
 
         # Check nonexistent rule has error information
-        assert results[2]["rule_name"] == "nonexistent_rule.md"
-        assert results[2]["content"] is None
-        assert "not found" in results[2]["error"]
+        assert results["rules"][2]["isError"] is True
+        assert isinstance(results["rules"][2]["content"], list)
+        assert results["rules"][2]["content"][0]["type"] == "text"
+        assert "Error: Static cursor rule 'nonexistent_rule' not found" in results["rules"][2]["content"][0]["text"]
 
 
 class TestWorkflowFunctions:
@@ -1538,3 +1684,139 @@ class TestPlanAndExecuteWorkflow:
                 assert "validation error" in validation_error_text
                 assert "string should have at least" in validation_error_text
                 assert "string_too_short" in validation_error_text
+
+    def test_ensure_makefile_task_remote_compatibility(self, mocker: "MockerFixture", tmp_path: Path) -> None:
+        """Test ensure_makefile_task's remote compatibility features.
+
+        This test verifies that ensure_makefile_task properly handles remote execution by:
+        1. Never performing direct file operations
+        2. Returning properly structured operation instructions
+        3. Handling error cases appropriately
+        4. Supporting the two-phase operation pattern
+
+        Args:
+            mocker: Pytest fixture for mocking
+            tmp_path: Pytest fixture providing a temporary directory path
+
+        """
+        # Mock Path.cwd to return our temporary directory
+        mocker.patch("pathlib.Path.cwd", return_value=tmp_path)
+
+        # Test 1: Verify operation structure
+        result = ensure_makefile_task()
+
+        # Check that the result follows the FastMCP operation structure
+        assert isinstance(result, dict)
+        assert "operations" in result
+        assert isinstance(result["operations"], list)
+        assert "requires_result" in result
+        assert result["requires_result"] is True
+        assert "message" in result
+        assert isinstance(result["message"], str)
+
+        # Verify each operation has required fields
+        for op in result["operations"]:
+            assert "type" in op
+            assert "path" in op
+            assert isinstance(op["type"], str)
+            assert isinstance(op["path"], str)
+
+        # Test 2: Verify no direct file operations are performed
+        # The function should not create any files in the filesystem
+        makefile_path = tmp_path / "Makefile"
+        assert not makefile_path.exists(), "Function should not create files directly"
+
+        # Test 3: Error handling
+        # Simulate an error in the operation results
+        error_results = {"Makefile": {"error": "Permission denied", "exists": False}}
+
+        process_result = process_makefile_result(
+            operation_results=error_results, update_task_content=result["update_task_content"]
+        )
+
+        assert "error" in process_result
+        assert not process_result["success"]
+        assert "permission denied" in process_result["message"].lower()
+
+        # Test 4: Verify operation content
+        # Check that file operations are properly structured
+        check_op = next(op for op in result["operations"] if op["type"] == "check_file_exists")
+        assert check_op["path"] == "Makefile"
+
+        read_op = next(op for op in result["operations"] if op["type"] == "read_file")
+        assert read_op["path"] == "Makefile"
+
+        # Test 5: Process result handling
+        # Test with various operation results
+        success_results = {"Makefile": {"exists": True, "content": "existing-content"}}
+
+        process_result = process_makefile_result(
+            operation_results=success_results, update_task_content=result["update_task_content"]
+        )
+
+        assert "operations" in process_result
+        assert isinstance(process_result["operations"], list)
+        assert process_result["success"] is True
+
+        # Verify write operation structure
+        write_op = next(op for op in process_result["operations"] if op["type"] == "write_file")
+        assert write_op["path"] == "Makefile"
+        assert "content" in write_op
+        assert "options" in write_op
+        assert write_op["options"].get("mode") == "w"
+
+    def test_ensure_makefile_task_edge_cases(self, mocker: "MockerFixture") -> None:
+        """Test ensure_makefile_task's handling of edge cases.
+
+        This test verifies that ensure_makefile_task properly handles various edge cases:
+        1. Empty operation results
+        2. Malformed operation results
+        3. Missing required fields
+        4. Invalid file paths
+
+        Args:
+            mocker: Pytest fixture for mocking
+
+        """
+        result = ensure_makefile_task()
+
+        # Test 1: Empty operation results
+        process_result = process_makefile_result(
+            operation_results={}, update_task_content=result["update_task_content"]
+        )
+        assert not process_result["success"]
+        assert "error" in process_result
+        assert "missing operation results" in process_result["message"].lower()
+
+        # Test 2: Malformed operation results
+        malformed_results = {
+            "Makefile": "invalid"  # Should be a dict
+        }
+        process_result = process_makefile_result(
+            operation_results=malformed_results,  # type: ignore
+            update_task_content=result["update_task_content"],
+        )
+        assert not process_result["success"]
+        assert "error" in process_result
+        assert "invalid operation results" in process_result["message"].lower()
+
+        # Test 3: Missing required fields
+        incomplete_results = {
+            "Makefile": {
+                # Missing 'exists' field
+                "content": "test content"
+            }
+        }
+        process_result = process_makefile_result(
+            operation_results=incomplete_results,  # type: ignore
+            update_task_content=result["update_task_content"],
+        )
+        assert not process_result["success"]
+        assert "error" in process_result
+        assert "missing required field" in process_result["message"].lower()
+
+        # Test 4: Invalid file paths
+        invalid_path_result = ensure_makefile_task(makefile_path="invalid/*/path")
+        assert not invalid_path_result["success"]
+        assert "error" in invalid_path_result
+        assert "invalid file path" in invalid_path_result["message"].lower()
