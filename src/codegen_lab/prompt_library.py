@@ -611,10 +611,10 @@ def instruct_repo_analysis() -> dict[str, Any]:
 
 
 @mcp.tool(
-    name="instruct_cursor_rules_generation",
+    name="instruct_custom_repo_rules_generation",
     description="Run a cursor rules generation process based on repository analysis",
 )
-def instruct_cursor_rules_generation(
+def instruct_custom_repo_rules_generation(
     repo_summary: str = Field(
         description="A summary description of the repository, including technologies, frameworks, and key features",
         examples=[

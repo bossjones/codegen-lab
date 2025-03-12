@@ -351,11 +351,11 @@ class TestPrompts:
 
 
 class TestInstructCursorRulesGeneration:
-    """Tests for the instruct_cursor_rules_generation function."""
+    """Tests for the instruct_custom_repo_rules_generation function."""
 
     @pytest.mark.anyio
-    async def test_instruct_cursor_rules_generation(self, mocker: "MockerFixture") -> None:
-        """Test that the instruct_cursor_rules_generation function returns the expected structure.
+    async def test_instruct_custom_repo_rules_generation(self, mocker: "MockerFixture") -> None:
+        """Test that the instruct_custom_repo_rules_generation function returns the expected structure.
 
         This test verifies that the function returns a properly structured dictionary
         with instructions for cursor rules generation.
@@ -375,7 +375,7 @@ class TestInstructCursorRulesGeneration:
         async with client_session(mcp._mcp_server) as client:
             # Call the function with a sample repository summary
             repo_summary = "A Python web application using FastAPI, SQLAlchemy, and React for the frontend. Includes authentication, API endpoints, and database models."
-            result = await client.call_tool("instruct_cursor_rules_generation", {"repo_summary": repo_summary})
+            result = await client.call_tool("instruct_custom_repo_rules_generation", {"repo_summary": repo_summary})
 
             # Verify the result structure
             assert result is not None
