@@ -570,9 +570,12 @@ def get_static_cursor_rule(rule_name: str) -> dict[str, str | bool | list[dict[s
         rule_name: The name of the cursor rule to retrieve (without .md extension)
 
     Returns:
-        dict[str, str | bool | list[dict[str, str]]]: A dictionary containing either:
+        dict[str, Union[str, bool, list[dict[str, str]]]]: A dictionary containing either:
             - On success: {"rule_name": str, "content": str}
             - On error: {"isError": bool, "content": list[dict[str, str]]}
+
+    Raises:
+        No exceptions are raised; errors are returned in the result object.
 
     """
     # Add .md extension if not already present
