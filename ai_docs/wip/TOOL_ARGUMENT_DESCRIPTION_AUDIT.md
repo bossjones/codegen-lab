@@ -100,7 +100,7 @@ def get_static_cursor_rules(rule_names: list[str]) -> dict[str, Any]:
 The following tools should be audited:
 
 - [x] Line 558-562: `get_static_cursor_rule`
-- [ ] Line 591-595: `get_static_cursor_rules`
+- [x] Line 591-595: `get_static_cursor_rules`
 - [ ] Line 490: `list_cursor_rules`
 - [ ] Line 204: `read_cursor_rule`
 - [ ] Line 321: `generate_cursor_rule`
@@ -229,4 +229,103 @@ def get_static_cursor_rule(
         }
 
     return {"rule_name": full_rule_name, "content": content}
+```
+
+### get_static_cursor_rules (Lines 595-622)
+
+**Audit Status**: Completed ✅
+
+**Findings**:
+
+1. Basic Tool Configuration:
+   - ✅ Has descriptive name via `name` parameter
+   - ✅ Has comprehensive description in the decorator
+   - ⚠️ Return type annotation is vague using `Any` and not properly documenting return structure
+   - ✅ Has detailed docstring explaining purpose and behavior
+
+2. Function Arguments:
+   - ✅ `rule_names` parameter has type annotation (list[str])
+   - ✅ Has Field() with description for `rule_names`
+   - ✅ Has examples provided for the `rule_names` parameter
+   - ✅ Has appropriate validation (min_items=1)
+   - ✅ No Context parameter needed for this function
+
+3. Docstring Quality:
+   - ✅ Follows PEP 257 convention
+   - ✅ Includes summary line
+   - ✅ Includes detailed description
+   - ✅ Includes Args section documenting the parameter
+   - ⚠️ Returns section lacks specific details about structure
+   - ❌ No Raises section (though no exceptions are explicitly raised)
+   - ❌ No Examples section (optional)
+
+4. Error Handling:
+   - ⚠️ Indirectly handles errors through `get_static_cursor_rule`
+   - ❌ No explicit validation for an empty `rule_names` list
+   - ❌ No explicit error handling in this function itself
+
+5. Code Style and Best Practices:
+   - ✅ Function name follows snake_case convention
+   - ✅ Function is focused on single responsibility
+   - ✅ Function is not overly complex
+   - ✅ Reuses existing function (`get_static_cursor_rule`) instead of duplicating code
+   - ✅ No logging needed for this function
+
+**Recommended Improvements**:
+- Specify return type more precisely instead of using `Any`
+- Enhance Returns section to detail the exact structure of returned data
+- Consider adding explicit error handling for edge cases
+- Add a Raises section to document that no exceptions are raised
+- Consider adding an Examples section to the docstring
+
+**Code Sample with Suggested Improvements**:
+```python
+@mcp.tool(
+    name="get_static_cursor_rules",
+    description="Get multiple static cursor rule files to be written to the caller's .cursor/rules directory",
+)
+def get_static_cursor_rules(
+    rule_names: list[str] = Field(
+        description="List of cursor rule names to retrieve (with or without .md extension)",
+        examples=[["python-best-practices", "react-patterns"], ["error-handling"]],
+        min_items=1,
+    ),
+) -> dict[str, list[dict[str, Union[str, bool, list[dict[str, str]]]]]]:
+    """Get multiple static cursor rule files by name.
+
+    This tool returns the content of specific cursor rule files so they can be
+    written to the calling repository's .cursor/rules directory.
+
+    Args:
+        rule_names: List of cursor rule names to retrieve (with or without .md extension)
+
+    Returns:
+        dict[str, list[dict[str, Union[str, bool, list[dict[str, str]]]]]]: A dictionary containing:
+            - "rules": A list of rule data objects, where each object is either:
+                - On success: {"rule_name": str, "content": str}
+                - On error: {"isError": bool, "content": list[dict[str, str]]}
+
+    Raises:
+        No exceptions are raised; errors are returned in the result object.
+
+    Examples:
+        >>> result = get_static_cursor_rules(["python-best-practices", "react-patterns"])
+        >>> print(len(result["rules"]))
+        2
+        >>> print(result["rules"][0]["rule_name"])
+        'python-best-practices.md'
+    """
+    # Validation happens through Field() with min_items=1
+
+    results = []
+
+    for rule_name in rule_names:
+        # Get the rule data using get_static_cursor_rule
+        rule_data = get_static_cursor_rule(rule_name)
+
+        # Add the result to our list
+        results.append(rule_data)
+
+    # Return a single JSON object with the results array
+    return {"rules": results}
 ```
