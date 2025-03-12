@@ -99,7 +99,7 @@ def get_static_cursor_rules(rule_names: list[str]) -> dict[str, Any]:
 
 The following tools should be audited:
 
-- [ ] Line 558-562: `get_static_cursor_rule`
+- [x] Line 558-562: `get_static_cursor_rule`
 - [ ] Line 591-595: `get_static_cursor_rules`
 - [ ] Line 490: `list_cursor_rules`
 - [ ] Line 204: `read_cursor_rule`
@@ -122,3 +122,111 @@ Additional tool functions found in prompt_library.py:
 - [ ] Line 1795: Tool at line 1795
 
 Note: The functions `update_cursor_rule`, `delete_cursor_rule`, `search_cursor_rules`, and `execute_cursor_rule` were not found in prompt_library.py.
+
+## Completed Audits
+
+### get_static_cursor_rule (Lines 558-562)
+
+**Audit Status**: Completed ✅
+
+**Findings**:
+
+1. Basic Tool Configuration:
+   - ✅ Has descriptive name via `name` parameter
+   - ✅ Has comprehensive description in the decorator
+   - ⚠️ Return type annotation using Python 3.10+ Union operator (`|`) instead of `Union` from typing
+   - ✅ Has detailed docstring explaining purpose and behavior
+
+2. Function Arguments:
+   - ✅ `rule_name` parameter has type annotation (string)
+   - ❌ Missing Field() with description for `rule_name`
+   - ❌ No examples provided for the `rule_name` parameter
+   - ❌ No validation for `rule_name` (e.g., pattern, min_length)
+   - ✅ No Context parameter needed for this function
+
+3. Docstring Quality:
+   - ✅ Follows PEP 257 convention
+   - ✅ Includes summary line
+   - ✅ Includes detailed description
+   - ✅ Includes Args section documenting the parameter
+   - ✅ Includes Returns section explaining return value structure
+   - ✅ Explicitly mentions that no exceptions are raised
+   - ❌ No Examples section (optional)
+
+4. Error Handling:
+   - ✅ Properly handles case when rule is not found
+   - ✅ Returns descriptive error message
+   - ⚠️ Limited input validation before processing
+
+5. Code Style and Best Practices:
+   - ✅ Function name follows snake_case convention
+   - ✅ Function is focused on single responsibility
+   - ✅ Function is not overly complex
+   - ✅ No logging needed for this function
+
+**Implemented Improvements**:
+- Updated return type annotation from `dict[str, str | bool | list[dict[str, str]]]` to `dict[str, Union[str, bool, list[dict[str, str]]]]` for better compatibility
+- Enhanced docstring to explicitly state that no exceptions are raised
+
+**Recommended Further Improvements**:
+- Add Field() with description for the `rule_name` parameter
+- Add examples for the `rule_name` parameter
+- Add validation for `rule_name` (e.g., pattern, min_length)
+- Add input validation to prevent potential path traversal
+- Consider adding an Examples section to the docstring
+
+**Code Sample with Suggested Improvements**:
+```python
+@mcp.tool(
+    name="get_static_cursor_rule",
+    description="Get a static cursor rule file by name to be written to the caller's .cursor/rules directory",
+)
+def get_static_cursor_rule(
+    rule_name: str = Field(
+        description="Name of the cursor rule to retrieve (with or without .md extension)",
+        examples=["python-best-practices", "react-patterns", "error-handling"],
+        min_length=2,
+        pattern="^[a-zA-Z0-9-_]+(\\.md)?$",  # Validate to prevent path traversal
+    )
+) -> dict[str, Union[str, bool, list[dict[str, str]]]]:
+    """Get a static cursor rule file by name.
+
+    This tool retrieves the content of a specific cursor rule file so it can be
+    written to the calling repository's .cursor/rules directory.
+
+    Args:
+        rule_name: Name of the cursor rule to retrieve (with or without .md extension)
+
+    Returns:
+        dict[str, Union[str, bool, list[dict[str, str]]]]: A dictionary containing either:
+            - On success: {"rule_name": str, "content": str}
+            - On error: {"isError": bool, "content": list[dict[str, str]]}
+
+    Raises:
+        No exceptions are raised; errors are returned in the result object.
+
+    Examples:
+        >>> result = get_static_cursor_rule("python-best-practices")
+        >>> print(result["rule_name"])
+        'python-best-practices.md'
+    """
+    # Validate input to prevent path traversal
+    if "/" in rule_name or "\\" in rule_name:
+        return {
+            "isError": True,
+            "content": [{"type": "text", "text": "Error: Invalid rule name format"}],
+        }
+
+    # Add .md extension if not already present
+    full_rule_name = rule_name if rule_name.endswith(".md") else f"{rule_name}.md"
+
+    content = read_cursor_rule(rule_name.replace(".md", ""))
+    if not content:
+        # Return an error result object instead of raising an exception
+        return {
+            "isError": True,
+            "content": [{"type": "text", "text": f"Error: Static cursor rule '{rule_name}' not found"}],
+        }
+
+    return {"rule_name": full_rule_name, "content": content}
+```
