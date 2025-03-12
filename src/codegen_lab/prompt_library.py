@@ -596,19 +596,42 @@ def get_static_cursor_rule(rule_name: str) -> dict[str, str | bool | list[dict[s
     name="get_static_cursor_rules",
     description="Get multiple static cursor rule files to be written to the caller's .cursor/rules directory",
 )
-def get_static_cursor_rules(rule_names: list[str]) -> dict[str, Any]:
+def get_static_cursor_rules(
+    rule_names: list[str] = Field(
+        description="List of cursor rule names to retrieve (with or without .md extension)",
+        examples=[["python-best-practices", "react-patterns"], ["error-handling"]],
+        min_items=1,
+    ),
+) -> dict[str, list[dict[str, str | bool | list[dict[str, str]]]]]:
     """Get multiple static cursor rule files by name.
 
     This tool returns the content of specific cursor rule files so they can be
     written to the calling repository's .cursor/rules directory.
 
     Args:
-        rule_names: List of cursor rule names to retrieve (without .md extension)
+        rule_names: List of cursor rule names to retrieve (with or without .md extension)
 
     Returns:
-        dict[str, Any]: A dictionary containing a list of rule data objects
+        dict[str, list[dict[str, Union[str, bool, list[dict[str, str]]]]]]: A dictionary containing:
+            - "rules": A list of rule data objects, each with either:
+                - On success: {"rule_name": str, "content": str}
+                - On error: {"isError": bool, "content": list[dict[str, str]]}
+
+    Raises:
+        No exceptions are raised; errors are returned in the result objects.
+
+    Examples:
+        >>> result = get_static_cursor_rules(["python-best-practices", "react-patterns"])
+        >>> print(len(result["rules"]))
+        2
 
     """
+    # Validate input
+    if not rule_names:
+        return {
+            "rules": [{"isError": True, "content": [{"type": "text", "text": "Error: Empty rule_names list provided"}]}]
+        }
+
     results = []
 
     for rule_name in rule_names:
