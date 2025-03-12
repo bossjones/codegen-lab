@@ -1245,7 +1245,13 @@ Next steps:
     name="ensure_makefile_task",
     description="Ensure the Makefile has the update-cursor-rules task",
 )
-def ensure_makefile_task(makefile_path: str = "Makefile") -> dict[str, Any]:
+def ensure_makefile_task(
+    makefile_path: str = Field(
+        description="Path to the Makefile file, relative to the project root",
+        examples=["Makefile", "build/Makefile"],
+        default="Makefile",
+    ),
+) -> dict[str, Any]:
     """Ensure the Makefile has the update-cursor-rules task.
 
     This function checks if the Makefile exists and contains the update-cursor-rules task.
@@ -1259,8 +1265,15 @@ def ensure_makefile_task(makefile_path: str = "Makefile") -> dict[str, Any]:
         dict[str, Any]: A dictionary containing operations to perform and additional information
 
     """
+    # Handle the case where makefile_path is a Field object
+    # This is a common pattern when using FastMCP with Field decorators
+    if hasattr(makefile_path, "default"):
+        path_str = makefile_path.default
+    else:
+        path_str = makefile_path
+
     # Check if the makefile path is valid
-    if "*" in str(makefile_path) or "?" in str(makefile_path):
+    if "*" in str(path_str) or "?" in str(path_str):
         return {
             "success": False,
             "error": "Invalid file path",
@@ -1283,8 +1296,8 @@ update-cursor-rules:  ## Update cursor rules from prompts/drafts/cursor_rules
 
     # Define the operations to check if Makefile exists and contains the task
     operations = [
-        {"type": "check_file_exists", "path": makefile_path},
-        {"type": "read_file", "path": makefile_path, "options": {"encoding": "utf-8"}},
+        {"type": "check_file_exists", "path": path_str},
+        {"type": "read_file", "path": path_str, "options": {"encoding": "utf-8"}},
     ]
 
     # Return operations with instructions for the client
