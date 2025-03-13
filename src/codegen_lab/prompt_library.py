@@ -1006,28 +1006,47 @@ def save_cursor_rule(
         ],
         min_length=10,
     ),
+    overwrite: bool = Field(
+        description="Whether to overwrite the file if it already exists",
+        default=True,
+    ),
 ) -> dict[str, list[dict[str, str | dict[str, bool | str]]] | str]:
     r"""Save a cursor rule to the cursor rules directory.
 
     This tool writes a cursor rule to the designated draft directory for cursor rules in the project.
-    It performs basic validation of the rule name and content before creating the necessary directory
+    It performs comprehensive validation of the rule name and content before creating the necessary directory
     structure and writing the file. The function returns a dictionary with file operation
     instructions for the client to execute.
+
+    The cursor rule format should follow this structure:
+    1. Optional YAML frontmatter with metadata
+    2. A markdown title and introduction
+    3. A <rule>...</rule> block containing:
+       - name: The rule identifier (should match the filename)
+       - description: Brief explanation of the rule
+       - filters: Conditions for when the rule applies
+       - actions: Guidance provided when the rule matches
+       - examples: Sample inputs and outputs
+       - metadata: Priority, version, and tags
 
     Args:
         rule_name: The name of the cursor rule file (without extension).
                    Must be lowercase with hyphens (no spaces) and at least 3 characters.
         rule_content: The complete content of the cursor rule in mdc.md format.
                       Should contain valid markdown and be at least 10 characters long.
+        overwrite: Whether to overwrite the file if it already exists.
+                   Defaults to True.
 
     Returns:
         dict[str, list[dict[str, str | dict[str, bool | str]]] | str]: Dictionary containing:
             - On success: {
                 "operations": [
                     {"type": "create_directory", "path": str, "options": {"parents": bool, "exist_ok": bool}},
-                    {"type": "write_file", "path": str, "content": str, "options": {"mode": str}}
+                    {"type": "write_file", "path": str, "content": str, "options": {"mode": str, "encoding": str}}
                 ],
-                "message": str
+                "message": str,
+                "rule_structure": dict,
+                "validation_results": dict
               }
             - On error: {
                 "isError": True,
@@ -1052,29 +1071,127 @@ def save_cursor_rule(
     if not rule_content:
         return {"isError": True, "content": [{"type": "text", "text": "Error: Rule content cannot be empty"}]}
 
-    # # Check if content appears to be valid markdown
-    # if not rule_content.startswith("#"):
-    #     return {
-    #         "isError": True,
-    #         "content": [{"type": "text", "text": "Error: Rule content should start with a markdown heading (#)"}],
-    #     }
+    # Initialize validation results
+    validation_results = {
+        "basic_structure": True,
+        "rule_name_match": False,
+        "has_filters": False,
+        "has_actions": False,
+        "has_examples": False,
+        "has_metadata": False,
+        "warnings": [],
+        "errors": [],
+    }
+
+    # Basic validations
+    basic_validations = [
+        ("<rule>" not in rule_content, "Error: Rule content must include a <rule>...</rule> block"),
+        ("</rule>" not in rule_content, "Error: Rule content has an incomplete <rule> block"),
+    ]
+
+    for condition, error_message in basic_validations:
+        if condition:
+            validation_results["basic_structure"] = False
+            validation_results["errors"].append(error_message)
+            return {"isError": True, "content": [{"type": "text", "text": error_message}]}
+
+    # Extract rule block for deeper validation
+    try:
+        rule_block_start = rule_content.find("<rule>")
+        rule_block_end = rule_content.find("</rule>") + len("</rule>")
+        rule_block = rule_content[rule_block_start:rule_block_end]
+
+        # Check rule name in rule block
+        import re
+
+        rule_name_pattern = r"name:\s*([a-z0-9-]+)"
+        rule_name_match = re.search(rule_name_pattern, rule_block)
+
+        if rule_name_match:
+            rule_name_in_block = rule_name_match.group(1)
+            validation_results["rule_name_match"] = rule_name_in_block == rule_name
+            if not validation_results["rule_name_match"]:
+                validation_results["warnings"].append(
+                    f"Warning: Rule name in file ({rule_name}) doesn't match name in rule block ({rule_name_in_block})"
+                )
+        else:
+            validation_results["warnings"].append("Warning: Could not find rule name in rule block")
+
+        # Check for required rule components
+        validation_results["has_filters"] = "filters:" in rule_block
+        validation_results["has_actions"] = "actions:" in rule_block
+        validation_results["has_examples"] = "examples:" in rule_block
+        validation_results["has_metadata"] = "metadata:" in rule_block
+
+        # Add warnings for missing components
+        if not validation_results["has_filters"]:
+            validation_results["warnings"].append("Warning: Rule is missing filters section")
+        if not validation_results["has_actions"]:
+            validation_results["warnings"].append("Warning: Rule is missing actions section")
+    except Exception as e:
+        validation_results["warnings"].append(f"Warning: Could not fully validate rule structure: {e!s}")
 
     try:
         # Define the path for the cursor rules directory
-        cursor_rules_dir_path = "./hack/drafts/cursor_rules"
+        cursor_rules_dir_path = "hack/drafts/cursor_rules"
         rule_file_path = f"{cursor_rules_dir_path}/{rule_name}.mdc.md"
+
+        # File existence operations
+        check_file_existence = {"type": "custom_operation", "operation": "check_file_exists", "path": rule_file_path}
+
+        # Determine write operation mode based on file existence and overwrite flag
+        write_mode = "w"  # Default mode
+
+        # If we don't want to overwrite and the file exists, return an error
+        file_existence_check = {
+            "type": "conditional_operation",
+            "condition": {
+                "operation": "file_exists",
+                "path": rule_file_path,
+                "and": {"operation": "not", "value": overwrite},
+            },
+            "if_true": {
+                "type": "error",
+                "message": f"Error: File {rule_file_path} already exists and overwrite is set to False",
+            },
+        }
 
         # Return operations for the client to perform
         return {
             "operations": [
+                # Check file existence first (conditional operation)
+                file_existence_check,
+                # Create directory
                 {
                     "type": "create_directory",
                     "path": cursor_rules_dir_path,
                     "options": {"parents": True, "exist_ok": True},
                 },
-                {"type": "write_file", "path": rule_file_path, "content": rule_content, "options": {"mode": "w"}},
+                # Write file with encoding specified
+                {
+                    "type": "write_file",
+                    "path": rule_file_path,
+                    "content": rule_content,
+                    "options": {"mode": write_mode, "encoding": "utf-8"},
+                },
             ],
             "message": f"Instructions to save cursor rule to {rule_file_path}",
+            "rule_structure": {
+                "filename": f"{rule_name}.mdc.md",
+                "path": rule_file_path,
+                "format": "Markdown with embedded rule specification",
+                "components": {
+                    "frontmatter": "Optional YAML metadata at the top",
+                    "introduction": "Markdown heading and description",
+                    "rule_block": "<rule>...</rule> block with the main rule definition",
+                },
+            },
+            "validation_results": validation_results,
+            "next_steps": [
+                "The rule has been saved to the drafts directory",
+                "Run `make update-cursor-rules` to deploy it to the .cursor/rules directory",
+                "Verify the rule appears in your Cursor editor",
+            ],
         }
     except Exception as e:
         # Handle any unexpected errors
