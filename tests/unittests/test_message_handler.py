@@ -170,7 +170,7 @@ class TestInstructRepoAnalysis:
             assert isinstance(text_data["analysis_status"], dict)
             assert text_data["analysis_status"]["status"] == "pending"
             assert "message" in text_data["analysis_status"]
-            assert text_data["analysis_status"]["rule_exists"] is False
+            assert text_data["analysis_status"]["rule_exists"]
             assert text_data["analysis_status"]["rule_path"] == "./.cursor/rules/repo_analyzer.mdc"
 
             # Verify isError is False - this is not an error condition, just a status

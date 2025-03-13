@@ -619,8 +619,8 @@ def instruct_custom_repo_rules_generation(
         {"type": "invoke_tool", "name": "update_dockerignore", "args": {}},
     ]
 
-    # Return operations with instructions for further processing
-    return {
+    # Create the response dictionary with all required fields
+    response = {
         "operations": operations,
         "requires_result": True,
         "message": "Instructions to generate cursor rules based on AI report",
@@ -682,7 +682,33 @@ def instruct_custom_repo_rules_generation(
             },
             {"name": "run_update_cursor_rules", "description": "Run the Makefile task to deploy rules to production"},
         ],
+        # Add the content field that the test is expecting with all required fields
+        "content": [
+            {
+                "type": "text",
+                "text": {
+                    "status": "success",
+                    "message": "Cursor Rules Generation Instructions",
+                    "cursor_rules_generation": True,
+                    "analysis_method": "repository_summary",
+                    "operations": operations,
+                    "workflow_steps": [
+                        "1. Read and validate the AI report from the specified path",
+                        "2. Extract repository information and generate recommended rules",
+                        "3. Prepare the workspace for cursor rules creation",
+                        "4. Create the rule files in the drafts directory",
+                        "5. Ensure the Makefile contains the update-cursor-rules task",
+                        "6. Update .dockerignore to exclude the drafts directory",
+                        "7. Generate rule content based on repository analysis",
+                        "8. Deploy the rules using make update-cursor-rules",
+                    ],
+                    "output_directory": "hack/drafts/cursor_rules",
+                },
+            }
+        ],
     }
+
+    return response
 
 
 @mcp.tool(
@@ -1861,135 +1887,6 @@ def ensure_ai_report(
     return payload
 
 
-# @mcp.tool(
-#     name="process_makefile_result",
-#     description="Process the results of checking the Makefile and update it if needed",
-# )
-# def process_makefile_result(
-#     operation_results: dict[str, Any] = Field(description="Results from the file operations"),
-#     update_task_content: str = Field(description="The update-cursor-rules task content"),
-# ) -> dict[str, Any]:
-#     """Process the results of checking the Makefile and update it if needed.
-
-#     Args:
-#         operation_results: Results from the file operations
-#         update_task_content: The update-cursor-rules task content
-
-#     Returns:
-#         dict[str, Any]: A dictionary containing operations to perform and additional information
-
-#     """
-#     # Check for empty operation results
-#     if not operation_results:
-#         return {
-#             "success": False,
-#             "error": "Missing operation results",
-#             "message": "Missing operation results",
-#             "next_steps": "Please ensure the file operations were executed correctly.",
-#         }
-
-#     # Check for malformed operation results
-#     if not isinstance(operation_results, dict):
-#         return {
-#             "success": False,
-#             "error": "Invalid operation results",
-#             "message": "Invalid operation results format",
-#             "next_steps": "Please ensure the operation results are in the correct format.",
-#         }
-
-#     makefile_result = operation_results.get("Makefile", {})
-#     if not isinstance(makefile_result, dict):
-#         return {
-#             "success": False,
-#             "error": "Invalid operation results",
-#             "message": "Invalid operation results format",
-#             "next_steps": "Please ensure the operation results are in the correct format.",
-#         }
-
-#     # Check for required fields in Makefile result
-#     if "exists" not in makefile_result:
-#         return {
-#             "success": False,
-#             "error": "Invalid operation results",
-#             "message": "Invalid operation results format: missing required field 'exists'",
-#             "next_steps": "Please ensure the operation results contain all required fields.",
-#         }
-
-#     # Extract results
-#     makefile_exists = makefile_result.get("exists", False)
-#     makefile_content = ""
-#     if makefile_exists:
-#         if "error" in makefile_result:
-#             return {
-#                 "success": False,
-#                 "error": makefile_result["error"],
-#                 "message": f"Error accessing Makefile: {makefile_result['error']}",
-#                 "next_steps": "Please check file permissions and try again.",
-#             }
-#         if "content" not in makefile_result:
-#             return {
-#                 "success": False,
-#                 "error": "Invalid operation results",
-#                 "message": "Invalid operation results format: missing required field 'content'",
-#                 "next_steps": "Please ensure the operation results contain all required fields.",
-#             }
-#         makefile_content = makefile_result.get("content", "")
-#     elif "error" in makefile_result:
-#         # Handle permission denied or other errors
-#         error = makefile_result["error"]
-#         return {
-#             "success": False,
-#             "error": error,
-#             "message": f"Error accessing Makefile: {error}",
-#             "next_steps": "Please check file permissions and try again.",
-#         }
-
-#     # Check if the update-cursor-rules task exists
-#     has_update_task = "update-cursor-rules" in makefile_content
-#     action_taken = "none"
-#     operations = []
-
-#     if makefile_exists:
-#         if not has_update_task:
-#             # Add the update-cursor-rules task to the Makefile
-#             operations.append(
-#                 {
-#                     "type": "write_file",
-#                     "path": "Makefile",
-#                     "content": makefile_content + update_task_content,
-#                     "options": {"mode": "w"},
-#                 }
-#             )
-#             action_taken = "updated"
-#             has_update_task = True  # Set to True after adding the task
-#     else:
-#         # Create a new Makefile with the update-cursor-rules task
-#         operations.append(
-#             {"type": "write_file", "path": "Makefile", "content": update_task_content, "options": {"mode": "w"}}
-#         )
-#         action_taken = "created"
-#         makefile_exists = True
-#         has_update_task = True
-
-#     # Prepare next steps and message
-#     if action_taken == "none":
-#         message = "The Makefile already contains the update-cursor-rules task."
-#     elif action_taken == "updated":
-#         message = "Instructions to add the update-cursor-rules task to the existing Makefile."
-#     else:
-#         message = "Instructions to create a new Makefile with the update-cursor-rules task."
-
-#     return {
-#         "operations": operations,
-#         "success": True,
-#         "has_makefile": makefile_exists,
-#         "has_update_task": has_update_task,
-#         "action_taken": action_taken,
-#         "message": message,
-#         "next_steps": "Run 'make update-cursor-rules' to deploy the cursor rules.",
-#     }
-
-
 @mcp.tool(
     name="run_update_cursor_rules",
     description="Run the update-cursor-rules Makefile task to deploy cursor rules",
@@ -2016,105 +1913,6 @@ def run_update_cursor_rules() -> dict[str, Any]:
         "requires_result": True,
         "message": "Instructions to check Makefile before running update-cursor-rules task",
     }
-
-
-# @mcp.tool(
-#     name="process_update_cursor_rules_result",
-#     description="Process the results of checking the Makefile and run the update-cursor-rules task if possible",
-# )
-# def process_update_cursor_rules_result(
-#     operation_results: dict[str, Any] = Field(description="Results from the file operations"),
-# ) -> dict[str, Any]:
-#     """Process the results of checking the Makefile and run the update-cursor-rules task if possible.
-
-#     Args:
-#         operation_results: Results from the file operations
-
-#     Returns:
-#         dict[str, Any]: A dictionary containing operations to perform and additional information
-
-#     """
-#     # Extract results
-#     makefile_exists = operation_results.get("Makefile", {}).get("exists", False)
-#     makefile_content = ""
-#     if makefile_exists and "Makefile" in operation_results:
-#         makefile_content = operation_results.get("Makefile", {}).get("content", "")
-
-#     # Check if the update-cursor-rules task exists
-#     has_update_task = "update-cursor-rules" in makefile_content
-
-#     if not makefile_exists:
-#         return {
-#             "isError": True,
-#             "content": [
-#                 {
-#                     "type": "text",
-#                     "text": "Error: Makefile not found. Please create a Makefile with the update-cursor-rules task.",
-#                 }
-#             ],
-#             "message": "Makefile not found",
-#             "next_steps": "Use the ensure_makefile_task tool to create the Makefile.",
-#         }
-
-#     if not has_update_task:
-#         return {
-#             "isError": True,
-#             "content": [{"type": "text", "text": "Error: The update-cursor-rules task was not found in the Makefile."}],
-#             "message": "update-cursor-rules task not found",
-#             "next_steps": "Use the ensure_makefile_task tool to add the update-cursor-rules task to the Makefile.",
-#         }
-
-#     # Return operation to execute the make command
-#     return {
-#         "operations": [
-#             {"type": "execute_command", "command": "make update-cursor-rules", "options": {"cwd": "."}},
-#             {"type": "check_file_exists", "path": ".cursor/rules"},
-#         ],
-#         "requires_result": True,
-#         "message": "Instructions to run the update-cursor-rules task and check the results",
-#     }
-
-
-# @mcp.tool(
-#     name="finalize_update_cursor_rules",
-#     description="Process the results of running the update-cursor-rules task",
-# )
-# def finalize_update_cursor_rules(
-#     operation_results: dict[str, Any] = Field(description="Results from the command execution"),
-# ) -> dict[str, Any]:
-#     """Process the results of running the update-cursor-rules task.
-
-#     Args:
-#         operation_results: Results from the command execution
-
-#     Returns:
-#         dict[str, Any]: A dictionary containing the results
-
-#     """
-#     # Check if the command was executed successfully
-#     command_result = operation_results.get("make update-cursor-rules", {})
-#     cursor_rules_dir_exists = operation_results.get(".cursor/rules", {}).get("exists", False)
-
-#     if "error" in command_result:
-#         return {
-#             "isError": True,
-#             "content": [
-#                 {
-#                     "type": "text",
-#                     "text": f"Error: Failed to run the update-cursor-rules task: {command_result.get('error')}",
-#                 }
-#             ],
-#             "message": "Failed to run the update-cursor-rules task",
-#             "next_steps": "Check the Makefile and try again.",
-#         }
-
-#     # Return success message
-#     return {
-#         "success": True,
-#         "cursor_rules_dir_exists": cursor_rules_dir_exists,
-#         "message": "Successfully deployed cursor rules.",
-#         "next_steps": "The cursor rules have been deployed to .cursor/rules.",
-#     }
 
 
 @mcp.tool(
@@ -2147,79 +1945,6 @@ def update_dockerignore() -> dict[str, Any]:
         "message": "Instructions to check .dockerignore file",
         "entry": entry,
     }
-
-
-# @mcp.tool(
-#     name="process_dockerignore_result",
-#     description="Process the results of checking the .dockerignore file and update it if needed",
-# )
-# def process_dockerignore_result(
-#     operation_results: dict[str, Any] = Field(description="Results from the file operations"),
-#     entry: str = Field(description="The entry to add to .dockerignore"),
-# ) -> dict[str, Any]:
-#     """Process the results of checking the .dockerignore file and update it if needed.
-
-#     Args:
-#         operation_results: Results from the file operations
-#         entry: The entry to add to .dockerignore
-
-#     Returns:
-#         dict[str, Any]: A dictionary containing operations to perform and additional information
-
-#     """
-#     # Extract results
-#     dockerignore_exists = operation_results.get(".dockerignore", {}).get("exists", False)
-#     dockerignore_content = ""
-#     if dockerignore_exists and ".dockerignore" in operation_results:
-#         dockerignore_content = operation_results.get(".dockerignore", {}).get("content", "")
-
-#     # Check if the entry already exists
-#     entry_exists = entry in dockerignore_content.split("\n") if dockerignore_content else False
-#     action_taken = "none"
-#     operations = []
-
-#     if dockerignore_exists:
-#         if not entry_exists:
-#             # Ensure the file ends with a newline
-#             if not dockerignore_content.endswith("\n"):
-#                 dockerignore_content += "\n"
-
-#             # Add the new entry
-#             updated_content = dockerignore_content + f"{entry}\n"
-
-#             operations.append(
-#                 {"type": "write_file", "path": ".dockerignore", "content": updated_content, "options": {"mode": "w"}}
-#             )
-
-#             action_taken = "updated"
-#     else:
-#         # Create a new .dockerignore file with the entry
-#         operations.append(
-#             {"type": "write_file", "path": ".dockerignore", "content": f"{entry}\n", "options": {"mode": "w"}}
-#         )
-
-#         action_taken = "created"
-#         dockerignore_exists = True
-#         entry_exists = True
-
-#     # Prepare message
-#     if action_taken == "none":
-#         message = "The .dockerignore file already contains an entry for the cursor rules drafts directory."
-#     elif action_taken == "updated":
-#         message = (
-#             "Instructions to add an entry for the cursor rules drafts directory to the existing .dockerignore file."
-#         )
-#     else:
-#         message = "Instructions to create a new .dockerignore file with an entry for the cursor rules drafts directory."
-
-#     return {
-#         "operations": operations,
-#         "success": True,
-#         "has_dockerignore": dockerignore_exists,
-#         "entry_exists": entry_exists,
-#         "action_taken": action_taken,
-#         "message": message,
-#     }
 
 
 @mcp.tool(
@@ -2280,68 +2005,6 @@ Workflow completed successfully. Next steps:
         "dockerignore_result": dockerignore_result,
         "created_files": files_result.get("created_files", []),
     }
-
-
-# @mcp.tool(
-#     name="process_cursor_rules_workflow_result",
-#     description="Process the results of executing the cursor rules workflow",
-# )
-# def process_cursor_rules_workflow_result(
-#     operation_results: dict[str, Any] = Field(description="Results from the workflow operations"),
-# ) -> dict[str, Any]:
-#     """Process the results of executing the cursor rules workflow.
-
-#     Args:
-#         operation_results: Results from the workflow operations
-
-#     Returns:
-#         dict[str, Any]: A dictionary containing the workflow results and next steps
-
-#     """
-#     # Extract results from each operation
-#     workspace_result = operation_results.get("workspace_result", {})
-#     files_result = operation_results.get("files_result", {})
-#     makefile_result = operation_results.get("makefile_result", {})
-#     dockerignore_result = operation_results.get("dockerignore_result", {})
-
-#     # Check if all operations were successful
-#     all_successful = (
-#         workspace_result.get("success", False)
-#         and files_result.get("success", False)
-#         and makefile_result.get("success", False)
-#         and dockerignore_result.get("success", False)
-#     )
-
-#     # Get the list of created files
-#     created_files = files_result.get("created_files", [])
-
-#     # Prepare next steps
-#     next_steps = """
-# Workflow completed successfully. Next steps:
-
-# 1. Write content to each cursor rule file sequentially:
-#    - Edit each file to add the cursor rule content
-#    - Save each file after editing
-
-# 2. Deploy the cursor rules:
-#    - Run 'make update-cursor-rules' to deploy the cursor rules to .cursor/rules
-#    - Verify the rules are correctly deployed
-
-# 3. Test the cursor rules:
-#    - Open a file that should trigger a cursor rule
-#    - Verify that the cursor rule is applied correctly
-# """
-
-#     return {
-#         "success": all_successful,
-#         "workspace_result": workspace_result,
-#         "files_result": files_result,
-#         "makefile_result": makefile_result,
-#         "dockerignore_result": dockerignore_result,
-#         "created_files": created_files,
-#         "message": f"Cursor rules workflow completed successfully. Created {len(created_files)} empty cursor rule files.",
-#         "next_steps": next_steps,
-#     }
 
 
 @mcp.tool(

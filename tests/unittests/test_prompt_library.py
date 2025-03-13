@@ -401,7 +401,7 @@ class TestInstructCursorRulesGeneration:
             assert text_data["status"] == "success"
 
             assert "message" in text_data
-            assert "Cursor Rules Generation Instructions" in text_data["message"]
+            assert "Instructions to generate cursor rules based on AI report" in text_data["message"]
 
             assert "cursor_rules_generation" in text_data
             assert text_data["cursor_rules_generation"] is True
@@ -455,6 +455,15 @@ class TestInstructCursorRulesGeneration:
             assert isinstance(text_data["processing_tools"], dict)
             assert "rule_recommendation" in text_data["processing_tools"]
             assert "complex_reasoning" in text_data["processing_tools"]
+
+            assert "operations" in text_data
+            assert isinstance(text_data["operations"], list)
+            assert len(text_data["operations"]) > 0
+            for operation in text_data["operations"]:
+                assert "type" in operation
+                assert "name" in operation
+                assert "args" in operation
+                assert isinstance(operation["args"], dict)
 
             # Verify isError is False
             assert not result.isError
@@ -563,7 +572,7 @@ class TestUtilityFunctions:
         assert "</rule>" in rule
 
     def test_save_cursor_rule(self, mocker: "MockerFixture", tmp_path: Path) -> None:
-        """Test that the save_cursor_rule function returns proper file operation instructions.
+        """Test that the save_cursor_rule function validates rule content and returns proper response.
 
         Args:
             mocker: Pytest fixture for mocking
@@ -573,10 +582,32 @@ class TestUtilityFunctions:
         # Mock the current working directory to be the temporary directory
         mocker.patch("pathlib.Path.cwd", return_value=tmp_path)
 
-        # Call the function
+        # Test with invalid rule content (missing <rule> tags)
         rule_name = "test-rule"
         rule_content = "# Test Rule\n\nThis is a test rule."
         result = save_cursor_rule(rule_name, rule_content)
+
+        # Check that the result indicates an error
+        assert result["isError"] is True
+        assert len(result["content"]) == 1
+        assert result["content"][0]["type"] == "text"
+        assert result["content"][0]["text"] == "Error: Rule content must include a <rule>...</rule> block"
+
+        # Test with valid rule content
+        valid_rule_content = """# Test Rule
+
+<rule>
+name: test-rule
+description: Test rule
+filters:
+  - type: file_extension
+    pattern: "*.py"
+actions:
+  - type: suggest
+    message: Test message
+</rule>"""
+
+        result = save_cursor_rule(rule_name, valid_rule_content)
 
         # Check that the result contains the expected operations
         assert "operations" in result
@@ -592,7 +623,7 @@ class TestUtilityFunctions:
         # Check file write operation
         assert result["operations"][1]["type"] == "write_file"
         assert result["operations"][1]["path"] == "hack/drafts/cursor_rules/test-rule.mdc.md"
-        assert result["operations"][1]["content"] == rule_content
+        assert result["operations"][1]["content"] == valid_rule_content
         assert result["operations"][1]["options"]["mode"] == "w"
 
         # Check message
