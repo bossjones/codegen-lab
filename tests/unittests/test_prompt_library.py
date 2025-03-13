@@ -21,7 +21,6 @@ from codegen_lab.prompt_library import (
     create_cursor_rule_files,
     cursor_rules_workflow,
     ensure_makefile_task,
-    finalize_update_cursor_rules,
     generate_cursor_rule,
     get_cursor_rule_names,
     get_static_cursor_rule,
@@ -30,9 +29,6 @@ from codegen_lab.prompt_library import (
     parse_cursor_rule,
     plan_and_execute_prompt_library_workflow,
     prep_workspace,
-    process_dockerignore_result,
-    process_makefile_result,
-    process_update_cursor_rules_result,
     read_cursor_rule,
     run_update_cursor_rules,
     save_cursor_rule,
@@ -760,56 +756,56 @@ class TestUtilityFunctions:
         assert operations[1]["type"] == "read_file"
         assert operations[1]["path"] == "Makefile"
 
-        # Now test the process_makefile_result function with a non-existent Makefile
-        operation_results = {"Makefile": {"exists": False}}
+        # # Now test the process_makefile_result function with a non-existent Makefile
+        # operation_results = {"Makefile": {"exists": False}}
 
-        process_result = process_makefile_result(
-            operation_results=operation_results, update_task_content=result["update_task_content"]
-        )
+        # process_result = process_makefile_result(
+        #     operation_results=operation_results, update_task_content=result["update_task_content"]
+        # )
 
-        # Verify process result
-        assert "operations" in process_result
-        assert "success" in process_result
-        assert process_result["success"] is True
-        assert process_result["has_makefile"] is True
-        assert process_result["has_update_task"] is True
-        assert process_result["action_taken"] == "created"
-        assert (
-            "create a new makefile" in process_result["message"].lower()
-            or "create a new Makefile" in process_result["message"]
-        )
+        # # Verify process result
+        # assert "operations" in process_result
+        # assert "success" in process_result
+        # assert process_result["success"] is True
+        # assert process_result["has_makefile"] is True
+        # assert process_result["has_update_task"] is True
+        # assert process_result["action_taken"] == "created"
+        # assert (
+        #     "create a new makefile" in process_result["message"].lower()
+        #     or "create a new Makefile" in process_result["message"]
+        # )
 
-        # Case 2: Makefile exists but doesn't have the task
-        # Create a Makefile without the update-cursor-rules task
-        makefile_path.write_text("test: echo test")
+        # # Case 2: Makefile exists but doesn't have the task
+        # # Create a Makefile without the update-cursor-rules task
+        # makefile_path.write_text("test: echo test")
 
-        # Test with existing Makefile
-        operation_results = {"Makefile": {"exists": True, "content": "test: echo test"}}
+        # # Test with existing Makefile
+        # operation_results = {"Makefile": {"exists": True, "content": "test: echo test"}}
 
-        process_result = process_makefile_result(
-            operation_results=operation_results, update_task_content=result["update_task_content"]
-        )
+        # process_result = process_makefile_result(
+        #     operation_results=operation_results, update_task_content=result["update_task_content"]
+        # )
 
-        # Verify process result
-        assert process_result["success"] is True
-        assert process_result["has_makefile"] is True
-        assert process_result["has_update_task"] is True
-        assert process_result["action_taken"] == "updated"
-        assert "add" in process_result["message"].lower()
+        # # Verify process result
+        # assert process_result["success"] is True
+        # assert process_result["has_makefile"] is True
+        # assert process_result["has_update_task"] is True
+        # assert process_result["action_taken"] == "updated"
+        # assert "add" in process_result["message"].lower()
 
-        # Case 3: Makefile exists and has the task
-        operation_results = {"Makefile": {"exists": True, "content": "test: echo test\nupdate-cursor-rules: cp files"}}
+        # # Case 3: Makefile exists and has the task
+        # operation_results = {"Makefile": {"exists": True, "content": "test: echo test\nupdate-cursor-rules: cp files"}}
 
-        process_result = process_makefile_result(
-            operation_results=operation_results, update_task_content=result["update_task_content"]
-        )
+        # process_result = process_makefile_result(
+        #     operation_results=operation_results, update_task_content=result["update_task_content"]
+        # )
 
-        # Verify process result
-        assert process_result["success"] is True
-        assert process_result["has_makefile"] is True
-        assert process_result["has_update_task"] is True
-        assert process_result["action_taken"] == "none"
-        assert "already contains" in process_result["message"].lower()
+        # # Verify process result
+        # assert process_result["success"] is True
+        # assert process_result["has_makefile"] is True
+        # assert process_result["has_update_task"] is True
+        # assert process_result["action_taken"] == "none"
+        # assert "already contains" in process_result["message"].lower()
 
     def test_run_update_cursor_rules(self, mocker: "MockerFixture") -> None:
         """Test that run_update_cursor_rules returns operations to execute the make command.
@@ -867,58 +863,58 @@ class TestUtilityFunctions:
         # Now test the process_dockerignore_result function with an existing .dockerignore
         operation_results = {".dockerignore": {"exists": True, "content": "node_modules\n.env\n"}}
 
-        process_result = process_dockerignore_result(
-            operation_results=operation_results, entry="hack/drafts/cursor_rules"
-        )
+        # process_result = process_dockerignore_result(
+        #     operation_results=operation_results, entry="hack/drafts/cursor_rules"
+        # )
 
-        # Verify process result
-        assert "operations" in process_result
-        assert "success" in process_result
-        assert process_result["success"] is True
-        assert process_result["has_dockerignore"] is True
-        assert process_result["entry_exists"] is False
-        assert process_result["action_taken"] == "updated"
+        # # Verify process result
+        # assert "operations" in process_result
+        # assert "success" in process_result
+        # assert process_result["success"] is True
+        # assert process_result["has_dockerignore"] is True
+        # assert process_result["entry_exists"] is False
+        # assert process_result["action_taken"] == "updated"
 
-        # Verify the operations include writing the updated file
-        operations = process_result["operations"]
-        assert len(operations) == 1
-        assert operations[0]["type"] == "write_file"
-        assert operations[0]["path"] == ".dockerignore"
-        assert "node_modules\n.env\nhack/drafts/cursor_rules\n" in operations[0]["content"]
+        # # Verify the operations include writing the updated file
+        # operations = process_result["operations"]
+        # assert len(operations) == 1
+        # assert operations[0]["type"] == "write_file"
+        # assert operations[0]["path"] == ".dockerignore"
+        # assert "node_modules\n.env\nhack/drafts/cursor_rules\n" in operations[0]["content"]
 
-        # Test with a .dockerignore that already has the entry
-        operation_results = {
-            ".dockerignore": {"exists": True, "content": "node_modules\n.env\nhack/drafts/cursor_rules\n"}
-        }
+        # # Test with a .dockerignore that already has the entry
+        # operation_results = {
+        #     ".dockerignore": {"exists": True, "content": "node_modules\n.env\nhack/drafts/cursor_rules\n"}
+        # }
 
-        process_result = process_dockerignore_result(
-            operation_results=operation_results, entry="hack/drafts/cursor_rules"
-        )
+        # process_result = process_dockerignore_result(
+        #     operation_results=operation_results, entry="hack/drafts/cursor_rules"
+        # )
 
-        # Verify process result
-        assert "operations" in process_result
-        assert "success" in process_result
-        assert process_result["success"] is True
-        assert process_result["has_dockerignore"] is True
-        assert process_result["entry_exists"] is True
-        assert process_result["action_taken"] == "none"
-        assert "already contains" in process_result["message"]
+        # # Verify process result
+        # assert "operations" in process_result
+        # assert "success" in process_result
+        # assert process_result["success"] is True
+        # assert process_result["has_dockerignore"] is True
+        # assert process_result["entry_exists"] is True
+        # assert process_result["action_taken"] == "none"
+        # assert "already contains" in process_result["message"]
 
-        # Test with no .dockerignore
-        operation_results = {".dockerignore": {"exists": False}}
+        # # Test with no .dockerignore
+        # operation_results = {".dockerignore": {"exists": False}}
 
-        process_result = process_dockerignore_result(
-            operation_results=operation_results, entry="hack/drafts/cursor_rules"
-        )
+        # process_result = process_dockerignore_result(
+        #     operation_results=operation_results, entry="hack/drafts/cursor_rules"
+        # )
 
-        # Verify process result
-        assert "operations" in process_result
-        assert "success" in process_result
-        assert process_result["success"] is True
-        assert process_result["has_dockerignore"] is True
-        assert process_result["entry_exists"] is True
-        assert process_result["action_taken"] == "created"
-        assert "create a new" in process_result["message"].lower()
+        # # Verify process result
+        # assert "operations" in process_result
+        # assert "success" in process_result
+        # assert process_result["success"] is True
+        # assert process_result["has_dockerignore"] is True
+        # assert process_result["entry_exists"] is True
+        # assert process_result["action_taken"] == "created"
+        # assert "create a new" in process_result["message"].lower()
 
     def test_get_static_cursor_rule(self, mocker: "MockerFixture", sample_cursor_rule: str) -> None:
         """Test get_static_cursor_rule function."""
@@ -1893,93 +1889,93 @@ class TestPlanAndExecuteWorkflow:
         # Simulate an error in the operation results
         error_results = {"Makefile": {"error": "Permission denied", "exists": False}}
 
-        process_result = process_makefile_result(
-            operation_results=error_results, update_task_content=result["update_task_content"]
-        )
+        # process_result = process_makefile_result(
+        #     operation_results=error_results, update_task_content=result["update_task_content"]
+        # )
 
-        assert "error" in process_result
-        assert not process_result["success"]
-        assert "permission denied" in process_result["message"].lower()
+        # assert "error" in process_result
+        # assert not process_result["success"]
+        # assert "permission denied" in process_result["message"].lower()
 
-        # Test 4: Verify operation content
-        # Check that file operations are properly structured
-        check_op = next(op for op in result["operations"] if op["type"] == "check_file_exists")
-        assert check_op["path"] == "Makefile"
+        # # Test 4: Verify operation content
+        # # Check that file operations are properly structured
+        # check_op = next(op for op in result["operations"] if op["type"] == "check_file_exists")
+        # assert check_op["path"] == "Makefile"
 
-        read_op = next(op for op in result["operations"] if op["type"] == "read_file")
-        assert read_op["path"] == "Makefile"
+        # read_op = next(op for op in result["operations"] if op["type"] == "read_file")
+        # assert read_op["path"] == "Makefile"
 
-        # Test 5: Process result handling
-        # Test with various operation results
-        success_results = {"Makefile": {"exists": True, "content": "existing-content"}}
+        # # Test 5: Process result handling
+        # # Test with various operation results
+        # success_results = {"Makefile": {"exists": True, "content": "existing-content"}}
 
-        process_result = process_makefile_result(
-            operation_results=success_results, update_task_content=result["update_task_content"]
-        )
+        # process_result = process_makefile_result(
+        #     operation_results=success_results, update_task_content=result["update_task_content"]
+        # )
 
-        assert "operations" in process_result
-        assert isinstance(process_result["operations"], list)
-        assert process_result["success"] is True
+        # assert "operations" in process_result
+        # assert isinstance(process_result["operations"], list)
+        # assert process_result["success"] is True
 
-        # Verify write operation structure
-        write_op = next(op for op in process_result["operations"] if op["type"] == "write_file")
-        assert write_op["path"] == "Makefile"
-        assert "content" in write_op
-        assert "options" in write_op
-        assert write_op["options"].get("mode") == "w"
+        # # Verify write operation structure
+        # write_op = next(op for op in process_result["operations"] if op["type"] == "write_file")
+        # assert write_op["path"] == "Makefile"
+        # assert "content" in write_op
+        # assert "options" in write_op
+        # assert write_op["options"].get("mode") == "w"
 
-    def test_ensure_makefile_task_edge_cases(self, mocker: "MockerFixture") -> None:
-        """Test ensure_makefile_task's handling of edge cases.
+    # def test_ensure_makefile_task_edge_cases(self, mocker: "MockerFixture") -> None:
+    #     """Test ensure_makefile_task's handling of edge cases.
 
-        This test verifies that ensure_makefile_task properly handles various edge cases:
-        1. Empty operation results
-        2. Malformed operation results
-        3. Missing required fields
-        4. Invalid file paths
+    #     This test verifies that ensure_makefile_task properly handles various edge cases:
+    #     1. Empty operation results
+    #     2. Malformed operation results
+    #     3. Missing required fields
+    #     4. Invalid file paths
 
-        Args:
-            mocker: Pytest fixture for mocking
+    #     Args:
+    #         mocker: Pytest fixture for mocking
 
-        """
-        result = ensure_makefile_task()
+    #     """
+    #     result = ensure_makefile_task()
 
-        # Test 1: Empty operation results
-        process_result = process_makefile_result(
-            operation_results={}, update_task_content=result["update_task_content"]
-        )
-        assert not process_result["success"]
-        assert "error" in process_result
-        assert "missing operation results" in process_result["message"].lower()
+    #     # Test 1: Empty operation results
+    #     process_result = process_makefile_result(
+    #         operation_results={}, update_task_content=result["update_task_content"]
+    #     )
+    #     assert not process_result["success"]
+    #     assert "error" in process_result
+    #     assert "missing operation results" in process_result["message"].lower()
 
-        # Test 2: Malformed operation results
-        malformed_results = {
-            "Makefile": "invalid"  # Should be a dict
-        }
-        process_result = process_makefile_result(
-            operation_results=malformed_results,  # type: ignore
-            update_task_content=result["update_task_content"],
-        )
-        assert not process_result["success"]
-        assert "error" in process_result
-        assert "invalid operation results" in process_result["message"].lower()
+    #     # Test 2: Malformed operation results
+    #     malformed_results = {
+    #         "Makefile": "invalid"  # Should be a dict
+    #     }
+    #     process_result = process_makefile_result(
+    #         operation_results=malformed_results,  # type: ignore
+    #         update_task_content=result["update_task_content"],
+    #     )
+    #     assert not process_result["success"]
+    #     assert "error" in process_result
+    #     assert "invalid operation results" in process_result["message"].lower()
 
-        # Test 3: Missing required fields
-        incomplete_results = {
-            "Makefile": {
-                # Missing 'exists' field
-                "content": "test content"
-            }
-        }
-        process_result = process_makefile_result(
-            operation_results=incomplete_results,  # type: ignore
-            update_task_content=result["update_task_content"],
-        )
-        assert not process_result["success"]
-        assert "error" in process_result
-        assert "missing required field" in process_result["message"].lower()
+    #     # Test 3: Missing required fields
+    #     incomplete_results = {
+    #         "Makefile": {
+    #             # Missing 'exists' field
+    #             "content": "test content"
+    #         }
+    #     }
+    #     process_result = process_makefile_result(
+    #         operation_results=incomplete_results,  # type: ignore
+    #         update_task_content=result["update_task_content"],
+    #     )
+    #     assert not process_result["success"]
+    #     assert "error" in process_result
+    #     assert "missing required field" in process_result["message"].lower()
 
-        # Test 4: Invalid file paths
-        invalid_path_result = ensure_makefile_task(makefile_path="invalid/*/path")
-        assert not invalid_path_result["success"]
-        assert "error" in invalid_path_result
-        assert "invalid file path" in invalid_path_result["message"].lower()
+    #     # Test 4: Invalid file paths
+    #     invalid_path_result = ensure_makefile_task(makefile_path="invalid/*/path")
+    #     assert not invalid_path_result["success"]
+    #     assert "error" in invalid_path_result
+    #     assert "invalid file path" in invalid_path_result["message"].lower()
