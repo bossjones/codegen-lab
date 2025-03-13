@@ -409,61 +409,40 @@ class TestInstructCursorRulesGeneration:
             assert "analysis_method" in text_data
             assert text_data["analysis_method"] == "repository_summary"
 
-            assert "repo_summary" in text_data
-            assert text_data["repo_summary"] == repo_summary
+            assert "operations" in text_data
+            assert isinstance(text_data["operations"], list)
+            assert len(text_data["operations"]) == 7
+
+            # Check specific operations
+            assert text_data["operations"][0]["type"] == "invoke_tool"
+            assert text_data["operations"][0]["name"] == "ensure_ai_report"
+            assert "report_path" in text_data["operations"][0]["args"]
+
+            assert text_data["operations"][1]["name"] == "recommend_cursor_rules"
+            assert "repo_summary" in text_data["operations"][1]["args"]
+
+            assert text_data["operations"][2]["name"] == "prep_workspace"
+
+            assert text_data["operations"][3]["name"] == "list_directory"
+            assert text_data["operations"][3]["args"]["path"] == "./hack/drafts/cursor_rules/"
+
+            assert text_data["operations"][4]["name"] == "create_cursor_rule_files"
+            assert "rule_names" in text_data["operations"][4]["args"]
+
+            assert text_data["operations"][5]["name"] == "ensure_makefile_task"
+            assert "makefile_path" in text_data["operations"][5]["args"]
+
+            assert text_data["operations"][6]["name"] == "update_dockerignore"
+
+            # Check workflow steps
+            assert "workflow_steps" in text_data
+            assert isinstance(text_data["workflow_steps"], list)
+            assert len(text_data["workflow_steps"]) == 8
+            assert text_data["workflow_steps"][0].startswith("1. Read and validate")
+            assert text_data["workflow_steps"][7].startswith("8. Deploy the rules")
 
             assert "output_directory" in text_data
             assert text_data["output_directory"] == "hack/drafts/cursor_rules"
-
-            assert "rule_format" in text_data
-            assert isinstance(text_data["rule_format"], dict)
-            assert "filename" in text_data["rule_format"]
-            assert "frontmatter" in text_data["rule_format"]
-            assert "rule_structure" in text_data["rule_format"]
-
-            assert "rule_example_template" in text_data
-            assert isinstance(text_data["rule_example_template"], dict)
-            assert "frontmatter" in text_data["rule_example_template"]
-            assert "title_and_introduction" in text_data["rule_example_template"]
-            assert "rule_definition" in text_data["rule_example_template"]
-
-            assert "key_components_explanation" in text_data
-            assert isinstance(text_data["key_components_explanation"], dict)
-            assert "frontmatter" in text_data["key_components_explanation"]
-            assert "title_and_introduction" in text_data["key_components_explanation"]
-            assert "rule_definition" in text_data["key_components_explanation"]
-
-            assert "multishot_prompting_strategy" in text_data
-            assert isinstance(text_data["multishot_prompting_strategy"], str)
-
-            assert "generation_status" in text_data
-            assert isinstance(text_data["generation_status"], dict)
-            assert "status" in text_data["generation_status"]
-            assert text_data["generation_status"]["status"] == "ready"
-            assert "message" in text_data["generation_status"]
-            assert "input_source" in text_data["generation_status"]
-            assert "output_destination" in text_data["generation_status"]
-            assert "production_destination" in text_data["generation_status"]
-
-            assert "deployment_commands" in text_data
-            assert isinstance(text_data["deployment_commands"], dict)
-            assert "prepare_files" in text_data["deployment_commands"]
-            assert "audit_files" in text_data["deployment_commands"]
-            assert "deploy_to_production" in text_data["deployment_commands"]
-
-            assert "processing_tools" in text_data
-            assert isinstance(text_data["processing_tools"], dict)
-            assert "rule_recommendation" in text_data["processing_tools"]
-            assert "complex_reasoning" in text_data["processing_tools"]
-
-            assert "operations" in text_data
-            assert isinstance(text_data["operations"], list)
-            assert len(text_data["operations"]) > 0
-            for operation in text_data["operations"]:
-                assert "type" in operation
-                assert "name" in operation
-                assert "args" in operation
-                assert isinstance(operation["args"], dict)
 
             # Verify isError is False
             assert not result.isError
