@@ -1245,7 +1245,7 @@ def save_cursor_rule(
             },
             "validation_results": validation_results,
             "next_steps": [
-                "The rule has been saved to the drafts directory",
+                "Write content to each file sequentially",
                 "Run `make update-cursor-rules` to deploy it to the .cursor/rules directory",
                 "Verify the rule appears in your Cursor editor",
             ],
