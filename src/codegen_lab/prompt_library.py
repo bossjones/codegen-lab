@@ -54,51 +54,6 @@ from mcp.server.fastmcp import FastMCP
 from mcp.server.fastmcp.server import Context
 from pydantic import Field
 
-# # Configure JSON logger
-# class JsonFormatter(logging.Formatter):
-#     """Custom JSON formatter for logging.
-
-#     This formatter outputs log records in JSON format with timestamp, level,
-#     and message fields.
-#     """
-
-#     def format(self, record: logging.LogRecord) -> str:
-#         """Format the log record as JSON.
-
-#         Args:
-#             record: The log record to format
-
-#         Returns:
-#             str: JSON formatted log string
-
-#         """
-#         log_obj = {
-#             "timestamp": datetime.fromtimestamp(record.created).isoformat(),
-#             "level": record.levelname,
-#             "message": record.getMessage(),
-#             "logger": record.name,
-#         }
-
-#         if record.exc_info:
-#             log_obj["exc_info"] = self.formatException(record.exc_info)
-
-#         return json.dumps(log_obj)
-
-
-# # Set up file handler with JSON formatter
-# file_handler = logging.handlers.RotatingFileHandler(
-#     filename="mcpserver.log",
-#     maxBytes=10485760,  # 10MB
-#     backupCount=5,
-#     encoding="utf-8",
-# )
-# file_handler.setFormatter(JsonFormatter())
-
-# # Configure root logger
-# logger = logging.getLogger("prompt_library")
-# logger.setLevel(logging.INFO)
-# logger.addHandler(file_handler)
-
 
 # Define types for cursor rule components
 class CursorRuleMetadata(TypedDict, total=False):
@@ -641,15 +596,21 @@ def instruct_custom_repo_rules_generation(
         {"type": "invoke_tool", "name": "recommend_cursor_rules", "args": {"repo_summary": "{result}"}},
         # Step 3: Prepare the workspace for cursor rules
         {"type": "invoke_tool", "name": "prep_workspace", "args": {}},
-        # Step 4: Create the cursor rule files
+        # Step 4: Check existing cursor rules
+        {
+            "type": "invoke_tool",
+            "name": "list_directory",
+            "args": {"path": "./hack/drafts/cursor_rules/", "options": "-la"},
+        },
+        # Step 5: Create the cursor rule files
         {
             "type": "invoke_tool",
             "name": "create_cursor_rule_files",
             "args": {"rule_names": "{result.recommended_rules}"},
         },
-        # Step 5: Ensure the Makefile has the update-cursor-rules task
+        # Step 6: Ensure the Makefile has the update-cursor-rules task
         {"type": "invoke_tool", "name": "ensure_makefile_task", "args": {"makefile_path": "Makefile"}},
-        # Step 6: Update the .dockerignore file to exclude the cursor rules drafts directory
+        # Step 7: Update the .dockerignore file to exclude the cursor rules drafts directory
         {"type": "invoke_tool", "name": "update_dockerignore", "args": {}},
     ]
 

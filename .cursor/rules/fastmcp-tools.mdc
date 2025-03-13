@@ -461,6 +461,536 @@ actions:
       * The error message as text content
       * `isError` flag set to `True`
 
+      ## Advanced Error Handling and Status Tracking
+
+      The MCP Python SDK provides robust mechanisms for managing tool call failures and tracking operation status. This section outlines comprehensive implementation strategies for error handling, progress reporting, and integration with MCP's standardized protocols.
+
+      ### Structured Error Responses
+
+      MCP tools should return structured error responses with `isError: True` per the specification. The SDK simplifies this through Pythonic error handling patterns:
+
+      ```python
+      from mcp.server.fastmcp import FastMCP, Context
+      from typing import Dict, Any, Optional
+
+      mcp = FastMCP("Error Handling Demo")
+
+      @mcp.tool()
+      def calculate_bmi(weight_kg: float, height_m: float) -> Dict[str, Any]:
+          """
+          Calculate BMI with comprehensive error handling.
+
+          Args:
+              weight_kg: Weight in kilograms
+              height_m: Height in meters
+
+          Returns:
+              Dictionary containing BMI or error information
+          """
+          try:
+              if weight_kg <= 0:
+                  raise ValueError("Weight must be positive")
+              if height_m <= 0:
+                  raise ValueError("Height must be positive")
+
+              return {"bmi": weight_kg / (height_m ** 2)}
+          except ZeroDivisionError:
+              return {
+                  "isError": True,
+                  "errorType": "ZeroDivisionError",
+                  "message": "Height cannot be zero"
+              }
+          except ValueError as e:
+              return {
+                  "isError": True,
+                  "errorType": "ValidationError",
+                  "message": str(e)
+              }
+          except Exception as e:
+              return {
+                  "isError": True,
+                  "errorType": "UnexpectedError",
+                  "message": f"An unexpected error occurred: {str(e)}"
+              }
+      ```
+
+      This implementation ensures errors are explicitly flagged and categorized, enabling downstream systems to differentiate between validation errors, runtime exceptions, and other failures.
+
+      ### Centralized Error Handling with Decorators
+
+      Use decorators to standardize error handling across multiple tools:
+
+      ```python
+      from functools import wraps
+      from typing import Callable, Any, Dict, TypeVar, cast
+
+      T = TypeVar('T')
+
+      def error_handler(func: Callable[..., T]) -> Callable[..., Dict[str, Any]]:
+          """
+          Decorator that wraps a function to standardize error handling.
+
+          Args:
+              func: The function to wrap with error handling
+
+          Returns:
+              Wrapped function that catches exceptions and returns standardized error responses
+          """
+          @wraps(func)
+          def wrapper(*args: Any, **kwargs: Any) -> Dict[str, Any]:
+              try:
+                  result = func(*args, **kwargs)
+                  return cast(Dict[str, Any], result)
+              except ValueError as e:
+                  return {
+                      "isError": True,
+                      "errorType": "ValidationError",
+                      "message": str(e)
+                  }
+              except Exception as e:
+                  return {
+                      "isError": True,
+                      "errorType": type(e).__name__,
+                      "message": str(e)
+                  }
+          return wrapper
+
+      @mcp.tool()
+      @error_handler
+      def sensitive_operation(input_data: str) -> Dict[str, Any]:
+          """
+          Handle risky operations with automatic error capture.
+
+          Args:
+              input_data: The input data to process
+
+          Returns:
+              Dictionary containing operation results or error information
+          """
+          if not input_data:
+              raise ValueError("Input cannot be empty")
+          # Implementation...
+          return {"status": "success", "result": f"Processed: {input_data}"}
+      ```
+
+      This pattern ensures consistent error formatting without duplicating try-except blocks.
+
+      ### Asynchronous Error Handling
+
+      For async operations, combine `asyncio` with MCP's error model:
+
+      ```python
+      import httpx
+      from mcp.server.fastmcp import FastMCP, Context
+      from typing import Dict, Any
+
+      mcp = FastMCP("Async Error Handling Demo")
+
+      @mcp.tool()
+      async def async_fetch_data(url: str, ctx: Context) -> Dict[str, Any]:
+          """
+          Fetch data with progress and error handling.
+
+          Args:
+              url: The URL to fetch data from
+              ctx: MCP context for progress reporting
+
+          Returns:
+              Dictionary containing fetched data or error information
+          """
+          try:
+              await ctx.info(f"Fetching data from {url}")
+              async with httpx.AsyncClient() as client:
+                  response = await client.get(url)
+                  response.raise_for_status()
+                  await ctx.report_progress(1, 1)
+                  return {"data": response.json()}
+          except httpx.HTTPStatusError as e:
+              await ctx.error(f"HTTP error: {e.response.status_code}")
+              await ctx.report_progress(1, 1)
+              return {
+                  "isError": True,
+                  "errorType": "HTTPStatusError",
+                  "message": f"HTTP {e.response.status_code}: {e.response.reason_phrase}",
+                  "details": {
+                      "status_code": e.response.status_code,
+                      "url": str(e.request.url)
+                  }
+              }
+          except httpx.RequestError as e:
+              await ctx.error(f"Request error: {str(e)}")
+              await ctx.report_progress(1, 1)
+              return {
+                  "isError": True,
+                  "errorType": "RequestError",
+                  "message": str(e)
+              }
+          except Exception as e:
+              await ctx.error(f"Unexpected error: {str(e)}")
+              await ctx.report_progress(1, 1)
+              return {
+                  "isError": True,
+                  "errorType": "UnexpectedError",
+                  "message": str(e)
+              }
+      ```
+
+      ### Comprehensive Status Tracking
+
+      The `Context` object provides methods for detailed progress reporting and logging during tool execution:
+
+      ```python
+      import asyncio
+      from mcp.server.fastmcp import FastMCP, Context
+      from typing import List, Dict, Any
+
+      mcp = FastMCP("Status Tracking Demo")
+
+      @mcp.tool()
+      async def long_task(files: List[str], ctx: Context) -> Dict[str, Any]:
+          """
+          Process files with detailed progress updates.
+
+          Args:
+              files: List of files to process
+              ctx: MCP context for progress reporting
+
+          Returns:
+              Dictionary containing processing results
+          """
+          total = len(files)
+          await ctx.info(f"Processing {total} files")
+
+          results = []
+          errors = []
+
+          for i, file in enumerate(files):
+              try:
+                  # Update progress with current file information
+                  await ctx.info(f"Processing file {i+1}/{total}: {file}")
+                  await ctx.report_progress(i + 1, total)
+
+                  # Simulate processing time
+                  await asyncio.sleep(0.5)
+
+                  # Simulate processing logic
+                  result = f"Processed {file}"
+                  results.append(result)
+
+              except Exception as e:
+                  await ctx.error(f"Error processing {file}: {str(e)}")
+                  errors.append({"file": file, "error": str(e)})
+
+          # Final status report
+          if errors:
+              await ctx.warning(f"Completed with {len(errors)} errors")
+          else:
+              await ctx.info("Processing complete - all files successful")
+
+          return {
+              "status": "completed",
+              "processed": len(results),
+              "errors": len(errors),
+              "results": results,
+              "error_details": errors
+          }
+      ```
+
+      Key features:
+      - **Progress tokens**: Automatically managed via `report_progress` when a client includes a `progressToken` in requests.
+      - **Logging**: `ctx.info`, `ctx.warning`, and `ctx.error` provide standardized logging channels visible in MCP Inspector.
+      - **Detailed status**: Return comprehensive status information including success and error counts.
+
+      ### Progress Granularity for Multi-Stage Operations
+
+      For multi-stage operations, use intermediate progress updates:
+
+      ```python
+      from mcp.server.fastmcp import FastMCP, Context
+      from typing import Dict, Any
+
+      mcp = FastMCP("Multi-Phase Demo")
+
+      @mcp.tool()
+      async def multi_phase_operation(ctx: Context) -> Dict[str, Any]:
+          """
+          Track progress across multiple phases with detailed reporting.
+
+          Args:
+              ctx: MCP context for progress reporting
+
+          Returns:
+              Dictionary containing operation results
+          """
+          # Phase 1: Data collection
+          await ctx.info("Starting phase 1/3: Data collection")
+          await ctx.report_progress(1, 3)
+          # Phase 1 implementation
+          await asyncio.sleep(1)
+
+          # Phase 2: Processing
+          await ctx.info("Starting phase 2/3: Data processing")
+          await ctx.report_progress(2, 3)
+          # Phase 2 implementation
+          await asyncio.sleep(1)
+
+          # Phase 3: Finalization
+          await ctx.info("Starting phase 3/3: Finalization")
+          await ctx.report_progress(3, 3)
+          # Phase 3 implementation
+          await asyncio.sleep(0.5)
+
+          await ctx.info("Operation completed successfully")
+          return {
+              "status": "completed",
+              "phases_completed": 3,
+              "result": "Operation successful"
+          }
+      ```
+
+      ### Error Propagation in Tool Pipelines
+
+      Handle errors in tool chains while maintaining progress:
+
+      ```python
+      from mcp.server.fastmcp import FastMCP, Context
+      from typing import Dict, Any, Optional
+
+      mcp = FastMCP("Pipeline Demo")
+
+      @mcp.tool()
+      async def pipeline_tool(input_data: str, ctx: Context) -> Dict[str, Any]:
+          """
+          Execute multiple tools with error recovery and detailed status tracking.
+
+          Args:
+              input_data: The input data to process
+              ctx: MCP context for progress reporting
+
+          Returns:
+              Dictionary containing pipeline results or error information
+          """
+          pipeline_status = {
+              "steps_completed": 0,
+              "steps_total": 3,
+              "current_step": "initialization",
+              "errors": []
+          }
+
+          # Step 1: Validation
+          try:
+              await ctx.info("Step 1/3: Validating input data")
+              pipeline_status["current_step"] = "validation"
+
+              if not input_data:
+                  raise ValueError("Input data cannot be empty")
+
+              # Simulate validation
+              await asyncio.sleep(0.5)
+
+              pipeline_status["steps_completed"] = 1
+              await ctx.report_progress(1, 3)
+
+          except Exception as e:
+              await ctx.error(f"Validation failed: {str(e)}")
+              pipeline_status["errors"].append({
+                  "step": "validation",
+                  "error": str(e)
+              })
+              return {
+                  "isError": True,
+                  "errorType": "ValidationError",
+                  "message": f"Pipeline failed at validation step: {str(e)}",
+                  "pipeline_status": pipeline_status
+              }
+
+          # Step 2: Processing
+          try:
+              await ctx.info("Step 2/3: Processing data")
+              pipeline_status["current_step"] = "processing"
+
+              # Simulate processing
+              await asyncio.sleep(1)
+              processed_data = f"Processed: {input_data}"
+
+              pipeline_status["steps_completed"] = 2
+              await ctx.report_progress(2, 3)
+
+          except Exception as e:
+              await ctx.error(f"Processing failed: {str(e)}")
+              pipeline_status["errors"].append({
+                  "step": "processing",
+                  "error": str(e)
+              })
+              return {
+                  "isError": True,
+                  "errorType": "ProcessingError",
+                  "message": f"Pipeline failed at processing step: {str(e)}",
+                  "pipeline_status": pipeline_status
+              }
+
+          # Step 3: Finalization
+          try:
+              await ctx.info("Step 3/3: Finalizing results")
+              pipeline_status["current_step"] = "finalization"
+
+              # Simulate finalization
+              await asyncio.sleep(0.5)
+              final_result = f"Finalized: {processed_data}"
+
+              pipeline_status["steps_completed"] = 3
+              await ctx.report_progress(3, 3)
+
+          except Exception as e:
+              await ctx.error(f"Finalization failed: {str(e)}")
+              pipeline_status["errors"].append({
+                  "step": "finalization",
+                  "error": str(e)
+              })
+              return {
+                  "isError": True,
+                  "errorType": "FinalizationError",
+                  "message": f"Pipeline failed at finalization step: {str(e)}",
+                  "pipeline_status": pipeline_status
+              }
+
+          # All steps completed successfully
+          await ctx.info("Pipeline completed successfully")
+          return {
+              "status": "success",
+              "result": final_result,
+              "pipeline_status": pipeline_status
+          }
+      ```
+
+      ### Testing Error Handling and Status Tracking
+
+      ```python
+      import pytest
+      from mcp.server.fastmcp import FastMCP, Context
+      from mcp.server.fastmcp.testing import client_session
+      from typing import Dict, Any, List, Tuple
+
+      @pytest.mark.anyio
+      async def test_error_handling_and_status_tracking():
+          """Test comprehensive error handling and status tracking."""
+          server = FastMCP()
+
+          @server.tool()
+          async def process_with_status(
+              items: List[str],
+              fail_on_item: Optional[str] = None,
+              ctx: Context
+          ) -> Dict[str, Any]:
+              """Process items with status tracking and optional failure."""
+              results = []
+              errors = []
+              total = len(items)
+
+              for i, item in enumerate(items):
+                  await ctx.info(f"Processing item {i+1}/{total}: {item}")
+                  await ctx.report_progress(i + 1, total)
+
+                  # Simulate processing with optional failure
+                  if item == fail_on_item:
+                      await ctx.error(f"Failed to process item: {item}")
+                      errors.append({"item": item, "reason": "Requested failure"})
+                  else:
+                      await asyncio.sleep(0.01)
+                      results.append(f"Processed: {item}")
+
+              if errors:
+                  return {
+                      "isError": len(errors) == total,  # Only mark as error if all items failed
+                      "status": "partial_success" if results else "failed",
+                      "processed": len(results),
+                      "failed": len(errors),
+                      "results": results,
+                      "errors": errors
+                  }
+              else:
+                  return {
+                      "status": "success",
+                      "processed": len(results),
+                      "results": results
+                  }
+
+          # Capture progress updates and log messages
+          progress_updates: List[Tuple[int, int]] = []
+          log_messages: List[Tuple[str, str]] = []
+
+          async with client_session(server._mcp_server) as client:
+              # Set up callbacks
+              async def progress_callback(progress: int, total: int) -> None:
+                  progress_updates.append((progress, total))
+
+              async def log_callback(level: str, message: str, logger: str = None) -> None:
+                  log_messages.append((level, message))
+
+              # Register callbacks
+              client.session.on_progress = progress_callback
+              client.session.on_log_message = log_callback
+
+              # Test successful processing
+              items = ["item1", "item2", "item3"]
+              result = await client.call_tool(
+                  "process_with_status",
+                  {"items": items}
+              )
+
+              assert not result.isError
+              assert "success" in result.content[0].text
+              assert len(progress_updates) == 3
+              assert progress_updates[-1] == (3, 3)
+
+              # Reset tracking
+              progress_updates.clear()
+              log_messages.clear()
+
+              # Test with failure
+              result = await client.call_tool(
+                  "process_with_status",
+                  {"items": items, "fail_on_item": "item2"}
+              )
+
+              # Should be partial success (not marked as error)
+              assert not result.isError
+              assert "partial_success" in result.content[0].text
+
+              # Check for error log
+              error_logs = [msg for level, msg in log_messages if level == "error"]
+              assert len(error_logs) == 1
+              assert "Failed to process item: item2" in error_logs[0]
+      ```
+
+      ### Debugging with MCP Inspector
+
+      The SDK's debugging tools enable real-time monitoring of errors and status:
+
+      ```bash
+      # Launch MCP Inspector for detailed error/status tracking
+      mcp dev server.py
+      ```
+
+      Key features:
+      - **Error inspection**: View complete error stacks and response payloads.
+      - **Progress visualization**: Track real-time progress updates for long-running operations.
+      - **Tool call replay**: Re-execute failed calls with modified inputs for debugging.
+      - **Log filtering**: Filter logs by level (debug, info, warning, error) for focused debugging.
+
+      ### Error Handling and Status Tracking Best Practices
+
+      1. **Structured Error Responses**: Always return structured error responses with `isError`, `errorType`, and `message`.
+      2. **Granular Progress Updates**: Report progress at meaningful intervals, especially for long-running operations.
+      3. **Informative Logging**: Use appropriate log levels (debug, info, warning, error) to provide context.
+      4. **Graceful Degradation**: Design tools to continue partial processing when possible, rather than failing completely.
+      5. **Detailed Status Information**: Return comprehensive status information including success counts, error counts, and specific error details.
+      6. **Error Categorization**: Categorize errors by type to help clients handle them appropriately.
+      7. **Context Preservation**: Include relevant context in error messages to aid debugging.
+      8. **Async Error Handling**: Use proper async error handling patterns for asynchronous tools.
+      9. **Pipeline Recovery**: Implement recovery strategies for multi-step pipelines.
+      10. **Testing Error Paths**: Thoroughly test both success and error paths in your tools.
+
       ## Context Capabilities
 
       The Context object provides these capabilities:
