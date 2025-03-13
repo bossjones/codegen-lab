@@ -401,7 +401,7 @@ class TestInstructCursorRulesGeneration:
             assert text_data["status"] == "success"
 
             assert "message" in text_data
-            assert "Instructions to generate cursor rules based on AI report" in text_data["message"]
+            assert "Cursor Rules Generation Instructions" in text_data["message"]
 
             assert "cursor_rules_generation" in text_data
             assert text_data["cursor_rules_generation"] is True
@@ -612,19 +612,31 @@ actions:
         # Check that the result contains the expected operations
         assert "operations" in result
         assert isinstance(result["operations"], list)
-        assert len(result["operations"]) == 2
+        assert len(result["operations"]) == 3
 
         # Check directory creation operation
-        assert result["operations"][0]["type"] == "create_directory"
-        assert result["operations"][0]["path"] == "hack/drafts/cursor_rules"
-        assert result["operations"][0]["options"]["parents"] is True
-        assert result["operations"][0]["options"]["exist_ok"] is True
+        assert result["operations"][0]["type"] == "conditional_operation"
+        assert result["operations"][0]["condition"]["operation"] == "file_exists"
+        assert result["operations"][0]["condition"]["path"] == "hack/drafts/cursor_rules/test-rule.mdc.md"
+        assert result["operations"][0]["condition"]["and"]["operation"] == "not"
+        assert result["operations"][0]["condition"]["and"]["value"]
+        assert result["operations"][0]["if_true"]["type"] == "error"
+        assert (
+            result["operations"][0]["if_true"]["message"]
+            == "Error: File hack/drafts/cursor_rules/test-rule.mdc.md already exists and overwrite is set to False"
+        )
+        # Check directory creation operation
+        assert result["operations"][1]["type"] == "create_directory"
+        assert result["operations"][1]["path"] == "hack/drafts/cursor_rules"
+        assert result["operations"][1]["options"]["parents"] is True
+        assert result["operations"][1]["options"]["exist_ok"] is True
 
         # Check file write operation
-        assert result["operations"][1]["type"] == "write_file"
-        assert result["operations"][1]["path"] == "hack/drafts/cursor_rules/test-rule.mdc.md"
-        assert result["operations"][1]["content"] == valid_rule_content
-        assert result["operations"][1]["options"]["mode"] == "w"
+        assert result["operations"][2]["type"] == "write_file"
+        assert result["operations"][2]["path"] == "hack/drafts/cursor_rules/test-rule.mdc.md"
+        assert result["operations"][2]["content"] == valid_rule_content
+        assert result["operations"][2]["options"]["mode"] == "w"
+        assert result["operations"][2]["options"]["encoding"] == "utf-8"
 
         # Check message
         assert "message" in result
