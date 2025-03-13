@@ -1002,7 +1002,7 @@ def save_cursor_rule(
     rule_content: str = Field(
         description="The complete content of the cursor rule in mdc.md format",
         examples=[
-            "# Python Best Practices\n\nWhen writing Python code, follow these guidelines:\n\n1. Use type hints\n2. Write docstrings\n3. Follow PEP 8"
+            '---\ndescription: Rule description\nglobs: *.py\nalwaysApply: false\n---\n# Python Best Practices\n\nWhen writing Python code, follow these guidelines:\n\n<rule>\nname: python-best-practices\ndescription: Best practices for Python development\nfilters:\n  - type: file_extension\n    pattern: "\\.py$"\nactions:\n  - type: suggest\n    message: |\n      Follow these guidelines:\n      1. Use type hints\n      2. Write docstrings\n      3. Follow PEP 8\n</rule>'
         ],
         min_length=10,
     ),
@@ -1019,7 +1019,10 @@ def save_cursor_rule(
     instructions for the client to execute.
 
     The cursor rule format should follow this structure:
-    1. Optional YAML frontmatter with metadata
+    1. Optional YAML frontmatter with metadata inside triple-dash delimiters (---)
+       - description: Brief description of the rule's purpose
+       - globs: File patterns the rule applies to (e.g., *.py)
+       - alwaysApply: Boolean value (typically false)
     2. A markdown title and introduction
     3. A <rule>...</rule> block containing:
        - name: The rule identifier (should match the filename)
@@ -1054,7 +1057,8 @@ def save_cursor_rule(
               }
 
     Examples:
-        >>> result = save_cursor_rule("python-best-practices", "# Python Best Practices\\n\\nUse type hints...")
+        >>> result = save_cursor_rule("python-best-practices",
+        ...   "---\\ndescription: Python guidelines\\nglobs: *.py\\nalwaysApply: false\\n---\\n# Python Best Practices\\n...")
         >>> print("operations" in result)
         True
 
@@ -1074,6 +1078,8 @@ def save_cursor_rule(
     # Initialize validation results
     validation_results = {
         "basic_structure": True,
+        "has_frontmatter": False,
+        "has_rule_block": False,
         "rule_name_match": False,
         "has_filters": False,
         "has_actions": False,
@@ -1083,17 +1089,49 @@ def save_cursor_rule(
         "errors": [],
     }
 
-    # Basic validations
-    basic_validations = [
-        ("<rule>" not in rule_content, "Error: Rule content must include a <rule>...</rule> block"),
-        ("</rule>" not in rule_content, "Error: Rule content has an incomplete <rule> block"),
-    ]
+    # Check for essential structure: the rule block
+    if "<rule>" not in rule_content or "</rule>" not in rule_content:
+        validation_results["basic_structure"] = False
+        validation_results["has_rule_block"] = False
+        error_message = "Error: Rule content must include a <rule>...</rule> block"
+        validation_results["errors"].append(error_message)
+        return {"isError": True, "content": [{"type": "text", "text": error_message}]}
+    else:
+        validation_results["has_rule_block"] = True
 
-    for condition, error_message in basic_validations:
-        if condition:
-            validation_results["basic_structure"] = False
-            validation_results["errors"].append(error_message)
-            return {"isError": True, "content": [{"type": "text", "text": error_message}]}
+    # Check for frontmatter (optional but recommended)
+    import re
+
+    frontmatter_pattern = r"^---\s*\n(.*?)\n---\s*\n"
+    frontmatter_match = re.search(frontmatter_pattern, rule_content, re.DOTALL)
+    validation_results["has_frontmatter"] = bool(frontmatter_match)
+
+    if validation_results["has_frontmatter"]:
+        frontmatter_content = frontmatter_match.group(1)
+        # Check for required frontmatter fields
+        validation_results["has_description"] = "description:" in frontmatter_content
+        validation_results["has_globs"] = "globs:" in frontmatter_content
+        validation_results["has_always_apply"] = "alwaysApply:" in frontmatter_content
+
+        # Add warnings for missing frontmatter fields
+        if not validation_results["has_description"]:
+            validation_results["warnings"].append("Warning: Frontmatter is missing 'description' field")
+        if not validation_results["has_globs"]:
+            validation_results["warnings"].append("Warning: Frontmatter is missing 'globs' field")
+        if not validation_results["has_always_apply"]:
+            validation_results["warnings"].append("Warning: Frontmatter is missing 'alwaysApply' field")
+
+        # Check for quoted glob patterns (not recommended)
+        glob_pattern = r"globs:\s*\"(.*?)\""
+        if re.search(glob_pattern, frontmatter_content):
+            validation_results["warnings"].append("Warning: Glob patterns should not be quoted in frontmatter")
+    else:
+        validation_results["warnings"].append("Warning: Rule is missing YAML frontmatter (recommended but optional)")
+
+    # Check for markdown heading (optional if frontmatter exists)
+    has_heading = bool(re.search(r"^# ", rule_content, re.MULTILINE))
+    if not has_heading and not validation_results["has_frontmatter"]:
+        validation_results["warnings"].append("Warning: Rule has neither frontmatter nor a markdown heading")
 
     # Extract rule block for deeper validation
     try:
@@ -1102,8 +1140,6 @@ def save_cursor_rule(
         rule_block = rule_content[rule_block_start:rule_block_end]
 
         # Check rule name in rule block
-        import re
-
         rule_name_pattern = r"name:\s*([a-z0-9-]+)"
         rule_name_match = re.search(rule_name_pattern, rule_block)
 
@@ -1128,13 +1164,31 @@ def save_cursor_rule(
             validation_results["warnings"].append("Warning: Rule is missing filters section")
         if not validation_results["has_actions"]:
             validation_results["warnings"].append("Warning: Rule is missing actions section")
+
+        # Check for action types
+        if "type: suggest" in rule_block:
+            validation_results["has_suggest_action"] = True
+        if "type: reject" in rule_block:
+            validation_results["has_reject_action"] = True
+
+        # Check for filter types
+        filter_types = {
+            "file_extension": "type: file_extension" in rule_block,
+            "file_path": "type: file_path" in rule_block,
+            "content": "type: content" in rule_block,
+            "event": "type: event" in rule_block,
+        }
+        validation_results["filter_types"] = filter_types
+
     except Exception as e:
         validation_results["warnings"].append(f"Warning: Could not fully validate rule structure: {e!s}")
 
     try:
-        # Define the path for the cursor rules directory
-        cursor_rules_dir_path = "hack/drafts/cursor_rules"
-        rule_file_path = f"{cursor_rules_dir_path}/{rule_name}.mdc.md"
+        # Normalize path with consideration for cross-platform compatibility
+        import os
+
+        cursor_rules_dir_path = os.path.normpath("hack/drafts/cursor_rules")
+        rule_file_path = os.path.normpath(f"{cursor_rules_dir_path}/{rule_name}.mdc.md")
 
         # File existence operations
         check_file_existence = {"type": "custom_operation", "operation": "check_file_exists", "path": rule_file_path}
@@ -1181,9 +1235,20 @@ def save_cursor_rule(
                 "path": rule_file_path,
                 "format": "Markdown with embedded rule specification",
                 "components": {
-                    "frontmatter": "Optional YAML metadata at the top",
+                    "frontmatter": {
+                        "description": "Brief description of the rule's purpose",
+                        "globs": "File patterns the rule applies to (e.g., *.py)",
+                        "alwaysApply": "Boolean value (typically false)",
+                    },
                     "introduction": "Markdown heading and description",
-                    "rule_block": "<rule>...</rule> block with the main rule definition",
+                    "rule_block": {
+                        "name": "Rule identifier (should match filename)",
+                        "description": "Brief explanation of the rule",
+                        "filters": "Conditions for when the rule applies",
+                        "actions": "Guidance provided when the rule matches",
+                        "examples": "Sample inputs and outputs",
+                        "metadata": "Priority, version, and tags",
+                    },
                 },
             },
             "validation_results": validation_results,
@@ -1192,6 +1257,7 @@ def save_cursor_rule(
                 "Run `make update-cursor-rules` to deploy it to the .cursor/rules directory",
                 "Verify the rule appears in your Cursor editor",
             ],
+            "deployment_path": ".cursor/rules/",
         }
     except Exception as e:
         # Handle any unexpected errors
