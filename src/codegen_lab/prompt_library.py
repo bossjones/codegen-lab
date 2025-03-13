@@ -570,6 +570,11 @@ def instruct_repo_analysis() -> dict[str, Any]:
     description="Run a cursor rules generation process based on repository analysis",
 )
 def instruct_custom_repo_rules_generation(
+    # repo_summary: str = Field(
+    #     description="A summary description of the repository, including technologies, frameworks, and key features",
+    #     examples=["A Python web application using FastAPI, SQLAlchemy, and React for the frontend. Includes authentication, API endpoints, and database models."],
+    #     min_length=20,
+    # ),
     report_path: str = Field(
         description="Path to the AI report file, relative to the project root",
         examples=["ai_report.md", "docs/ai_report.md"],
