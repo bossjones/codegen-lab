@@ -1,3 +1,10 @@
+# pyright: reportMissingImports=false
+# pyright: reportUnusedVariable=warning
+# pyright: reportUntypedBaseClass=error
+# pyright: reportGeneralTypeIssues=false
+# pyright: reportAttributeAccessIssue=false
+# pyright: reportInvalidTypeForm=false
+
 """Tests for the prompt_library FastMCP server.
 
 This module contains tests for the prompt_library FastMCP server, which exposes

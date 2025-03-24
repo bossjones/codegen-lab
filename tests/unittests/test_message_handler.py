@@ -1,3 +1,10 @@
+# pyright: reportMissingImports=false
+# pyright: reportUnusedVariable=warning
+# pyright: reportUntypedBaseClass=error
+# pyright: reportGeneralTypeIssues=false
+# pyright: reportAttributeAccessIssue=false
+# pyright: reportInvalidTypeForm=false
+
 import json
 from typing import TYPE_CHECKING, Any, Dict
 
