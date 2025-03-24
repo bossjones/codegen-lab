@@ -928,6 +928,405 @@ actions:
               )
       ```
 
+      ## 14. View Components
+
+      Implement interactive components using discord.py's View system:
+
+      ```python
+      from typing import Optional, List, Dict, Any
+      import discord
+      from discord.ext import commands
+      from datetime import datetime, timedelta
+
+      class ConfirmButton(discord.ui.Button["ConfirmView"]):
+          """A button for confirmation dialogs."""
+
+          def __init__(
+              self,
+              label: str,
+              style: discord.ButtonStyle,
+              custom_id: str
+          ) -> None:
+              """
+              Initialize the button.
+
+              Args:
+                  label: The button label
+                  style: The button style
+                  custom_id: The button's custom ID
+              """
+              super().__init__(
+                  label=label,
+                  style=style,
+                  custom_id=custom_id
+              )
+
+          async def callback(self, interaction: discord.Interaction) -> None:
+              """
+              Handle button click.
+
+              Args:
+                  interaction: The button interaction
+              """
+              assert self.view is not None
+              self.view.value = self.custom_id == "confirm"
+              await interaction.response.defer()
+              await self.view.disable_all_items()
+              self.view.stop()
+
+      class ConfirmView(discord.ui.View):
+          """A view for confirmation dialogs."""
+
+          def __init__(self, timeout: float = 180.0) -> None:
+              """
+              Initialize the view.
+
+              Args:
+                  timeout: View timeout in seconds
+              """
+              super().__init__(timeout=timeout)
+              self.value: Optional[bool] = None
+
+              # Add buttons
+              self.add_item(ConfirmButton(
+                  "Confirm",
+                  discord.ButtonStyle.green,
+                  "confirm"
+              ))
+              self.add_item(ConfirmButton(
+                  "Cancel",
+                  discord.ButtonStyle.red,
+                  "cancel"
+              ))
+
+          async def disable_all_items(self) -> None:
+              """Disable all items in the view."""
+              for item in self.children:
+                  if isinstance(item, (discord.ui.Button, discord.ui.Select)):
+                      item.disabled = True
+              if self.message:
+                  await self.message.edit(view=self)
+
+          async def on_timeout(self) -> None:
+              """Handle view timeout."""
+              await self.disable_all_items()
+
+      class RoleSelect(discord.ui.Select["RoleView"]):
+          """A select menu for role assignment."""
+
+          def __init__(self, roles: List[discord.Role]) -> None:
+              """
+              Initialize the select menu.
+
+              Args:
+                  roles: List of assignable roles
+              """
+              options = [
+                  discord.SelectOption(
+                      label=role.name,
+                      value=str(role.id),
+                      description=f"Join the {role.name} group"
+                  )
+                  for role in roles
+              ]
+
+              super().__init__(
+                  placeholder="Select your roles...",
+                  min_values=0,
+                  max_values=len(options),
+                  options=options
+              )
+
+          async def callback(self, interaction: discord.Interaction) -> None:
+              """
+              Handle role selection.
+
+              Args:
+                  interaction: The selection interaction
+              """
+              member = interaction.user
+              if not isinstance(member, discord.Member):
+                  return
+
+              # Get selected roles
+              selected_roles = [
+                  interaction.guild.get_role(int(role_id))
+                  for role_id in self.values
+              ]
+              selected_roles = [r for r in selected_roles if r is not None]
+
+              # Get assignable roles
+              assert self.view is not None
+              assignable_roles = [
+                  r for r in self.view.roles
+                  if r.position < interaction.guild.me.top_role.position
+              ]
+
+              try:
+                  # Remove unselected assignable roles
+                  to_remove = [
+                      r for r in member.roles
+                      if r in assignable_roles and r not in selected_roles
+                  ]
+                  if to_remove:
+                      await member.remove_roles(*to_remove)
+
+                  # Add selected roles
+                  to_add = [
+                      r for r in selected_roles
+                      if r not in member.roles
+                  ]
+                  if to_add:
+                      await member.add_roles(*to_add)
+
+                  await interaction.response.send_message(
+                      "Roles updated!",
+                      ephemeral=True
+                  )
+              except discord.Forbidden:
+                  await interaction.response.send_message(
+                      "I don't have permission to manage these roles!",
+                      ephemeral=True
+                  )
+              except discord.HTTPException as e:
+                  await interaction.response.send_message(
+                      f"Failed to update roles: {str(e)}",
+                      ephemeral=True
+                  )
+
+      class RoleView(discord.ui.View):
+          """A view for role selection."""
+
+          def __init__(
+              self,
+              roles: List[discord.Role],
+              timeout: float = 600.0
+          ) -> None:
+              """
+              Initialize the view.
+
+              Args:
+                  roles: List of assignable roles
+                  timeout: View timeout in seconds
+              """
+              super().__init__(timeout=timeout)
+              self.roles = roles
+              self.add_item(RoleSelect(roles))
+
+      class PaginationView(discord.ui.View):
+          """A view for paginated content."""
+
+          def __init__(
+              self,
+              pages: List[discord.Embed],
+              timeout: float = 180.0
+          ) -> None:
+              """
+              Initialize the view.
+
+              Args:
+                  pages: List of embeds to paginate
+                  timeout: View timeout in seconds
+              """
+              super().__init__(timeout=timeout)
+              self.pages = pages
+              self.current_page = 0
+
+          @discord.ui.button(
+              label="Previous",
+              style=discord.ButtonStyle.gray,
+              custom_id="prev",
+              disabled=True
+          )
+          async def prev_button(
+              self,
+              interaction: discord.Interaction,
+              button: discord.ui.Button
+          ) -> None:
+              """
+              Show the previous page.
+
+              Args:
+                  interaction: The button interaction
+                  button: The button that was clicked
+              """
+              self.current_page = max(0, self.current_page - 1)
+              await self.update_buttons(interaction)
+
+          @discord.ui.button(
+              label="Next",
+              style=discord.ButtonStyle.gray,
+              custom_id="next"
+          )
+          async def next_button(
+              self,
+              interaction: discord.Interaction,
+              button: discord.ui.Button
+          ) -> None:
+              """
+              Show the next page.
+
+              Args:
+                  interaction: The button interaction
+                  button: The button that was clicked
+              """
+              self.current_page = min(len(self.pages) - 1, self.current_page + 1)
+              await self.update_buttons(interaction)
+
+          async def update_buttons(self, interaction: discord.Interaction) -> None:
+              """
+              Update button states and current page.
+
+              Args:
+                  interaction: The button interaction
+              """
+              # Update button states
+              self.prev_button.disabled = self.current_page == 0
+              self.next_button.disabled = self.current_page == len(self.pages) - 1
+
+              # Update the message
+              await interaction.response.edit_message(
+                  embed=self.pages[self.current_page],
+                  view=self
+              )
+
+      class ViewComponentsCog(commands.Cog):
+          """Example cog demonstrating view components."""
+
+          def __init__(self, bot: commands.Bot) -> None:
+              self.bot = bot
+
+          @commands.command()
+          @commands.has_permissions(kick_members=True)
+          async def kick(
+              self,
+              ctx: commands.Context,
+              member: discord.Member,
+              *,
+              reason: Optional[str] = None
+          ) -> None:
+              """
+              Kick a member with confirmation.
+
+              Args:
+                  ctx: The command context
+                  member: The member to kick
+                  reason: Optional reason for the kick
+              """
+              view = ConfirmView()
+              msg = await ctx.send(
+                  f"Are you sure you want to kick {member.mention}?",
+                  view=view
+              )
+              view.message = msg
+
+              # Wait for interaction
+              await view.wait()
+              if view.value:
+                  try:
+                      await member.kick(reason=reason)
+                      await ctx.send(
+                          f"✅ Kicked {member.name}"
+                          + (f" for: {reason}" if reason else "")
+                      )
+                  except discord.Forbidden:
+                      await ctx.send("I don't have permission to kick that member!")
+                  except discord.HTTPException as e:
+                      await ctx.send(f"Failed to kick member: {str(e)}")
+              else:
+                  await ctx.send("Kick cancelled.")
+
+          @commands.command()
+          @commands.has_permissions(manage_roles=True)
+          async def rolemenu(
+              self,
+              ctx: commands.Context,
+              *roles: discord.Role
+          ) -> None:
+              """
+              Create a role selection menu.
+
+              Args:
+                  ctx: The command context
+                  roles: Roles to include in the menu
+              """
+              if not roles:
+                  await ctx.send("Please specify at least one role!")
+                  return
+
+              # Filter roles that the bot can manage
+              assignable_roles = [
+                  r for r in roles
+                  if r.position < ctx.guild.me.top_role.position
+              ]
+
+              if not assignable_roles:
+                  await ctx.send(
+                      "I cannot manage any of the specified roles!"
+                  )
+                  return
+
+              embed = discord.Embed(
+                  title="Role Selection",
+                  description="Select your roles from the menu below:",
+                  color=discord.Color.blue()
+              )
+
+              view = RoleView(assignable_roles)
+              await ctx.send(embed=embed, view=view)
+
+          @commands.command()
+          async def help(self, ctx: commands.Context) -> None:
+              """
+              Show paginated help menu.
+
+              Args:
+                  ctx: The command context
+              """
+              # Create help pages
+              pages = []
+
+              # General commands page
+              general = discord.Embed(
+                  title="General Commands",
+                  color=discord.Color.blue()
+              )
+              general.add_field(
+                  name="help",
+                  value="Show this help menu",
+                  inline=False
+              )
+              pages.append(general)
+
+              # Moderation commands page
+              mod = discord.Embed(
+                  title="Moderation Commands",
+                  color=discord.Color.red()
+              )
+              mod.add_field(
+                  name="kick <member> [reason]",
+                  value="Kick a member from the server",
+                  inline=False
+              )
+              pages.append(mod)
+
+              # Role commands page
+              roles = discord.Embed(
+                  title="Role Commands",
+                  color=discord.Color.green()
+              )
+              roles.add_field(
+                  name="rolemenu <roles...>",
+                  value="Create a role selection menu",
+                  inline=False
+              )
+              pages.append(roles)
+
+              # Send paginated help menu
+              view = PaginationView(pages)
+              await ctx.send(embed=pages[0], view=view)
+      ```
+
 examples:
   - input: |
       # Bad: No type hints or docstrings
