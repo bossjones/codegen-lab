@@ -716,4 +716,501 @@ actions:
       - Advanced error handling for complex commands
       - Proper type annotations for all parameters
       - Comprehensive command descriptions and help text
+
+      ## 8. Testing Patterns
+
+      Implement comprehensive testing for cogs:
+
+      ```python
+      from typing import Optional, Dict, Any, Generator, AsyncGenerator, TYPE_CHECKING
+      import pytest
+      import discord
+      from discord.ext import commands
+      import asyncio
+      from datetime import datetime, timedelta
+
+      if TYPE_CHECKING:
+          from _pytest.capture import CaptureFixture
+          from _pytest.fixtures import FixtureRequest
+          from _pytest.logging import LogCaptureFixture
+          from _pytest.monkeypatch import MonkeyPatch
+          from pytest_mock.plugin import MockerFixture
+
+      class MockBot(commands.Bot):
+          """Mock bot class for testing."""
+
+          def __init__(self) -> None:
+              """Initialize the mock bot."""
+              super().__init__(command_prefix="!", intents=discord.Intents.all())
+              self.user = discord.Object(id=123)  # Mock bot user
+              self.application_id = 123
+
+      class MockGuild(discord.Guild):
+          """Mock guild for testing."""
+
+          def __init__(self, **kwargs: Any) -> None:
+              """Initialize mock guild with default values."""
+              self.id = kwargs.get('id', 123)
+              self.name = kwargs.get('name', 'Test Guild')
+              self.roles = [discord.Object(id=1)]  # Default @everyone role
+
+      class MockMember(discord.Member):
+          """Mock member for testing."""
+
+          def __init__(self, **kwargs: Any) -> None:
+              """Initialize mock member with default values."""
+              self.id = kwargs.get('id', 456)
+              self.name = kwargs.get('name', 'Test User')
+              self.guild = kwargs.get('guild', MockGuild())
+              self.roles = [discord.Object(id=1)]
+              self.joined_at = kwargs.get('joined_at', datetime.now())
+              self.created_at = kwargs.get('created_at', datetime.now())
+
+      class MockContext:
+          """Mock context for testing commands."""
+
+          def __init__(
+              self,
+              bot: Optional[commands.Bot] = None,
+              author: Optional[discord.Member] = None,
+              guild: Optional[discord.Guild] = None,
+              **kwargs: Any
+          ) -> None:
+              """Initialize mock context with configurable values."""
+              self.bot = bot or MockBot()
+              self.guild = guild or MockGuild()
+              self.author = author or MockMember(guild=self.guild)
+              self.channel = kwargs.get('channel', discord.Object(id=789))
+              self.message = kwargs.get('message', discord.Object(id=101112))
+              self.command = kwargs.get('command', None)
+
+          async def send(self, *args: Any, **kwargs: Any) -> None:
+              """Mock message sending."""
+              return None
+
+      @pytest.fixture
+      def mock_bot() -> MockBot:
+          """
+          Fixture providing a mock bot instance.
+
+          Returns:
+              MockBot: A mock bot instance for testing
+          """
+          return MockBot()
+
+      @pytest.fixture
+      def mock_guild() -> MockGuild:
+          """
+          Fixture providing a mock guild.
+
+          Returns:
+              MockGuild: A mock guild instance for testing
+          """
+          return MockGuild()
+
+      @pytest.fixture
+      def mock_member(mock_guild: MockGuild) -> MockMember:
+          """
+          Fixture providing a mock member.
+
+          Args:
+              mock_guild: The mock guild fixture
+
+          Returns:
+              MockMember: A mock member instance for testing
+          """
+          return MockMember(guild=mock_guild)
+
+      @pytest.fixture
+      def mock_ctx(
+          mock_bot: MockBot,
+          mock_member: MockMember,
+          mock_guild: MockGuild
+      ) -> MockContext:
+          """
+          Fixture providing a mock context.
+
+          Args:
+              mock_bot: The mock bot fixture
+              mock_member: The mock member fixture
+              mock_guild: The mock guild fixture
+
+          Returns:
+              MockContext: A mock context instance for testing
+          """
+          return MockContext(
+              bot=mock_bot,
+              author=mock_member,
+              guild=mock_guild
+          )
+
+      class TestHybridCog:
+          """Tests for the HybridCog."""
+
+          @pytest.fixture
+          async def cog(self, mock_bot: MockBot) -> Generator[HybridCog, None, None]:
+              """
+              Fixture providing a HybridCog instance.
+
+              Args:
+                  mock_bot: The mock bot fixture
+
+              Yields:
+                  HybridCog: A cog instance for testing
+              """
+              cog = HybridCog(mock_bot)
+              yield cog
+              # Cleanup if needed
+              if hasattr(cog, 'cleanup'):
+                  await cog.cleanup()
+
+          @pytest.mark.asyncio
+          async def test_userinfo_command_basic(
+              self,
+              cog: HybridCog,
+              mock_ctx: MockContext,
+              mock_member: MockMember,
+              mocker: MockerFixture
+          ) -> None:
+              """
+              Test basic userinfo command functionality.
+
+              Args:
+                  cog: The cog fixture
+                  mock_ctx: The mock context fixture
+                  mock_member: The mock member fixture
+                  mocker: The pytest-mock fixture
+              """
+              # Mock the send method to capture the output
+              send_mock = mocker.patch.object(mock_ctx, 'send')
+
+              # Call the command
+              await cog.userinfo(mock_ctx, mock_member, detailed=False)
+
+              # Verify the output
+              send_mock.assert_called_once()
+              call_args = send_mock.call_args[1]
+              embed = call_args['embed']
+
+              assert isinstance(embed, discord.Embed)
+              assert embed.title == f"User Info - {mock_member.name}"
+              assert any(field.name == "ID" for field in embed.fields)
+
+      class TestTasksCog:
+          """Tests for the TasksCog."""
+
+          @pytest.fixture
+          async def cog(
+              self,
+              mock_bot: MockBot,
+              monkeypatch: MonkeyPatch
+          ) -> AsyncGenerator[TasksCog, None]:
+              """
+              Fixture providing a TasksCog instance.
+
+              Args:
+                  mock_bot: The mock bot fixture
+                  monkeypatch: The pytest monkeypatch fixture
+
+              Yields:
+                  TasksCog: A cog instance for testing
+              """
+              # Mock the task loop to prevent it from actually running
+              monkeypatch.setattr(
+                  'discord.ext.tasks.Loop.start',
+                  lambda self: None
+              )
+
+              cog = TasksCog(mock_bot)
+              yield cog
+
+              # Cleanup
+              if not cog.check_reminders.is_being_cancelled():
+                  cog.check_reminders.cancel()
+
+          @pytest.mark.asyncio
+          async def test_reminder_scheduling(
+              self,
+              cog: TasksCog,
+              mock_ctx: MockContext,
+              mocker: MockerFixture
+          ) -> None:
+              """
+              Test reminder scheduling functionality.
+
+              Args:
+                  cog: The cog fixture
+                  mock_ctx: The mock context fixture
+                  mocker: The pytest-mock fixture
+              """
+              # Mock the send method
+              send_mock = mocker.patch.object(mock_ctx, 'send')
+
+              # Test scheduling a reminder
+              reminder_text = "Test reminder"
+              await cog.remind(mock_ctx, 5, reminder=reminder_text)
+
+              # Verify reminder was scheduled
+              assert mock_ctx.author.id in cog.reminder_queue
+              send_mock.assert_called_once()
+              assert reminder_text in send_mock.call_args[0][0]
+
+          @pytest.mark.asyncio
+          async def test_reminder_execution(
+              self,
+              cog: TasksCog,
+              mock_bot: MockBot,
+              mocker: MockerFixture
+          ) -> None:
+              """
+              Test reminder execution functionality.
+
+              Args:
+                  cog: The cog fixture
+                  mock_bot: The mock bot fixture
+                  mocker: The pytest-mock fixture
+              """
+              # Mock get_user and send methods
+              user = MockMember()
+              mocker.patch.object(mock_bot, 'get_user', return_value=user)
+              send_mock = mocker.patch.object(user, 'send')
+
+              # Add a due reminder
+              cog.reminder_queue[user.id] = datetime.now() - timedelta(minutes=1)
+
+              # Run the check
+              await cog.check_reminders()
+
+              # Verify reminder was sent and cleaned up
+              send_mock.assert_called_once_with("Your reminder is due!")
+              assert user.id not in cog.reminder_queue
+
+      class TestUICog:
+          """Tests for the UICog."""
+
+          @pytest.fixture
+          async def cog(self, mock_bot: MockBot) -> UICog:
+              """
+              Fixture providing a UICog instance.
+
+              Args:
+                  mock_bot: The mock bot fixture
+
+              Returns:
+                  UICog: A cog instance for testing
+              """
+              return UICog(mock_bot)
+
+          @pytest.mark.asyncio
+          async def test_poll_creation(
+              self,
+              cog: UICog,
+              mock_ctx: MockContext,
+              mocker: MockerFixture
+          ) -> None:
+              """
+              Test poll creation functionality.
+
+              Args:
+                  cog: The cog fixture
+                  mock_ctx: The mock context fixture
+                  mocker: The pytest-mock fixture
+              """
+              # Mock the send method
+              send_mock = mocker.patch.object(mock_ctx, 'send')
+
+              # Create a poll
+              question = "Test poll question?"
+              await cog.poll(mock_ctx, question=question)
+
+              # Verify the poll was created correctly
+              send_mock.assert_called_once()
+              call_args = send_mock.call_args[1]
+
+              assert isinstance(call_args['embed'], discord.Embed)
+              assert call_args['embed'].description == question
+              assert isinstance(call_args['view'], PollView)
+
+          @pytest.mark.asyncio
+          async def test_poll_voting(
+              self,
+              mocker: MockerFixture
+          ) -> None:
+              """
+              Test poll voting functionality.
+
+              Args:
+                  mocker: The pytest-mock fixture
+              """
+              # Create a poll view
+              view = PollView()
+
+              # Mock an interaction
+              interaction = mocker.MagicMock()
+              interaction.user.id = 123
+              response_mock = mocker.MagicMock()
+              interaction.response = response_mock
+
+              # Test voting yes
+              await view.yes_button.callback(interaction)
+              assert 123 in view.votes["yes"]
+              assert 123 not in view.votes["no"]
+              response_mock.send_message.assert_called_with(
+                  "Voted Yes!",
+                  ephemeral=True
+              )
+
+              # Test changing vote to no
+              await view.no_button.callback(interaction)
+              assert 123 not in view.votes["yes"]
+              assert 123 in view.votes["no"]
+              response_mock.send_message.assert_called_with(
+                  "Voted No!",
+                  ephemeral=True
+              )
+
+      class TestErrorHandlerCog:
+          """Tests for the ErrorHandlerCog."""
+
+          @pytest.fixture
+          async def cog(self, mock_bot: MockBot) -> ErrorHandlerCog:
+              """
+              Fixture providing an ErrorHandlerCog instance.
+
+              Args:
+                  mock_bot: The mock bot fixture
+
+              Returns:
+                  ErrorHandlerCog: A cog instance for testing
+              """
+              return ErrorHandlerCog(mock_bot)
+
+          @pytest.mark.asyncio
+          async def test_app_command_error_handling(
+              self,
+              cog: ErrorHandlerCog,
+              mocker: MockerFixture
+          ) -> None:
+              """
+              Test application command error handling.
+
+              Args:
+                  cog: The cog fixture
+                  mocker: The pytest-mock fixture
+              """
+              # Mock interaction
+              interaction = mocker.MagicMock()
+              response_mock = mocker.MagicMock()
+              interaction.response = response_mock
+
+              # Test cooldown error
+              error = app_commands.CommandOnCooldown(retry_after=5.0)
+              await cog.cog_app_command_error(interaction, error)
+              response_mock.send_message.assert_called_with(
+                  "This command is on cooldown. Try again in 5.00s",
+                  ephemeral=True
+              )
+
+              # Test permissions error
+              error = app_commands.MissingPermissions(["manage_messages"])
+              await cog.cog_app_command_error(interaction, error)
+              response_mock.send_message.assert_called_with(
+                  "You don't have permission to use this command!",
+                  ephemeral=True
+              )
+
+      class TestPersistentStateCog:
+          """Tests for the PersistentStateCog."""
+
+          @pytest.fixture
+          def temp_data_dir(self, tmp_path: Path) -> Path:
+              """
+              Fixture providing a temporary data directory.
+
+              Args:
+                  tmp_path: pytest's temporary path fixture
+
+              Returns:
+                  Path: Path to temporary data directory
+              """
+              data_dir = tmp_path / "data"
+              data_dir.mkdir()
+              return data_dir
+
+          @pytest.fixture
+          async def cog(
+              self,
+              mock_bot: MockBot,
+              temp_data_dir: Path,
+              monkeypatch: MonkeyPatch
+          ) -> PersistentStateCog:
+              """
+              Fixture providing a PersistentStateCog instance with temporary storage.
+
+              Args:
+                  mock_bot: The mock bot fixture
+                  temp_data_dir: The temporary data directory fixture
+                  monkeypatch: The pytest monkeypatch fixture
+
+              Returns:
+                  PersistentStateCog: A cog instance for testing
+              """
+              cog = PersistentStateCog(mock_bot)
+              monkeypatch.setattr(cog, 'data_path', temp_data_dir / "cog_state.json")
+              return cog
+
+          @pytest.mark.asyncio
+          async def test_state_persistence(
+              self,
+              cog: PersistentStateCog,
+              mock_guild: MockGuild
+          ) -> None:
+              """
+              Test state persistence functionality.
+
+              Args:
+                  cog: The cog fixture
+                  mock_guild: The mock guild fixture
+              """
+              # Trigger state initialization
+              await cog.on_guild_join(mock_guild)
+
+              # Verify state was initialized
+              guild_id = str(mock_guild.id)
+              assert guild_id in cog.state
+              assert cog.state[guild_id]["welcome_channel"] is None
+              assert isinstance(cog.state[guild_id]["auto_roles"], list)
+
+              # Save state
+              await cog.save_state()
+
+              # Create new cog instance to test loading
+              new_cog = PersistentStateCog(cog.bot)
+              new_cog.data_path = cog.data_path
+
+              # Verify state was loaded correctly
+              loaded_state = new_cog.load_state()
+              assert guild_id in loaded_state
+              assert loaded_state[guild_id] == cog.state[guild_id]
+      ```
+
+      This section demonstrates:
+      1. Mock classes for Discord objects (Bot, Guild, Member, Context)
+      2. Fixtures for common test requirements
+      3. Comprehensive test cases for different cog types
+      4. Testing async code with pytest-asyncio
+      5. Testing UI components and interactions
+      6. Testing error handlers
+      7. Testing persistent state with temporary files
+      8. Type hints and documentation for all test code
+
+      Key testing patterns shown:
+      - Using pytest fixtures for test setup and cleanup
+      - Mocking Discord.py objects and methods
+      - Testing async code properly
+      - Testing UI interactions and state
+      - Testing error handling paths
+      - Testing persistent state management
+      - Proper type annotations for test code
+      - Comprehensive test documentation
 </rule>
