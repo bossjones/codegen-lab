@@ -43,6 +43,60 @@ actions:
       """
       ```
 
+      - Create a PLAN.md file for high-level implementation details:
+      ```bash
+      # Create a PLAN.md file in the project root
+      touch PLAN.md
+      ```
+
+      ```markdown
+      # Refactoring Plan
+
+      ## Overview
+      This document outlines the refactoring plan for [component/module]. It will be updated as the refactoring progresses.
+
+      ## Goals
+      - Improve maintainability by breaking down large files
+      - Separate concerns into appropriate modules
+      - Ensure backward compatibility
+      - Maintain test coverage
+
+      ## Architecture Changes
+      - Create new module structure with the following components:
+        - `models.py`: Data structures and schemas
+        - `services.py`: Business logic and processing
+        - `utils.py`: Helper functions and utilities
+        - `resources.py`: API endpoints and interfaces
+
+      ## Implementation Phases
+      1. **Setup Phase**
+         - Create directory structure
+         - Add placeholder files with docstrings
+         - Establish test scaffolding
+
+      2. **Migration Phase**
+         - Move models to models.py
+         - Move business logic to services.py
+         - Move utilities to utils.py
+         - Move API endpoints to resources.py
+
+      3. **Integration Phase**
+         - Update imports
+         - Set up proper exports
+         - Ensure backward compatibility
+         - Run full test suite
+
+      ## Current Status
+      - [ ] Phase 1: Setup (In Progress)
+      - [ ] Phase 2: Migration
+      - [ ] Phase 3: Integration
+
+      ## Notes
+      - Any dependencies between components
+      - Potential issues to be aware of
+      - Design decisions made during refactoring
+      ```
+
       - Set up the directory structure before making any code changes:
       ```bash
       # Create directory structure (with fallback if it exists)
@@ -54,6 +108,12 @@ actions:
       touch src/package_name/submodule/services.py
       touch src/package_name/submodule/resources.py
       ```
+
+      - **Throughout the refactoring process**, reference and update the PLAN.md file:
+        - Update the "Current Status" section after completing each phase
+        - Add implementation details and decisions to the "Notes" section
+        - Document any challenges encountered and their solutions
+        - Track changes to the high-level architecture
 
       ### 1. Write Tests First
       ```bash
@@ -352,7 +412,7 @@ actions:
           pass
       ```
 
-      ### Step 1: Create a scratch pad
+      ### Step 1: Create a scratch pad and PLAN.md
       Add a planning docstring at the top of the file:
       ```python
       """Refactoring Plan for large_module.py:
@@ -370,6 +430,56 @@ actions:
       # Rest of large_module.py...
       ```
 
+      Create a PLAN.md file with high-level implementation details:
+      ```bash
+      # Create the PLAN.md file
+      touch PLAN.md
+      ```
+
+      ```markdown
+      # Refactoring Plan for large_module.py
+
+      ## Overview
+      This document outlines the plan for breaking down large_module.py into more manageable components.
+
+      ## Goals
+      - Separate concerns into appropriate modules
+      - Improve code maintainability
+      - Ensure backward compatibility
+
+      ## Architecture Changes
+      - Extract data model into models.py
+      - Move business logic to services.py
+      - Move utility functions to utils.py
+      - Place API endpoints in resources.py
+
+      ## Implementation Phases
+      1. **Setup Phase** (Current)
+         - Create directory structure
+         - Add placeholder files
+
+      2. **Migration Phase**
+         - Move DataModel to models.py
+         - Move process_data to services.py
+         - Move helper_function to utils.py
+         - Move api_endpoint to resources.py
+
+      3. **Integration Phase**
+         - Update imports
+         - Set up re-exports in __init__.py
+         - Update large_module.py to maintain compatibility
+
+      ## Current Status
+      - [x] Analysis completed
+      - [ ] Phase 1: Setup (In Progress)
+      - [ ] Phase 2: Migration
+      - [ ] Phase 3: Integration
+
+      ## Notes
+      - DataModel is used by process_data, so we need to ensure imports are correct
+      - All exports should be maintained for backward compatibility
+      ```
+
       ### Step 2: Create directory structure
       ```bash
       # Create the required directories
@@ -382,6 +492,20 @@ actions:
       touch src/package_name/submodule/utils.py
       touch src/package_name/submodule/services.py
       touch src/package_name/submodule/resources.py
+      ```
+
+      Update PLAN.md to reflect progress:
+      ```markdown
+      ## Current Status
+      - [x] Analysis completed
+      - [x] Phase 1: Setup (Completed)
+      - [ ] Phase 2: Migration (In Progress)
+      - [ ] Phase 3: Integration
+
+      ## Notes
+      - Directory structure created
+      - Empty files initialized
+      - Ready to begin migration of components
       ```
 
       ### Step 3: Set up files with pseudocode
@@ -453,6 +577,22 @@ actions:
           pass
       ```
 
+      Update PLAN.md to document implementation decisions:
+      ```markdown
+      ## Current Status
+      - [x] Analysis completed
+      - [x] Phase 1: Setup (Completed)
+      - [x] Phase 2: Migration (Initial)
+      - [ ] Phase 2: Migration (Implementation)
+      - [ ] Phase 3: Integration
+
+      ## Notes
+      - Initial placeholder implementations completed
+      - Confirmed import structure: models -> services -> resources
+      - Decided to use pass with TODO comments to document implementation plans
+      - Decision: DataModel will be a fully typed class in the final implementation
+      ```
+
       ### Step 4: Create the __init__.py file for re-exports
       ```python
       # src/package_name/submodule/__init__.py
@@ -488,8 +628,46 @@ actions:
       __all__ = ['DataModel', 'process_data', 'helper_function', 'api_endpoint']
       ```
 
+      Update PLAN.md to reflect progress:
+      ```markdown
+      ## Current Status
+      - [x] Analysis completed
+      - [x] Phase 1: Setup (Completed)
+      - [x] Phase 2: Migration (Completed)
+      - [x] Phase 3: Integration (Initial)
+      - [ ] Phase 3: Integration (Testing)
+
+      ## Notes
+      - Migration of all components completed
+      - Re-exports established in __init__.py
+      - Original module updated to maintain backward compatibility
+      - Integration tests pending
+      - Next steps: Implement full functionality for each component
+      ```
+
       ### Step 6: Gradually implement each component
-      After setting up the structure, go back and implement each component fully, updating the checklist in your scratch pad as you complete each task.
+      After setting up the structure, go back and implement each component fully, updating the checklist in your scratch pad as you complete each task and regularly updating the PLAN.md file with your progress and decisions.
+
+      Final update to PLAN.md after completion:
+      ```markdown
+      ## Current Status
+      - [x] Analysis completed
+      - [x] Phase 1: Setup (Completed)
+      - [x] Phase 2: Migration (Completed)
+      - [x] Phase 3: Integration (Completed)
+
+      ## Notes
+      - All components have been fully implemented
+      - Tests passing for all modules
+      - Backward compatibility confirmed
+      - Refactoring complete and ready for review
+
+      ## Lessons Learned
+      - Models should be defined early as they are dependencies for other components
+      - Type hints are essential for ensuring correct integration
+      - Pseudocode approach made it easy to see the overall structure before diving into details
+      - Incremental approach allowed for regular testing and validation
+      ```
 
 examples:
   - input: |
@@ -527,6 +705,56 @@ examples:
       # Rest of big_module.py continues...
       ```
 
+      Next, create a PLAN.md file with high-level implementation details:
+
+      ```bash
+      # Create the PLAN.md file
+      touch PLAN.md
+      ```
+
+      ```markdown
+      # Refactoring Plan for big_module.py
+
+      ## Overview
+      This document outlines the plan for refactoring big_module.py into a modular structure.
+
+      ## Goals
+      - Break down the monolithic module into smaller components
+      - Create a clear separation of concerns
+      - Improve maintainability and testability
+      - Maintain backward compatibility
+
+      ## Architecture Changes
+      - Create a promptlib package with specialized modules:
+        - models.py: Will contain UserModel
+        - services.py: Will contain process_user
+        - resources.py: Will contain api_endpoint
+
+      ## Implementation Phases
+      1. **Setup Phase**
+         - Create directory structure
+         - Initialize files
+
+      2. **Migration Phase**
+         - Move each component to its appropriate file
+         - Add proper typing and docstrings
+
+      3. **Integration Phase**
+         - Set up exports in __init__.py
+         - Update original file for backward compatibility
+         - Test functionality
+
+      ## Current Status
+      - [x] Analysis completed
+      - [ ] Phase 1: Setup (In Progress)
+      - [ ] Phase 2: Migration
+      - [ ] Phase 3: Integration
+
+      ## Notes
+      - UserModel is used by process_user and api_endpoint
+      - Need to ensure consistent return types across all functions
+      ```
+
       ### Step 2: Create the directory structure
 
       ```bash
@@ -539,6 +767,21 @@ examples:
       touch src/codegen_lab/promptlib/models.py
       touch src/codegen_lab/promptlib/services.py
       touch src/codegen_lab/promptlib/resources.py
+      ```
+
+      Update the PLAN.md to reflect progress:
+
+      ```markdown
+      ## Current Status
+      - [x] Analysis completed
+      - [x] Phase 1: Setup (Completed)
+      - [ ] Phase 2: Migration (In Progress)
+      - [ ] Phase 3: Integration
+
+      ## Notes
+      - Directory structure created
+      - Empty files initialized
+      - Ready to begin component migration
       ```
 
       ### Step 3: Set up files with pseudocode and docstrings
@@ -597,6 +840,25 @@ examples:
           pass
       ```
 
+      Update PLAN.md to document implementation decisions:
+
+      ```markdown
+      ## Current Status
+      - [x] Analysis completed
+      - [x] Phase 1: Setup (Completed)
+      - [x] Phase 2: Migration (Initial)
+      - [ ] Phase 2: Migration (Implementation)
+      - [ ] Phase 3: Integration
+
+      ## Notes
+      - Added type hints to all functions (Dict[str, Any] for return types)
+      - Created pseudocode implementations with TODO comments
+      - Established import relationships between modules
+      - Decision: UserModel will need proper attributes in the final implementation
+      ```
+
+      ### Step 4: Set up the package exports
+
       ```python
       # src/codegen_lab/promptlib/__init__.py
       """Promptlib module exports.
@@ -613,7 +875,7 @@ examples:
       __all__ = ['UserModel', 'process_user', 'api_endpoint']
       ```
 
-      ### Step 4: Update the original module
+      ### Step 5: Update the original module
 
       ```python
       # src/codegen_lab/big_module.py
@@ -630,9 +892,45 @@ examples:
       __all__ = ['UserModel', 'process_user', 'api_endpoint']
       ```
 
-      ### Step 5: Implement the actual functionality
+      Update PLAN.md to reflect progress:
 
-      Now that you have the structure set up, go back and implement each component fully, checking off items in your scratch pad as you complete them.
+      ```markdown
+      ## Current Status
+      - [x] Analysis completed
+      - [x] Phase 1: Setup (Completed)
+      - [x] Phase 2: Migration (Completed)
+      - [x] Phase 3: Integration (Initial)
+      - [ ] Phase 3: Integration (Testing)
+
+      ## Notes
+      - All components have been migrated to their respective files
+      - Package exports configured in __init__.py
+      - Original module updated to maintain backward compatibility
+      - Next steps: Implement full functionality and test
+      ```
+
+      ### Step 6: Implement the actual functionality
+
+      Now that you have the structure set up, go back and implement each component fully, checking off items in your scratch pad as you complete them. Remember to update the PLAN.md file as you make progress:
+
+      ```markdown
+      ## Current Status
+      - [x] Analysis completed
+      - [x] Phase 1: Setup (Completed)
+      - [x] Phase 2: Migration (Completed)
+      - [x] Phase 3: Integration (Completed)
+
+      ## Notes
+      - Full implementation completed for all components
+      - All tests passing
+      - Backward compatibility verified
+      - Refactoring completed successfully
+
+      ## Lessons Learned
+      - Pseudocode approach made development more structured
+      - Maintaining the PLAN.md file helped track progress
+      - Type hints were essential for ensuring correct integration
+      ```
 
       The refactored directory structure will look like:
 
