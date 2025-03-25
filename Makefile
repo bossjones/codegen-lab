@@ -253,6 +253,10 @@ aider:
 inspect-fserver:
 	@npx -y @modelcontextprotocol/inspector uv run python -m packages.cursor_rules_mcp_server.src.cursor_rules_mcp_server.fserver
 
+.PHONY: inspect-mcp
+inspect-mcp:
+	@npx -y @modelcontextprotocol/inspector uv run --frozen --with 'mcp[cli]==1.3.0' mcp run /Users/malcolm/dev/bossjones/codegen-lab/src/codegen_lab/prompt_library.py
+
 .PHONY: relint relint-cursor-rules
 relint: ## Run relint via pre-commit on specified files (usage: make relint FILES="file1 file2")
 	@echo "🚀 Running relint on specified files"

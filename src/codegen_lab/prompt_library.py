@@ -54,50 +54,10 @@ from mcp.server.fastmcp import FastMCP
 from mcp.server.fastmcp.server import Context
 from pydantic import Field
 
-# # Configure JSON logger
-# class JsonFormatter(logging.Formatter):
-#     """Custom JSON formatter for logging.
-
-#     This formatter outputs log records in JSON format with timestamp, level,
-#     and message fields.
-#     """
-
-#     def format(self, record: logging.LogRecord) -> str:
-#         """Format the log record as JSON.
-
-#         Args:
-#             record: The log record to format
-
-#         Returns:
-#             str: JSON formatted log string
-
-#         """
-#         log_obj = {
-#             "timestamp": datetime.fromtimestamp(record.created).isoformat(),
-#             "level": record.levelname,
-#             "message": record.getMessage(),
-#             "logger": record.name,
-#         }
-
-#         if record.exc_info:
-#             log_obj["exc_info"] = self.formatException(record.exc_info)
-
-#         return json.dumps(log_obj)
-
-
-# # Set up file handler with JSON formatter
-# file_handler = logging.handlers.RotatingFileHandler(
-#     filename="mcpserver.log",
-#     maxBytes=10485760,  # 10MB
-#     backupCount=5,
-#     encoding="utf-8",
-# )
-# file_handler.setFormatter(JsonFormatter())
-
-# # Configure root logger
-# logger = logging.getLogger("prompt_library")
-# logger.setLevel(logging.INFO)
-# logger.addHandler(file_handler)
+# Disable all logging handlers
+logging.getLogger("asyncio").setLevel(logging.WARNING)
+logging.getLogger("mcp").handlers = []
+logging.getLogger("mcp").propagate = False  # Prevent propagation to root logger
 
 
 # Define types for cursor rule components
@@ -589,9 +549,9 @@ def instruct_repo_analysis() -> dict[str, Any]:
             "type": "text",
             "text": {
                 "status": "success",
-                "message": "Repository Analysis Instructions:1. Invoke the Cursor rule for repository analysis:   Using the repo_analyzer.mdc rule located at ./cursor/rules/repo_analyzer.mdc to perform a comprehensive code base analysis.2. Utilize the sequential thinking MCP server:   The sequentialthinking MCP server will be used to generate a detailed, structured report of the entire codebase.3. Generate and save a comprehensive report:   The analysis will be written to disk as ai_report.md for future reference and parameter population.4. Structure requirements for the report:   The markdown report should be structured to support extraction of the following parameters at minimum:   - Main languages used in the repository   - Frameworks and packages utilized   - Development packages and dependencies   - Testing frameworks and methodologies   - Other relevant code organization information5. Command to execute:   Run the repo_analyzer.mdc rule with the sequentialthinking processor to generate the comprehensive report6. Output validation:   Verify that ai_report.md has been created with proper markdown structure that facilitates parameter extraction7. Next steps:   Once generated, the ai_report.md file will be used as a source for populating project configuration parameters and documentation.",
+                "message": "Repository Analysis Instructions:1. Invoke the Cursor rule for repository analysis:   Using the repo_analyzer.mdc rule located at ./.cursor/rules/repo_analyzer.mdc to perform a comprehensive code base analysis.2. Utilize the sequential thinking MCP server:   The sequentialthinking MCP server will be used to generate a detailed, structured report of the entire codebase.3. Generate and save a comprehensive report:   The analysis will be written to disk as ai_report.md for future reference and parameter population.4. Structure requirements for the report:   The markdown report should be structured to support extraction of the following parameters at minimum:   - Main languages used in the repository   - Frameworks and packages utilized   - Development packages and dependencies   - Testing frameworks and methodologies   - Other relevant code organization information5. Command to execute:   Run the repo_analyzer.mdc rule with the sequentialthinking processor to generate the comprehensive report6. Output validation:   Verify that ai_report.md has been created with proper markdown structure that facilitates parameter extraction7. Next steps:   Once generated, the ai_report.md file will be used as a source for populating project configuration parameters and documentation.",
                 "repository_analysis": True,
-                "analysis_rule": "./cursor/rules/repo_analyzer.mdc",
+                "analysis_rule": "./.cursor/rules/repo_analyzer.mdc",
                 "processing_method": "sequentialthinking",
                 "output_file": "ai_report.md",
                 "required_parameters": ["main_languages", "frameworks", "packages", "dev_packages", "testing"],
@@ -599,7 +559,7 @@ def instruct_repo_analysis() -> dict[str, Any]:
                     "status": "pending",
                     "message": "Ready to execute repository analysis using Cursor rules and sequential thinking processor",
                     "rule_exists": True,
-                    "rule_path": "./cursor/rules/repo_analyzer.mdc",
+                    "rule_path": "./.cursor/rules/repo_analyzer.mdc",
                     "output_destination": "ai_report.md",
                 },
             },
@@ -615,77 +575,145 @@ def instruct_repo_analysis() -> dict[str, Any]:
     description="Run a cursor rules generation process based on repository analysis",
 )
 def instruct_custom_repo_rules_generation(
-    repo_summary: str = Field(
-        description="A summary description of the repository, including technologies, frameworks, and key features",
-        examples=[
-            "A Python web application using FastAPI, SQLAlchemy, and React for the frontend. Includes authentication, API endpoints, and database models.",
-            "A TypeScript library for data visualization with React components. Uses webpack for bundling and Jest for testing.",
-        ],
-        min_length=20,
+    # repo_summary: str = Field(
+    #     description="A summary description of the repository, including technologies, frameworks, and key features",
+    #     examples=["A Python web application using FastAPI, SQLAlchemy, and React for the frontend. Includes authentication, API endpoints, and database models."],
+    #     min_length=20,
+    # ),
+    report_path: str = Field(
+        description="Path to the AI report file, relative to the project root",
+        examples=["ai_report.md", "docs/ai_report.md"],
+        default="ai_report.md",
     ),
 ) -> dict[str, Any]:
-    """Run a cursor rules generation process based on repository analysis."""
-    payload = {}
-    payload["content"] = []
-    payload["content"].append(
-        {
-            "type": "text",
-            "text": {
-                "status": "success",
-                "message": "Cursor Rules Generation Instructions:1. Analyze repository structure and codebase:   Using the provided repository summary to identify languages, frameworks, and patterns used.2. Generate recommended cursor rules:   Invoke the recommend_cursor_rules tool with the repository summary to generate a list of tailored cursor rules.3. Prepare the staging directory:   Run `touch hack/drafts/cursor_rules/{rule-name}.mdc.md` for each rule name to ensure cursor creates the files properly.4. Implement cursor rules systematically:   Create each cursor rule in the hack/drafts/cursor_rules directory with proper formatting and structure.5. Format requirements for cursor rules:   Each cursor rule must include:   - Proper filename with .mdc.md extension (e.g., rule-name.mdc.md)   - Frontmatter with description, globs, and alwaysApply configuration   - Rule content with name, description, filters, actions, examples, and metadata6. Implementation process:   For each rule recommended by recommend_cursor_rules:   - Create the rule file in hack/drafts/cursor_rules/   - Implement the rule with proper structure and formatting   - Ensure the rule includes appropriate filters and actions   - Add relevant examples and metadata7. Verification:   Confirm each rule has been properly formatted with:   - Descriptive name and purpose   - Appropriate glob patterns based on file types identified in the summary   - Correct alwaysApply setting (typically false)   - Comprehensive rule content with examples8. Audit generated files:   For each rule file created, run `head -10 hack/drafts/cursor_rules/{rule-name}.mdc.md | cat` to validate that frontmatter is present and properly formatted.9. Deploy to production:   Run `make update-cursor-rules` to move the rules from the staging directory to production.10. Next steps:   The rules should now be available in the .cursor/rules directory for production use.   Consider using sequentialthinking for complex rules that require detailed reasoning and step-by-step analysis.",
-                "cursor_rules_generation": True,
-                "analysis_method": "repository_summary",
-                "repo_summary": repo_summary,
-                "output_directory": "hack/drafts/cursor_rules",
-                "rule_format": {
-                    "filename": "{rule-name}.mdc.md",
-                    "frontmatter": {
-                        "description": "Brief description of the rule's purpose",
-                        "globs": "File patterns the rule applies to (e.g., *.py)",
-                        "alwaysApply": "Boolean value (typically false)",
-                    },
-                    "rule_structure": {
-                        "name": "rule-name",
-                        "description": "Detailed description of the rule",
-                        "filters": "Conditions for when the rule applies",
-                        "actions": "Suggestions or requirements provided by the rule",
-                        "examples": "Example inputs and outputs",
-                        "metadata": "Priority, version, and tags",
-                    },
-                },
-                "rule_example_template": {
-                    "frontmatter": "---\ndescription: Brief description of the rule\nglobs: *.py  # File patterns to match\nalwaysApply: false  # Whether to always apply the rule\n---",
-                    "title_and_introduction": "# Rule Title\nBrief description of what the rule covers.",
-                    "rule_definition": '<rule>\nname: rule_name\ndescription: Concise description of the rule\nfilters:\n  # Match specific file types\n  - type: file_extension\n    pattern: "\\\\.py$"\n  # Match specific paths\n  - type: file_path\n    pattern: "tests?/"\n  # Match specific content\n  - type: content\n    pattern: "(?i)(relevant|terms|to|match)"\nactions:\n  - type: suggest\n    message: |\n      # Main Heading\n      Explanation of the rule and its purpose.\n      ## Subheading\n      Detailed guidance with code examples:\n      ```python\n      # Example code\n      def example_function():\n          return "example"\n      ```\n      ## Another Subheading\n      More detailed information and best practices.\nexamples:\n  - input: |\n      # User query example\n      I want to do X with Y\n    output: |\n      Here\'s how to do X with Y:\n      \n      ```python\n      # Solution code\n      ```\nmetadata:\n  priority: high\n  version: 1.0\n  tags:\n    - relevant\n    - tags\n    - here\n</rule>',
-                },
-                "key_components_explanation": {
-                    "frontmatter": "YAML metadata at the top",
-                    "title_and_introduction": "Markdown heading and description",
-                    "rule_definition": "Enclosed in <rule> tags with basic properties, filters, actions, examples, and metadata",
-                },
-                "multishot_prompting_strategy": "Use the template as a basis for creating multiple examples that show different rule variations tailored to specific language features, frameworks, or coding patterns identified in the repository",
-                "generation_status": {
-                    "status": "ready",
-                    "message": "Ready to generate cursor rules based on repository summary",
-                    "input_source": "recommend_cursor_rules tool",
-                    "output_destination": "hack/drafts/cursor_rules",
-                    "production_destination": ".cursor/rules",
-                },
-                "deployment_commands": {
-                    "prepare_files": "touch hack/drafts/cursor_rules/{rule-name}.mdc.md",
-                    "audit_files": "head -10 hack/drafts/cursor_rules/{rule-name}.mdc.md | cat",
-                    "deploy_to_production": "make update-cursor-rules",
-                },
-                "processing_tools": {
-                    "rule_recommendation": "recommend_cursor_rules",
-                    "complex_reasoning": "sequentialthinking",
-                },
-            },
-        }
-    )
-    payload["isError"] = False
+    """Run a cursor rules generation process based on repository analysis.
 
-    return payload
+    This function first checks for the existence of an AI report file,
+    then uses its content to generate cursor rules for the repository.
+
+    Args:
+        report_path: Path to the AI report file, defaults to "ai_report.md"
+
+    Returns:
+        dict[str, Any]: A dictionary containing operations and instructions
+
+    """
+    # Define a complete sequence of operations for the cursor rules generation workflow
+    operations = [
+        # Step 1: Ensure the AI report exists and read its content
+        {"type": "invoke_tool", "name": "ensure_ai_report", "args": {"report_path": report_path}},
+        # Step 2: Generate recommended cursor rules based on the report content
+        {"type": "invoke_tool", "name": "recommend_cursor_rules", "args": {"repo_summary": "{result}"}},
+        # Step 3: Prepare the workspace for cursor rules
+        {"type": "invoke_tool", "name": "prep_workspace", "args": {}},
+        # Step 4: Check existing cursor rules
+        {
+            "type": "invoke_tool",
+            "name": "list_directory",
+            "args": {"path": "./hack/drafts/cursor_rules/", "options": "-la"},
+        },
+        # Step 5: Create the cursor rule files
+        {
+            "type": "invoke_tool",
+            "name": "create_cursor_rule_files",
+            "args": {"rule_names": "{result.recommended_rules}"},
+        },
+        # Step 6: Ensure the Makefile has the update-cursor-rules task
+        {"type": "invoke_tool", "name": "ensure_makefile_task", "args": {"makefile_path": "Makefile"}},
+        # Step 7: Update the .dockerignore file to exclude the cursor rules drafts directory
+        {"type": "invoke_tool", "name": "update_dockerignore", "args": {}},
+    ]
+
+    # Create the response dictionary with all required fields
+    response = {
+        "operations": operations,
+        "requires_result": True,
+        "message": "Instructions to generate cursor rules based on AI report",
+        "workflow_steps": [
+            "1. Read and validate the AI report from the specified path",
+            "2. Extract repository information and generate recommended rules",
+            "3. Prepare the workspace for cursor rules creation",
+            "4. Create the rule files in the drafts directory",
+            "5. Ensure the Makefile contains the update-cursor-rules task",
+            "6. Update .dockerignore to exclude the drafts directory",
+            "7. Generate rule content based on repository analysis",
+            "8. Deploy the rules using make update-cursor-rules",
+        ],
+        "output_directory": "hack/drafts/cursor_rules",
+        "rule_format": {
+            "filename": "{rule-name}.mdc.md",
+            "frontmatter": {
+                "description": "Brief description of the rule's purpose",
+                "globs": "File patterns the rule applies to (e.g., *.py)",
+                "alwaysApply": "Boolean value (typically false)",
+            },
+            "rule_structure": {
+                "name": "rule-name",
+                "description": "Detailed description of the rule",
+                "filters": "Conditions for when the rule applies",
+                "actions": "Suggestions or requirements provided by the rule",
+                "examples": "Example inputs and outputs",
+                "metadata": "Priority, version, and tags",
+            },
+        },
+        "rule_example_template": {
+            "frontmatter": "---\ndescription: Brief description of the rule\nglobs: *.py  # File patterns to match\nalwaysApply: false  # Whether to always apply the rule\n---",
+            "title_and_introduction": "# Rule Title\nBrief description of what the rule covers.",
+            "rule_definition": '<rule>\nname: rule_name\ndescription: Concise description of the rule\nfilters:\n  # Match specific file types\n  - type: file_extension\n    pattern: "\\\\.py$"\n  # Match specific paths\n  - type: file_path\n    pattern: "tests?/"\n  # Match specific content\n  - type: content\n    pattern: "(?i)(relevant|terms|to|match)"\nactions:\n  - type: suggest\n    message: |\n      # Main Heading\n      Explanation of the rule and its purpose.\n      ## Subheading\n      Detailed guidance with code examples:\n      ```python\n      # Example code\n      def example_function():\n          return "example"\n      ```\n      ## Another Subheading\n      More detailed information and best practices.\nexamples:\n  - input: |\n      # User query example\n      I want to do X with Y\n    output: |\n      Here\'s how to do X with Y:\n      \n      ```python\n      # Solution code\n      ```\nmetadata:\n  priority: high\n  version: 1.0\n  tags:\n    - relevant\n    - tags\n    - here\n</rule>',
+        },
+        "key_components_explanation": {
+            "frontmatter": "YAML metadata at the top",
+            "title_and_introduction": "Markdown heading and description",
+            "rule_definition": "Enclosed in <rule> tags with basic properties, filters, actions, examples, and metadata",
+        },
+        "deployment_commands": {
+            "prepare_files": "touch hack/drafts/cursor_rules/{rule-name}.mdc.md",
+            "audit_files": "head -10 hack/drafts/cursor_rules/{rule-name}.mdc.md | cat",
+            "deploy_to_production": "make update-cursor-rules",
+        },
+        "processing_tools": {
+            "rule_recommendation": "recommend_cursor_rules",
+            "complex_reasoning": "sequentialthinking",
+            "file_management": "create_cursor_rule_files",
+            "makefile_integration": "ensure_makefile_task",
+            "docker_integration": "update_dockerignore",
+            "ai_report_validation": "ensure_ai_report",
+            "deploy_rules": "run_update_cursor_rules",
+        },
+        "final_steps": [
+            {
+                "name": "save_cursor_rule",
+                "description": "For each rule, save the generated content to the appropriate file",
+            },
+            {"name": "run_update_cursor_rules", "description": "Run the Makefile task to deploy rules to production"},
+        ],
+        # Add the content field that the test is expecting with all required fields
+        "content": [
+            {
+                "type": "text",
+                "text": {
+                    "status": "success",
+                    "message": "Cursor Rules Generation Instructions",
+                    "cursor_rules_generation": True,
+                    "analysis_method": "repository_summary",
+                    "operations": operations,
+                    "workflow_steps": [
+                        "1. Read and validate the AI report from the specified path",
+                        "2. Extract repository information and generate recommended rules",
+                        "3. Prepare the workspace for cursor rules creation",
+                        "4. Create the rule files in the drafts directory",
+                        "5. Ensure the Makefile contains the update-cursor-rules task",
+                        "6. Update .dockerignore to exclude the drafts directory",
+                        "7. Generate rule content based on repository analysis",
+                        "8. Deploy the rules using make update-cursor-rules",
+                    ],
+                    "output_directory": "hack/drafts/cursor_rules",
+                },
+            }
+        ],
+    }
+
+    return response
 
 
 @mcp.tool(
@@ -971,32 +999,54 @@ def save_cursor_rule(
     rule_content: str = Field(
         description="The complete content of the cursor rule in mdc.md format",
         examples=[
-            "# Python Best Practices\n\nWhen writing Python code, follow these guidelines:\n\n1. Use type hints\n2. Write docstrings\n3. Follow PEP 8"
+            '---\ndescription: Rule description\nglobs: *.py\nalwaysApply: false\n---\n# Python Best Practices\n\nWhen writing Python code, follow these guidelines:\n\n<rule>\nname: python-best-practices\ndescription: Best practices for Python development\nfilters:\n  - type: file_extension\n    pattern: "\\.py$"\nactions:\n  - type: suggest\n    message: |\n      Follow these guidelines:\n      1. Use type hints\n      2. Write docstrings\n      3. Follow PEP 8\n</rule>'
         ],
         min_length=10,
+    ),
+    overwrite: bool = Field(
+        description="Whether to overwrite the file if it already exists",
+        default=True,
     ),
 ) -> dict[str, list[dict[str, str | dict[str, bool | str]]] | str]:
     r"""Save a cursor rule to the cursor rules directory.
 
     This tool writes a cursor rule to the designated draft directory for cursor rules in the project.
-    It performs basic validation of the rule name and content before creating the necessary directory
+    It performs comprehensive validation of the rule name and content before creating the necessary directory
     structure and writing the file. The function returns a dictionary with file operation
     instructions for the client to execute.
+
+    The cursor rule format should follow this structure:
+    1. Optional YAML frontmatter with metadata inside triple-dash delimiters (---)
+       - description: Brief description of the rule's purpose
+       - globs: File patterns the rule applies to (e.g., *.py)
+       - alwaysApply: Boolean value (typically false)
+    2. A markdown title and introduction
+    3. A <rule>...</rule> block containing:
+       - name: The rule identifier (should match the filename)
+       - description: Brief explanation of the rule
+       - filters: Conditions for when the rule applies
+       - actions: Guidance provided when the rule matches
+       - examples: Sample inputs and outputs
+       - metadata: Priority, version, and tags
 
     Args:
         rule_name: The name of the cursor rule file (without extension).
                    Must be lowercase with hyphens (no spaces) and at least 3 characters.
         rule_content: The complete content of the cursor rule in mdc.md format.
                       Should contain valid markdown and be at least 10 characters long.
+        overwrite: Whether to overwrite the file if it already exists.
+                   Defaults to True.
 
     Returns:
         dict[str, list[dict[str, str | dict[str, bool | str]]] | str]: Dictionary containing:
             - On success: {
                 "operations": [
                     {"type": "create_directory", "path": str, "options": {"parents": bool, "exist_ok": bool}},
-                    {"type": "write_file", "path": str, "content": str, "options": {"mode": str}}
+                    {"type": "write_file", "path": str, "content": str, "options": {"mode": str, "encoding": str}}
                 ],
-                "message": str
+                "message": str,
+                "rule_structure": dict,
+                "validation_results": dict
               }
             - On error: {
                 "isError": True,
@@ -1004,7 +1054,8 @@ def save_cursor_rule(
               }
 
     Examples:
-        >>> result = save_cursor_rule("python-best-practices", "# Python Best Practices\\n\\nUse type hints...")
+        >>> result = save_cursor_rule("python-best-practices",
+        ...   "---\\ndescription: Python guidelines\\nglobs: *.py\\nalwaysApply: false\\n---\\n# Python Best Practices\\n...")
         >>> print("operations" in result)
         True
 
@@ -1021,29 +1072,189 @@ def save_cursor_rule(
     if not rule_content:
         return {"isError": True, "content": [{"type": "text", "text": "Error: Rule content cannot be empty"}]}
 
-    # Check if content appears to be valid markdown
-    if not rule_content.startswith("#"):
-        return {
-            "isError": True,
-            "content": [{"type": "text", "text": "Error: Rule content should start with a markdown heading (#)"}],
+    # Initialize validation results
+    validation_results = {
+        "basic_structure": True,
+        "has_frontmatter": False,
+        "has_rule_block": False,
+        "rule_name_match": False,
+        "has_filters": False,
+        "has_actions": False,
+        "has_examples": False,
+        "has_metadata": False,
+        "warnings": [],
+        "errors": [],
+    }
+
+    # Check for essential structure: the rule block
+    if "<rule>" not in rule_content or "</rule>" not in rule_content:
+        validation_results["basic_structure"] = False
+        validation_results["has_rule_block"] = False
+        error_message = "Error: Rule content must include a <rule>...</rule> block"
+        validation_results["errors"].append(error_message)
+        return {"isError": True, "content": [{"type": "text", "text": error_message}]}
+    else:
+        validation_results["has_rule_block"] = True
+
+    # Check for frontmatter (optional but recommended)
+    import re
+
+    frontmatter_pattern = r"^---\s*\n(.*?)\n---\s*\n"
+    frontmatter_match = re.search(frontmatter_pattern, rule_content, re.DOTALL)
+    validation_results["has_frontmatter"] = bool(frontmatter_match)
+
+    if validation_results["has_frontmatter"]:
+        frontmatter_content = frontmatter_match.group(1)
+        # Check for required frontmatter fields
+        validation_results["has_description"] = "description:" in frontmatter_content
+        validation_results["has_globs"] = "globs:" in frontmatter_content
+        validation_results["has_always_apply"] = "alwaysApply:" in frontmatter_content
+
+        # Add warnings for missing frontmatter fields
+        if not validation_results["has_description"]:
+            validation_results["warnings"].append("Warning: Frontmatter is missing 'description' field")
+        if not validation_results["has_globs"]:
+            validation_results["warnings"].append("Warning: Frontmatter is missing 'globs' field")
+        if not validation_results["has_always_apply"]:
+            validation_results["warnings"].append("Warning: Frontmatter is missing 'alwaysApply' field")
+
+        # Check for quoted glob patterns (not recommended)
+        glob_pattern = r"globs:\s*\"(.*?)\""
+        if re.search(glob_pattern, frontmatter_content):
+            validation_results["warnings"].append("Warning: Glob patterns should not be quoted in frontmatter")
+    else:
+        validation_results["warnings"].append("Warning: Rule is missing YAML frontmatter (recommended but optional)")
+
+    # Check for markdown heading (optional if frontmatter exists)
+    has_heading = bool(re.search(r"^# ", rule_content, re.MULTILINE))
+    if not has_heading and not validation_results["has_frontmatter"]:
+        validation_results["warnings"].append("Warning: Rule has neither frontmatter nor a markdown heading")
+
+    # Extract rule block for deeper validation
+    try:
+        rule_block_start = rule_content.find("<rule>")
+        rule_block_end = rule_content.find("</rule>") + len("</rule>")
+        rule_block = rule_content[rule_block_start:rule_block_end]
+
+        # Check rule name in rule block
+        rule_name_pattern = r"name:\s*([a-z0-9-]+)"
+        rule_name_match = re.search(rule_name_pattern, rule_block)
+
+        if rule_name_match:
+            rule_name_in_block = rule_name_match.group(1)
+            validation_results["rule_name_match"] = rule_name_in_block == rule_name
+            if not validation_results["rule_name_match"]:
+                validation_results["warnings"].append(
+                    f"Warning: Rule name in file ({rule_name}) doesn't match name in rule block ({rule_name_in_block})"
+                )
+        else:
+            validation_results["warnings"].append("Warning: Could not find rule name in rule block")
+
+        # Check for required rule components
+        validation_results["has_filters"] = "filters:" in rule_block
+        validation_results["has_actions"] = "actions:" in rule_block
+        validation_results["has_examples"] = "examples:" in rule_block
+        validation_results["has_metadata"] = "metadata:" in rule_block
+
+        # Add warnings for missing components
+        if not validation_results["has_filters"]:
+            validation_results["warnings"].append("Warning: Rule is missing filters section")
+        if not validation_results["has_actions"]:
+            validation_results["warnings"].append("Warning: Rule is missing actions section")
+
+        # Check for action types
+        if "type: suggest" in rule_block:
+            validation_results["has_suggest_action"] = True
+        if "type: reject" in rule_block:
+            validation_results["has_reject_action"] = True
+
+        # Check for filter types
+        filter_types = {
+            "file_extension": "type: file_extension" in rule_block,
+            "file_path": "type: file_path" in rule_block,
+            "content": "type: content" in rule_block,
+            "event": "type: event" in rule_block,
         }
+        validation_results["filter_types"] = filter_types
+
+    except Exception as e:
+        validation_results["warnings"].append(f"Warning: Could not fully validate rule structure: {e!s}")
 
     try:
-        # Define the path for the cursor rules directory
-        cursor_rules_dir_path = "hack/drafts/cursor_rules"
-        rule_file_path = f"{cursor_rules_dir_path}/{rule_name}.mdc.md"
+        # Normalize path with consideration for cross-platform compatibility
+        import os
+
+        cursor_rules_dir_path = os.path.normpath("hack/drafts/cursor_rules")
+        rule_file_path = os.path.normpath(f"{cursor_rules_dir_path}/{rule_name}.mdc.md")
+
+        # File existence operations
+        check_file_existence = {"type": "custom_operation", "operation": "check_file_exists", "path": rule_file_path}
+
+        # Determine write operation mode based on file existence and overwrite flag
+        write_mode = "w"  # Default mode
+
+        # If we don't want to overwrite and the file exists, return an error
+        file_existence_check = {
+            "type": "conditional_operation",
+            "condition": {
+                "operation": "file_exists",
+                "path": rule_file_path,
+                "and": {"operation": "not", "value": overwrite},
+            },
+            "if_true": {
+                "type": "error",
+                "message": f"Error: File {rule_file_path} already exists and overwrite is set to False",
+            },
+        }
 
         # Return operations for the client to perform
         return {
             "operations": [
+                # Check file existence first (conditional operation)
+                file_existence_check,
+                # Create directory
                 {
                     "type": "create_directory",
                     "path": cursor_rules_dir_path,
                     "options": {"parents": True, "exist_ok": True},
                 },
-                {"type": "write_file", "path": rule_file_path, "content": rule_content, "options": {"mode": "w"}},
+                # Write file with encoding specified
+                {
+                    "type": "write_file",
+                    "path": rule_file_path,
+                    "content": rule_content,
+                    "options": {"mode": write_mode, "encoding": "utf-8"},
+                },
             ],
             "message": f"Instructions to save cursor rule to {rule_file_path}",
+            "rule_structure": {
+                "filename": f"{rule_name}.mdc.md",
+                "path": rule_file_path,
+                "format": "Markdown with embedded rule specification",
+                "components": {
+                    "frontmatter": {
+                        "description": "Brief description of the rule's purpose",
+                        "globs": "File patterns the rule applies to (e.g., *.py)",
+                        "alwaysApply": "Boolean value (typically false)",
+                    },
+                    "introduction": "Markdown heading and description",
+                    "rule_block": {
+                        "name": "Rule identifier (should match filename)",
+                        "description": "Brief explanation of the rule",
+                        "filters": "Conditions for when the rule applies",
+                        "actions": "Guidance provided when the rule matches",
+                        "examples": "Sample inputs and outputs",
+                        "metadata": "Priority, version, and tags",
+                    },
+                },
+            },
+            "validation_results": validation_results,
+            "next_steps": [
+                "Write content to each file sequentially",
+                "Run `make update-cursor-rules` to deploy it to the .cursor/rules directory",
+                "Verify the rule appears in your Cursor editor",
+            ],
+            "deployment_path": ".cursor/rules/",
         }
     except Exception as e:
         # Handle any unexpected errors
@@ -1630,132 +1841,55 @@ update-cursor-rules:  ## Update cursor rules from prompts/drafts/cursor_rules
 
 
 @mcp.tool(
-    name="process_makefile_result",
-    description="Process the results of checking the Makefile and update it if needed",
+    name="ensure_ai_report",
+    description="Check for the existence of an AI report file and ensure its content aligns with requirements",
 )
-def process_makefile_result(
-    operation_results: dict[str, Any] = Field(description="Results from the file operations"),
-    update_task_content: str = Field(description="The update-cursor-rules task content"),
+def ensure_ai_report(
+    report_path: str = Field(
+        description="Path to the AI report file, relative to the project root",
+        examples=[
+            "./ai_report.md",
+            "./docs/ai_report.md",
+            "./reports/ai_report.md",
+        ],
+        default="./ai_report.md",
+    ),
 ) -> dict[str, Any]:
-    """Process the results of checking the Makefile and update it if needed.
+    """Check for the existence of an AI report file and ensure its content aligns with requirements.
+
+    This function verifies if the specified AI report file exists and contains all required sections.
+    If the file doesn't exist or is missing required sections, it provides instructions for remediation.
 
     Args:
-        operation_results: Results from the file operations
-        update_task_content: The update-cursor-rules task content
+        report_path: Path to the AI report file, defaults to "ai_report.md"
 
     Returns:
-        dict[str, Any]: A dictionary containing operations to perform and additional information
+        dict[str, Any]: A dictionary containing status, operations, and guidance
 
     """
-    # Check for empty operation results
-    if not operation_results:
-        return {
-            "success": False,
-            "error": "Missing operation results",
-            "message": "Missing operation results",
-            "next_steps": "Please ensure the file operations were executed correctly.",
-        }
+    # Define the operations to check if the report file exists and read its content
+    operations = [
+        {"type": "check_file_exists", "path": report_path},
+        {"type": "read_file", "path": report_path, "options": {"encoding": "utf-8"}},
+    ]
 
-    # Check for malformed operation results
-    if not isinstance(operation_results, dict):
-        return {
-            "success": False,
-            "error": "Invalid operation results",
-            "message": "Invalid operation results format",
-            "next_steps": "Please ensure the operation results are in the correct format.",
-        }
-
-    makefile_result = operation_results.get("Makefile", {})
-    if not isinstance(makefile_result, dict):
-        return {
-            "success": False,
-            "error": "Invalid operation results",
-            "message": "Invalid operation results format",
-            "next_steps": "Please ensure the operation results are in the correct format.",
-        }
-
-    # Check for required fields in Makefile result
-    if "exists" not in makefile_result:
-        return {
-            "success": False,
-            "error": "Invalid operation results",
-            "message": "Invalid operation results format: missing required field 'exists'",
-            "next_steps": "Please ensure the operation results contain all required fields.",
-        }
-
-    # Extract results
-    makefile_exists = makefile_result.get("exists", False)
-    makefile_content = ""
-    if makefile_exists:
-        if "error" in makefile_result:
-            return {
-                "success": False,
-                "error": makefile_result["error"],
-                "message": f"Error accessing Makefile: {makefile_result['error']}",
-                "next_steps": "Please check file permissions and try again.",
-            }
-        if "content" not in makefile_result:
-            return {
-                "success": False,
-                "error": "Invalid operation results",
-                "message": "Invalid operation results format: missing required field 'content'",
-                "next_steps": "Please ensure the operation results contain all required fields.",
-            }
-        makefile_content = makefile_result.get("content", "")
-    elif "error" in makefile_result:
-        # Handle permission denied or other errors
-        error = makefile_result["error"]
-        return {
-            "success": False,
-            "error": error,
-            "message": f"Error accessing Makefile: {error}",
-            "next_steps": "Please check file permissions and try again.",
-        }
-
-    # Check if the update-cursor-rules task exists
-    has_update_task = "update-cursor-rules" in makefile_content
-    action_taken = "none"
-    operations = []
-
-    if makefile_exists:
-        if not has_update_task:
-            # Add the update-cursor-rules task to the Makefile
-            operations.append(
-                {
-                    "type": "write_file",
-                    "path": "Makefile",
-                    "content": makefile_content + update_task_content,
-                    "options": {"mode": "w"},
-                }
-            )
-            action_taken = "updated"
-            has_update_task = True  # Set to True after adding the task
-    else:
-        # Create a new Makefile with the update-cursor-rules task
-        operations.append(
-            {"type": "write_file", "path": "Makefile", "content": update_task_content, "options": {"mode": "w"}}
-        )
-        action_taken = "created"
-        makefile_exists = True
-        has_update_task = True
-
-    # Prepare next steps and message
-    if action_taken == "none":
-        message = "The Makefile already contains the update-cursor-rules task."
-    elif action_taken == "updated":
-        message = "Instructions to add the update-cursor-rules task to the existing Makefile."
-    else:
-        message = "Instructions to create a new Makefile with the update-cursor-rules task."
-
-    return {
+    # Return payload with operations and additional information
+    payload = {
         "operations": operations,
-        "success": True,
-        "has_makefile": makefile_exists,
-        "has_update_task": has_update_task,
-        "action_taken": action_taken,
-        "message": message,
-        "next_steps": "Run 'make update-cursor-rules' to deploy the cursor rules.",
+        "requires_result": True,
+        "message": f"Instructions to check AI report file at {report_path}",
+        "expected_sections": [
+            "Project Overview",
+            "Repository Structure",
+            "Technology Stack",
+            "Application Structure",
+            "Deployment",
+            "Development Tools",
+            "Conclusion",
+        ],
     }
+
+    return payload
 
 
 @mcp.tool(
@@ -1783,105 +1917,6 @@ def run_update_cursor_rules() -> dict[str, Any]:
         "operations": operations,
         "requires_result": True,
         "message": "Instructions to check Makefile before running update-cursor-rules task",
-    }
-
-
-@mcp.tool(
-    name="process_update_cursor_rules_result",
-    description="Process the results of checking the Makefile and run the update-cursor-rules task if possible",
-)
-def process_update_cursor_rules_result(
-    operation_results: dict[str, Any] = Field(description="Results from the file operations"),
-) -> dict[str, Any]:
-    """Process the results of checking the Makefile and run the update-cursor-rules task if possible.
-
-    Args:
-        operation_results: Results from the file operations
-
-    Returns:
-        dict[str, Any]: A dictionary containing operations to perform and additional information
-
-    """
-    # Extract results
-    makefile_exists = operation_results.get("Makefile", {}).get("exists", False)
-    makefile_content = ""
-    if makefile_exists and "Makefile" in operation_results:
-        makefile_content = operation_results.get("Makefile", {}).get("content", "")
-
-    # Check if the update-cursor-rules task exists
-    has_update_task = "update-cursor-rules" in makefile_content
-
-    if not makefile_exists:
-        return {
-            "isError": True,
-            "content": [
-                {
-                    "type": "text",
-                    "text": "Error: Makefile not found. Please create a Makefile with the update-cursor-rules task.",
-                }
-            ],
-            "message": "Makefile not found",
-            "next_steps": "Use the ensure_makefile_task tool to create the Makefile.",
-        }
-
-    if not has_update_task:
-        return {
-            "isError": True,
-            "content": [{"type": "text", "text": "Error: The update-cursor-rules task was not found in the Makefile."}],
-            "message": "update-cursor-rules task not found",
-            "next_steps": "Use the ensure_makefile_task tool to add the update-cursor-rules task to the Makefile.",
-        }
-
-    # Return operation to execute the make command
-    return {
-        "operations": [
-            {"type": "execute_command", "command": "make update-cursor-rules", "options": {"cwd": "."}},
-            {"type": "check_file_exists", "path": ".cursor/rules"},
-        ],
-        "requires_result": True,
-        "message": "Instructions to run the update-cursor-rules task and check the results",
-    }
-
-
-@mcp.tool(
-    name="finalize_update_cursor_rules",
-    description="Process the results of running the update-cursor-rules task",
-)
-def finalize_update_cursor_rules(
-    operation_results: dict[str, Any] = Field(description="Results from the command execution"),
-) -> dict[str, Any]:
-    """Process the results of running the update-cursor-rules task.
-
-    Args:
-        operation_results: Results from the command execution
-
-    Returns:
-        dict[str, Any]: A dictionary containing the results
-
-    """
-    # Check if the command was executed successfully
-    command_result = operation_results.get("make update-cursor-rules", {})
-    cursor_rules_dir_exists = operation_results.get(".cursor/rules", {}).get("exists", False)
-
-    if "error" in command_result:
-        return {
-            "isError": True,
-            "content": [
-                {
-                    "type": "text",
-                    "text": f"Error: Failed to run the update-cursor-rules task: {command_result.get('error')}",
-                }
-            ],
-            "message": "Failed to run the update-cursor-rules task",
-            "next_steps": "Check the Makefile and try again.",
-        }
-
-    # Return success message
-    return {
-        "success": True,
-        "cursor_rules_dir_exists": cursor_rules_dir_exists,
-        "message": "Successfully deployed cursor rules.",
-        "next_steps": "The cursor rules have been deployed to .cursor/rules.",
     }
 
 
@@ -1914,79 +1949,6 @@ def update_dockerignore() -> dict[str, Any]:
         "requires_result": True,
         "message": "Instructions to check .dockerignore file",
         "entry": entry,
-    }
-
-
-@mcp.tool(
-    name="process_dockerignore_result",
-    description="Process the results of checking the .dockerignore file and update it if needed",
-)
-def process_dockerignore_result(
-    operation_results: dict[str, Any] = Field(description="Results from the file operations"),
-    entry: str = Field(description="The entry to add to .dockerignore"),
-) -> dict[str, Any]:
-    """Process the results of checking the .dockerignore file and update it if needed.
-
-    Args:
-        operation_results: Results from the file operations
-        entry: The entry to add to .dockerignore
-
-    Returns:
-        dict[str, Any]: A dictionary containing operations to perform and additional information
-
-    """
-    # Extract results
-    dockerignore_exists = operation_results.get(".dockerignore", {}).get("exists", False)
-    dockerignore_content = ""
-    if dockerignore_exists and ".dockerignore" in operation_results:
-        dockerignore_content = operation_results.get(".dockerignore", {}).get("content", "")
-
-    # Check if the entry already exists
-    entry_exists = entry in dockerignore_content.split("\n") if dockerignore_content else False
-    action_taken = "none"
-    operations = []
-
-    if dockerignore_exists:
-        if not entry_exists:
-            # Ensure the file ends with a newline
-            if not dockerignore_content.endswith("\n"):
-                dockerignore_content += "\n"
-
-            # Add the new entry
-            updated_content = dockerignore_content + f"{entry}\n"
-
-            operations.append(
-                {"type": "write_file", "path": ".dockerignore", "content": updated_content, "options": {"mode": "w"}}
-            )
-
-            action_taken = "updated"
-    else:
-        # Create a new .dockerignore file with the entry
-        operations.append(
-            {"type": "write_file", "path": ".dockerignore", "content": f"{entry}\n", "options": {"mode": "w"}}
-        )
-
-        action_taken = "created"
-        dockerignore_exists = True
-        entry_exists = True
-
-    # Prepare message
-    if action_taken == "none":
-        message = "The .dockerignore file already contains an entry for the cursor rules drafts directory."
-    elif action_taken == "updated":
-        message = (
-            "Instructions to add an entry for the cursor rules drafts directory to the existing .dockerignore file."
-        )
-    else:
-        message = "Instructions to create a new .dockerignore file with an entry for the cursor rules drafts directory."
-
-    return {
-        "operations": operations,
-        "success": True,
-        "has_dockerignore": dockerignore_exists,
-        "entry_exists": entry_exists,
-        "action_taken": action_taken,
-        "message": message,
     }
 
 
@@ -2047,68 +2009,6 @@ Workflow completed successfully. Next steps:
         "makefile_result": makefile_result,
         "dockerignore_result": dockerignore_result,
         "created_files": files_result.get("created_files", []),
-    }
-
-
-@mcp.tool(
-    name="process_cursor_rules_workflow_result",
-    description="Process the results of executing the cursor rules workflow",
-)
-def process_cursor_rules_workflow_result(
-    operation_results: dict[str, Any] = Field(description="Results from the workflow operations"),
-) -> dict[str, Any]:
-    """Process the results of executing the cursor rules workflow.
-
-    Args:
-        operation_results: Results from the workflow operations
-
-    Returns:
-        dict[str, Any]: A dictionary containing the workflow results and next steps
-
-    """
-    # Extract results from each operation
-    workspace_result = operation_results.get("workspace_result", {})
-    files_result = operation_results.get("files_result", {})
-    makefile_result = operation_results.get("makefile_result", {})
-    dockerignore_result = operation_results.get("dockerignore_result", {})
-
-    # Check if all operations were successful
-    all_successful = (
-        workspace_result.get("success", False)
-        and files_result.get("success", False)
-        and makefile_result.get("success", False)
-        and dockerignore_result.get("success", False)
-    )
-
-    # Get the list of created files
-    created_files = files_result.get("created_files", [])
-
-    # Prepare next steps
-    next_steps = """
-Workflow completed successfully. Next steps:
-
-1. Write content to each cursor rule file sequentially:
-   - Edit each file to add the cursor rule content
-   - Save each file after editing
-
-2. Deploy the cursor rules:
-   - Run 'make update-cursor-rules' to deploy the cursor rules to .cursor/rules
-   - Verify the rules are correctly deployed
-
-3. Test the cursor rules:
-   - Open a file that should trigger a cursor rule
-   - Verify that the cursor rule is applied correctly
-"""
-
-    return {
-        "success": all_successful,
-        "workspace_result": workspace_result,
-        "files_result": files_result,
-        "makefile_result": makefile_result,
-        "dockerignore_result": dockerignore_result,
-        "created_files": created_files,
-        "message": f"Cursor rules workflow completed successfully. Created {len(created_files)} empty cursor rule files.",
-        "next_steps": next_steps,
     }
 
 
