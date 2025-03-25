@@ -14,17 +14,17 @@ prompt_library.py module while providing a more modular structure.
 
 from __future__ import annotations
 
+# Import constants directly from the original module
 # Re-export everything from the original module for backward compatibility
 # These imports will be gradually replaced with imports from the new modules
 # as the refactoring progresses.
-from codegen_lab.promptlib import (
-    # Constants
+from codegen_lab.prompt_library import (
     CURSOR_RULES_DIR,
+    # Data models
     CursorRule,
     CursorRuleAction,
     CursorRuleExample,
     CursorRuleFilter,
-    # Data models
     CursorRuleMetadata,
     create_cursor_rule_files,
     cursor_rules_workflow,

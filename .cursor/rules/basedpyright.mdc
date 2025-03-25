@@ -200,7 +200,7 @@ This guide provides comprehensive best practices for using pyright and BasedPyri
 
 ### 5.5 Mocking and Stubbing
 
-*   **`unittest.mock` or `pytest-mock`:** Use the `unittest.mock` module or the `pytest-mock` plugin for mocking and stubbing.
+*   ** `pytest-mock`:** Use the `pytest-mock` plugin for mocking and stubbing. NEVER USE `unittest.mock`
 *   **Patching:** Use patching to replace objects or functions with mocks during testing.
 *   **Context Managers:** Use context managers to manage mock objects.
 *   **Side Effects:** Define side effects for mock objects to simulate different scenarios.
