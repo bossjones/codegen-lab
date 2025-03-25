@@ -34,7 +34,7 @@ This document outlines the plan for refactoring the prompt_library.py module int
 We'll refactor the code into the following modules:
 
 ```
-src/codegen_lab/prompt_library/
+src/codegen_lab/promptlib/
 ├── __init__.py           # Exports for backward compatibility
 ├── models.py             # Data structures and TypedDict classes
 ├── utils.py              # Helper functions and utilities for cursor rules
@@ -222,7 +222,7 @@ To minimize disruption and ensure the system remains functional throughout refac
 
 For Phase 1, we have created the directory structure and set up the initial module files:
 
-1. Created the `src/codegen_lab/prompt_library/` directory
+1. Created the `src/codegen_lab/promptlib/` directory
 2. Created the following files with appropriate docstrings and type hints:
    - `__init__.py`: Re-exports all functionality from the original file
    - `models.py`: Contains TypedDict class definitions for cursor rule components
