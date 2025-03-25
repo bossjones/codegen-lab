@@ -320,4 +320,8 @@ local-open-coverage: ## open coverage report in browser
 
 .PHONY: logs
 logs:
-	tail -f  ~/Library/Logs/Claude/mcp-server-prompt_library.log | ccze -A
+	tail -f ~/Library/Logs/Claude/mcp-server-prompt_library.log $(shell find "/Users/malcolm/Library/Application Support/Cursor Nightly/logs/" -type f -name "*.log" -mtime 0) | ccze -A
+
+.PHONY: cursor-logs
+cursor-logs:
+	./scripts/cursor-logs.sh
