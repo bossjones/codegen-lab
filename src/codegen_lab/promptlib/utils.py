@@ -77,11 +77,100 @@ def parse_cursor_rule(content: str) -> dict[str, Any]:
         Dict[str, Any]: Structured representation of the cursor rule
 
     """
-    # This function will be implemented in a later phase
-    # For now, it's a placeholder that references the original implementation
-    from codegen_lab.promptlib import parse_cursor_rule as original_parse_cursor_rule
+    # Extract frontmatter
+    frontmatter = {}
+    frontmatter_match = re.search(r"^---\n(.*?)\n---", content, re.DOTALL)
+    if frontmatter_match:
+        frontmatter_text = frontmatter_match.group(1)
+        for line in frontmatter_text.strip().split("\n"):
+            if ":" in line:
+                key, value = line.split(":", 1)
+                frontmatter[key.strip()] = value.strip()
 
-    return original_parse_cursor_rule(content)
+    # Extract title and description
+    title_match = re.search(r"# (.*?)\n", content)
+    title = title_match.group(1) if title_match else ""
+
+    description = ""
+    description_match = re.search(r"# .*?\n\n(.*?)\n\n", content, re.DOTALL)
+    if description_match:
+        description = description_match.group(1).strip()
+
+    # Extract rule content
+    rule_content = {}
+    rule_match = re.search(r"<rule>(.*?)</rule>", content, re.DOTALL)
+    if rule_match:
+        rule_text = rule_match.group(1)
+
+        # Extract name
+        name_match = re.search(r"name: (.*?)$", rule_text, re.MULTILINE)
+        if name_match:
+            rule_content["name"] = name_match.group(1).strip()
+
+        # Extract description
+        desc_match = re.search(r"description: (.*?)$", rule_text, re.MULTILINE)
+        if desc_match:
+            rule_content["description"] = desc_match.group(1).strip()
+
+        # Extract filters section
+        filters_match = re.search(r"filters:(.*?)(?:actions:|examples:|metadata:)", rule_text, re.DOTALL)
+        if filters_match:
+            filters_text = filters_match.group(1).strip()
+            filters = []
+            for filter_match in re.finditer(r"- type: (.*?)\n\s+pattern: \"(.*?)\"", filters_text, re.DOTALL):
+                filters.append({"type": filter_match.group(1).strip(), "pattern": filter_match.group(2).strip()})
+            rule_content["filters"] = filters
+
+        # Extract actions section
+        actions_match = re.search(r"actions:(.*?)(?:examples:|metadata:|$)", rule_text, re.DOTALL)
+        if actions_match:
+            actions_text = actions_match.group(1).strip()
+            actions = []
+            for action_match in re.finditer(
+                r"- type: (.*?)\n\s+message: \|(.*?)(?:\n\s+-|\n\nexamples|\n\nmetadata|$)", actions_text, re.DOTALL
+            ):
+                actions.append({"type": action_match.group(1).strip(), "message": action_match.group(2).strip()})
+            rule_content["actions"] = actions
+
+        # Extract examples section
+        examples_match = re.search(r"examples:(.*?)(?:metadata:|$)", rule_text, re.DOTALL)
+        if examples_match:
+            examples_text = examples_match.group(1).strip()
+            examples = []
+            for example_match in re.finditer(
+                r"- input: \|(.*?)\n\s+output: \|(.*?)(?:\n\s+-|$)", examples_text, re.DOTALL
+            ):
+                examples.append({"input": example_match.group(1).strip(), "output": example_match.group(2).strip()})
+            rule_content["examples"] = examples
+
+        # Extract metadata section
+        metadata_match = re.search(r"metadata:(.*?)$", rule_text, re.DOTALL)
+        if metadata_match:
+            metadata_text = metadata_match.group(1).strip()
+            metadata = {}
+
+            # Extract priority
+            priority_match = re.search(r"priority: (.*?)$", metadata_text, re.MULTILINE)
+            if priority_match:
+                metadata["priority"] = priority_match.group(1).strip()
+
+            # Extract version
+            version_match = re.search(r"version: (.*?)$", metadata_text, re.MULTILINE)
+            if version_match:
+                metadata["version"] = version_match.group(1).strip()
+
+            # Extract tags
+            tags_match = re.search(r"tags:(.*?)(?:\n\s*[a-z]|$)", metadata_text, re.DOTALL)
+            if tags_match:
+                tags_text = tags_match.group(1).strip()
+                tags = []
+                for tag_match in re.finditer(r"- (.*?)$", tags_text, re.MULTILINE):
+                    tags.append(tag_match.group(1).strip())
+                metadata["tags"] = tags
+
+            rule_content["metadata"] = metadata
+
+    return rule_content
 
 
 def generate_cursor_rule(
@@ -110,17 +199,86 @@ def generate_cursor_rule(
         str: The generated cursor rule content
 
     """
-    # This function will be implemented in a later phase
-    # For now, it's a placeholder that references the original implementation
-    from codegen_lab.promptlib import generate_cursor_rule as original_generate_cursor_rule
+    # Generate frontmatter
+    frontmatter = {
+        "description": description,
+        "globs": "*.{" + ",".join(file_patterns) + "}",
+        "alwaysApply": False,
+    }
 
-    return original_generate_cursor_rule(
-        rule_name=rule_name,
-        description=description,
-        file_patterns=file_patterns,
-        content_patterns=content_patterns,
-        action_message=action_message,
-        examples=examples,
-        tags=tags,
-        priority=priority,
-    )
+    # Generate rule content
+    rule_content = {
+        "name": rule_name,
+        "description": description,
+        "filters": [{"type": "file_extension", "pattern": f"\\.{pattern}$"} for pattern in file_patterns],
+        "actions": [{"type": "suggest", "message": action_message}],
+        "examples": [{"input": ex["input"], "output": ex["output"]} for ex in examples],
+        "metadata": {
+            "priority": priority,
+            "version": "1.0",
+            "tags": tags,
+        },
+    }
+
+    # Add content patterns if provided
+    if content_patterns:
+        rule_content["filters"].extend([{"type": "content", "pattern": pattern} for pattern in content_patterns])
+
+    # Format frontmatter as YAML
+    frontmatter_str = "---\n"
+    for key, value in frontmatter.items():
+        frontmatter_str += f"{key}: {value}\n"
+    frontmatter_str += "---\n\n"
+
+    # Format title and description
+    title_str = f"# {rule_name.replace('-', ' ').title()}\n\n{description}\n\n"
+
+    # Format rule content
+    rule_str = "<rule>\n"
+
+    # Add name and description
+    rule_str += f"name: {rule_content['name']}\n"
+    rule_str += f"description: {rule_content['description']}\n\n"
+
+    # Add filters
+    rule_str += "filters:\n"
+    for filter_item in rule_content["filters"]:
+        rule_str += f"  - type: {filter_item['type']}\n"
+        rule_str += f'    pattern: "{filter_item["pattern"]}"\n'
+
+    # Add actions
+    rule_str += "\nactions:\n"
+    for action in rule_content["actions"]:
+        rule_str += f"  - type: {action['type']}\n"
+        rule_str += "    message: |\n"
+        # Indent each line of the message
+        for line in action["message"].split("\n"):
+            rule_str += f"      {line}\n"
+
+    # Add examples if provided
+    if examples:
+        rule_str += "\nexamples:\n"
+        for example in rule_content["examples"]:
+            rule_str += "  - input: |\n"
+            # Indent each line of the input
+            for line in example["input"].split("\n"):
+                rule_str += f"      {line}\n"
+            rule_str += "    output: |\n"
+            # Indent each line of the output
+            for line in example["output"].split("\n"):
+                rule_str += f"      {line}\n"
+
+    # Add metadata
+    rule_str += "\nmetadata:\n"
+    metadata = rule_content["metadata"]
+    rule_str += f"  priority: {metadata['priority']}\n"
+    rule_str += f"  version: {metadata['version']}\n"
+    if metadata.get("tags"):
+        rule_str += "  tags:\n"
+        for tag in metadata["tags"]:
+            rule_str += f"    - {tag}\n"
+
+    rule_str += "</rule>\n"
+
+    # Combine all sections
+    return frontmatter_str + title_str + rule_str

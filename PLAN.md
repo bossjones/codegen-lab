@@ -63,10 +63,10 @@ src/codegen_lab/promptlib/
 - ✅ Verify original functionality is preserved via re-exports
 
 ### 2. Migration Phase - Core Models and Utilities
-- [ ] Move data models to `models.py`
-- [ ] Move utility functions to `utils.py`
-- [ ] Update imports between these modules
-- [ ] Verify functionality via manual tests or existing tests
+- [x] Move data models to `models.py`
+- [x] Move utility functions to `utils.py`
+- [x] Update imports between these modules
+- [x] Verify functionality via manual tests or existing tests
 
 ### 3. Migration Phase - MCP Resources, Tools, and Prompts
 - [ ] Move resource endpoints to `resources.py`
@@ -234,10 +234,20 @@ To minimize disruption and ensure the system remains functional throughout refac
 <current_status>
 ## Current Status
 - [x] Phase 1: POC (Completed)
-- [ ] Phase 2: Migration - Models & Utils (Not Started)
+- [x] Phase 2: Migration - Models & Utils (Completed)
+  - [x] Migrated all data models to models.py
+  - [x] Migrated utility functions to utils.py
+  - [x] Implemented full parse_cursor_rule function
+  - [x] Implemented full generate_cursor_rule function
+  - [x] Updated imports between modules
 - [ ] Phase 3: Migration - Resources, Tools & Prompts (Not Started)
 - [ ] Phase 4: Migration - Workflows (Not Started)
 - [ ] Phase 5: Integration (Not Started)
+
+## Notes
+- Successfully migrated all models and utility functions
+- Maintained backward compatibility through re-exports
+- Next step is to begin Phase 3: Migration of Resources, Tools & Prompts
 </current_status>
 
 <phase1_details>

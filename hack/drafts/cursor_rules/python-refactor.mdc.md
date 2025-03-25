@@ -1,15 +1,15 @@
 ---
-description: Python code refactoring and modularization guidelines
+description: Python code refactoring and modularization guidelines with mandatory TDD practices
 globs: "*.py"
-alwaysApply: false
+alwaysApply: true
 ---
 # Python Code Refactoring Guide
 
-This rule provides guidance for refactoring Python code, particularly focusing on breaking down large files into smaller, more manageable components.
+This rule provides mandatory guidance for refactoring Python code using Test-Driven Development (TDD), with a focus on breaking down large files into smaller, more manageable components.
 
 <rule>
 name: python-refactor
-description: Guidelines for refactoring Python code into modular components
+description: Mandatory TDD guidelines for refactoring Python code into modular components
 filters:
   - type: file_extension
     pattern: "\\.py$"
@@ -21,7 +21,78 @@ actions:
     message: |
       # Python Code Refactoring Guidelines
 
-      When refactoring Python code, particularly large files, follow these guidelines and development loop:
+      ⚠️ IMPORTANT: Test-Driven Development (TDD) is MANDATORY for all refactoring work. No exceptions.
+
+      ## TDD-First Development Loop
+
+      Every refactoring task MUST follow this TDD-based workflow:
+
+      1. Write failing tests for the desired behavior
+      2. Implement minimal code to make tests pass
+      3. Refactor while keeping tests green
+      4. Repeat for each component
+
+      ### Required Testing Setup
+
+      Before ANY code changes:
+
+      ```bash
+      # 1. Create test directory structure
+      mkdir -p tests/unit tests/integration || true
+
+      # 2. Create test files first
+      touch tests/unit/test_${component}.py
+      touch tests/integration/test_${component}_integration.py
+
+      # 3. Set up test fixtures and helpers
+      touch tests/conftest.py
+      ```
+
+      ### Test Structure Template
+
+      All test files MUST follow this structure:
+
+      ```python
+      """Unit tests for component functionality.
+
+      This test suite verifies the behavior of the component
+      in isolation from other system components.
+      """
+      from typing import TYPE_CHECKING
+
+      import pytest
+
+      if TYPE_CHECKING:
+          from _pytest.capture import CaptureFixture
+          from _pytest.fixtures import FixtureRequest
+          from _pytest.logging import LogCaptureFixture
+          from _pytest.monkeypatch import MonkeyPatch
+          from pytest_mock.plugin import MockerFixture
+
+      @pytest.fixture
+      def component_fixture():
+          """Create an isolated component instance for testing."""
+          return ComponentUnderTest()
+
+      def test_component_behavior(
+          component_fixture: ComponentUnderTest,
+          mocker: MockerFixture,
+          caplog: LogCaptureFixture,
+      ) -> None:
+          """Test specific component behavior.
+
+          This test verifies that the component behaves correctly
+          under specific conditions.
+          """
+          # Given
+          input_data = {"test": "data"}
+
+          # When
+          result = component_fixture.process(input_data)
+
+          # Then
+          assert result == expected_output
+      ```
 
       ## Development Loop
 
@@ -1117,13 +1188,14 @@ examples:
       ```
 
 metadata:
-  priority: high
-  version: 1.0
+  priority: critical
+  version: 2.0
+  enforce_tdd: true
   tags:
-    - python
-    - refactoring
-    - code-organization
-    - best-practices
-    - tdd
-    - testing
+  - python
+  - refactoring
+  - code-organization
+  - best-practices
+  - tdd
+  - testing
 </rule>
