@@ -27,8 +27,39 @@ actions:
 
       For each component you're refactoring, follow this TDD-based development loop:
 
+      ### 0. Planning Phase
+      - Create a scratch pad at the top of your module with a markdown checklist:
+      ```python
+      """Refactoring Plan:
+      - [ ] Analyze code dependencies
+      - [ ] Create directory structure
+      - [ ] Create empty files with docstrings
+      - [ ] Write tests for module 1
+      - [ ] Implement module 1 (pseudocode first)
+      - [ ] Write tests for module 2
+      - [ ] Implement module 2 (pseudocode first)
+      - [ ] Update imports
+      - [ ] Verify tests pass
+      """
+      ```
+
+      - Set up the directory structure before making any code changes:
+      ```bash
+      # Create directory structure (with fallback if it exists)
+      mkdir -p src/package_name/submodule || true
+
+      # Initialize files before editing
+      touch src/package_name/submodule/__init__.py
+      touch src/package_name/submodule/models.py
+      touch src/package_name/submodule/services.py
+      touch src/package_name/submodule/resources.py
+      ```
+
       ### 1. Write Tests First
       ```bash
+      # Create test directory if it doesn't exist
+      mkdir -p tests || true
+
       # Create test file for the component you're extracting
       touch tests/test_component.py
 
@@ -127,10 +158,33 @@ actions:
          ```
 
       ### 2. Extract Component
-      - Move the code to its new location
+      - Start with pseudocode and docstrings for each module
+      - Create placeholder functions and classes with detailed docstrings
+      - Gradually implement each component, checking off items in your scratch pad
       - Update imports to use fully qualified paths
       - Add type hints and docstrings
       - Ensure backward compatibility
+
+      Example of placeholder with docstring:
+      ```python
+      def process_data(data: Dict) -> List:
+          """Process the input data and return a list of results.
+
+          This function will:
+          1. Validate input data
+          2. Transform the data into the required format
+          3. Apply business rules
+          4. Return the processed results
+
+          Args:
+              data: Dictionary containing input data
+
+          Returns:
+              List of processed data items
+          """
+          # TODO: Implement data processing
+          pass
+      ```
 
       ### 3. Quality Checks
       Run through these checks after each significant change:
@@ -211,11 +265,31 @@ actions:
 
       2. **Create Module Structure**:
          - Create appropriate directories for the submodule
+         ```bash
+         mkdir -p src/package_name/submodule || true
+         ```
          - Add `__init__.py` files to make directories packages
+         ```bash
+         touch src/package_name/__init__.py
+         touch src/package_name/submodule/__init__.py
+         ```
          - Plan the new file organization based on functionality
+         ```bash
+         touch src/package_name/submodule/models.py
+         touch src/package_name/submodule/services.py
+         touch src/package_name/submodule/utils.py
+         touch src/package_name/submodule/resources.py
+         ```
          - Set up test files for each new module
+         ```bash
+         mkdir -p tests || true
+         touch tests/test_models.py
+         touch tests/test_services.py
+         ```
 
       3. **Extract Components**:
+         - Begin with pseudocode and docstrings for each component
+         - Gradually implement each module, testing as you go
          - Move related functions/classes to appropriate new files
          - Update imports in all affected files
          - Maintain backward compatibility in the original entry point
@@ -254,9 +328,9 @@ actions:
          - Update import examples in documentation
          - Add type hints for all functions and classes
 
-      ## Example Refactoring
+      ## Example Refactoring Workflow
 
-      Original large file:
+      Starting with a large file:
       ```python
       # large_module.py
       from typing import Dict, List, Optional
@@ -278,50 +352,144 @@ actions:
           pass
       ```
 
-      Refactored structure (Simplified Approach):
+      ### Step 1: Create a scratch pad
+      Add a planning docstring at the top of the file:
+      ```python
+      """Refactoring Plan for large_module.py:
+      - [ ] Create directory structure
+      - [ ] Set up __init__.py files
+      - [ ] Extract DataModel to models.py
+      - [ ] Extract process_data to services.py
+      - [ ] Extract helper_function to utils.py
+      - [ ] Extract api_endpoint to resources.py
+      - [ ] Update imports in all files
+      - [ ] Update large_module.py to re-export
+      - [ ] Verify tests pass
+      """
+
+      # Rest of large_module.py...
+      ```
+
+      ### Step 2: Create directory structure
+      ```bash
+      # Create the required directories
+      mkdir -p src/package_name/submodule || true
+
+      # Initialize all the files
+      touch src/package_name/__init__.py
+      touch src/package_name/submodule/__init__.py
+      touch src/package_name/submodule/models.py
+      touch src/package_name/submodule/utils.py
+      touch src/package_name/submodule/services.py
+      touch src/package_name/submodule/resources.py
+      ```
+
+      ### Step 3: Set up files with pseudocode
       ```python
       # src/package_name/submodule/models.py
+      """Models module containing data structures.
+
+      This module will contain:
+      - [ ] DataModel class
+      """
       from typing import Dict, List
 
       class DataModel:
-          """Data model implementation."""
-          pass
+          """Data model implementation.
 
+          TODO: Implement this class with proper attributes and methods.
+          """
+          pass
+      ```
+
+      ```python
       # src/package_name/submodule/utils.py
-      def helper_function() -> None:
-          """Helper utility."""
-          pass
+      """Utilities module containing helper functions.
 
+      This module will contain:
+      - [ ] helper_function utility
+      """
+      def helper_function() -> None:
+          """Helper utility.
+
+          TODO: Implement the helper functionality.
+          """
+          pass
+      ```
+
+      ```python
       # src/package_name/submodule/services.py
+      """Services module containing business logic.
+
+      This module will contain:
+      - [ ] process_data function
+      """
       from typing import Dict, List
       from package_name.submodule.models import DataModel
 
       def process_data(data: Dict) -> List:
-          """Process the data."""
-          pass
+          """Process the data.
 
+          TODO: Implement processing logic.
+          """
+          pass
+      ```
+
+      ```python
       # src/package_name/submodule/resources.py
+      """Resources module containing API endpoints.
+
+      This module will contain:
+      - [ ] api_endpoint function
+      """
       from typing import Dict
       from package_name.submodule.services import process_data
 
       def api_endpoint() -> Dict:
-          """API endpoint handler."""
-          pass
+          """API endpoint handler.
 
+          TODO: Implement endpoint logic.
+          """
+          pass
+      ```
+
+      ### Step 4: Create the __init__.py file for re-exports
+      ```python
       # src/package_name/submodule/__init__.py
+      """Submodule package exports.
+
+      This module exports:
+      - [ ] DataModel from models
+      - [ ] process_data from services
+      - [ ] api_endpoint from resources
+      """
       from package_name.submodule.models import DataModel
       from package_name.submodule.services import process_data
       from package_name.submodule.resources import api_endpoint
 
       __all__ = ['DataModel', 'process_data', 'api_endpoint']
+      ```
 
-      # src/package_name/large_module.py becomes:
+      ### Step 5: Update the original module
+      ```python
+      # src/package_name/large_module.py
+      """Original module now importing from submodules.
+
+      This module re-exports:
+      - [x] DataModel from submodule.models
+      - [x] process_data from submodule.services
+      - [x] helper_function from submodule.utils
+      - [x] api_endpoint from submodule.resources
+      """
       from package_name.submodule import DataModel, process_data, api_endpoint
       from package_name.submodule.utils import helper_function
 
       # Re-export for backward compatibility
       __all__ = ['DataModel', 'process_data', 'helper_function', 'api_endpoint']
       ```
+
+      ### Step 6: Gradually implement each component
+      After setting up the structure, go back and implement each component fully, updating the checklist in your scratch pad as you complete each task.
 
 examples:
   - input: |
@@ -338,7 +506,135 @@ examples:
           pass
       ```
     output: |
-      Let's refactor this into a cleaner structure:
+      Let's refactor this into a cleaner structure. I'll walk you through the complete process:
+
+      ### Step 1: Create a scratch pad and plan
+
+      First, add a refactoring plan to the top of your file:
+
+      ```python
+      """Refactoring Plan for big_module.py:
+      - [ ] Create directory structure
+      - [ ] Create __init__.py files
+      - [ ] Extract UserModel to models.py
+      - [ ] Extract process_user to services.py
+      - [ ] Extract api_endpoint to resources.py
+      - [ ] Set up exports in __init__.py
+      - [ ] Update big_module.py to re-export
+      - [ ] Verify functionality
+      """
+
+      # Rest of big_module.py continues...
+      ```
+
+      ### Step 2: Create the directory structure
+
+      ```bash
+      # Create the directory structure
+      mkdir -p src/codegen_lab/promptlib || true
+
+      # Initialize files
+      touch src/codegen_lab/__init__.py
+      touch src/codegen_lab/promptlib/__init__.py
+      touch src/codegen_lab/promptlib/models.py
+      touch src/codegen_lab/promptlib/services.py
+      touch src/codegen_lab/promptlib/resources.py
+      ```
+
+      ### Step 3: Set up files with pseudocode and docstrings
+
+      ```python
+      # src/codegen_lab/promptlib/models.py
+      """Models for the promptlib module.
+
+      This module contains:
+      - [ ] UserModel class
+      """
+      from typing import Dict, Any
+
+      class UserModel:
+          """User model implementation.
+
+          TODO: Add proper attributes and methods
+          """
+          pass
+      ```
+
+      ```python
+      # src/codegen_lab/promptlib/services.py
+      """Services for the promptlib module.
+
+      This module contains:
+      - [ ] process_user function
+      """
+      from typing import Dict, Any
+      from codegen_lab.promptlib.models import UserModel
+
+      def process_user(user: UserModel) -> Dict[str, Any]:
+          """Process the user data.
+
+          TODO: Implement user processing logic
+          """
+          pass
+      ```
+
+      ```python
+      # src/codegen_lab/promptlib/resources.py
+      """Resources for the promptlib module.
+
+      This module contains:
+      - [ ] api_endpoint function
+      """
+      from typing import Dict, Any
+      from codegen_lab.promptlib.models import UserModel
+      from codegen_lab.promptlib.services import process_user
+
+      def api_endpoint() -> Dict[str, Any]:
+          """API endpoint handler.
+
+          TODO: Implement API endpoint logic
+          """
+          pass
+      ```
+
+      ```python
+      # src/codegen_lab/promptlib/__init__.py
+      """Promptlib module exports.
+
+      This module exports:
+      - [ ] UserModel from models
+      - [ ] process_user from services
+      - [ ] api_endpoint from resources
+      """
+      from codegen_lab.promptlib.models import UserModel
+      from codegen_lab.promptlib.services import process_user
+      from codegen_lab.promptlib.resources import api_endpoint
+
+      __all__ = ['UserModel', 'process_user', 'api_endpoint']
+      ```
+
+      ### Step 4: Update the original module
+
+      ```python
+      # src/codegen_lab/big_module.py
+      """Original module now re-exporting from submodules.
+
+      This module re-exports:
+      - [x] UserModel from promptlib.models
+      - [x] process_user from promptlib.services
+      - [x] api_endpoint from promptlib.resources
+      """
+      from codegen_lab.promptlib import UserModel, process_user, api_endpoint
+
+      # Re-export for backward compatibility
+      __all__ = ['UserModel', 'process_user', 'api_endpoint']
+      ```
+
+      ### Step 5: Implement the actual functionality
+
+      Now that you have the structure set up, go back and implement each component fully, checking off items in your scratch pad as you complete them.
+
+      The refactored directory structure will look like:
 
       ```
       src/codegen_lab/
@@ -349,47 +645,6 @@ examples:
       │   ├── services.py        # Contains process_user
       │   └── resources.py       # Contains api_endpoint
       └── big_module.py          # Now just imports and re-exports
-      ```
-
-      With the following implementation:
-
-      ```python
-      # src/codegen_lab/promptlib/models.py
-      from typing import Dict, Any
-
-      class UserModel:
-          """User model implementation."""
-          pass
-
-      # src/codegen_lab/promptlib/services.py
-      from typing import Dict, Any
-      from codegen_lab.promptlib.models import UserModel
-
-      def process_user(user: UserModel) -> Dict[str, Any]:
-          """Process the user data."""
-          pass
-
-      # src/codegen_lab/promptlib/resources.py
-      from typing import Dict, Any
-      from codegen_lab.promptlib.models import UserModel
-      from codegen_lab.promptlib.services import process_user
-
-      def api_endpoint() -> Dict[str, Any]:
-          """API endpoint handler."""
-          pass
-
-      # src/codegen_lab/promptlib/__init__.py
-      from codegen_lab.promptlib.models import UserModel
-      from codegen_lab.promptlib.services import process_user
-      from codegen_lab.promptlib.resources import api_endpoint
-
-      __all__ = ['UserModel', 'process_user', 'api_endpoint']
-
-      # src/codegen_lab/big_module.py
-      from codegen_lab.promptlib import UserModel, process_user, api_endpoint
-
-      # Re-export for backward compatibility
-      __all__ = ['UserModel', 'process_user', 'api_endpoint']
       ```
 
 metadata:
