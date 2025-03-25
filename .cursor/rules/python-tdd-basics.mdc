@@ -20,6 +20,67 @@ actions:
       3. Refactor while keeping tests green
       4. Repeat
 
+      ## TDD Verification Loop
+
+      Always verify your tests and code in an iterative loop:
+
+      ```bash
+      # 1. Format code first
+      uv run ruff format .
+
+      # 2. Run the specific test to verify it fails (for new tests)
+      # or passes (after implementation/fix)
+      uv run pytest tests/path/to/test_file.py::TestClass::test_method -v
+
+      # 3. If test fails with errors other than assertion failures (e.g., import or syntax errors),
+      # fix those structural issues first
+
+      # 4. After implementation, run the test again to verify it passes
+      uv run pytest tests/path/to/test_file.py::TestClass::test_method -v
+
+      # 5. Run related tests to verify no regressions
+      uv run pytest tests/path/to/test_file.py -v
+
+      # 6. Fix any linting/type checking issues
+      uv run ruff check . --fix --show-fixes
+      uv run mypy
+
+      # 7. Run tests again to ensure fixes didn't break anything
+      uv run pytest tests/path/to/test_file.py -v
+      ```
+
+      ### Best Practices for Test Verification
+
+      1. **Verify Tests First**: When creating a new test file, verify it loads correctly before adding tests:
+         ```bash
+         # Verify the test file loads without errors
+         uv run pytest tests/path/to/new_test_file.py -v
+         ```
+
+      2. **Iterative Testing**: Test each specific change immediately after making it:
+         ```bash
+         # Run only the specific test you're working on
+         uv run pytest tests/path/to/test_file.py::TestClass::test_method -vxs
+         ```
+
+      3. **Test with Debugging**: For failing tests, use debugging flags:
+         ```bash
+         # Run with debug on failures and verbose output
+         uv run pytest tests/path/to/test_file.py::TestClass::test_method -vxs --pdb
+         ```
+
+      4. **Focus on Relevant Tests**: Use the `-k` flag to run only relevant tests:
+         ```bash
+         # Run all tests related to a specific feature
+         uv run pytest -k "feature_name" -v
+         ```
+
+      5. **Check Test Coverage**: Verify your tests cover the code:
+         ```bash
+         # Run with coverage report
+         uv run pytest --cov=src/path/to/module tests/path/to/test_file.py
+         ```
+
       ## Test Structure Template
       ```python
       """Unit tests for component functionality.
@@ -432,7 +493,87 @@ actions:
 
       # Set up test fixtures and helpers
       touch tests/conftest.py
+
+      # Verify test infrastructure loads correctly
+      uv run pytest tests/unit/test_${component}.py -v
       ```
+
+      ## TDD Workflow for New Features
+
+      1. **Create Test Infrastructure First**:
+         ```bash
+         # Create test directory/file
+         mkdir -p tests/unit/module || true
+         touch tests/unit/module/test_new_feature.py
+
+         # Create empty test file with imports and basic structure
+         # Add minimal test skeleton
+
+         # Verify test file loads without errors
+         uv run pytest tests/unit/module/test_new_feature.py -v
+         ```
+
+      2. **Write First Failing Test**:
+         ```python
+         def test_new_feature_behavior() -> None:
+             """Test that new feature behaves as expected."""
+             # Write assertions for expected behavior
+             assert new_feature() == expected_result
+         ```
+
+      3. **Verify Test Fails Correctly**:
+         ```bash
+         # Run test and confirm it fails for the expected reason
+         uv run pytest tests/unit/module/test_new_feature.py::test_new_feature_behavior -v
+         ```
+
+      4. **Implement Minimal Code to Pass Test**:
+         ```python
+         def new_feature():
+             """Implement the minimum code to pass the test."""
+             return expected_result
+         ```
+
+      5. **Verify Test Passes**:
+         ```bash
+         # Run test and confirm it passes
+         uv run pytest tests/unit/module/test_new_feature.py::test_new_feature_behavior -v
+         ```
+
+      6. **Refactor While Keeping Tests Green**:
+         ```python
+         def new_feature():
+             """Improved implementation that still passes tests."""
+             # Better implementation
+             return processed_result
+         ```
+
+      7. **Verify Refactored Code Still Passes**:
+         ```bash
+         # Run test to confirm refactoring didn't break functionality
+         uv run pytest tests/unit/module/test_new_feature.py -v
+         ```
+
+      8. **Fix Any Linting or Type Issues**:
+         ```bash
+         # Format code
+         uv run ruff format .
+
+         # Check and fix linting
+         uv run ruff check . --fix --show-fixes
+
+         # Check types
+         uv run mypy
+         ```
+
+      9. **Final Test Verification**:
+         ```bash
+         # Run tests again to ensure fixes didn't break anything
+         uv run pytest tests/unit/module/test_new_feature.py -v
+
+         # Run broader test suite for possible integration issues
+         uv run pytest -k "feature_name" -v
+         ```
 
       ## Testing Best Practices
       1. Use descriptive test names that explain the behavior being tested
