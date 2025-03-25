@@ -62,6 +62,38 @@ actions:
       - Maintain test coverage
       - Create a working POC without losing functionality
 
+      ## XML Tag Structure
+      Use XML-style tags to organize and track different aspects of the refactoring:
+
+      <success_criteria>
+      - All tests passing
+      - No functionality loss
+      - Improved code organization
+      </success_criteria>
+
+      <implementation>
+      - Phase 1: Initial setup
+      - Phase 2: Component extraction
+      - Phase 3: Testing and validation
+      </implementation>
+
+      <dependencies>
+      - Module A depends on Module B
+      - Module C requires configuration from Module D
+      </dependencies>
+
+      <testing_strategy>
+      - Unit tests for each component
+      - Integration tests for module interactions
+      - End-to-end tests for full workflows
+      </testing_strategy>
+
+      <documentation>
+      - Update module docstrings
+      - Add function/class documentation
+      - Create usage examples
+      </documentation>
+
       ## Architecture Changes
       - Create new module structure with the following components:
         - `models.py`: Data structures and schemas
@@ -94,15 +126,19 @@ actions:
          - Run full test suite
 
       ## Current Status
+      <status>
       - [ ] Phase 1: POC (In Progress)
       - [ ] Phase 2: Setup
       - [ ] Phase 3: Migration
       - [ ] Phase 4: Integration
+      </status>
 
       ## Notes
+      <notes>
       - Any dependencies between components
       - Potential issues to be aware of
       - Design decisions made during refactoring
+      </notes>
       ```
 
       - Set up the directory structure before making any code changes:

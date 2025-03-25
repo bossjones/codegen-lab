@@ -1,8 +1,12 @@
+<project>
+<overview>
 # Refactoring Plan for prompt_library.py
 
 ## Overview
 This document outlines the plan for refactoring the prompt_library.py module into a more modular and maintainable structure. The current file is very large (2791 lines) and mixes multiple concerns including data models, utilities, API endpoints, and business logic.
+</overview>
 
+<goals>
 ## Goals
 - Improve maintainability by breaking down the large file into smaller components
 - Separate concerns into appropriate modules
@@ -11,7 +15,9 @@ This document outlines the plan for refactoring the prompt_library.py module int
 - Create a working POC without losing functionality
 - Improve code organization and readability
 - Make future extensions easier
+</goals>
 
+<analysis>
 ## Current Code Analysis
 
 ### Main Components Identified
@@ -28,7 +34,9 @@ This document outlines the plan for refactoring the prompt_library.py module int
 - The workflow functions depend on the tool functions
 - The prompt functions depend on the utility functions
 - Most functions depend on the data models
+</analysis>
 
+<architecture>
 ## Architecture Changes
 
 We'll refactor the code into the following modules:
@@ -43,7 +51,9 @@ src/codegen_lab/promptlib/
 ├── prompts.py            # MCP prompts for cursor rule generation
 └── workflows.py          # Functions for executing cursor rule workflows
 ```
+</architecture>
 
+<implementation_phases>
 ## Implementation Phases
 
 ### 1. POC Phase (Create Structure with Essential Re-exports)
@@ -75,7 +85,9 @@ src/codegen_lab/promptlib/
 - [ ] Refactor the original `prompt_library.py` to import and re-export from new modules
 - [ ] Run full test suite
 - [ ] Verify all functionality is preserved
+</implementation_phases>
 
+<file_structure>
 ## File Structure Details
 
 ### models.py
@@ -123,7 +135,9 @@ src/codegen_lab/promptlib/
 - `execute_phase_3`
 - `execute_phase_4`
 - `execute_phase_5`
+</file_structure>
 
+<dependency_strategy>
 ## Strategy for Handling Circular Dependencies
 
 Potential circular dependencies are a common issue in refactoring monolithic code. We'll use the following strategies to prevent and resolve them:
@@ -154,11 +168,14 @@ Potential circular dependencies are a common issue in refactoring monolithic cod
    - Gradually move to more complex modules (resources.py, tools.py)
    - Leave modules with the most dependencies for last (workflows.py)
 
+
 For each module being refactored, we'll:
 1. Document suspected circular dependencies in a comment at the top of the file
 2. Apply the appropriate strategy from above
 3. Verify imports work correctly after each module is migrated
+</dependency_strategy>
 
+<deployment_plan>
 ## Incremental Deployment Plan
 
 To minimize disruption and ensure the system remains functional throughout refactoring, we'll implement an incremental deployment approach:
@@ -200,7 +217,9 @@ To minimize disruption and ensure the system remains functional throughout refac
    - Run comprehensive comparison tests in production environment
    - Verify logs show expected behavior
    - Check all integrations are functioning as expected
+</deployment_plan>
 
+<deployment_timeline>
 ### Deployment Timeline
 
 | Phase | Description | Testing | Deployment Environment | Rollback Method |
@@ -210,14 +229,18 @@ To minimize disruption and ensure the system remains functional throughout refac
 | Phase 3 | Resources, Tools & Prompts | Integration tests | Test environment | Toggle feature flag |
 | Phase 4 | Workflows | System tests | Staging environment | Toggle feature flag |
 | Phase 5 | Complete Integration | Full test suite | Production | Toggle feature flag, then gradual adoption |
+</deployment_timeline>
 
+<current_status>
 ## Current Status
 - [x] Phase 1: POC (Completed)
 - [ ] Phase 2: Migration - Models & Utils (Not Started)
 - [ ] Phase 3: Migration - Resources, Tools & Prompts (Not Started)
 - [ ] Phase 4: Migration - Workflows (Not Started)
 - [ ] Phase 5: Integration (Not Started)
+</current_status>
 
+<phase1_details>
 ## Phase 1 Implementation Details
 
 For Phase 1, we have created the directory structure and set up the initial module files:
@@ -241,23 +264,186 @@ For Phase 1, we have created the directory structure and set up the initial modu
 4. Current implementation still relies on the original file for actual functionality:
    - Each function contains a placeholder that imports and calls the original implementation
    - This ensures that the refactored code is functionally equivalent to the original
+</phase1_details>
 
-Next steps: Begin implementing Phase 2 by moving the actual implementations of data models and utility functions to their respective modules.
+<phase2_details>
+## Phase 2 Implementation Details
 
-## Testing Strategy
-1. Ensure all existing tests pass after each phase
-2. Write additional tests for new modules if needed
-3. Create comparison tests to verify behavior equivalence before and after refactoring
-4. Manually test the MCP server functionality
+For Phase 2, we will focus on migrating the core data models and utility functions. This phase is critical as these components form the foundation that other modules will build upon.
 
-## Notes
-- The FastMCP server instance (mcp) is defined at the top level, so we need to ensure it continues to work properly
-- Path constants like CURSOR_RULES_DIR will need to be moved to utils.py
-- Type hints and docstrings must be preserved during refactoring
+### Step 1: Data Models Migration
 
-## Success Criteria
-- All existing functionality works without modifications to client code
-- Code is more modular and easier to maintain
-- File sizes are reduced to reasonable lengths
-- Type hints and docstrings are preserved or improved
-- Tests pass without modification
+1. **Preparation**:
+   - Create a scratch pad at the top of models.py:
+   ```python
+   """Migration Plan for models.py:
+   - [ ] Import all required typing modules
+   - [ ] Move CursorRuleMetadata TypedDict
+   - [ ] Move CursorRuleExample TypedDict
+   - [ ] Move CursorRuleFilter TypedDict
+   - [ ] Move CursorRuleAction TypedDict
+   - [ ] Move CursorRule TypedDict
+   - [ ] Add proper docstrings and type hints
+   - [ ] Add validation functions if needed
+   - [ ] Update imports in __init__.py
+   - [ ] Verify type checking passes
+   """
+   ```
+
+2. **Implementation Order**:
+   - Start with base types that have no dependencies
+   - Move to more complex types that depend on the base types
+   - Add any missing type hints or documentation
+   - Implement any necessary validation logic
+
+3. **Type Safety**:
+   - Use literal types where appropriate
+   - Add runtime type checking where needed
+   - Include proper TypeVar definitions
+   - Add type guards if necessary
+
+### Step 2: Utility Functions Migration
+
+1. **Preparation**:
+   - Create a scratch pad at the top of utils.py:
+   ```python
+   """Migration Plan for utils.py:
+   - [ ] Import all required dependencies
+   - [ ] Move get_cursor_rule_files function
+   - [ ] Move get_cursor_rule_names function
+   - [ ] Move read_cursor_rule function
+   - [ ] Move parse_cursor_rule function
+   - [ ] Move generate_cursor_rule function
+   - [ ] Add proper error handling
+   - [ ] Add logging
+   - [ ] Update type hints
+   - [ ] Add/update docstrings
+   - [ ] Add unit tests
+   """
+   ```
+
+2. **Implementation Order**:
+   - Start with file system operations (get_cursor_rule_files, get_cursor_rule_names)
+   - Move to parsing functions (read_cursor_rule, parse_cursor_rule)
+   - Finally, implement generation functions (generate_cursor_rule)
+   - Add comprehensive error handling and logging
+
+3. **Error Handling**:
+   - Create custom exception classes if needed
+   - Add proper error messages and logging
+   - Implement graceful fallbacks where appropriate
+   - Add retry logic for file system operations
+</phase2_details>
+
+<testing_strategy>
+### Step 3: Testing Strategy
+
+1. **Unit Tests**:
+   - Create test_models.py:
+   ```python
+   """Test Plan for models.py:
+   - [ ] Test CursorRuleMetadata validation
+   - [ ] Test CursorRuleExample validation
+   - [ ] Test CursorRuleFilter validation
+   - [ ] Test CursorRuleAction validation
+   - [ ] Test CursorRule validation
+   - [ ] Test edge cases and error conditions
+   """
+   ```
+
+   - Create test_utils.py:
+   ```python
+   """Test Plan for utils.py:
+   - [ ] Test get_cursor_rule_files with various paths
+   - [ ] Test get_cursor_rule_names with different rule sets
+   - [ ] Test read_cursor_rule with valid/invalid files
+   - [ ] Test parse_cursor_rule with various formats
+   - [ ] Test generate_cursor_rule with different inputs
+   - [ ] Test error handling and edge cases
+   """
+   ```
+
+2. **Integration Tests**:
+   - Test interaction between models and utils
+   - Verify file system operations work correctly
+   - Test with actual cursor rule files
+   - Verify backward compatibility
+</testing_strategy>
+
+<documentation>
+### Step 4: Documentation
+
+1. **API Documentation**:
+   - Document all public functions and classes
+   - Include usage examples in docstrings
+   - Add type information to docstrings
+   - Document error conditions and handling
+
+2. **Internal Documentation**:
+   - Add implementation notes where needed
+   - Document any non-obvious design decisions
+   - Include references to relevant issues/PRs
+   - Document performance considerations
+</documentation>
+
+<verification>
+### Step 5: Verification
+
+1. **Type Checking**:
+   ```bash
+   # Run type checking on new modules
+   uv run mypy src/codegen_lab/promptlib/models.py
+   uv run mypy src/codegen_lab/promptlib/utils.py
+   ```
+
+2. **Linting**:
+   ```bash
+   # Run linting on new modules
+   uv run ruff check src/codegen_lab/promptlib/models.py
+   uv run ruff check src/codegen_lab/promptlib/utils.py
+   ```
+
+3. **Testing**:
+   ```bash
+   # Run tests for new modules
+   uv run pytest tests/test_models.py -v
+   uv run pytest tests/test_utils.py -v
+   ```
+</verification>
+
+<integration>
+### Step 6: Integration
+
+1. **Update Imports**:
+   - Update __init__.py to use new modules
+   - Verify no circular dependencies
+   - Check all re-exports work correctly
+
+2. **Verification**:
+   - Run full test suite
+   - Check type checking passes
+   - Verify linting passes
+   - Manual testing of key functionality
+</integration>
+
+<success_criteria>
+### Success Criteria
+
+Phase 2 will be considered complete when:
+1. All data models are properly migrated with full type safety
+2. All utility functions are migrated with proper error handling
+3. All tests pass with good coverage
+4. Type checking and linting pass
+5. Documentation is complete and accurate
+6. Backward compatibility is maintained
+7. No regressions in existing functionality
+</success_criteria>
+
+<next_steps>
+### Next Steps After Completion
+1. Review and update the migration plan for Phase 3
+2. Document any lessons learned
+3. Update project documentation
+4. Plan the deployment of Phase 2 changes
+</next_steps>
+</project>
