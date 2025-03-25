@@ -54,6 +54,11 @@ from mcp.server.fastmcp import FastMCP
 from mcp.server.fastmcp.server import Context
 from pydantic import Field
 
+# Disable all logging handlers
+logging.getLogger("asyncio").setLevel(logging.WARNING)
+logging.getLogger("mcp").handlers = []
+logging.getLogger("mcp").propagate = False  # Prevent propagation to root logger
+
 
 # Define types for cursor rule components
 class CursorRuleMetadata(TypedDict, total=False):
