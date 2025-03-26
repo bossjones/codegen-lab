@@ -1,4 +1,4 @@
-# Title: PRD for LLM Codegen Lab
+# Title: PRD for Codegen Lab - AI-Assisted Development Toolkit
 
 <version>1.0.0</version>
 
@@ -6,9 +6,101 @@
 
 ## Intro
 
-The LLM Codegen Lab project aims to build a comprehensive toolkit for AI-assisted code generation workflows. This project will provide developers with a powerful set of tools for integrating Large Language Models (LLMs) into their development process, focusing on test-driven development, code quality, and efficient workflow automation. The toolkit will streamline the interaction between developers, LLMs, and development tools while maintaining high standards for code quality and testing.
+The Codegen Lab project aims to build a comprehensive toolkit for AI-assisted code generation and development workflows. This project provides developers with a powerful set of tools for integrating Large Language Models (LLMs) and other AI capabilities into their development process. It emphasizes test-driven development, code quality, efficient workflow automation, and structured communication protocols. The toolkit streamlines the interaction between developers, AI assistants (like those in Cursor), and various development tools while maintaining high standards for code quality and testing.
 
-A key feature of the project is its implementation of the Anthropic Model Context Protocol (MCP), a standardized JSON-RPC 2.0 based communication protocol for LLM interactions. MCP enables structured, bidirectional communication between LLM clients and servers, providing robust support for resource management, tool invocation, prompt templates, and LLM sampling. This standardization ensures reliable and efficient communication while maintaining flexibility for future enhancements.
+A core component is the implementation and utilization of the Anthropic Model Context Protocol (MCP), a standardized JSON-RPC 2.0 based communication protocol. This enables structured, bidirectional communication between LLM clients (like Cursor) and specialized servers (like the included Prompt Library server). This facilitates features such as dynamic resource management (e.g., accessing project documentation or rules), tool invocation (e.g., running analysis scripts), and managing prompt templates.
+
+The project also incorporates robust development practices, including UV for workspace and package management, Ruff for linting/formatting, pytest for testing, and GitHub Actions for CI/CD.
+
+### Functional Requirements
+
+1. **Cursor Rule Management & Execution**
+   - Define, organize, and manage Cursor rules (`.mdc` files) for AI behavior.
+   - Support different rule types (agent, always, auto, manual).
+   - Implement a migration path from older rule formats (v1 `.mdc.md`) to the current v2 format (`.mdc`).
+   - Provide tools or workflows for generating and updating rules.
+   - Integrate rules into the development workflow (e.g., Agile workflow rule).
+
+2. **AI-Assisted Development Workflow (Agile)**
+   - Implement a structured Agile workflow (`.ai/` folder structure).
+   - Guide users through PRD and Architecture document creation and approval.
+   - Manage Epics and Stories, including status tracking.
+   - Integrate TDD practices within the workflow.
+   - Retain context and memory across development sessions via structured `.ai/` files.
+
+3. **Model Context Protocol (MCP) Server (Prompt Library)**
+   - Expose project resources (like Cursor rules) via MCP.
+   - Provide MCP tools for repository analysis, rule generation, and workspace preparation.
+   - Offer MCP prompts for guided interactions (e.g., generating rules based on analysis).
+   - Implement using the FastMCP framework.
+
+4. **Test-Driven Development Framework**
+   - Integrate with pytest for automated testing.
+   - Define testing standards (e.g., using fixtures, avoiding `unittest.mock`).
+   - Include tools or rules for generating test cases (`test-generator.mdc`).
+   - Support coverage reporting.
+
+5. **UV Workspace Management**
+   - Utilize UV for managing Python dependencies and virtual environments.
+   - Support a multi-package workspace structure (`packages/` directory).
+   - Provide Makefile targets for common UV operations (sync, lock, run, add).
+
+6. **Code Analysis & Context Generation**
+   - Provide tools/rules for analyzing repository structure (`repo_analyzer.mdc`, `tree.mdc`).
+   - Implement context gathering for LLMs (`code-context-gatherer.mdc`, `repomix.mdc`).
+   - Generate reports based on repository analysis (`ai_report.md`).
+
+7. **Development Tooling & Standards**
+   - Enforce code style using Ruff and BasedPyright.
+   - Integrate pre-commit hooks for quality checks.
+   - Provide clear documentation standards (`docs.mdc.md`, `changelog.mdc.md`).
+   - Support rule inheritance and composition
+   - Provide real-time rule validation
+   - Enable dynamic rule updates
+
+### Project Structure
+
+```text
+codegen-lab/
+├── .ai/                    # AI documentation and memory
+├── .cursor/                # Cursor IDE configuration
+│   └── templates/          # Document templates
+├── src/                    # Source code
+│   └── codegen_lab/       # Main package
+│       ├── rules/         # Rule processing
+│       ├── prompt_library.py # Core Prompt Library MCP Server
+│       ├── promptlib/     # Refactored prompt library components
+│       │   ├── __init__.py
+│       │   ├── models.py
+│       │   ├── prompts.py
+│       │   ├── resources.py
+│       │   ├── tools.py
+│       │   ├── utils.py
+│       │   └── workflows.py
+│       └── cli.py         # Command Line Interface
+├── tests/                 # Test suite
+│   ├── unit/              # Unit tests
+│   └── integration/       # Integration tests
+├── docs/                 # Documentation
+└── hack/                 # Development scripts
+    ├── drafts/            # Draft rules and configs
+    └── schemas/           # JSON Schemas (e.g., Taskfile)
+```
+
+### Getting Started Guide for Junior Developers
+
+#### Initial Setup
+1. Clone the repository
+2. Install UV package manager
+3. Create virtual environment (uv venv)
+4. Install dependencies (uv sync --frozen --dev)
+5. Set up pre-commit hooks (pre-commit install)
+
+### Key Concepts (Updated)
+- Cursor Rules: .mdc files defining AI behavior and workflows.
+- MCP Server (Prompt Library): Provides tools and resources via Model Context Protocol.
+- UV Workspace: Manages multiple Python packages (packages/ directory).
+- Agile Workflow (.ai/): Structured process for development using PRD, Arch, and Story files.
 
 ## Goals
 
@@ -25,7 +117,7 @@ A key feature of the project is its implementation of the Anthropic Model Contex
 - Reasonable response times for LLM interactions (targeting < 5 seconds)
 - Code quality score >= 7/10 based on established metrics
 - Developer productivity improvement >= 20%
-- Zero critical security vulnerabilities in generated code
+- Basic input validation for API interactions
 - 90% compliance with Python type hints and documentation standards
 
 #### Future Optimization Phase
@@ -37,32 +129,6 @@ A key feature of the project is its implementation of the Anthropic Model Contex
 - 100% compliance with Python type hints and documentation standards
 
 ## Features and Requirements
-
-### Functional Requirements
-
-1. Cursor Agent Integration
-   - Process and execute cursor rule files (*.mdc)
-   - Support rule inheritance and composition
-   - Provide real-time rule validation
-   - Enable dynamic rule updates
-
-2. Test-Driven Development Framework
-   - Automated test case generation
-   - Test coverage reporting
-   - Integration with pytest ecosystem
-   - Support for property-based testing
-
-3. UV Workspace Management
-   - Automated workspace initialization
-   - Dependency version management
-   - Virtual environment handling
-   - Package installation and updates
-
-4. Task Runner Integration
-   - Task definition and execution
-   - LLM interaction task support
-   - Development workflow automation
-   - Build and deployment task management
 
 ### Non-functional Requirements
 
@@ -79,10 +145,23 @@ A key feature of the project is its implementation of the Anthropic Model Contex
    - CPU usage < 50% during normal operation
 
 2. Security
-   - Secure API key management
+   - Basic API key management (MVP)
+
+   Post-MVP Security Features:
+   - Enhanced API key management and rotation
    - Code generation safety checks
    - Dependency vulnerability scanning
    - Access control for sensitive operations
+   - Sandboxed execution environment
+   - Rate limiting for API calls
+   - Role-based access control
+   - Audit logging
+   - Session management
+   - Secure communication channels
+   - Regular dependency updates
+   - Vulnerability scanning
+   - Lock file validation
+   - Supply chain security checks
 
 3. Reliability
    - 99.9% uptime for core services
@@ -162,10 +241,10 @@ Stories:
 - Story 3: LLM Integration Framework
   Requirements:
   - Implement LLM service abstraction layer
-  - Create API key and credentials management
-  - Set up request/response handling
-  - Implement rate limiting and caching
-  - Add error handling and retry logic
+  - Create basic API key management
+  - Set up request/response handling with minimal validation
+  - Implement basic error handling
+  - Add retry logic for critical operations
 
 - Story 4: Data Storage and State Management
   Requirements:
@@ -546,11 +625,14 @@ graph TD
    - Support for concurrent tool invocations
    - Efficient resource cleanup
 
-6. **Security Considerations**
-   - Input validation for all messages
+6. **Security Considerations (MVP)**
+   - Basic input validation for messages
+
+   Post-MVP Security Considerations:
    - Rate limiting for resource-intensive operations
    - Secure handling of credentials and tokens
    - Audit logging for all operations
+   - Advanced input validation and sanitization
 
 ##### Implementation Stories
 
@@ -805,6 +887,7 @@ codegen-lab/
 |--------|----------|-------------|
 | Initial draft | N/A | Initial PRD creation |
 | MVP Refinement | N/A | Updated KPIs and requirements for MVP phase, added detailed stories for Epic-2 and Epic-3, added schemas and getting started guide |
+| Security Features Adjustment | N/A | Moved security features from MVP to post-MVP phase to accelerate development |
 
 ### Testing Framework Technical Specifications
 
