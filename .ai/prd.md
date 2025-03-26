@@ -98,6 +98,46 @@ A key feature of the project is its implementation of the Anthropic Model Contex
 
 ## Epic List
 
+### Epic-6: Cursor Rules Migration (MVP)
+
+Implement a comprehensive migration system to convert existing cursor rules to the new V2 format with improved organization and standardization.
+
+Stories:
+- Story 1: Rule Organization Structure
+  Requirements:
+  - Create standardized directory structure under .cursor/rules/
+  - Set up core-rules, global-rules, testing-rules, tool-rules, and language-specific directories
+  - Implement rule type detection and categorization
+  - Add validation for directory structure compliance
+  - Create migration scripts for existing rules
+
+- Story 2: Rule Format Standardization
+  Requirements:
+  - Implement frontmatter validation and conversion
+  - Create rule naming convention enforcement
+  - Set up glob pattern standardization
+  - Add rule content validation
+  - Implement example section validation
+  - Create documentation section requirements
+
+- Story 3: Migration Tooling
+  Requirements:
+  - Create automated rule analysis tools
+  - Implement rule conversion utilities
+  - Add validation reporting
+  - Create backup and rollback capabilities
+  - Implement migration logging
+  - Add progress tracking and reporting
+
+- Story 4: Quality Assurance
+  Requirements:
+  - Implement rule testing framework
+  - Create validation test suites
+  - Add regression testing
+  - Implement performance benchmarking
+  - Create migration success metrics
+  - Add automated quality checks
+
 ### Epic-1: Core Infrastructure (MVP)
 
 Focus on establishing the fundamental infrastructure required for the LLM Codegen Lab toolkit.
@@ -235,46 +275,6 @@ Stories:
   - Set up model preferences
   - Add progress tracking
   - Implement sampling result processing
-
-### Epic-6: Cursor Rules Migration
-
-Implement a comprehensive migration system to convert existing cursor rules to the new V2 format with improved organization and standardization.
-
-Stories:
-- Story 1: Rule Organization Structure
-  Requirements:
-  - Create standardized directory structure under .cursor/rules/
-  - Set up core-rules, global-rules, testing-rules, tool-rules, and language-specific directories
-  - Implement rule type detection and categorization
-  - Add validation for directory structure compliance
-  - Create migration scripts for existing rules
-
-- Story 2: Rule Format Standardization
-  Requirements:
-  - Implement frontmatter validation and conversion
-  - Create rule naming convention enforcement
-  - Set up glob pattern standardization
-  - Add rule content validation
-  - Implement example section validation
-  - Create documentation section requirements
-
-- Story 3: Migration Tooling
-  Requirements:
-  - Create automated rule analysis tools
-  - Implement rule conversion utilities
-  - Add validation reporting
-  - Create backup and rollback capabilities
-  - Implement migration logging
-  - Add progress tracking and reporting
-
-- Story 4: Quality Assurance
-  Requirements:
-  - Implement rule testing framework
-  - Create validation test suites
-  - Add regression testing
-  - Implement performance benchmarking
-  - Create migration success metrics
-  - Add automated quality checks
 
 ## Technology Stack
 
