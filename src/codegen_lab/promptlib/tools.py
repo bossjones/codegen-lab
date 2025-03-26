@@ -14,11 +14,43 @@ This module contains MCP tool functions for cursor rule operations, including:
 - run_update_cursor_rules: Run the update-cursor-rules Makefile task
 - update_dockerignore: Update the .dockerignore file
 - cursor_rules_workflow: Execute the complete cursor rules workflow
+
+Migration Plan for tools.py:
+- [x] Import all necessary dependencies
+- [x] Update type imports to use models and utils modules
+- [ ] Group tools by functionality:
+  - [x] Analysis tools:
+    - [x] Implement instruct_repo_analysis
+    - [x] Implement recommend_cursor_rules
+  - [ ] Generation tools:
+    - [ ] Implement instruct_custom_repo_rules_generation
+    - [ ] Implement get_static_cursor_rule
+    - [ ] Implement get_static_cursor_rules
+    - [ ] Implement save_cursor_rule
+  - [ ] Workspace preparation tools:
+    - [ ] Implement prep_workspace
+    - [ ] Implement create_cursor_rule_files
+    - [ ] Implement ensure_makefile_task
+    - [ ] Implement ensure_ai_report
+    - [ ] Implement run_update_cursor_rules
+    - [ ] Implement update_dockerignore
+  - [ ] Workflow tools:
+    - [ ] Implement cursor_rules_workflow
+- [ ] Add proper error handling for each tool
+- [ ] Add comprehensive logging for debugging
+- [ ] Update type hints and docstrings
+- [ ] Update __init__.py to re-export tools
+- [ ] Verify functionality through manual testing
 """
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
+import json
+import logging
+import os
+import subprocess
+from pathlib import Path
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union, cast
 
 from pydantic import Field
 
@@ -28,6 +60,13 @@ if TYPE_CHECKING:
 
 from codegen_lab.promptlib import mcp
 
+# Set up logging
+logger = logging.getLogger(__name__)
+
+#
+# Analysis Tools
+#
+
 
 @mcp.tool(
     name="instruct_repo_analysis",
@@ -36,15 +75,282 @@ from codegen_lab.promptlib import mcp
 def instruct_repo_analysis() -> dict[str, Any]:
     """Run a repository analysis to gather information for cursor rule creation.
 
+    This tool executes a script that analyzes the repository structure and
+    generates a report with information that can be used to create cursor rules.
+
     Returns:
-        Dict[str, Any]: Repository analysis results
+        Dict[str, Any]: Repository analysis results, or an error message if the analysis fails.
 
     """
-    # This function will be implemented in a later phase
-    # For now, it's a placeholder that references the original implementation
-    from codegen_lab.promptlib import instruct_repo_analysis as original_instruct_repo_analysis
+    try:
+        logger.debug("Starting repository analysis")
 
-    return original_instruct_repo_analysis()
+        # Get the current working directory
+        cwd = os.getcwd()
+        logger.debug(f"Running analysis in directory: {cwd}")
+
+        # Determine the directory for saving results
+        ai_dir = os.path.join(cwd, "ai_docs")
+        os.makedirs(ai_dir, exist_ok=True)
+        report_path = os.path.join(ai_dir, "ai_report.md")
+
+        # Execute the analysis script
+        logger.debug("Executing repository analysis script")
+        result = subprocess.run(
+            ["python", "-m", "codegen_lab.repo_analyzer"], capture_output=True, text=True, check=True
+        )
+
+        if result.returncode != 0:
+            logger.error(f"Repository analysis failed with error: {result.stderr}")
+            return {
+                "success": False,
+                "error": "Repository analysis failed",
+                "message": result.stderr,
+            }
+
+        # Check if the report was generated
+        if not os.path.exists(report_path):
+            logger.warning(f"Repository analysis did not generate a report at {report_path}")
+            return {
+                "success": False,
+                "error": "Report not generated",
+                "message": f"Repository analysis did not generate a report at {report_path}",
+            }
+
+        logger.debug(f"Repository analysis completed successfully, report saved to {report_path}")
+        return {
+            "success": True,
+            "message": "Repository analysis completed successfully",
+            "report_path": report_path,
+            "output": result.stdout,
+        }
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Repository analysis failed with error: {e.stderr}")
+        return {
+            "success": False,
+            "error": "Repository analysis failed",
+            "message": e.stderr,
+        }
+    except Exception as e:
+        logger.error(f"Error during repository analysis: {e!s}", exc_info=True)
+        return {
+            "success": False,
+            "error": "Error during repository analysis",
+            "message": str(e),
+        }
+
+
+@mcp.tool(
+    name="recommend_cursor_rules",
+    description="Analyze a repository summary and recommend cursor rules to generate based on identified technologies and patterns",
+)
+def recommend_cursor_rules(
+    repo_summary: str = Field(
+        description="A summary description of the repository, including technologies, frameworks, and key features",
+        examples=[
+            "A Python web application using FastAPI, SQLAlchemy, and React for the frontend. Includes authentication, API endpoints, and database models.",
+            "A TypeScript library for data visualization with React components. Uses webpack for bundling and Jest for testing.",
+        ],
+        min_length=20,
+    ),
+) -> list[dict[str, str | list[str]]] | dict[str, bool | list[dict[str, str]]]:
+    """Analyze a repository summary and recommend cursor rules to generate.
+
+    This tool analyzes a repository summary and recommends cursor rules that
+    would be useful for that repository, based on the technologies, frameworks,
+    and key features mentioned in the summary.
+
+    Args:
+        repo_summary: A summary description of the repository, including technologies,
+            frameworks, and key features
+
+    Returns:
+        Union[List[Dict[str, Union[str, List[str]]]], Dict[str, Union[bool, List[Dict[str, str]]]]]:
+            Recommendations for cursor rules, or an error message if the analysis fails.
+
+    """
+    try:
+        logger.debug(f"Analyzing repository summary: {repo_summary[:100]}...")
+
+        # Get the available cursor rule templates
+        templates_dir = Path(
+            os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../hack/static/cursor_rules"))
+        )
+        template_files = list(templates_dir.glob("*.mdc.md"))
+
+        if not template_files:
+            logger.warning("No template cursor rules found")
+            return {
+                "success": False,
+                "error": "No template cursor rules found",
+                "message": f"No template cursor rules found in {templates_dir}",
+            }
+
+        # Extract rule names from template files
+        template_names = [file.stem.replace(".mdc", "") for file in template_files]
+        logger.debug(f"Found {len(template_names)} template cursor rules")
+
+        # Simplified matching logic: match repository summary against rule names and descriptions
+        repo_summary_lower = repo_summary.lower()
+        matched_rules = []
+
+        # Common technology categories
+        technology_categories = {
+            "python": ["python", "django", "flask", "fastapi", "sqlalchemy", "pytest", "pip", "conda"],
+            "javascript": ["javascript", "js", "react", "vue", "angular", "node", "npm", "yarn", "webpack", "babel"],
+            "typescript": ["typescript", "ts", "tsc", "tsconfig"],
+            "testing": ["test", "pytest", "jest", "mocha", "chai", "unittest", "integration test"],
+            "database": ["sql", "database", "orm", "mongodb", "postgresql", "mysql", "sqlite"],
+            "documentation": ["documentation", "docs", "sphinx", "docstring", "jsdoc", "readme"],
+            "git": ["git", "github", "gitlab", "bitbucket", "version control"],
+            "ci_cd": [
+                "ci",
+                "cd",
+                "continuous integration",
+                "continuous delivery",
+                "github actions",
+                "jenkins",
+                "travis",
+            ],
+            "docker": ["docker", "container", "containerization", "dockerfile", "docker-compose"],
+            "code_quality": ["linting", "linter", "ruff", "eslint", "prettier", "black", "isort"],
+        }
+
+        # Match categories mentioned in the repo summary
+        matched_categories = []
+        for category, keywords in technology_categories.items():
+            if any(keyword in repo_summary_lower for keyword in keywords):
+                matched_categories.append(category)
+
+        logger.debug(f"Matched technology categories: {matched_categories}")
+
+        # Define cursor rule recommendations based on matched categories
+        recommendations = []
+
+        if "python" in matched_categories:
+            if "testing" in matched_categories:
+                recommendations.append(
+                    {
+                        "name": "python-tdd-basics",
+                        "description": "Test-Driven Development basics for Python",
+                        "relevance": "Python testing best practices",
+                        "tags": ["python", "testing", "tdd"],
+                    }
+                )
+                recommendations.append(
+                    {
+                        "name": "pytest-loop",
+                        "description": "Quality assurance with pytest for every code edit",
+                        "relevance": "Ensures good test coverage for Python code",
+                        "tags": ["python", "testing", "pytest"],
+                    }
+                )
+
+            if "code_quality" in matched_categories:
+                recommendations.append(
+                    {
+                        "name": "ruff",
+                        "description": "Ruff linting configuration and usage guidelines",
+                        "relevance": "Ensures code quality with the Ruff linter",
+                        "tags": ["python", "linting", "code quality"],
+                    }
+                )
+
+            recommendations.append(
+                {
+                    "name": "python-refactor",
+                    "description": "Python refactoring and modularization guidelines with TDD",
+                    "relevance": "Helps maintain clean code architecture",
+                    "tags": ["python", "refactoring", "architecture"],
+                }
+            )
+
+        if "javascript" in matched_categories or "typescript" in matched_categories:
+            recommendations.append(
+                {
+                    "name": "js-best-practices",
+                    "description": "JavaScript/TypeScript best practices",
+                    "relevance": "Provides guidance for JavaScript/TypeScript development",
+                    "tags": ["javascript", "typescript", "best practices"],
+                }
+            )
+
+        if "documentation" in matched_categories:
+            recommendations.append(
+                {
+                    "name": "documentation-standards",
+                    "description": "Documentation standards for code and project documentation",
+                    "relevance": "Helps maintain consistent documentation",
+                    "tags": ["documentation", "docs", "standards"],
+                }
+            )
+
+        if "git" in matched_categories:
+            recommendations.append(
+                {
+                    "name": "git-workflow",
+                    "description": "Git workflow and branch management guidelines",
+                    "relevance": "Establishes good practices for version control",
+                    "tags": ["git", "workflow", "branching"],
+                }
+            )
+
+        if "ci_cd" in matched_categories:
+            recommendations.append(
+                {
+                    "name": "gh-action-security",
+                    "description": "Security guidelines for GitHub Actions workflows",
+                    "relevance": "Helps secure CI/CD pipelines in GitHub Actions",
+                    "tags": ["github", "actions", "security", "ci/cd"],
+                }
+            )
+
+        if "docker" in matched_categories:
+            recommendations.append(
+                {
+                    "name": "docker-best-practices",
+                    "description": "Docker best practices for containerization",
+                    "relevance": "Provides guidance for Docker container setup",
+                    "tags": ["docker", "containers", "best practices"],
+                }
+            )
+
+        # If no specific categories matched, provide general recommendations
+        if not recommendations:
+            logger.debug("No specific categories matched, providing general recommendations")
+            recommendations = [
+                {
+                    "name": "code-organization",
+                    "description": "General code organization and architecture principles",
+                    "relevance": "Provides guidance for any codebase",
+                    "tags": ["architecture", "organization", "best practices"],
+                },
+                {
+                    "name": "documentation-standards",
+                    "description": "Documentation standards for code and project documentation",
+                    "relevance": "Helps maintain consistent documentation",
+                    "tags": ["documentation", "docs", "standards"],
+                },
+                {
+                    "name": "explain-code-modification",
+                    "description": "Guidelines for explaining code modifications and changes",
+                    "relevance": "Helps ensure clear communication about code changes",
+                    "tags": ["code changes", "documentation", "communication"],
+                },
+            ]
+
+        # Limit to a reasonable number of recommendations
+        recommendations = recommendations[:5]
+
+        logger.debug(f"Generated {len(recommendations)} cursor rule recommendations")
+        return recommendations
+    except Exception as e:
+        logger.error(f"Error generating cursor rule recommendations: {e!s}", exc_info=True)
+        return {
+            "success": False,
+            "error": "Error generating recommendations",
+            "message": str(e),
+        }
 
 
 @mcp.tool(
@@ -171,36 +477,6 @@ def save_cursor_rule(
     from codegen_lab.promptlib import save_cursor_rule as original_save_cursor_rule
 
     return original_save_cursor_rule(rule_name=rule_name, rule_content=rule_content, overwrite=overwrite)
-
-
-@mcp.tool(
-    name="recommend_cursor_rules",
-    description="Analyze a repository summary and recommend cursor rules to generate based on identified technologies and patterns",
-)
-def recommend_cursor_rules(
-    repo_summary: str = Field(
-        description="A summary description of the repository, including technologies, frameworks, and key features",
-        examples=[
-            "A Python web application using FastAPI, SQLAlchemy, and React for the frontend. Includes authentication, API endpoints, and database models.",
-            "A TypeScript library for data visualization with React components. Uses webpack for bundling and Jest for testing.",
-        ],
-        min_length=20,
-    ),
-) -> list[dict[str, str | list[str]]] | dict[str, bool | list[dict[str, str]]]:
-    """Analyze a repository summary and recommend cursor rules to generate.
-
-    Args:
-        repo_summary: A summary description of the repository
-
-    Returns:
-        Union[List[Dict[str, Union[str, List[str]]]], Dict[str, Union[bool, List[Dict[str, str]]]]]: Recommendations
-
-    """
-    # This function will be implemented in a later phase
-    # For now, it's a placeholder that references the original implementation
-    from codegen_lab.promptlib import recommend_cursor_rules as original_recommend_cursor_rules
-
-    return original_recommend_cursor_rules(repo_summary=repo_summary)
 
 
 @mcp.tool(

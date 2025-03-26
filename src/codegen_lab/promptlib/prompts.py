@@ -3,6 +3,30 @@
 This module contains MCP prompt functions for cursor rule generation, including:
 - repo_analysis_prompt: Analyze a repository to gather information for cursor rule creation
 - generate_cursor_rule_prompt: Generate a custom cursor rule based on repository information
+
+Migration Plan for prompts.py:
+- [ ] Import all necessary dependencies
+- [ ] Update type imports to use models and utils modules
+- [ ] Implement repo_analysis_prompt:
+  - [ ] Set up proper context handling
+  - [ ] Create prompt structure with clear instructions
+  - [ ] Define system message with detailed analysis instructions
+  - [ ] Handle user input formatting and validation
+  - [ ] Process and format assistant response
+  - [ ] Add error handling for API failures
+  - [ ] Add logging for debugging
+- [ ] Implement generate_cursor_rule_prompt:
+  - [ ] Set up proper context handling
+  - [ ] Create prompt structure with rule generation instructions
+  - [ ] Define system message with formatting guidelines
+  - [ ] Incorporate template rule if provided
+  - [ ] Process and validate user inputs
+  - [ ] Format AI response into proper structure
+  - [ ] Add error handling for API failures
+  - [ ] Add logging for debugging
+- [ ] Add proper docstrings and type hints
+- [ ] Update __init__.py to re-export prompts
+- [ ] Verify functionality through manual testing
 """
 
 from __future__ import annotations

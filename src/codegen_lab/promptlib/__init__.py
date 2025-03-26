@@ -37,30 +37,38 @@ from codegen_lab.prompt_library import (
     execute_phase_5,
     generate_cursor_rule,
     generate_cursor_rule_prompt,
-    get_cursor_rule,
     # Utility functions
     get_cursor_rule_files,
     get_cursor_rule_names,
-    get_cursor_rule_raw,
     get_static_cursor_rule,
     get_static_cursor_rules,
     instruct_custom_repo_rules_generation,
     # Tool functions
-    instruct_repo_analysis,
-    # Resource endpoints
-    list_cursor_rules,
     mcp,
     parse_cursor_rule,
     # Workflow functions
     plan_and_execute_prompt_library_workflow,
     prep_workspace,
     read_cursor_rule,
-    recommend_cursor_rules,
     # Prompt functions
     repo_analysis_prompt,
     run_update_cursor_rules,
     save_cursor_rule,
     update_dockerignore,
+)
+
+# Import from refactored modules
+# Phase 3: Resources
+from codegen_lab.promptlib.resources import (
+    get_cursor_rule,
+    get_cursor_rule_raw,
+    list_cursor_rules,
+)
+
+# Phase 3: Tools - Analysis
+from codegen_lab.promptlib.tools import (
+    instruct_repo_analysis,
+    recommend_cursor_rules,
 )
 
 # Define what should be exported when using 'from prompt_library import *'

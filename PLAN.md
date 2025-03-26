@@ -240,14 +240,44 @@ To minimize disruption and ensure the system remains functional throughout refac
   - [x] Implemented full parse_cursor_rule function
   - [x] Implemented full generate_cursor_rule function
   - [x] Updated imports between modules
-- [ ] Phase 3: Migration - Resources, Tools & Prompts (Not Started)
+- [ ] Phase 3: Migration - Resources, Tools & Prompts (In Progress)
+  - [x] Created detailed migration plans for all Phase 3 files:
+    - [x] Added migration plan for resources.py
+    - [x] Added migration plan for tools.py
+    - [x] Added migration plan for prompts.py
+  - [x] Implement resource endpoints in resources.py
+    - [x] list_cursor_rules
+    - [x] get_cursor_rule
+    - [x] get_cursor_rule_raw
+    - [x] Added proper logging and error handling
+    - [x] Updated __init__.py to re-export resources
+  - [ ] Implement tool functions in tools.py
+    - [x] Analysis tools
+      - [x] Implemented instruct_repo_analysis
+      - [x] Implemented recommend_cursor_rules
+      - [x] Added proper logging and error handling
+    - [ ] Generation tools
+      - [ ] instruct_custom_repo_rules_generation
+      - [ ] get_static_cursor_rule
+      - [ ] get_static_cursor_rules
+      - [ ] save_cursor_rule
+    - [ ] Workspace preparation tools
+    - [ ] Workflow tools
+  - [ ] Implement prompt functions in prompts.py
+    - [ ] repo_analysis_prompt
+    - [ ] generate_cursor_rule_prompt
+  - [ ] Update imports across modules
+  - [ ] Verify MCP server functionality
 - [ ] Phase 4: Migration - Workflows (Not Started)
 - [ ] Phase 5: Integration (Not Started)
 
 ## Notes
 - Successfully migrated all models and utility functions
 - Maintained backward compatibility through re-exports
-- Next step is to begin Phase 3: Migration of Resources, Tools & Prompts
+- Created detailed implementation plans for resources, tools, and prompts
+- Successfully implemented all resource endpoints with proper error handling and logging
+- Successfully implemented analysis tools with intelligent rule recommendations
+- Next step is to implement generation tools in tools.py
 </current_status>
 
 <phase1_details>
