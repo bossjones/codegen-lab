@@ -149,5 +149,8 @@
     "python.analysis.importFormat": "absolute",
     "python.analysis.stubPath": "${workspaceFolder}/typings",
     "python.analysis.autoSearchPaths": true,
-    "editor.semanticHighlighting.enabled": true
+    "editor.semanticHighlighting.enabled": true,
+    "workbench.editorAssociations": {
+        "*.mdc": "default"
+    }
 }
