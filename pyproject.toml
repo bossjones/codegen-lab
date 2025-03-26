@@ -41,6 +41,11 @@ dependencies = [
     "tzlocal>=5.2",
 ]
 
+[project.urls]
+"Changelog" = "https://github.com/bossjones/codegen-lab/blob/main/CHANGES.rst"
+"Code" = "https://github.com/bossjones/codegen-lab"
+"Issue tracker" = "https://github.com/bossjones/codegen-lab/issues"
+
 [project.scripts]
 codegen-lab = "codegen_lab.cli:main"
 clctl = "codegen_lab.cli:main"
@@ -90,6 +95,7 @@ dev = [
     "requests-mock>=1.12.1",
     "respx>=0.22.0",
     "ruff>=0.9.9",
+    "towncrier>=24.8.0",
     "tox-uv>=1.25.0",
     "types-aiofiles>=24.1.0.20241221",
     "types-beautifulsoup4>=4.12.0.20250204",

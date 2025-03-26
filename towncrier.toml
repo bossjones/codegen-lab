@@ -1,0 +1,16 @@
+[tool.towncrier]
+package = "codegen-lab"
+package_dir = "src"
+filename = "CHANGES.rst"
+directory = "changelog"
+issue_format = "`#{issue} <https://github.com/bossjones/codegen-lab/issues/{issue}>`__"
+title_format = "(v{version})=\n### {version} {small}`{project_date}`"
+
+# Fragment types and their display names
+fragment.bugfix.name = "Bug fixes"
+fragment.doc.name = "Documentation"
+fragment.feature.name = "Features"
+fragment.misc.name = "Miscellaneous improvements"
+fragment.performance.name = "Performance"
+fragment.breaking.name = "Breaking changes"
+fragment.dev.name = "Development Process"

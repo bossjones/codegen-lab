@@ -338,3 +338,15 @@ pre-commit-install:  ## Install pre-commit hooks
 pre-commit-update:  ## Update pre-commit hooks to latest versions
 	@echo "Updating pre-commit hooks..."
 	uv run pre-commit autoupdate
+
+
+# Bump
+# Used if we want a minor release.
+bump-minor:
+	bump-my-version bump minor
+
+# Release
+# 1. Create release-commit: bump-version to stable + changelog-update + build package
+# 2. Create bump-commit: bump-version to next cycle
+release: clean
+	./scripts/release-main.sh

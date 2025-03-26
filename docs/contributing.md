@@ -84,3 +84,34 @@ There are many ways to contribute to Codegen Lab:
 ## License
 
 By contributing to Codegen Lab, you agree that your contributions will be licensed under the project's license.
+
+## Changes
+
+Changes are recorded using [Towncrier](https://towncrier.readthedocs.io/). Once a new release is created, towncrier is used to create the file `CHANGES.rst`.
+
+To create a new change run:
+
+```bash
+towncrier create <pr-number>.<change type>
+```
+
+A change type can be one of:
+
+- **feature**: Signifying a new feature.
+- **bugfix**: Signifying a bug fix.
+- **doc**: Signifying a documentation improvement.
+- **removal**: Signifying a deprecation or removal of public API.
+- **misc**: A ticket has been closed, but it is not of interest to users.
+
+A new file is then created in the `changes` directory. Add a short description of the change to that file.
+
+## Releasing
+
+Steps for releasing:
+
+1. Switch to main: `git checkout main`
+2. Do a pull: `git pull`
+3. Run towncrier: `towncrier build --version <version>`
+4. Commit towncrier results: `git commit -m "Towncrier"`
+5. Run bump2version (note that this creates a new commit + tag): `bump2version --tag major/minor/patch`
+6. Push to github: `git push && git push --tags`
