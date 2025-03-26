@@ -273,6 +273,19 @@ The script will extract conventional commit messages and categorize them accordi
 
 You can customize the changelog configuration by editing the `.changelog-config.yml` file in the project root.
 
+## Rule Types
+
+| Rule Type        | Usage                                            | description Field | globs Field           | alwaysApply field |
+| ---------------- | ------------------------------------------------ | ----------------- | --------------------- | ----------------- |
+| Agent Selected   | Agent sees description and chooses when to apply | critical          | blank                 | false             |
+| Always           | Applied to every chat and cmd-k request          | blank             | blank                 | true              |
+| Auto Select      | Applied to matching existing files               | blank             | critical glob pattern | false             |
+| Auto Select+desc | Better for new files                             | included          | critical glob pattern | false             |
+| Manual           | User must reference in chat                      | blank             | blank                 | false             |
+
+Learn more here: https://www.youtube.com/watch?v=vjyAba8-QA8
+
+
 # Cursor Rules Migration Checklist
 
 This checklist tracks the progress of updating cursor rules files to meet the proper frontmatter requirements according to the `cursor_rules_location.mdc` standard.

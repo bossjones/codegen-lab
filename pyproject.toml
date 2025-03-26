@@ -41,6 +41,11 @@ dependencies = [
     "tzlocal>=5.2",
 ]
 
+[project.urls]
+"Changelog" = "https://github.com/bossjones/codegen-lab/blob/main/CHANGES.rst"
+"Code" = "https://github.com/bossjones/codegen-lab"
+"Issue tracker" = "https://github.com/bossjones/codegen-lab/issues"
+
 [project.scripts]
 codegen-lab = "codegen_lab.cli:main"
 clctl = "codegen_lab.cli:main"
@@ -90,6 +95,7 @@ dev = [
     "requests-mock>=1.12.1",
     "respx>=0.22.0",
     "ruff>=0.9.9",
+    "towncrier>=24.8.0",
     "tox-uv>=1.25.0",
     "types-aiofiles>=24.1.0.20241221",
     "types-beautifulsoup4>=4.12.0.20250204",
@@ -138,7 +144,7 @@ src = ["src", "tests", "packages"]
 # Existing configuration
 select = [
     "D", "E", "F", "UP", "B", "I", "S", "YTT", "A",
-    "C4", "T10", "SIM", "C90", "W", "PGH", "RUF"
+    "C4", "T10", "SIM", "C90", "W", "PGH", "RUF", "TID252"
 ]
 ignore = [
     # Existing ignores
@@ -146,7 +152,7 @@ ignore = [
     # New ignores from errors
     "D100", "D104", "D107", "D200", "D205", "D211", "D213", "D400", "D401", "D415", "D203",
     "UP035", "C901", "RUF013", "RUF015", "S603", "S607", "E722",
-    "S110", "SIM102", "SIM118", "PGH003", "B904", "F841", "F401", "SIM108", "SIM103"
+    "S110", "SIM102", "SIM118", "PGH003", "B904", "F841", "F401", "SIM108", "SIM103", "RUF022"
 ]
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 

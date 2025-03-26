@@ -320,4 +320,33 @@ local-open-coverage: ## open coverage report in browser
 
 .PHONY: logs
 logs:
-	tail -f  ~/Library/Logs/Claude/mcp-server-prompt_library.log | ccze -A
+	tail -f ~/Library/Logs/Claude/mcp-server-prompt_library.log $(shell find "/Users/malcolm/Library/Application Support/Cursor Nightly/logs/" -type f -name "*.log" -mtime 0) | ccze -A
+
+.PHONY: cursor-logs
+cursor-logs:
+	./scripts/cursor-logs.sh
+
+# Pre-commit Tasks
+pre-commit-run:  ## Run pre-commit checks on all files
+	@echo "Running pre-commit checks on all files..."
+	uv run pre-commit run -a
+
+pre-commit-install:  ## Install pre-commit hooks
+	@echo "Installing pre-commit hooks..."
+	uv run pre-commit install
+
+pre-commit-update:  ## Update pre-commit hooks to latest versions
+	@echo "Updating pre-commit hooks..."
+	uv run pre-commit autoupdate
+
+
+# Bump
+# Used if we want a minor release.
+bump-minor:
+	bump-my-version bump minor
+
+# Release
+# 1. Create release-commit: bump-version to stable + changelog-update + build package
+# 2. Create bump-commit: bump-version to next cycle
+release: clean
+	./scripts/release-main.sh

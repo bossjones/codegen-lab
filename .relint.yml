@@ -6,29 +6,28 @@
   error: true
 
 # Cursor Rules Linting Rules
-
-- name: Cursor rule file in wrong location
+- name: v1 Cursor rule file in wrong location
   pattern: "^---\n(?:.*\n)+?---"
   filePattern: .*\.(mdc|mdc\.md)$
   hint: "Cursor rule files (.mdc) must be placed in the .cursor/rules/ directory"
   error: true
   exclude: \.cursor/rules/.*\.mdc$|\.relint\.yml$
 
-- name: Cursor rule with wrong extension
+- name: v1 Cursor rule with wrong extension
   pattern: "^---\n(?:.*\n)+?---"
   filePattern: .*\.mdc\.md$
   hint: "Cursor rule files should use .mdc extension, not .mdc.md"
   error: true
   exclude: \.relint\.yml$
 
-- name: Missing alwaysApply in frontmatter
+- name: v1 Missing alwaysApply in frontmatter
   pattern: "^---\n(?!(?:.*\n)*?alwaysApply:(?:.*\n)+?---)(?:.*\n)+?---"
   filePattern: .*\.(mdc|mdc\.md)$
   hint: "Cursor rule files must include 'alwaysApply: true' or 'alwaysApply: false' in frontmatter"
   error: true
   exclude: \.relint\.yml$
 
-- name: Quoted glob patterns in frontmatter
+- name: v1 Quoted glob patterns in frontmatter
   pattern: "^---\n(?:(?!---).)*?globs:(?:.*?[\"'].*?[\"'].*?\n)(?:(?!---).)*?---"
   filePattern: .*\.(mdc|mdc\.md)$
   hint: |
@@ -37,7 +36,7 @@
   error: true
   exclude: \.relint\.yml$
 
-- name: Array notation for globs in frontmatter
+- name: v1 Array notation for globs in frontmatter
   pattern: "^---\n(?:(?!---).)*?globs:\\s*\\[(?:(?!---).)*?---"
   filePattern: .*\.(mdc|mdc\.md)$
   hint: |
@@ -46,7 +45,7 @@
   error: true
   exclude: \.relint\.yml$
 
-- name: Missing spaces after commas in globs
+- name: v1 Missing spaces after commas in globs
   pattern: "^---\n(?:(?!---).)*?globs:.*?,\\S(?:(?!---).)*?---"
   filePattern: .*\.(mdc|mdc\.md)$
   hint: |
@@ -55,7 +54,7 @@
   error: true
   exclude: \.relint\.yml$
 
-- name: Curly brace notation in globs
+- name: v1 Curly brace notation in globs
   pattern: "^---\n(?:(?!---).)*?globs:.*?\\{.*?\\}(?:(?!---).)*?---"
   filePattern: .*\.(mdc|mdc\.md)$
   hint: |
@@ -64,17 +63,60 @@
   error: true
   exclude: \.relint\.yml$
 
-- name: Missing rule tag
+- name: v1 Missing rule tag
   pattern: "^---\n(?:.*\n)+?---\n(?:(?!<rule>).)*$"
   filePattern: .*\.(mdc|mdc\.md)$
   hint: "Cursor rule files must include a <rule> tag"
   error: true
   exclude: \.relint\.yml$
 
-- name: Missing rule name after tag
+- name: v1 Missing rule name after tag
   # Match <rule> tag not followed by name: within 5 lines
   pattern: "<rule>(?:\n[^\n]*){0,5}(?!.*name:)"
   filePattern: .*\.(mdc|mdc\.md)$
   hint: "Cursor rule must include a name field immediately after the <rule> tag"
   error: true
   exclude: \.relint\.yml$
+
+# v2 Cursor Rules Linting Rules based on bmadcode/cursor-auto-rules-agile-workflow
+- name: "v2 Frontmatter Format"
+  pattern: "^---\n(description:.*\nglobs:.*\nalwaysApply:.*\n)?---\n"
+  hint: "MDC files must start with frontmatter containing description, globs, and alwaysApply fields"
+  filePattern: "\\.cursor/rules/[^/]+/.*\\.mdc$"
+  error: true
+
+- name: "v2 Rule Title Format"
+  pattern: "^---.*?---\n\n# [A-Z].*?\n"
+  hint: "MDC files must have a top-level title starting with #"
+  filePattern: "\\.cursor/rules/[^/]+/.*\\.mdc$"
+  error: true
+
+- name: "v2 Required Sections"
+  pattern: "## Context.*?## Critical Rules.*?## Examples"
+  hint: "MDC files must contain Context, Critical Rules, and Examples sections in order"
+  filePattern: "\\.cursor/rules/[^/]+/.*\\.mdc$"
+  error: true
+
+- name: "v2 Example Format"
+  pattern: "<example>.*?</example>"
+  hint: "MDC files must contain at least one example section"
+  filePattern: "\\.cursor/rules/[^/]+/.*\\.mdc$"
+  error: true
+
+- name: "v2 Invalid Example Format"
+  pattern: '<example type="invalid">.*?</example>'
+  hint: "MDC files must contain at least one invalid example section"
+  filePattern: "\\.cursor/rules/[^/]+/.*\\.mdc$"
+  error: true
+
+- name: "v2 File Naming Convention"
+  pattern: "^.*/(.*-(?:auto|agent|manual|always)\\.mdc)$"
+  hint: "MDC files must end with -auto.mdc, -agent.mdc, -manual.mdc, or -always.mdc"
+  filePattern: "\\.cursor/rules/[^/]+/.*\\.mdc$"
+  error: true
+
+- name: "v2 Line Count Warning"
+  pattern: "(?s).{2000,}"
+  hint: "MDC files should ideally be under 50 lines, better under 25 lines"
+  filePattern: "\\.cursor/rules/[^/]+/.*\\.mdc$"
+  error: false

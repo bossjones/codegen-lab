@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 # Variables used across tasks
 vars:
@@ -11,111 +11,110 @@ env:
   # Python environment variables
   PYTHONPATH: "{{.ROOT_DIR}}"
 
-
 tasks:
   open:codegen_blog:
-    dir: '{{.USER_WORKING_DIR}}'
-    desc: 'Open the codegen blog'
+    dir: "{{.USER_WORKING_DIR}}"
+    desc: "Open the codegen blog"
     cmds:
       - open https://harper.blog/2025/02/16/my-llm-codegen-workflow-atm/
 
   # LLM Tasks
   llm:generate_bundle:
-    dir: '{{.USER_WORKING_DIR}}'
-    desc: 'Generate LLM bundle output file using repomix'
+    dir: "{{.USER_WORKING_DIR}}"
+    desc: "Generate LLM bundle output file using repomix"
     silent: true
     cmds:
       - npx repomix --style xml --output-show-line-numbers --output output.txt --ignore {{.IGNORE_PATTERNS}}
 
   llm:clean_bundles:
-    dir: '{{.USER_WORKING_DIR}}'
-    desc: 'Remove all generated LLM bundle output files'
+    dir: "{{.USER_WORKING_DIR}}"
+    desc: "Remove all generated LLM bundle output files"
     cmds:
       - find . -name "output.txt" -print -delete
 
   llm:generate_readme:
-    dir: '{{.USER_WORKING_DIR}}'
-    desc: 'Generate README.md from repository content stored in output.txt using LLM generation'
+    dir: "{{.USER_WORKING_DIR}}"
+    desc: "Generate README.md from repository content stored in output.txt using LLM generation"
     deps: [llm:generate_bundle]
     cmds:
       - /bin/cat output.txt | llm -t readme-gen > README.md
 
   llm:copy_buffer_bundle:
-    dir: '{{.USER_WORKING_DIR}}'
-    desc: 'Copy generated LLM bundle from output.txt to system clipboard for external use'
+    dir: "{{.USER_WORKING_DIR}}"
+    desc: "Copy generated LLM bundle from output.txt to system clipboard for external use"
     deps: [llm:generate_bundle]
     cmds:
       - /bin/cat output.txt | pbcopy
       - echo "Pushed output.txt to the copy buffer"
 
   llm:generate_github_issues:
-    dir: '{{.USER_WORKING_DIR}}'
-    desc: 'Generate GitHub issues from repository content stored in output.txt using LLM generation'
+    dir: "{{.USER_WORKING_DIR}}"
+    desc: "Generate GitHub issues from repository content stored in output.txt using LLM generation"
     deps: [llm:generate_bundle]
     cmds:
       - /bin/cat output.txt | llm -m {{.DEFAULT_MODEL}} -t github-issue-gen > issues.md
 
   llm:generate_code_review:
-    dir: '{{.USER_WORKING_DIR}}'
-    desc: 'Generate code review output from repository content stored in output.txt using LLM generation'
+    dir: "{{.USER_WORKING_DIR}}"
+    desc: "Generate code review output from repository content stored in output.txt using LLM generation"
     deps: [llm:generate_bundle]
     cmds:
       - /bin/cat output.txt | llm -m {{.DEFAULT_MODEL}} -t code-review-gen > code-review.md
 
   llm:generate_missing_tests:
-    dir: '{{.USER_WORKING_DIR}}'
-    desc: 'Generate missing tests for code in repository content stored in output.txt using LLM generation'
+    dir: "{{.USER_WORKING_DIR}}"
+    desc: "Generate missing tests for code in repository content stored in output.txt using LLM generation"
     deps: [llm:generate_bundle]
     cmds:
       - /bin/cat output.txt | llm -m {{.DEFAULT_MODEL}} -t missing-tests-gen > missing-tests.md
 
   llm:generate_issue_prompts:
-    dir: '{{.USER_WORKING_DIR}}'
-    desc: 'Generate issue prompts from repository content stored in output.txt using LLM generation'
+    dir: "{{.USER_WORKING_DIR}}"
+    desc: "Generate issue prompts from repository content stored in output.txt using LLM generation"
     deps: [llm:generate_bundle]
     cmds:
       - /bin/cat output.txt | llm -m o3-mini -t issue-prompts-gen > issue-prompts.md
 
   # Python Tasks
   python:format:
-    dir: '{{.USER_WORKING_DIR}}'
-    desc: 'Format Python code using ruff formatter'
+    dir: "{{.USER_WORKING_DIR}}"
+    desc: "Format Python code using ruff formatter"
     cmds:
       - uvx ruff format
 
   python:lint:
-    dir: '{{.USER_WORKING_DIR}}'
-    desc: 'Lint Python code using ruff'
+    dir: "{{.USER_WORKING_DIR}}"
+    desc: "Lint Python code using ruff"
     cmds:
       - uvx ruff check
 
   python:lint-fix:
-    dir: '{{.USER_WORKING_DIR}}'
-    desc: 'Automatically fix Python linting issues using ruff'
+    dir: "{{.USER_WORKING_DIR}}"
+    desc: "Automatically fix Python linting issues using ruff"
     cmds:
       - uvx ruff check --fix
 
   python:test:
-    dir: '{{.USER_WORKING_DIR}}'
-    desc: 'Run Python tests using pytest'
+    dir: "{{.USER_WORKING_DIR}}"
+    desc: "Run Python tests using pytest"
     cmds:
       - uv run pytest
 
   # Utility Tasks
   jupyter:
-    dir: '{{.USER_WORKING_DIR}}'
-    desc: 'Start Jupyter Lab'
+    dir: "{{.USER_WORKING_DIR}}"
+    desc: "Start Jupyter Lab"
     cmds:
       - uv run --with jupyter jupyter lab
 
   webui:
-    dir: '{{.USER_WORKING_DIR}}'
-    desc: 'Start WebUI'
+    dir: "{{.USER_WORKING_DIR}}"
+    desc: "Start WebUI"
     cmds:
       - uvx --python 3.11 open-webui serve
 
   claude:
-    dir: '{{.USER_WORKING_DIR}}'
-    desc: 'Start Claude CLI'
+    dir: "{{.USER_WORKING_DIR}}"
+    desc: "Start Claude CLI"
     cmds:
       - bash -c 'claude'
