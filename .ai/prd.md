@@ -8,6 +8,8 @@
 
 The LLM Codegen Lab project aims to build a comprehensive toolkit for AI-assisted code generation workflows. This project will provide developers with a powerful set of tools for integrating Large Language Models (LLMs) into their development process, focusing on test-driven development, code quality, and efficient workflow automation. The toolkit will streamline the interaction between developers, LLMs, and development tools while maintaining high standards for code quality and testing.
 
+A key feature of the project is its implementation of the Anthropic Model Context Protocol (MCP), a standardized JSON-RPC 2.0 based communication protocol for LLM interactions. MCP enables structured, bidirectional communication between LLM clients and servers, providing robust support for resource management, tool invocation, prompt templates, and LLM sampling. This standardization ensures reliable and efficient communication while maintaining flexibility for future enhancements.
+
 ## Goals
 
 - Create a robust framework for AI-assisted code generation that integrates seamlessly with existing development workflows
@@ -189,6 +191,91 @@ Stories:
 
 Implement advanced features such as automated code review, enhanced LLM integration, and workflow automation.
 
+### Epic-5: Model Context Protocol (MCP) Integration
+
+Implement comprehensive support for the Anthropic Model Context Protocol (MCP) to enable standardized communication between LLM clients and servers.
+
+Stories:
+- Story 1: MCP Core Protocol Implementation
+  Requirements:
+  - Implement JSON-RPC 2.0 based communication layer
+  - Set up bidirectional message handling
+  - Create protocol initialization flow
+  - Implement capability negotiation
+  - Add error handling and logging
+
+- Story 2: Resource Management System
+  Requirements:
+  - Implement resource discovery and listing
+  - Create resource template system
+  - Set up resource content retrieval
+  - Add resource subscription handling
+  - Implement resource update notifications
+
+- Story 3: Tool Integration Framework
+  Requirements:
+  - Create tool definition system
+  - Implement tool invocation handling
+  - Set up tool result processing
+  - Add tool error handling
+  - Create tool discovery mechanism
+
+- Story 4: Prompt Management
+  Requirements:
+  - Implement prompt template system
+  - Create prompt argument handling
+  - Set up prompt completion
+  - Add prompt validation
+  - Implement prompt discovery
+
+- Story 5: LLM Sampling Integration
+  Requirements:
+  - Implement sampling request handling
+  - Create message creation system
+  - Set up model preferences
+  - Add progress tracking
+  - Implement sampling result processing
+
+### Epic-6: Cursor Rules Migration
+
+Implement a comprehensive migration system to convert existing cursor rules to the new V2 format with improved organization and standardization.
+
+Stories:
+- Story 1: Rule Organization Structure
+  Requirements:
+  - Create standardized directory structure under .cursor/rules/
+  - Set up core-rules, global-rules, testing-rules, tool-rules, and language-specific directories
+  - Implement rule type detection and categorization
+  - Add validation for directory structure compliance
+  - Create migration scripts for existing rules
+
+- Story 2: Rule Format Standardization
+  Requirements:
+  - Implement frontmatter validation and conversion
+  - Create rule naming convention enforcement
+  - Set up glob pattern standardization
+  - Add rule content validation
+  - Implement example section validation
+  - Create documentation section requirements
+
+- Story 3: Migration Tooling
+  Requirements:
+  - Create automated rule analysis tools
+  - Implement rule conversion utilities
+  - Add validation reporting
+  - Create backup and rollback capabilities
+  - Implement migration logging
+  - Add progress tracking and reporting
+
+- Story 4: Quality Assurance
+  Requirements:
+  - Implement rule testing framework
+  - Create validation test suites
+  - Add regression testing
+  - Implement performance benchmarking
+  - Create migration success metrics
+  - Add automated quality checks
+
 ## Technology Stack
 
 | Technology | Description |
@@ -205,6 +292,8 @@ Implement advanced features such as automated code review, enhanced LLM integrat
 | BasedPyright | Static type checking |
 | Rich | Terminal formatting and output |
 | Langchain | LLM framework and tools |
+| MCP | Anthropic Model Context Protocol for standardized LLM communication |
+| JSON-RPC 2.0 | Protocol foundation for MCP implementation |
 
 ## Development Environment
 
