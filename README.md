@@ -152,7 +152,7 @@ Follow the Greenfield development workflow:
 │       └── src/                 # Package source code
 │           └── cursor_rules_mcp_server/ # Package code
 ├── src/                         # Python source code
-│   └── goob_ai/                 # Core application modules
+│   └── codegen_lab/                 # Core application modules
 ├── tests/                       # Test suites
 │   ├── integration/             # Integration tests
 │   └── unittests/               # Unit tests

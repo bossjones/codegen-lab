@@ -23,7 +23,7 @@ The MCP server is a critical component that provides standardized communication 
 
 ### Implementation Steps
 1. [ ] Set up project structure
-   - [ ] Create necessary directories (src/goob_ai/mcp)
+   - [ ] Create necessary directories (src/codegen_lab/mcp)
    - [ ] Initialize __init__.py files
    - [ ] Set up test directory structure
 

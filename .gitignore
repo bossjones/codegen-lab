@@ -556,7 +556,7 @@ contextforge_cli/vendored/dpytest
 contextforge_cli/vendored/langgraph
 contextforge_cli/vendored/langchain
 .env.langraph
-contextforge_cli/vendored/goob_ai
+contextforge_cli/vendored/codegen_lab
 contextforge_cli/vendored/brevia
 contextforge_cli/vendored/chat-langchain
 contextforge_cli/vendored/sandbox_agent
