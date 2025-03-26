@@ -17,12 +17,12 @@ nav:
   - Home: index.md
   - Getting Started: getting-started.md
   - User Guide:
-    - Installation: user-guide/installation.md
-    - Configuration: user-guide/configuration.md
-    - Documentation Automation: user-guide/docs-automation.md
+      - Installation: user-guide/installation.md
+      - Configuration: user-guide/configuration.md
+      - Documentation Automation: user-guide/docs-automation.md
   - Development Tools:
-    - Cursor Rules: tools/cursor-rules.md
-    - UV Workspace: tools/uv-workspace.md
+      - Cursor Rules: tools/cursor-rules.md
+      - UV Workspace: tools/uv-workspace.md
   - API Reference: api-reference.md
   - Troubleshooting: troubleshooting.md
   - Contributing: contributing.md

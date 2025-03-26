@@ -325,3 +325,16 @@ logs:
 .PHONY: cursor-logs
 cursor-logs:
 	./scripts/cursor-logs.sh
+
+# Pre-commit Tasks
+pre-commit-run:  ## Run pre-commit checks on all files
+	@echo "Running pre-commit checks on all files..."
+	uv run pre-commit run -a
+
+pre-commit-install:  ## Install pre-commit hooks
+	@echo "Installing pre-commit hooks..."
+	uv run pre-commit install
+
+pre-commit-update:  ## Update pre-commit hooks to latest versions
+	@echo "Updating pre-commit hooks..."
+	uv run pre-commit autoupdate
