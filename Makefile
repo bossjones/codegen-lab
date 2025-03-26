@@ -350,3 +350,6 @@ bump-minor:
 # 2. Create bump-commit: bump-version to next cycle
 release: clean
 	./scripts/release-main.sh
+
+check-rule-lines:
+	./scripts/check_rule_lines.py .cursor/rules/

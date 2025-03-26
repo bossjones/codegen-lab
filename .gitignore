@@ -605,3 +605,6 @@ local-research/*.md
 .cursor/mcp-server-shims/.env
 .cursor/mcp.bak.json
 output.txt
+
+# Private individual user cursor rules
+.cursor/rules/_*.mdc
