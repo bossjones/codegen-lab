@@ -276,6 +276,143 @@ sequenceDiagram
     C->>D: Show Feedback
 ```
 
+### Command Routing Format and Specifications
+
+#### MCP Integration
+
+The command routing system follows the Model Context Protocol (MCP) specification for seamless integration between LLMs and development tools.
+
+##### Server Configuration
+```python
+{
+    "mcpServers": {
+        "codegen-lab": {
+            "command": "python",
+            "args": ["-m", "fastmcp", "serve"],
+            "resources": {
+                "workspace": "./workspace",
+                "config": "./config"
+            }
+        }
+    }
+}
+```
+
+##### Command Structure
+1. **Base Command Format**
+```python
+{
+    "command": str,              # The command identifier
+    "args": dict,               # Command arguments
+    "context": dict,            # Execution context
+    "metadata": dict,           # Optional metadata
+    "require_approval": bool    # Whether user approval is required
+}
+```
+
+2. **Standard Commands**
+- `init`: Initialize workspace
+- `test`: Run test suites
+- `generate`: Generate code
+- `validate`: Validate rules
+- `analyze`: Code analysis
+- `refactor`: Code refactoring
+
+3. **Command Routing Flow**
+```mermaid
+graph TD
+    A[Command Request] --> B{Validate Command}
+    B -->|Valid| C[Parse Arguments]
+    B -->|Invalid| D[Error Response]
+    C --> E{Check Permissions}
+    E -->|Approved| F[Execute Command]
+    E -->|Denied| G[Request Approval]
+    F --> H[Return Result]
+    G -->|Approved| F
+    G -->|Denied| I[Cancel Command]
+```
+
+#### FastMCP Integration
+
+The system uses FastMCP for efficient command routing and execution:
+
+1. **Server Setup**
+```python
+from fastmcp import FastMCPServer
+from fastmcp.tools import CodegenTools
+
+server = FastMCPServer(
+    name="codegen-lab",
+    tools=[CodegenTools],
+    config={
+        "workspace_dir": "./workspace",
+        "max_concurrent_tasks": 10,
+        "timeout_seconds": 300
+    }
+)
+```
+
+2. **Command Handlers**
+```python
+@server.command("generate")
+async def handle_generate(
+    context: dict,
+    args: dict,
+    metadata: Optional[dict] = None
+) -> MCPResponse:
+    """Handle code generation requests."""
+    return await CodegenTools.generate(**args)
+```
+
+3. **Response Format**
+```python
+{
+    "status": str,              # "success" or "error"
+    "data": Any,               # Response data
+    "metadata": dict,          # Response metadata
+    "errors": Optional[list]   # Error details if status is "error"
+}
+```
+
+#### Security and Rate Limiting
+
+1. **Authentication**
+- JWT-based authentication for API access
+- Role-based access control for commands
+- Secure credential storage using environment variables
+
+2. **Rate Limiting**
+```python
+{
+    "limits": {
+        "default": "100/minute",
+        "generate": "20/minute",
+        "analyze": "50/minute"
+    },
+    "timeout": 30,
+    "max_retries": 3
+}
+```
+
+3. **Error Handling**
+- Standardized error codes and messages
+- Automatic retry for transient failures
+- Detailed error logging and monitoring
+
+#### Performance Requirements
+
+1. **Latency Targets**
+- Command validation: < 50ms
+- Simple commands: < 100ms
+- Complex commands: < 1000ms
+- Async operations: Background processing with status updates
+
+2. **Resource Limits**
+- Maximum concurrent commands: 10
+- Memory usage per command: < 256MB
+- Command timeout: 5 minutes
+- Rate limiting: Configurable per command type
+
 ## Data Models, API Specs, Schemas
 
 ### Rule Schema
