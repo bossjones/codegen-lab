@@ -423,84 +423,215 @@ graph TD
 
 #### FastMCP Integration
 
-The system uses FastMCP for efficient command routing and execution:
+The FastMCP integration provides a high-level, ergonomic interface for building Model Context Protocol (MCP) servers in Python, enabling seamless communication between LLM clients and servers.
 
-1. **Server Setup**
-```python
-from fastmcp import FastMCPServer
-from fastmcp.tools import CodegenTools
+##### Architecture Overview
 
-server = FastMCPServer(
-    name="codegen-lab",
-    tools=[CodegenTools],
-    config={
-        "workspace_dir": "./workspace",
-        "max_concurrent_tasks": 10,
-        "timeout_seconds": 300
-    }
-)
+```mermaid
+graph TD
+    A[FastMCP Server] --> B[Tool Manager]
+    A --> C[Resource Manager]
+    A --> D[Prompt Manager]
+    B --> E[Tool Registration]
+    B --> F[Tool Execution]
+    C --> G[Static Resources]
+    C --> H[Resource Templates]
+    D --> I[Prompt Registration]
+    D --> J[Prompt Execution]
+    E --> K[Parameter Validation]
+    F --> L[Context Injection]
+    G --> M[File Resources]
+    H --> N[Dynamic Resources]
 ```
 
-2. **Command Handlers**
-```python
-@server.command("generate")
-async def handle_generate(
-    context: dict,
-    args: dict,
-    metadata: Optional[dict] = None
-) -> MCPResponse:
-    """Handle code generation requests."""
-    return await CodegenTools.generate(**args)
+##### Core Components
+
+1. **Server Class**
+   ```python
+   class FastMCP:
+       def __init__(self,
+           config: Optional[Config] = None,
+           logger: Optional[Logger] = None):
+           """Initialize FastMCP server with optional configuration."""
+
+       async def add_tool(self,
+           func: Callable,
+           name: Optional[str] = None) -> None:
+           """Register a new tool with the server."""
+
+       async def start(self) -> None:
+           """Start the FastMCP server."""
+   ```
+
+2. **Context Management**
+   ```python
+   class Context:
+       def debug(self, msg: str) -> None: ...
+       def info(self, msg: str) -> None: ...
+       def warning(self, msg: str) -> None: ...
+       def error(self, msg: str) -> None: ...
+       def report_progress(self, progress: float) -> None: ...
+   ```
+
+3. **Tool System**
+   ```python
+   @mcp.tool()
+   async def example_tool(
+       ctx: Context,
+       param1: str,
+       param2: int = 42
+   ) -> Dict[str, Any]:
+       """Example tool with type annotations and docstring."""
+       ctx.info(f"Processing with {param1} and {param2}")
+       return {"result": "success"}
+   ```
+
+##### Technical Requirements
+
+1. **Protocol Implementation**
+   - Full compliance with JSON-RPC 2.0 specification
+   - Support for bidirectional communication
+   - Structured message handling and validation
+   - Capability negotiation system
+   - Error handling and recovery mechanisms
+
+2. **Testing Standards**
+   - Use pytest EXCLUSIVELY for all testing
+   - Maintain 90% test coverage for core modules
+   - Implement parameterized tests for multiple test cases
+   - Use fixtures over mocks when possible
+   - Follow iterative testing workflow:
+     ```python
+     @pytest.mark.parametrize("input_val,expected", [
+         ({"method": "initialize", "params": {}}, {"status": "success"}),
+         ({"method": "list_tools", "params": {}}, {"tools": [...]}),
+         ({"method": "invoke_tool", "params": {...}}, {"result": {...}})
+     ])
+     def test_mcp_endpoints(input_val, expected):
+         assert process_mcp_request(input_val) == expected
+     ```
+
+3. **Code Modification Guidelines**
+   - Document all code changes with proper tags:
+     ```
+     <old_code>
+     # Previous implementation
+     </old_code>
+
+     <explanation>
+     Improving error handling and adding type safety
+     </explanation>
+
+     <new_code>
+     # New implementation with better error handling
+     </new_code>
+     ```
+   - Preserve backward compatibility
+   - Include migration guides for breaking changes
+   - Follow step-by-step reasoning for complex changes
+
+4. **Development Workflow**
+   - Use TDD approach for all new features
+   - Implement incremental changes with proper testing
+   - Document all API endpoints and changes
+   - Follow the iterative development process:
+     1. Write failing test
+     2. Implement minimal code to pass
+     3. Refactor while maintaining tests
+     4. Document changes and impacts
+
+5. **Performance Requirements**
+   - Response time < 100ms for tool operations
+   - Memory usage < 256MB per instance
+   - Support for concurrent tool invocations
+   - Efficient resource cleanup
+
+6. **Security Considerations**
+   - Input validation for all messages
+   - Rate limiting for resource-intensive operations
+   - Secure handling of credentials and tokens
+   - Audit logging for all operations
+
+##### Implementation Stories
+
+1. **Core Protocol Implementation**
+   - Set up base MCP server structure
+     ```python
+     app = FastMCP(
+         config=Config(
+             tool_timeout=30,
+             max_concurrent_tools=10
+         )
+     )
+     ```
+   - Implement message validation using Pydantic models
+   - Add tool registration system with decorator support
+   - Create resource management with URI templates
+
+2. **Testing Infrastructure**
+   - Set up pytest configuration with fixtures
+     ```python
+     @pytest.fixture
+     async def mcp_server() -> AsyncIterator[FastMCP]:
+         server = FastMCP()
+         await server.start()
+         yield server
+         await server.shutdown()
+     ```
+   - Create common test utilities and helpers
+   - Implement integration test suite
+   - Add CI/CD pipeline integration
+
+3. **Tool Integration**
+   - Implement tool discovery and registration
+     ```python
+     @app.tool()
+     async def list_files(
+         ctx: Context,
+         path: str = ".",
+         pattern: Optional[str] = None
+     ) -> List[str]:
+         """List files in directory matching pattern."""
+         files = await scan_directory(path, pattern)
+         ctx.info(f"Found {len(files)} files")
+         return files
+     ```
+   - Add input/output validation
+   - Create execution framework with timeout handling
+   - Add result serialization and error handling
+
+4. **Documentation and Examples**
+   - Create API documentation with type hints
+   - Add usage examples for common patterns
+   - Write integration guides with code samples
+   - Include troubleshooting documentation
+
+##### Directory Structure
+
+```text
+src/mcp/server/fastmcp/
+├── __init__.py           # Package exports
+├── exceptions.py         # Custom exceptions
+├── server.py            # Main FastMCP implementation
+├── prompts/             # Prompt system
+│   ├── __init__.py
+│   ├── base.py          # Base prompt classes
+│   ├── manager.py       # Prompt manager
+│   └── prompt_manager.py
+├── resources/           # Resource system
+│   ├── __init__.py
+│   ├── base.py          # Base resource classes
+│   ├── resource_manager.py
+│   └── types.py         # Resource types
+├── tools/               # Tool system
+│   ├── __init__.py
+│   ├── base.py          # Base tool classes
+│   └── tool_manager.py  # Tool manager
+└── utilities/           # Utility functions
+    ├── __init__.py
+    ├── func_metadata.py # Function metadata
+    └── types.py         # Common types
 ```
-
-3. **Response Format**
-```python
-{
-    "status": str,              # "success" or "error"
-    "data": Any,               # Response data
-    "metadata": dict,          # Response metadata
-    "errors": Optional[list]   # Error details if status is "error"
-}
-```
-
-#### Security and Rate Limiting
-
-1. **Authentication**
-- JWT-based authentication for API access
-- Role-based access control for commands
-- Secure credential storage using environment variables
-
-2. **Rate Limiting**
-```python
-{
-    "limits": {
-        "default": "100/minute",
-        "generate": "20/minute",
-        "analyze": "50/minute"
-    },
-    "timeout": 30,
-    "max_retries": 3
-}
-```
-
-3. **Error Handling**
-- Standardized error codes and messages
-- Automatic retry for transient failures
-- Detailed error logging and monitoring
-
-#### Performance Requirements
-
-1. **Latency Targets**
-- Command validation: < 50ms
-- Simple commands: < 100ms
-- Complex commands: < 1000ms
-- Async operations: Background processing with status updates
-
-2. **Resource Limits**
-- Maximum concurrent commands: 10
-- Memory usage per command: < 256MB
-- Command timeout: 5 minutes
-- Rate limiting: Configurable per command type
 
 ## Data Models, API Specs, Schemas
 
