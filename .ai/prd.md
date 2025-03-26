@@ -17,11 +17,21 @@ The LLM Codegen Lab project aims to build a comprehensive toolkit for AI-assiste
 - Provide a seamless integration experience with Cursor IDE and other development tools
 
 ### Key Performance Indicators (KPIs)
-- Test coverage >= 90% for core modules
-- Average response time for LLM interactions < 2 seconds
-- Code quality score >= 8/10 based on established metrics
+
+#### MVP Phase
+- Test coverage >= 70% for core modules
+- Reasonable response times for LLM interactions (targeting < 5 seconds)
+- Code quality score >= 7/10 based on established metrics
+- Developer productivity improvement >= 20%
+- Zero critical security vulnerabilities in generated code
+- 90% compliance with Python type hints and documentation standards
+
+#### Future Optimization Phase
+- Test coverage >= 90% for all modules
+- LLM interaction response time < 2 seconds
+- Code quality score >= 8/10
 - Developer productivity improvement >= 40%
-- Zero security vulnerabilities in generated code
+- Zero security vulnerabilities of any severity
 - 100% compliance with Python type hints and documentation standards
 
 ## Features and Requirements
@@ -54,7 +64,13 @@ The LLM Codegen Lab project aims to build a comprehensive toolkit for AI-assiste
 
 ### Non-functional Requirements
 
-1. Performance
+1. Performance (MVP Phase)
+   - Reasonable response times for LLM interactions
+   - Efficient resource utilization
+   - Performance monitoring infrastructure
+   - Regular performance metric collection
+
+   Future Optimization Targets:
    - LLM response time < 2 seconds
    - Task execution overhead < 500ms
    - Memory usage < 512MB
@@ -88,39 +104,57 @@ Focus on establishing the fundamental infrastructure required for the LLM Codege
 
 Implement comprehensive integration with Cursor IDE and establish the rule processing system.
 
+Stories:
+- Story 1: Basic Cursor IDE Integration
+  Requirements:
+  - Implement basic file watching
+  - Set up command routing
+  - Create event handling system
+  - Basic error reporting
+
+- Story 2: MDC Rule File Processing
+  Requirements:
+  - Parse MDC file format
+  - Implement rule loading
+  - Add basic validation
+  - Create rule cache system
+
+- Story 3: Rule Validation System
+  Requirements:
+  - Implement syntax validation
+  - Add semantic validation
+  - Create error reporting
+  - Set up validation caching
+
 ### Epic-3: Testing Framework (MVP)
 
 Develop the test-driven development framework and testing infrastructure.
 
+Stories:
+- Story 1: Basic Test Framework Setup
+  Requirements:
+  - Set up pytest configuration
+  - Implement basic fixtures
+  - Create test utilities
+  - Add basic assertions
+
+- Story 2: Test Case Generation
+  Requirements:
+  - Implement test template system
+  - Add parameter generation
+  - Create mock data utilities
+  - Set up test organization
+
+- Story 3: Basic Coverage Reporting
+  Requirements:
+  - Set up coverage collection
+  - Implement report generation
+  - Add coverage visualization
+  - Create coverage tracking
+
 ### Epic-4: Advanced Features (Future)
 
 Implement advanced features such as automated code review, enhanced LLM integration, and workflow automation.
-
-## Epic 1: Story List
-
-- Story 1: Project Setup
-  Status: ''
-  Requirements:
-  - Initialize project structure
-  - Set up dependency management
-  - Configure development environment
-  - Implement basic CLI
-
-- Story 2: Core Rule Engine
-  Status: ''
-  Requirements:
-  - Implement rule parsing
-  - Create rule validation system
-  - Develop rule execution engine
-  - Add rule inheritance support
-
-- Story 3: Test Framework Setup
-  Status: ''
-  Requirements:
-  - Set up pytest infrastructure
-  - Implement test generators
-  - Create coverage reporting
-  - Add test utilities
 
 ## Technology Stack
 
@@ -205,6 +239,42 @@ class TestConfig(BaseModel):
     plugins: Optional[List[str]]
 ```
 
+### Workspace Management Schema
+
+```python
+class Dependency(BaseModel):
+    name: str
+    version: str
+    extras: Optional[List[str]]
+    dev_only: bool = False
+
+class WorkspaceConfig(BaseModel):
+    name: str
+    python_version: str
+    dependencies: List[Dependency]
+    dev_dependencies: List[Dependency]
+    env_vars: Optional[Dict[str, str]]
+    scripts: Optional[Dict[str, str]]
+```
+
+### Task Runner Schema
+
+```python
+class TaskEnvironment(BaseModel):
+    variables: Dict[str, str]
+    working_dir: Optional[str]
+    timeout: Optional[int]
+
+class Task(BaseModel):
+    name: str
+    description: str
+    dependencies: List[str]
+    commands: List[str]
+    environment: Optional[TaskEnvironment]
+    retry: Optional[Dict[str, Any]]
+    tags: Optional[List[str]]
+```
+
 ## Project Structure
 
 ```text
@@ -226,8 +296,31 @@ codegen-lab/
     └── drafts/          # Draft rules and configs
 ```
 
+## Getting Started Guide for Junior Developers
+
+### Initial Setup
+1. Clone the repository
+2. Install UV package manager
+3. Create virtual environment
+4. Install dependencies
+
+### Development Workflow
+1. Choose a story from current sprint
+2. Create feature branch
+3. Write tests first (TDD approach)
+4. Implement functionality
+5. Run tests and linting
+6. Submit PR for review
+
+### Key Concepts
+- Rule Engine: Processes MDC files for AI interactions
+- Test Framework: Automated testing infrastructure
+- Workspace Management: Handles project dependencies
+- Task Runner: Automates development tasks
+
 ## Change Log
 
 | Change | Story ID | Description |
 |--------|----------|-------------|
 | Initial draft | N/A | Initial PRD creation |
+| MVP Refinement | N/A | Updated KPIs and requirements for MVP phase, added detailed stories for Epic-2 and Epic-3, added schemas and getting started guide |
