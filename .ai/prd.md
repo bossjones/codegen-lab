@@ -193,14 +193,54 @@ Implement advanced features such as automated code review, enhanced LLM integrat
 
 | Technology | Description |
 |------------|-------------|
-| Python 3.11+ | Primary programming language |
-| pytest | Testing framework |
-| UV | Package management |
-| Cursor IDE | Development environment |
+| Python 3.12+ | Primary programming language with strict type checking |
+| pytest | Testing framework with asyncio support |
+| UV | Package management and virtual environment |
+| Cursor IDE | Development environment with BasedPyright |
 | FastAPI | API framework for tools |
-| Pydantic | Data validation |
+| Pydantic | Data validation and settings management |
 | OpenAI API | LLM integration |
 | GitHub Actions | CI/CD platform |
+| Ruff | Code formatting and linting |
+| BasedPyright | Static type checking |
+| Rich | Terminal formatting and output |
+| Langchain | LLM framework and tools |
+
+## Development Environment
+
+### IDE Configuration
+- VSCode/Cursor with BasedPyright extension
+- Type checking mode: recommended
+- Line length: 120 characters
+- Inlay hints enabled for:
+  - Variable types
+  - Function return types
+  - Call argument names
+  - Generic types
+
+### Required Environment Variables
+- CODEGEN_LAB_CONFIG_ENABLE_REDIS: Redis integration flag
+- CODEGEN_LAB_CONFIG_ENABLE_AI: AI features toggle
+- LANGCHAIN_DEBUG_LOGS: Debug logging for Langchain
+- PYTHONVERBOSE: Python verbosity level
+- PYTHONASYNCIODEBUG: Async debugging toggle
+- Various API keys (managed securely)
+
+### Development Tools
+- Pre-commit hooks for code quality
+- Ruff for code formatting and linting
+- Pytest for test automation
+- UV for dependency management
+- Towncrier for changelog management
+- Make for build automation
+
+### Code Quality Standards
+- 100% type hint coverage
+- Docstring coverage for all public APIs
+- Maximum complexity score: 10
+- Minimum test coverage: 70% (MVP), 90% (Future)
+- Zero critical security vulnerabilities
+- Compliant with PEP 8 and project-specific style guide
 
 ## Reference
 
@@ -260,53 +300,104 @@ class Action(BaseModel):
     conditions: Optional[List[Condition]]
 ```
 
-### Test Configuration Schema
+### Configuration Schema
 
 ```python
+class CodegenLabConfig(BaseModel):
+    enable_redis: bool = Field(default=False, env="CODEGEN_LAB_CONFIG_ENABLE_REDIS")
+    enable_ai: bool = Field(default=False, env="CODEGEN_LAB_CONFIG_ENABLE_AI")
+    debug_langchain: bool = Field(default=False, env="CODEGEN_LAB_CONFIG_DEBUG_LANGCHAIN")
+    sentry_dsn: Optional[str] = Field(default=None, env="CODEGEN_LAB_CONFIG_SENTRY_DSN")
+    enable_sentry: bool = Field(default=False, env="CODEGEN_LAB_CONFIG_ENABLE_SENTRY")
+
+class LLMConfig(BaseModel):
+    api_key: SecretStr
+    model: str
+    temperature: float = 0.7
+    max_tokens: int = 2000
+    timeout: int = 30
+
 class TestConfig(BaseModel):
-    name: str
-    framework: str = "pytest"
-    coverage_target: float = 90.0
-    test_paths: List[str]
-    markers: Optional[List[str]]
-    plugins: Optional[List[str]]
+    min_coverage: float = 70.0
+    fail_under: float = 70.0
+    show_missing: bool = True
+    skip_covered: bool = True
 ```
 
-### Workspace Management Schema
+### Command Line Interface
 
-```python
-class Dependency(BaseModel):
-    name: str
-    version: str
-    extras: Optional[List[str]]
-    dev_only: bool = False
+The project provides two main entry points:
+- `codegen-lab`: Primary CLI tool for code generation tasks
+- `clctl`: Control interface for managing the Codegen Lab environment
 
-class WorkspaceConfig(BaseModel):
-    name: str
-    python_version: str
-    dependencies: List[Dependency]
-    dev_dependencies: List[Dependency]
-    env_vars: Optional[Dict[str, str]]
-    scripts: Optional[Dict[str, str]]
+Common commands:
+```bash
+# Initialize workspace
+codegen-lab init
+
+# Run tests with coverage
+codegen-lab test --coverage
+
+# Generate new rule
+clctl rule create --name <rule_name>
+
+# Validate rules
+clctl validate-rules
 ```
 
-### Task Runner Schema
+## Performance Requirements
 
-```python
-class TaskEnvironment(BaseModel):
-    variables: Dict[str, str]
-    working_dir: Optional[str]
-    timeout: Optional[int]
+### MVP Phase
+- LLM Response Time:
+  - Average: < 5 seconds
+  - P95: < 8 seconds
+  - P99: < 10 seconds
+- Memory Usage:
+  - Base: < 256MB
+  - Peak: < 512MB
+- CPU Usage:
+  - Idle: < 5%
+  - Active: < 50%
+  - Peak: < 80%
 
-class Task(BaseModel):
-    name: str
-    description: str
-    dependencies: List[str]
-    commands: List[str]
-    environment: Optional[TaskEnvironment]
-    retry: Optional[Dict[str, Any]]
-    tags: Optional[List[str]]
-```
+### Future Phase
+- LLM Response Time:
+  - Average: < 2 seconds
+  - P95: < 4 seconds
+  - P99: < 6 seconds
+- Memory Usage:
+  - Base: < 128MB
+  - Peak: < 256MB
+- CPU Usage:
+  - Idle: < 2%
+  - Active: < 30%
+  - Peak: < 60%
+
+## Security Requirements
+
+1. API Key Management
+   - All API keys stored in environment variables
+   - No hardcoded secrets in codebase
+   - Regular key rotation support
+   - Secure key storage integration
+
+2. Code Generation Safety
+   - Syntax validation before execution
+   - Security vulnerability scanning
+   - Sandboxed execution environment
+   - Rate limiting for API calls
+
+3. Access Control
+   - Role-based access control
+   - Audit logging
+   - Session management
+   - Secure communication channels
+
+4. Dependency Management
+   - Regular dependency updates
+   - Vulnerability scanning
+   - Lock file validation
+   - Supply chain security checks
 
 ## Project Structure
 
