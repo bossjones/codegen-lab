@@ -137,17 +137,18 @@ def check_yaml_header(file_path: str) -> tuple[bool, list[str], dict[str, Any]]:
         if "description:" not in yaml_content:
             issues.append("Missing 'description' field")
         else:
-            # Match only single-line description
-            description_match = re.search(r"description:\s*(.*?)(?=\n[a-zA-Z]+:|$)", yaml_content)
+            # Use a better regex that stops at the next field or end of content
+            description_match = re.search(r"description:(.*?)(?=\n[a-zA-Z][a-zA-Z0-9_]*:|$)", yaml_content, re.DOTALL)
             if description_match:
-                frontmatter["description"] = description_match.group(1).strip()
+                # Get the content and strip leading/trailing whitespace (including newlines)
+                description = description_match.group(1).strip()
+                frontmatter["description"] = description
 
         if "globs:" not in yaml_content:
             issues.append("Missing 'globs' field")
         else:
-            # Match only single-line glob patterns (comma-separated entries)
-            # Simplified regex to handle only single-line globs
-            globs_match = re.search(r"globs:\s*(.*?)(?=\n[a-zA-Z]+:|$)", yaml_content)
+            # Use a better regex for glob patterns
+            globs_match = re.search(r"globs:(.*?)(?=\n[a-zA-Z][a-zA-Z0-9_]*:|$)", yaml_content, re.DOTALL)
             if globs_match:
                 globs = globs_match.group(1).strip()
                 frontmatter["globs"] = globs
@@ -166,8 +167,8 @@ def check_yaml_header(file_path: str) -> tuple[bool, list[str], dict[str, Any]]:
         if "alwaysApply:" not in yaml_content:
             issues.append("Missing 'alwaysApply' field")
         else:
-            # Match only single-line alwaysApply value
-            always_apply_match = re.search(r"alwaysApply:\s*(.*?)(?=\n[a-zA-Z]+:|$)", yaml_content)
+            # Use a better regex for alwaysApply
+            always_apply_match = re.search(r"alwaysApply:(.*?)(?=\n[a-zA-Z][a-zA-Z0-9_]*:|$)", yaml_content, re.DOTALL)
             if always_apply_match:
                 always_apply_value = always_apply_match.group(1).strip().lower()
                 frontmatter["alwaysApply"] = always_apply_value == "true"
