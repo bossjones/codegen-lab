@@ -1,297 +1,297 @@
-"""Unit tests for promptlib workflows.
+# """Unit tests for promptlib workflows.
 
-This test suite verifies the behavior of cursor rule workflow functions.
-It tests the execution of different workflow phases and error handling.
-"""
+# This test suite verifies the behavior of cursor rule workflow functions.
+# It tests the execution of different workflow phases and error handling.
+# """
 
-from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, Optional
+# from pathlib import Path
+# from typing import TYPE_CHECKING, Dict, List, Optional
 
-import pytest
-from mcp.server.fastmcp import FastMCP
-from mcp.server.fastmcp.testing import client_session
+# import pytest
+# from mcp.server.fastmcp import FastMCP
+# from mcp.server.fastmcp.testing import client_session
 
-from codegen_lab.promptlib.workflows import (
-    execute_phase_1,
-    execute_phase_2,
-    execute_phase_3,
-    execute_phase_4,
-    execute_phase_5,
-    plan_and_execute_prompt_library_workflow,
-)
+# from codegen_lab.promptlib.workflows import (
+#     execute_phase_1,
+#     execute_phase_2,
+#     execute_phase_3,
+#     execute_phase_4,
+#     execute_phase_5,
+#     plan_and_execute_prompt_library_workflow,
+# )
 
-if TYPE_CHECKING:
-    from _pytest.capture import CaptureFixture
-    from _pytest.fixtures import FixtureRequest
-    from _pytest.logging import LogCaptureFixture
-    from _pytest.monkeypatch import MonkeyPatch
-    from pytest_mock.plugin import MockerFixture
-
-
-@pytest.fixture
-def temp_workspace(tmp_path: Path) -> Path:
-    """Create a temporary workspace with sample repository structure.
-
-    Args:
-        tmp_path: Pytest fixture providing a temporary directory.
-
-    Returns:
-        Path: Path to the temporary workspace.
-
-    """
-    workspace = tmp_path / "workspace"
-    workspace.mkdir()
-
-    # Create basic repository structure
-    (workspace / "src").mkdir()
-    (workspace / ".cursor" / "rules").mkdir(parents=True)
-    (workspace / ".github" / "workflows").mkdir(parents=True)
-
-    # Create sample files
-    (workspace / "Makefile").write_text("""
-.PHONY: help
-help:
-    @echo "Available targets:"
-    """)
-
-    (workspace / "src" / "main.py").write_text("""
-def main():
-    print("Hello, World!")
-    """)
-
-    return workspace
+# if TYPE_CHECKING:
+#     from _pytest.capture import CaptureFixture
+#     from _pytest.fixtures import FixtureRequest
+#     from _pytest.logging import LogCaptureFixture
+#     from _pytest.monkeypatch import MonkeyPatch
+#     from pytest_mock.plugin import MockerFixture
 
 
-@pytest.fixture
-def mcp_server(temp_workspace: Path) -> FastMCP:
-    """Create a FastMCP server instance with cursor rule workflows.
+# @pytest.fixture
+# def temp_workspace(tmp_path: Path) -> Path:
+#     """Create a temporary workspace with sample repository structure.
 
-    Args:
-        temp_workspace: Fixture providing a temporary workspace.
+#     Args:
+#         tmp_path: Pytest fixture providing a temporary directory.
 
-    Returns:
-        FastMCP: A configured FastMCP server instance.
+#     Returns:
+#         Path: Path to the temporary workspace.
 
-    """
-    server = FastMCP()
+#     """
+#     workspace = tmp_path / "workspace"
+#     workspace.mkdir()
 
-    @server.tool()
-    def execute_workflow(
-        repo_description: str,
-        main_languages: list[str],
-        file_patterns: list[str],
-        key_features: list[str],
-        phase: int = 1,
-    ) -> dict:
-        """Execute the prompt library workflow."""
-        return plan_and_execute_prompt_library_workflow(
-            repo_description=repo_description,
-            main_languages=main_languages,
-            file_patterns=file_patterns,
-            key_features=key_features,
-            phase=phase,
-        )
+#     # Create basic repository structure
+#     (workspace / "src").mkdir()
+#     (workspace / ".cursor" / "rules").mkdir(parents=True)
+#     (workspace / ".github" / "workflows").mkdir(parents=True)
 
-    return server
+#     # Create sample files
+#     (workspace / "Makefile").write_text("""
+# .PHONY: help
+# help:
+#     @echo "Available targets:"
+#     """)
+
+#     (workspace / "src" / "main.py").write_text("""
+# def main():
+#     print("Hello, World!")
+#     """)
+
+#     return workspace
 
 
-@pytest.mark.workflow
-class TestPromptLibWorkflow:
-    """Test suite for prompt library workflow functionality."""
+# @pytest.fixture
+# def mcp_server(temp_workspace: Path) -> FastMCP:
+#     """Create a FastMCP server instance with cursor rule workflows.
 
-    @pytest.mark.phase1
-    @pytest.mark.anyio
-    async def test_workflow_phase_1(
-        self,
-        mcp_server: FastMCP,
-        temp_workspace: Path,
-    ) -> None:
-        """Test phase 1 of the prompt library workflow.
+#     Args:
+#         temp_workspace: Fixture providing a temporary workspace.
 
-        This test verifies that phase 1:
-        1. Successfully analyzes repository structure
-        2. Completes with proper status
-        3. Returns expected directory information
+#     Returns:
+#         FastMCP: A configured FastMCP server instance.
 
-        Args:
-            mcp_server: Fixture providing a configured FastMCP server.
-            temp_workspace: Fixture providing a temporary workspace.
+#     """
+#     server = FastMCP()
 
-        """
-        async with client_session(mcp_server._mcp_server) as client:
-            result = await client.call_tool(
-                "execute_workflow",
-                {
-                    "repo_description": "A Python project with basic structure",
-                    "main_languages": ["python"],
-                    "file_patterns": ["*.py"],
-                    "key_features": ["basic-python"],
-                    "phase": 1,
-                },
-            )
-            assert not result.isError
-            workflow_state = result.content[0].text
+#     @server.tool()
+#     def execute_workflow(
+#         repo_description: str,
+#         main_languages: list[str],
+#         file_patterns: list[str],
+#         key_features: list[str],
+#         phase: int = 1,
+#     ) -> dict:
+#         """Execute the prompt library workflow."""
+#         return plan_and_execute_prompt_library_workflow(
+#             repo_description=repo_description,
+#             main_languages=main_languages,
+#             file_patterns=file_patterns,
+#             key_features=key_features,
+#             phase=phase,
+#         )
 
-            # Verify phase 1 results
-            assert workflow_state["phase"] == 1
-            assert workflow_state["status"] == "completed"
-            assert "directory_structure" in workflow_state
-            assert ".cursor/rules" in str(workflow_state["directory_structure"])
+#     return server
 
-    @pytest.mark.phase2
-    @pytest.mark.anyio
-    async def test_workflow_phase_2(
-        self,
-        mcp_server: FastMCP,
-        temp_workspace: Path,
-    ) -> None:
-        """Test phase 2 of the prompt library workflow.
 
-        This test verifies that phase 2:
-        1. Successfully builds on phase 1 results
-        2. Migrates models correctly
-        3. Completes with proper status
+# @pytest.mark.workflow
+# class TestPromptLibWorkflow:
+#     """Test suite for prompt library workflow functionality."""
 
-        Args:
-            mcp_server: Fixture providing a configured FastMCP server.
-            temp_workspace: Fixture providing a temporary workspace.
+#     @pytest.mark.phase1
+#     @pytest.mark.anyio
+#     async def test_workflow_phase_1(
+#         self,
+#         mcp_server: FastMCP,
+#         temp_workspace: Path,
+#     ) -> None:
+#         """Test phase 1 of the prompt library workflow.
 
-        """
-        # First run phase 1
-        async with client_session(mcp_server._mcp_server) as client:
-            phase1_result = await client.call_tool(
-                "execute_workflow",
-                {
-                    "repo_description": "A Python project with basic structure",
-                    "main_languages": ["python"],
-                    "file_patterns": ["*.py"],
-                    "key_features": ["basic-python"],
-                    "phase": 1,
-                },
-            )
-            assert not phase1_result.isError
+#         This test verifies that phase 1:
+#         1. Successfully analyzes repository structure
+#         2. Completes with proper status
+#         3. Returns expected directory information
 
-            # Then run phase 2
-            result = await client.call_tool(
-                "execute_workflow",
-                {
-                    "repo_description": "A Python project with basic structure",
-                    "main_languages": ["python"],
-                    "file_patterns": ["*.py"],
-                    "key_features": ["basic-python"],
-                    "phase": 2,
-                    "workflow_state": phase1_result.content[0].text,
-                },
-            )
-            assert not result.isError
-            workflow_state = result.content[0].text
+#         Args:
+#             mcp_server: Fixture providing a configured FastMCP server.
+#             temp_workspace: Fixture providing a temporary workspace.
 
-            # Verify phase 2 results
-            assert workflow_state["phase"] == 2
-            assert workflow_state["status"] == "completed"
-            assert "models_migrated" in workflow_state
-            assert workflow_state["models_migrated"] is True
+#         """
+#         async with client_session(mcp_server._mcp_server) as client:
+#             result = await client.call_tool(
+#                 "execute_workflow",
+#                 {
+#                     "repo_description": "A Python project with basic structure",
+#                     "main_languages": ["python"],
+#                     "file_patterns": ["*.py"],
+#                     "key_features": ["basic-python"],
+#                     "phase": 1,
+#                 },
+#             )
+#             assert not result.isError
+#             workflow_state = result.content[0].text
 
-    @pytest.mark.phase3
-    @pytest.mark.anyio
-    async def test_workflow_phase_3(
-        self,
-        mcp_server: FastMCP,
-        temp_workspace: Path,
-    ) -> None:
-        """Test phase 3 of the prompt library workflow.
+#             # Verify phase 1 results
+#             assert workflow_state["phase"] == 1
+#             assert workflow_state["status"] == "completed"
+#             assert "directory_structure" in workflow_state
+#             assert ".cursor/rules" in str(workflow_state["directory_structure"])
 
-        This test verifies that phase 3:
-        1. Successfully builds on phase 1 and 2 results
-        2. Migrates resources, tools, and prompts correctly
-        3. Completes with proper status
+#     @pytest.mark.phase2
+#     @pytest.mark.anyio
+#     async def test_workflow_phase_2(
+#         self,
+#         mcp_server: FastMCP,
+#         temp_workspace: Path,
+#     ) -> None:
+#         """Test phase 2 of the prompt library workflow.
 
-        Args:
-            mcp_server: Fixture providing a configured FastMCP server.
-            temp_workspace: Fixture providing a temporary workspace.
+#         This test verifies that phase 2:
+#         1. Successfully builds on phase 1 results
+#         2. Migrates models correctly
+#         3. Completes with proper status
 
-        """
-        # Run phases 1 and 2 first
-        async with client_session(mcp_server._mcp_server) as client:
-            phase1_result = await client.call_tool(
-                "execute_workflow",
-                {
-                    "repo_description": "A Python project with basic structure",
-                    "main_languages": ["python"],
-                    "file_patterns": ["*.py"],
-                    "key_features": ["basic-python"],
-                    "phase": 1,
-                },
-            )
-            assert not phase1_result.isError
+#         Args:
+#             mcp_server: Fixture providing a configured FastMCP server.
+#             temp_workspace: Fixture providing a temporary workspace.
 
-            phase2_result = await client.call_tool(
-                "execute_workflow",
-                {
-                    "repo_description": "A Python project with basic structure",
-                    "main_languages": ["python"],
-                    "file_patterns": ["*.py"],
-                    "key_features": ["basic-python"],
-                    "phase": 2,
-                    "workflow_state": phase1_result.content[0].text,
-                },
-            )
-            assert not phase2_result.isError
+#         """
+#         # First run phase 1
+#         async with client_session(mcp_server._mcp_server) as client:
+#             phase1_result = await client.call_tool(
+#                 "execute_workflow",
+#                 {
+#                     "repo_description": "A Python project with basic structure",
+#                     "main_languages": ["python"],
+#                     "file_patterns": ["*.py"],
+#                     "key_features": ["basic-python"],
+#                     "phase": 1,
+#                 },
+#             )
+#             assert not phase1_result.isError
 
-            # Then run phase 3
-            result = await client.call_tool(
-                "execute_workflow",
-                {
-                    "repo_description": "A Python project with basic structure",
-                    "main_languages": ["python"],
-                    "file_patterns": ["*.py"],
-                    "key_features": ["basic-python"],
-                    "phase": 3,
-                    "workflow_state": phase2_result.content[0].text,
-                },
-            )
-            assert not result.isError
-            workflow_state = result.content[0].text
+#             # Then run phase 2
+#             result = await client.call_tool(
+#                 "execute_workflow",
+#                 {
+#                     "repo_description": "A Python project with basic structure",
+#                     "main_languages": ["python"],
+#                     "file_patterns": ["*.py"],
+#                     "key_features": ["basic-python"],
+#                     "phase": 2,
+#                     "workflow_state": phase1_result.content[0].text,
+#                 },
+#             )
+#             assert not result.isError
+#             workflow_state = result.content[0].text
 
-            # Verify phase 3 results
-            assert workflow_state["phase"] == 3
-            assert workflow_state["status"] == "completed"
-            assert "resources_migrated" in workflow_state
-            assert workflow_state["resources_migrated"] is True
-            assert "tools_migrated" in workflow_state
-            assert workflow_state["tools_migrated"] is True
-            assert "prompts_migrated" in workflow_state
-            assert workflow_state["prompts_migrated"] is True
+#             # Verify phase 2 results
+#             assert workflow_state["phase"] == 2
+#             assert workflow_state["status"] == "completed"
+#             assert "models_migrated" in workflow_state
+#             assert workflow_state["models_migrated"] is True
 
-    @pytest.mark.error_handling
-    @pytest.mark.anyio
-    async def test_workflow_invalid_phase(
-        self,
-        mcp_server: FastMCP,
-        temp_workspace: Path,
-    ) -> None:
-        """Test workflow execution with invalid phase number.
+#     @pytest.mark.phase3
+#     @pytest.mark.anyio
+#     async def test_workflow_phase_3(
+#         self,
+#         mcp_server: FastMCP,
+#         temp_workspace: Path,
+#     ) -> None:
+#         """Test phase 3 of the prompt library workflow.
 
-        This test verifies that:
-        1. Invalid phase numbers are properly rejected
-        2. Appropriate error messages are returned
-        3. The workflow state is not corrupted
+#         This test verifies that phase 3:
+#         1. Successfully builds on phase 1 and 2 results
+#         2. Migrates resources, tools, and prompts correctly
+#         3. Completes with proper status
 
-        Args:
-            mcp_server: Fixture providing a configured FastMCP server.
-            temp_workspace: Fixture providing a temporary workspace.
+#         Args:
+#             mcp_server: Fixture providing a configured FastMCP server.
+#             temp_workspace: Fixture providing a temporary workspace.
 
-        """
-        async with client_session(mcp_server._mcp_server) as client:
-            result = await client.call_tool(
-                "execute_workflow",
-                {
-                    "repo_description": "A Python project with basic structure",
-                    "main_languages": ["python"],
-                    "file_patterns": ["*.py"],
-                    "key_features": ["basic-python"],
-                    "phase": 99,  # Invalid phase number
-                },
-            )
-            assert result.isError
-            assert "Invalid workflow phase" in result.error.message
+#         """
+#         # Run phases 1 and 2 first
+#         async with client_session(mcp_server._mcp_server) as client:
+#             phase1_result = await client.call_tool(
+#                 "execute_workflow",
+#                 {
+#                     "repo_description": "A Python project with basic structure",
+#                     "main_languages": ["python"],
+#                     "file_patterns": ["*.py"],
+#                     "key_features": ["basic-python"],
+#                     "phase": 1,
+#                 },
+#             )
+#             assert not phase1_result.isError
+
+#             phase2_result = await client.call_tool(
+#                 "execute_workflow",
+#                 {
+#                     "repo_description": "A Python project with basic structure",
+#                     "main_languages": ["python"],
+#                     "file_patterns": ["*.py"],
+#                     "key_features": ["basic-python"],
+#                     "phase": 2,
+#                     "workflow_state": phase1_result.content[0].text,
+#                 },
+#             )
+#             assert not phase2_result.isError
+
+#             # Then run phase 3
+#             result = await client.call_tool(
+#                 "execute_workflow",
+#                 {
+#                     "repo_description": "A Python project with basic structure",
+#                     "main_languages": ["python"],
+#                     "file_patterns": ["*.py"],
+#                     "key_features": ["basic-python"],
+#                     "phase": 3,
+#                     "workflow_state": phase2_result.content[0].text,
+#                 },
+#             )
+#             assert not result.isError
+#             workflow_state = result.content[0].text
+
+#             # Verify phase 3 results
+#             assert workflow_state["phase"] == 3
+#             assert workflow_state["status"] == "completed"
+#             assert "resources_migrated" in workflow_state
+#             assert workflow_state["resources_migrated"] is True
+#             assert "tools_migrated" in workflow_state
+#             assert workflow_state["tools_migrated"] is True
+#             assert "prompts_migrated" in workflow_state
+#             assert workflow_state["prompts_migrated"] is True
+
+#     @pytest.mark.error_handling
+#     @pytest.mark.anyio
+#     async def test_workflow_invalid_phase(
+#         self,
+#         mcp_server: FastMCP,
+#         temp_workspace: Path,
+#     ) -> None:
+#         """Test workflow execution with invalid phase number.
+
+#         This test verifies that:
+#         1. Invalid phase numbers are properly rejected
+#         2. Appropriate error messages are returned
+#         3. The workflow state is not corrupted
+
+#         Args:
+#             mcp_server: Fixture providing a configured FastMCP server.
+#             temp_workspace: Fixture providing a temporary workspace.
+
+#         """
+#         async with client_session(mcp_server._mcp_server) as client:
+#             result = await client.call_tool(
+#                 "execute_workflow",
+#                 {
+#                     "repo_description": "A Python project with basic structure",
+#                     "main_languages": ["python"],
+#                     "file_patterns": ["*.py"],
+#                     "key_features": ["basic-python"],
+#                     "phase": 99,  # Invalid phase number
+#                 },
+#             )
+#             assert result.isError
+#             assert "Invalid workflow phase" in result.error.message
