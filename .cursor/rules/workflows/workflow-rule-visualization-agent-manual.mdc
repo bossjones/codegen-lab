@@ -14,8 +14,8 @@ This agent specializes in analyzing and visualizing when and how Cursor Rules ge
 - Analyze which rules are automatically triggered by different scenarios (file types, query content, directories)
 - Calculate the approximate total context being added to LLM prompts
 - Identify rules that should be converted to manual invocation or removed
-- Generate a Mermaid diagram showing rule activation patterns
-- Save the visualization and analysis to `debugging_rules_mermaid.md`
+- Generate Mermaid diagrams showing rule activation patterns
+- Save visualizations and analyses to structured documentation files
 
 ## When to Use
 
@@ -36,7 +36,15 @@ This agent specializes in analyzing and visualizing when and how Cursor Rules ge
    ```bash
    make audit-cursor-rules-prod-desc  # for production environment
    ```
-3. Analyze the command output to determine:
+3. Create the output directory structure WITHOUT PROMPTING THE USER FOR INPUT:
+   ```bash
+   # For staging environment
+   mkdir -p ai_docs/audit-cursor-rules/stage/
+
+   # For production environment
+   mkdir -p ai_docs/audit-cursor-rules/prod/
+   ```
+4. Analyze the command output to determine:
    - Which rules get automatically triggered based on:
      - File types (through glob patterns)
      - Directory location
@@ -44,10 +52,12 @@ This agent specializes in analyzing and visualizing when and how Cursor Rules ge
    - The approximate token count each rule adds to LLM context
    - Rules with overlapping triggers or redundant functionality
    - Which rules should be manually invoked vs. automatically triggered
-4. Create a Mermaid diagram that shows these activation patterns
-5. Estimate total context bloat for different query scenarios
-6. Recommend rules to convert to manual invocation or remove
-7. Save the analysis to `debugging_rules_mermaid.md`
+5. Create Mermaid diagrams that show activation patterns for different queries
+6. Estimate total context bloat for different query scenarios
+7. Recommend rules to convert to manual invocation or remove
+8. Generate and save structured documentation files:
+   - `README.md`: Overview, legends, and general recommendations
+   - Individual analysis files for each query scenario
 
 ## Token Count Estimation
 
@@ -72,27 +82,55 @@ To accurately estimate token counts for each rule:
    - Medium impact: 500-2000 tokens
    - High impact: > 2000 tokens
 
-4. Integrate these counts into the Mermaid diagram to visualize context load
+4. Integrate these counts into the Mermaid diagrams to visualize context load
 
 ## Implementation Steps
 
 1. Execute the appropriate make command for the environment WITHOUT PROMPTING THE USER FOR INPUT
-2. Parse the output to identify all available rules
-3. Analyze which rules would activate based on the user query
+2. Create the output directory structure WITHOUT PROMPTING THE USER FOR INPUT
+3. Parse the output to identify all available rules
+4. Analyze which rules would activate based on different user queries
    - Check glob patterns against any file mentioned in the query
    - Include Always rules
    - Include relevant Auto Select and Auto Select+desc rules
    - Consider Agent Selected rules that may be relevant
-4. Run token count estimation for all identified rules WITHOUT PROMPTING THE USER FOR INPUT
-   ```bash
-   uv run python scripts/token_counter.py -f .cursor/rules/path/to/rule.mdc
+5. Run token count estimation for all identified rules WITHOUT PROMPTING THE USER FOR INPUT
+6. Generate Mermaid diagrams showing the relationships and token counts
+7. Create and save structured documentation files:
+   - `README.md`: Overview, legends, and general recommendations
+   - Individual analysis files for each query scenario
+
+## Documentation Structure
+
+1. Create a main README.md file with:
+   ```markdown
+   # Cursor Rules Visualization - [Environment] Environment
+
+   ## Current Rule Structure and Relationships
+
+   ## Rule Types Legend
+
+   ## Token Impact Categories
+
+   ## Analysis and Recommendations
    ```
-5. Generate a Mermaid diagram showing the relationships and token counts
-6. Write the diagram to `debugging_rules_mermaid.md`
+
+2. Create individual analysis files for each query scenario:
+   ```markdown
+   # Query Analysis: "[Query Text]"
+
+   ## Activated Rules
+
+   ## Mermaid Diagram
+
+   ## Token Impact Analysis
+
+   ## Recommendations
+   ```
 
 ## Mermaid Diagram Structure
 
-The Mermaid diagram should:
+The Mermaid diagrams should:
 
 1. Start with the specific user query or file type node
 2. Show rule activation triggers and conditions
@@ -110,24 +148,21 @@ The Mermaid diagram should:
    - Dashed border: Consider converting to manual invocation
    - Dotted border: Consider removing or consolidating
    - Bold border: Keep as automatic trigger
-9. Include a comprehensive legend section that explains rule types and their attributes
-10. Add a consolidated context load subgraph at the end that shows all active rules grouped together and their total context impact
+9. Include a consolidated context load subgraph that shows all active rules grouped together and their total context impact
 
 ## Important Notes
 
 - DO NOT use scripts/generate_rule_mermaid.py
 - Generate all diagrams directly through LLM analysis of the make command output
-- Always save the output to `debugging_rules_mermaid.md`
-- Include the specific query or file type in the diagram and analysis
+- Create directory structure using `mkdir -p` commands WITHOUT PROMPTING THE USER FOR INPUT
+- Include the specific query or file type in each diagram and analysis
 - Show which rules would automatically activate in that scenario
 - Use token_counter.py for accurate token count estimates rather than guessing
 - Provide specific recommendations for:
   - Rules to convert to manual invocation (via @rule-name)
   - Rules to consolidate or remove due to overlap
   - Optimal rule organization to minimize context bloat
-- Always include a comprehensive LEGEND section in debugging_rules_mermaid.md with the following rule type details:
-
-<div style="white-space: pre-wrap; word-wrap: break-word; max-width: 100%;">
+- Always include a comprehensive Rule Types section in README.md with the following details:
 
 ```markdown
 ## Rule Types
@@ -141,8 +176,6 @@ The Mermaid diagram should:
 | Manual           | User must reference in chat                      | blank             | blank                 | false             |
 ```
 
-</div>
-
 ## Example Implementation
 
 For a query like "Update my changelog.md":
@@ -150,7 +183,9 @@ For a query like "Update my changelog.md":
 1. Execute:
    ```bash
    make audit-cursor-rules-prod-desc
+   mkdir -p ai_docs/audit-cursor-rules/prod/
    ```
+
 2. Analyze the output to determine which rules apply:
    - Always rules always apply
    - Rules with glob patterns matching *.md would apply
@@ -163,69 +198,126 @@ For a query like "Update my changelog.md":
    uv run python scripts/token_counter.py -f .cursor/rules/documentation/markdown-auto.mdc
    ```
 
-4. Generate a Mermaid diagram with actual token counts and save it to debugging_rules_mermaid.md:
+4. Create README.md in ai_docs/audit-cursor-rules/prod/:
+   ```markdown
+   # Cursor Rules Visualization - Production Environment
 
-<example>
+   ## Current Rule Structure and Relationships
 
-<div class="mermaid-container" style="overflow: auto; max-width: 100%;">
+   This document provides an overview of how cursor rules are triggered and their impact on LLM context.
 
-```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '16px', 'fontFamily': 'monospace'}}}%%
-flowchart TD
-    Query["User Query: Update my changelog.md"] --> Analysis["Rule Analysis"]
+   ## Rule Types Legend
 
-    Analysis --> RuleTypes["Rule Type Categorization"]
+   | Rule Type        | Usage                                            | description Field | globs Field           | alwaysApply field |
+   | ---------------- | ------------------------------------------------ | ----------------- | --------------------- | ----------------- |
+   | Agent Selected   | Agent sees description and chooses when to apply | critical          | blank                 | false             |
+   | Always           | Applied to every chat and cmd-k request          | blank             | blank                 | true              |
+   | Auto Select      | Applied to matching existing files               | blank             | critical glob pattern | false             |
+   | Auto Select+desc | Better for new files                             | included          | critical glob pattern | false             |
+   | Manual           | User must reference in chat                      | blank             | blank                 | false             |
 
-    RuleTypes --> Always["Always Rules"]
-    RuleTypes --> AutoSelect["Auto Select Rules"]
-    RuleTypes --> AutoSelectDesc["Auto Select+desc Rules"]
-    RuleTypes --> AgentSelected["Agent Selected Rules"]
-    RuleTypes --> Manual["Manual Rules"]
+   ## Token Impact Categories
 
-    Always --> AlwaysRules["emoji-communication-always.mdc
-    (782 tokens)"]
+   - Low impact: < 500 tokens
+   - Medium impact: 500-2000 tokens
+   - High impact: > 2000 tokens
 
-    AutoSelectDesc --> MarkdownRules["documentation/markdown-auto.mdc
-    (2,347 tokens)"]
-    AutoSelectDesc --> GeneralRules["repomix.mdc (1,426 tokens)
-    repo_analyzer.mdc (1,853 tokens)
-    notify.mdc (634 tokens)
-    tree.mdc (972 tokens)"]
+   ## Analysis and Recommendations
 
-    %% Add context load summary subgraph
-    subgraph ContextLoad["Total Context Load (8,014 tokens)"]
-        AllActiveRules["All Active Rules"] --> ActiveAlways["Always Rules (782 tokens)
-        - emoji-communication-always.mdc (782)"]
+   Based on the analysis of various queries, the following recommendations are provided:
 
-        AllActiveRules --> ActiveAutoSelect["Auto Select Rules (0 tokens)
-        - No active rules"]
+   1. Consider converting large Auto Select+desc rules to manual invocation
+   2. Consolidate overlapping rules to reduce context bloat
+   3. Keep small Always rules as they have minimal impact
+   ```
 
-        AllActiveRules --> ActiveAutoDesc["Auto Select+desc Rules (7,232 tokens)
-        - markdown-auto.mdc (2,347)
-        - repomix.mdc (1,426)
-        - repo_analyzer.mdc (1,853)
-        - notify.mdc (634)
-        - tree.mdc (972)"]
-    end
+5. Create analysis file for the changelog query in ai_docs/audit-cursor-rules/prod/changelog_query.md:
+   ```markdown
+   # Query Analysis: "Update my changelog.md"
 
-    style Query fill:#f9f,stroke:#333,stroke-width:2px
-    style Always fill:#f0f,stroke:#333,stroke-width:1px
-    style AutoSelect fill:#0d0,stroke:#333,stroke-width:1px
-    style AutoSelectDesc fill:#00f,stroke:#333,stroke-width:1px
-    style AgentSelected fill:#0dd,stroke:#333,stroke-width:1px
-    style Manual fill:#ff0,stroke:#333,stroke-width:1px
-    style ContextLoad fill:#ffd,stroke:#f00,stroke-width:3px
-    style AllActiveRules fill:#faa,stroke:#333,stroke-width:2px
-    style ActiveAlways,ActiveAutoSelect,ActiveAutoDesc fill:#afa,stroke:#333,stroke-width:1px
+   ## Activated Rules
 
-    classDef activated fill:#afa,stroke:#333,stroke-width:2px
-    class AlwaysRules,MarkdownRules,GeneralRules activated
-```
+   | Rule                           | Type             | Token Count | Impact     |
+   | ------------------------------ | ---------------- | ----------- | ---------- |
+   | emoji-communication-always.mdc | Always           | 782         | Medium     |
+   | markdown-auto.mdc              | Auto Select+desc | 2,347       | High       |
+   | repomix.mdc                    | Auto Select+desc | 1,426       | Medium     |
+   | repo_analyzer.mdc              | Auto Select+desc | 1,853       | Medium     |
+   | notify.mdc                     | Auto Select+desc | 634         | Medium     |
+   | tree.mdc                       | Auto Select+desc | 972         | Medium     |
+   | **TOTAL**                      |                  | **8,014**   | **Very High** |
 
-</div>
+   ## Mermaid Diagram
 
-</example>
+   ```mermaid
+   flowchart TD
+       Query["User Query: Update my changelog.md"] --> Analysis["Rule Analysis"]
 
-<example type="invalid">
-fixed stuff
-</example>
+       Analysis --> RuleTypes["Rule Type Categorization"]
+
+       RuleTypes --> Always["Always Rules"]
+       RuleTypes --> AutoSelect["Auto Select Rules"]
+       RuleTypes --> AutoSelectDesc["Auto Select+desc Rules"]
+       RuleTypes --> AgentSelected["Agent Selected Rules"]
+       RuleTypes --> Manual["Manual Rules"]
+
+       Always --> AlwaysRules["emoji-communication-always.mdc
+       (782 tokens)"]
+
+       AutoSelectDesc --> MarkdownRules["documentation/markdown-auto.mdc
+       (2,347 tokens)"]
+       AutoSelectDesc --> GeneralRules["repomix.mdc (1,426 tokens)
+       repo_analyzer.mdc (1,853 tokens)
+       notify.mdc (634 tokens)
+       tree.mdc (972 tokens)"]
+
+       %% Add context load summary subgraph
+       subgraph ContextLoad["Total Context Load (8,014 tokens)"]
+           AllActiveRules["All Active Rules"] --> ActiveAlways["Always Rules (782 tokens)
+           - emoji-communication-always.mdc (782)"]
+
+           AllActiveRules --> ActiveAutoSelect["Auto Select Rules (0 tokens)
+           - No active rules"]
+
+           AllActiveRules --> ActiveAutoDesc["Auto Select+desc Rules (7,232 tokens)
+           - markdown-auto.mdc (2,347)
+           - repomix.mdc (1,426)
+           - repo_analyzer.mdc (1,853)
+           - notify.mdc (634)
+           - tree.mdc (972)"]
+       end
+
+       style Query fill:#f9f,stroke:#333,stroke-width:2px
+       style Always fill:#f0f,stroke:#333,stroke-width:1px
+       style AutoSelect fill:#0d0,stroke:#333,stroke-width:1px
+       style AutoSelectDesc fill:#00f,stroke:#333,stroke-width:1px
+       style AgentSelected fill:#0dd,stroke:#333,stroke-width:1px
+       style Manual fill:#ff0,stroke:#333,stroke-width:1px
+       style ContextLoad fill:#ffd,stroke:#f00,stroke-width:3px
+       style AllActiveRules fill:#faa,stroke:#333,stroke-width:2px
+       style ActiveAlways,ActiveAutoSelect,ActiveAutoDesc fill:#afa,stroke:#333,stroke-width:1px
+
+       classDef activated fill:#afa,stroke:#333,stroke-width:2px
+       class AlwaysRules,MarkdownRules,GeneralRules activated
+   ```
+
+   ## Token Impact Analysis
+
+   The current rule configuration adds 8,014 tokens to the LLM context for a simple changelog update query. This is a significant amount of context that could potentially impact the quality of responses and increase token usage costs.
+
+   The Auto Select+desc rules account for 90.2% of the total token usage, with markdown-auto.mdc and repo_analyzer.mdc being the largest contributors.
+
+   ## Recommendations
+
+   1. Convert high-impact rules to manual invocation:
+      - markdown-auto.mdc (2,347 tokens) → @markdown-auto
+      - repo_analyzer.mdc (1,853 tokens) → @repo-analyzer
+
+   2. Consider consolidating similar rules:
+      - repomix.mdc and tree.mdc have overlapping functionality and could be combined
+
+   3. Keep low-impact rules as automatic:
+      - emoji-communication-always.mdc (782 tokens) is reasonable for an Always rule
+
+   These changes could reduce the automatic context load by approximately 4,200 tokens (52%).
+   ```
