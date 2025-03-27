@@ -1,3 +1,9 @@
+---
+description: Step-by-step workflow guide for Python code refactoring projects
+globs: *.py
+alwaysApply: false
+---
+
 # Python Refactoring Workflow Guide
 
 This rule provides a step-by-step workflow for Python code refactoring.

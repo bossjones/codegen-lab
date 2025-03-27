@@ -1,3 +1,9 @@
+---
+description: Planning and documentation guidelines for Python refactoring projects
+globs: *.py
+alwaysApply: false
+---
+
 # Python Refactoring Planning
 
 This rule provides guidance for planning and documenting Python code refactoring efforts.

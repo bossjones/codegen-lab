@@ -1,4 +1,4 @@
-```
+---
 description: This rule provides expert guidance for writing and debugging FastMCP tool tests using pytest.
 globs: *_test.py
 alwaysApply: false
