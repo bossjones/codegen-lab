@@ -391,3 +391,7 @@ audit-cursor-rules:
 
 audit-cursor-rules-prod:
 	uv run scripts/audit_cursor_rules_headers.py --prod
+
+
+audit-cursor-rules-prod-desc:
+	uv run scripts/audit_cursor_rules_headers.py --prod --desc

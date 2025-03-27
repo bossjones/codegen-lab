@@ -302,6 +302,11 @@ def parse_arguments() -> argparse.Namespace:
         action="store_true",
         help="Check production directory (.cursor/rules) instead of staging (hack/drafts/cursor_rules)"
     )
+    parser.add_argument(
+        "--desc",
+        action="store_true",
+        help="Include the description field in the output table"
+    )
     return parser.parse_args()
 
 
@@ -328,10 +333,14 @@ def main() -> None:
         return
 
     # Create a table for rule types
-    rule_table = Table(title=f"Cursor Rule Types in {env_name} environment", box=box.ROUNDED)
+    rule_table = Table(title=f"Cursor Rule Types in {env_name} environment", box=box.ROUNDED, show_lines=True)
     rule_table.add_column("File", style="dim")
     rule_table.add_column("Rule Type")
-    rule_table.add_column("Glob Patterns")  # Added glob patterns column
+    rule_table.add_column("Glob Patterns")
+
+    # Add description column if requested
+    if args.desc:
+        rule_table.add_column("Description")
 
     # Count rule types for summary
     rule_type_counts = {"Agent Selected": 0, "Always": 0, "Auto Select": 0, "Auto Select+desc": 0, "Manual": 0, "Unknown": 0}
@@ -349,11 +358,20 @@ def main() -> None:
         rule_type_counts[rule_type] = rule_type_counts.get(rule_type, 0) + 1
 
         color = get_rule_type_color(rule_type)
-        rule_table.add_row(
+
+        # Prepare row data
+        row_data = [
             relative_path,
             f"[{color}]{rule_type}[/{color}]",
             glob_patterns
-        )
+        ]
+
+        # Add description if requested
+        if args.desc:
+            description = frontmatter["description"].strip() if frontmatter["description"] else "<none>"
+            row_data.append(description)
+
+        rule_table.add_row(*row_data)
 
     console.print(rule_table)
 
