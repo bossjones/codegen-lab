@@ -4,23 +4,26 @@ globs:
 alwaysApply: false
 ---
 
-# Cursor Rules Visualization Agent
+# Cursor Rules Context Audit Agent
 
-This agent specializes in analyzing and visualizing the relationships between Cursor Rules, making it easier to understand how rules interact and when they apply based on specific user queries.
+This agent specializes in analyzing and visualizing when and how Cursor Rules get automatically invoked, tracking the total context they add to LLM prompts, and identifying overlapping or redundant rules.
 
 ## Primary Purpose
 
 - Execute the appropriate make task to audit cursor rules
-- Analyze the command output to understand rule relationships
-- Generate a Mermaid diagram showing which rules can be invoked based on a user query
-- Create a visual representation of rule hierarchy and dependencies
-- Save the visualization to `debugging_rules_mermaid.md`
+- Analyze which rules are automatically triggered by different scenarios (file types, query content, directories)
+- Calculate the approximate total context being added to LLM prompts
+- Identify rules that should be converted to manual invocation or removed
+- Generate a Mermaid diagram showing rule activation patterns
+- Save the visualization and analysis to `debugging_rules_mermaid.md`
 
 ## When to Use
 
-- When you need to understand which rules apply in different user query scenarios
-- When analyzing how cursor rules interact with each other
-- When visualizing the rule activation patterns for specific user inputs
+- When auditing your rule set to identify context bloat in LLM prompts
+- When determining which rules are automatically triggered in different scenarios
+- When deciding which rules should be converted to manual invocation (@rule-name)
+- When identifying redundant or overlapping rules that could be consolidated
+- When optimizing your rule set to reduce unnecessary context being sent to the LLM
 
 ## Core Process
 
@@ -34,11 +37,17 @@ This agent specializes in analyzing and visualizing the relationships between Cu
    make audit-cursor-rules-prod-desc  # for production environment
    ```
 3. Analyze the command output to determine:
-   - Which rules exist in the system
-   - Rule types and their glob patterns
-   - Which rules would be triggered by the specified user query
-4. Create a Mermaid diagram that shows these relationships
-5. Save the diagram to `debugging_rules_mermaid.md`
+   - Which rules get automatically triggered based on:
+     - File types (through glob patterns)
+     - Directory location
+     - Query content
+   - The approximate token count each rule adds to LLM context
+   - Rules with overlapping triggers or redundant functionality
+   - Which rules should be manually invoked vs. automatically triggered
+4. Create a Mermaid diagram that shows these activation patterns
+5. Estimate total context bloat for different query scenarios
+6. Recommend rules to convert to manual invocation or remove
+7. Save the analysis to `debugging_rules_mermaid.md`
 
 ## Implementation Steps
 
@@ -56,25 +65,36 @@ This agent specializes in analyzing and visualizing the relationships between Cu
 
 The Mermaid diagram should:
 
-1. Start with the specific user query node
-2. Show rule activation flow based on the query
+1. Start with the specific user query or file type node
+2. Show rule activation triggers and conditions
 3. Group rules by their types (Always, Agent Selected, Auto Select, etc.)
-4. Indicate which rules would be triggered by the query
-5. Use consistent color coding for rule types:
+4. Include estimated token count for each rule's context contribution
+5. Highlight overlapping rule coverage and redundancies
+6. Indicate total context bloat for the given scenario
+7. Use consistent color coding for rule types:
    - Always rules: magenta (#f0f)
    - Agent Selected rules: cyan (#0dd)
    - Auto Select rules: green (#0d0)
    - Auto Select+desc rules: blue (#00f)
    - Manual rules: yellow (#ff0)
-6. Include a comprehensive legend section that explains rule types and their attributes
+8. Use different border styles to indicate recommended actions:
+   - Dashed border: Consider converting to manual invocation
+   - Dotted border: Consider removing or consolidating
+   - Bold border: Keep as automatic trigger
+9. Include a comprehensive legend section that explains rule types and their attributes
 
 ## Important Notes
 
 - DO NOT use scripts/generate_rule_mermaid.py
 - Generate all diagrams directly through LLM analysis of the make command output
 - Always save the output to `debugging_rules_mermaid.md`
-- Include the specific user query in the diagram and analysis
-- Show which rules would activate for that specific query
+- Include the specific query or file type in the diagram and analysis
+- Show which rules would automatically activate in that scenario
+- Estimate token count for each rule and total context bloat
+- Provide specific recommendations for:
+  - Rules to convert to manual invocation (via @rule-name)
+  - Rules to consolidate or remove due to overlap
+  - Optimal rule organization to minimize context bloat
 - Always include a comprehensive LEGEND section in debugging_rules_mermaid.md with the following rule type details:
 
 ```
