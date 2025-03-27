@@ -137,14 +137,17 @@ def check_yaml_header(file_path: str) -> tuple[bool, list[str], dict[str, Any]]:
         if "description:" not in yaml_content:
             issues.append("Missing 'description' field")
         else:
-            description_match = re.search(r"description:\s*(.*?)(\n|$)", yaml_content)
+            # Match only single-line description
+            description_match = re.search(r"description:\s*(.*?)(?=\n[a-zA-Z]+:|$)", yaml_content)
             if description_match:
                 frontmatter["description"] = description_match.group(1).strip()
 
         if "globs:" not in yaml_content:
             issues.append("Missing 'globs' field")
         else:
-            globs_match = re.search(r"globs:\s*(.*?)(\n|$)", yaml_content)
+            # Match only single-line glob patterns (comma-separated entries)
+            # Simplified regex to handle only single-line globs
+            globs_match = re.search(r"globs:\s*(.*?)(?=\n[a-zA-Z]+:|$)", yaml_content)
             if globs_match:
                 globs = globs_match.group(1).strip()
                 frontmatter["globs"] = globs
@@ -163,10 +166,15 @@ def check_yaml_header(file_path: str) -> tuple[bool, list[str], dict[str, Any]]:
         if "alwaysApply:" not in yaml_content:
             issues.append("Missing 'alwaysApply' field")
         else:
-            always_apply_match = re.search(r"alwaysApply:\s*(.*?)(\n|$)", yaml_content)
+            # Match only single-line alwaysApply value
+            always_apply_match = re.search(r"alwaysApply:\s*(.*?)(?=\n[a-zA-Z]+:|$)", yaml_content)
             if always_apply_match:
                 always_apply_value = always_apply_match.group(1).strip().lower()
                 frontmatter["alwaysApply"] = always_apply_value == "true"
+
+                # Fix for incorrectly capturing "alwaysApply: false" as a glob pattern
+                if "alwaysApply:" in frontmatter["globs"]:
+                    frontmatter["globs"] = ""
 
         # Check for empty lines in frontmatter
         if "\n\n" in yaml_content:
@@ -323,6 +331,7 @@ def main() -> None:
     rule_table = Table(title=f"Cursor Rule Types in {env_name} environment", box=box.ROUNDED)
     rule_table.add_column("File", style="dim")
     rule_table.add_column("Rule Type")
+    rule_table.add_column("Glob Patterns")  # Added glob patterns column
 
     # Count rule types for summary
     rule_type_counts = {"Agent Selected": 0, "Always": 0, "Auto Select": 0, "Auto Select+desc": 0, "Manual": 0, "Unknown": 0}
@@ -330,10 +339,21 @@ def main() -> None:
     for file_path, frontmatter in frontmatter_info.items():
         relative_path = os.path.relpath(file_path)
         rule_type = frontmatter["rule_type"]
+
+        # Fix for displaying glob patterns
+        if not frontmatter["globs"] or frontmatter["globs"].strip() == "":
+            glob_patterns = "<none>"
+        else:
+            glob_patterns = frontmatter["globs"]
+
         rule_type_counts[rule_type] = rule_type_counts.get(rule_type, 0) + 1
 
         color = get_rule_type_color(rule_type)
-        rule_table.add_row(relative_path, f"[{color}]{rule_type}[/{color}]")
+        rule_table.add_row(
+            relative_path,
+            f"[{color}]{rule_type}[/{color}]",
+            glob_patterns
+        )
 
     console.print(rule_table)
 
