@@ -1,6 +1,7 @@
 ---
-description: Break down a development task into smaller, manageable steps for incremental implementation
-globs: *
+description:
+globs:
+alwaysApply: false
 ---
 # Incremental Task Planner
 
