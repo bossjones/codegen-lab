@@ -1,9 +1,10 @@
 ---
-description: Comprehensive guide to dpytest's factory system for creating Discord objects in tests
-globs: *.py
+description:
+globs:
 alwaysApply: false
 ---
 # dpytest Factories System
+Comprehensive guide to dpytest's factory system for creating Discord objects in tests
 
 Detailed documentation of dpytest's factory system for creating Discord objects in tests.
 

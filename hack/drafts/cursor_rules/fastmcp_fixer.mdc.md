@@ -1,10 +1,10 @@
 ---
-description: Fast Python MCP Server Development
-globs: *.py
+description:
+globs:
 alwaysApply: false
 ---
 
-# FastMCP File Operations Fixer
+# FastMCP File Operations Fixer | Fast Python MCP Server Development
 
 This rule provides guidance for refactoring FastMCP servers to avoid direct file operations, instead returning JSON instructions that allow clients to perform these operations. This enables MCP servers to run remotely while still supporting file system interactions.
 

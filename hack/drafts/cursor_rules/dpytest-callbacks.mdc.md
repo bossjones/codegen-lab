@@ -1,10 +1,10 @@
 ---
-description: Comprehensive guide to dpytest's callback system for handling Discord events in tests
-globs: *.py
+description:
+globs:
 alwaysApply: false
 ---
 # dpytest Callbacks System
-
+Comprehensive guide to dpytest's callback system for handling Discord events in tests
 Detailed documentation of dpytest's callback system for handling Discord events in tests.
 
 <rule>

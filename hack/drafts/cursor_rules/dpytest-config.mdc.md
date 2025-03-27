@@ -1,10 +1,10 @@
 ---
-description: Comprehensive guide to dpytest's configuration system and options
-globs: *.py
+description:
+globs:
 alwaysApply: false
 ---
 # dpytest Configuration System
-
+Comprehensive guide to dpytest's configuration system and options
 Documentation of dpytest's configuration system, options, and best practices.
 
 <rule>

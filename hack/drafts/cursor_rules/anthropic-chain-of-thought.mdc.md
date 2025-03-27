@@ -1,6 +1,6 @@
 ---
-description: Anthropic Chain of Thought and XML Tag Best Practices
-globs: *.py, *.md, *.txt
+description:
+globs:
 alwaysApply: false
 ---
 # Anthropic Chain of Thought and XML Tag Best Practices

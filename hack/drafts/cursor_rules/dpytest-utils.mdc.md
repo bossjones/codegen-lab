@@ -1,9 +1,10 @@
 ---
-description: Comprehensive guide to dpytest's utility functions and helper methods
-globs: *.py
+description:
+globs:
 alwaysApply: false
 ---
 # dpytest Utility Functions
+Comprehensive guide to dpytest's utility functions and helper methods
 
 Documentation of dpytest's utility functions, helpers, and common patterns.
 

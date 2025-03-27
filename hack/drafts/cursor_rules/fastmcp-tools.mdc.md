@@ -1,10 +1,13 @@
 ---
-description: This rule provides expert guidance for writing MCP server tools using the FastMCP framework.
-globs: *.py
+description:
+globs:
 alwaysApply: false
 ---
 
 # FastMCP Tool Development Guide
+
+This rule provides expert guidance for writing MCP server tools using the FastMCP framework.
+
 
 This rule provides expert guidance for writing MCP server tools using the FastMCP framework.
 

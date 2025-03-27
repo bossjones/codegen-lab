@@ -1,10 +1,12 @@
 ---
-description: Documentation patterns and standards for Python projects
-globs: *.py
+description:
+globs:
 alwaysApply: false
 ---
 
 # Python Documentation Standards
+
+Documentation patterns and standards for Python projects
 
 This rule provides comprehensive guidance for Python code documentation.
 

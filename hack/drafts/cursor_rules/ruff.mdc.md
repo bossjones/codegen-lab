@@ -1,9 +1,11 @@
 ---
-description: Ruff linting configuration and usage guidelines
-globs: *.py
+description:
+globs:
 alwaysApply: false
 ---
 # Ruff Configuration Guide
+
+Ruff linting configuration and usage guidelines
 
 When you have questions about Ruff linting configuration, need help with linting rules, or want to run Ruff commands in this project, I can provide guidance based on the project's configuration.
 

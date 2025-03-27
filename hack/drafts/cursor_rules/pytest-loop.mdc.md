@@ -1,10 +1,12 @@
 ---
-description: QA every edit with pytest
-globs: tests/**/*.py
+description:
+globs:
 alwaysApply: false
 ---
 
 # Python Testing Process
+
+QA every edit with pytest
 
 ## Project Stack
 

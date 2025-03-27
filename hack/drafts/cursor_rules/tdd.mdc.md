@@ -1,9 +1,11 @@
 ---
-description: Implement Test-Driven Development (TDD) for AI-generated code to ensure quality, reliability, and correctness
-globs: **/*.py, **/*.js, **/*.ts, **/*.java, **/*.c, **/*.cpp
+description:
+globs:
 alwaysApply: false
 ---
 # Test-Driven Development for AI Code
+
+Implement Test-Driven Development (TDD) for AI-generated code to ensure quality, reliability, and correctness
 
 Use TDD principles when working with AI coding assistants to ensure generated code is not just fast, but also correct, reliable, and maintainable.
 

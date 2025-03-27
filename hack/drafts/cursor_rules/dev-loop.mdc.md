@@ -1,10 +1,10 @@
 ---
-description: QA every edit
-globs: *.py
+description:
+globs:
 alwaysApply: false
 ---
 
-# Development Process
+# Development Process (QA every edit)
 
 ## Project Stack
 

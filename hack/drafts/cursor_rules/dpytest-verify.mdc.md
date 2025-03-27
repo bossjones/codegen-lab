@@ -1,9 +1,10 @@
 ---
-description: Comprehensive guide to dpytest's verification system for Discord bot testing
-globs: *.py
+description:
+globs:
 alwaysApply: false
 ---
 # dpytest Verification System
+Comprehensive guide to dpytest's verification system for Discord bot testing
 
 Detailed documentation of dpytest's verification system for asserting bot responses and behavior.
 

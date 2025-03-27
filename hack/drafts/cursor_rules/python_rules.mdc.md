@@ -1,9 +1,11 @@
 ---
-description: Comprehensive Python development rules and standards for the Codegen Lab project
-globs: **/*.py
+description:
+globs:
 alwaysApply: false
 ---
 # Python Development Standards
+
+ Comprehensive Python development rules and standards for the Codegen Lab project
 
 Comprehensive rules and best practices for Python development in the Codegen Lab project, covering code organization, typing, documentation, testing, performance, and security.
 

@@ -1,9 +1,11 @@
 ---
-description: Suggest Three Approaches to Fix Failing Tests
-globs: *.py, test_*.py, *_test.py
+description:
+globs:
 alwaysApply: false
 ---
 # Pytest Suggest Three Fixes
+
+Suggest Three Approaches to Fix Failing Tests
 
 This rule provides guidance for generating three different approaches to fix failing tests.
 

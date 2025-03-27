@@ -1,6 +1,6 @@
 ---
-description: Repository Analysis Tool
-globs: *
+description:
+globs:
 alwaysApply: false
 ---
 # Repository Analysis Tool

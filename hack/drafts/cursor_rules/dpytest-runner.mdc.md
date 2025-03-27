@@ -1,9 +1,10 @@
 ---
-description: Comprehensive guide to dpytest's test runner configuration and execution system
-globs: *.py
+description:
+globs:
 alwaysApply: false
 ---
 # dpytest Test Runner System
+Comprehensive guide to dpytest's test runner configuration and execution system
 
 Detailed documentation of dpytest's test runner configuration and execution system.
 

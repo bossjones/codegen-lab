@@ -1,9 +1,10 @@
 ---
-description: Comprehensive guide to dpytest's state management system for maintaining test environment state
-globs: *.py
+description:
+globs:
 alwaysApply: false
 ---
 # dpytest State Management System
+Comprehensive guide to dpytest's state management system for maintaining test environment state
 
 Detailed documentation of dpytest's state management system for maintaining test environment state.
 
