@@ -395,3 +395,9 @@ audit-cursor-rules-prod: ## Audit the cursor rules in the production environment
 
 audit-cursor-rules-prod-desc: ## Audit the cursor rules in the production environment with descriptions
 	uv run scripts/audit_cursor_rules_headers.py --prod --desc
+
+generate-rules-diagram: ## Generate a Mermaid diagram of cursor rules relationships
+	./scripts/generate_rule_mermaid.py
+
+generate-rules-diagram-prod: ## Generate a Mermaid diagram of cursor rules relationships (production)
+	./scripts/generate_rule_mermaid.py --prod
