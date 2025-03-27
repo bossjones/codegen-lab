@@ -1,0 +1,153 @@
+---
+description: Validate and fix frontmatter in cursor rule files
+globs: *.mdc, *.mdc.md
+alwaysApply: true
+---
+
+# Cursor Rule Frontmatter Validator
+
+This rule helps identify and fix issues with frontmatter in cursor rule files.
+
+## Context
+
+- When creating or editing cursor rule files (.mdc)
+- When reviewing cursor rule files for proper structure
+- When fixing frontmatter validation errors
+
+## Critical Rules
+
+1. **Valid Rule Types and Frontmatter Combinations**:
+
+   | Rule Type        | Description Field | Globs Field           | AlwaysApply Field |
+   | ---------------- | ---------------- | --------------------- | ----------------- |
+   | Agent Selected   | Required         | Empty                 | false             |
+   | Always           | Empty            | Empty                 | true              |
+   | Auto Select      | Empty            | Required             | false             |
+   | Auto Select+desc | Required         | Required             | false             |
+   | Manual           | Empty            | Empty                 | false             |
+
+2. **Required Frontmatter Structure**:
+   - Must start and end with `---` delimiters
+   - Must be at the start of the file
+   - Must contain all three fields: description, globs, alwaysApply
+   - No empty lines between frontmatter fields
+   - Fields can be empty based on rule type (see table above)
+
+3. **Field Requirements**:
+   - `description`: Single-line text describing the rule's purpose (required for Agent Selected and Auto Select+desc)
+   - `globs`: File patterns the rule applies to (required for Auto Select and Auto Select+desc)
+   - `alwaysApply`: Boolean value (true/false)
+
+4. **Formatting Rules**:
+   - No quotes around glob patterns
+   - No array notation for globs
+   - Spaces after commas in glob lists
+   - No curly brace notation in globs
+
+## Examples
+
+<example>
+# Agent Selected rule
+---
+description: This rule helps with Python code refactoring
+globs:
+alwaysApply: false
+---
+
+# Rule content starts here...
+</example>
+
+<example>
+# Always rule
+---
+description:
+globs:
+alwaysApply: true
+---
+
+# Rule content starts here...
+</example>
+
+<example>
+# Auto Select rule
+---
+description:
+globs: *.py, *.pyi, *.pyx
+alwaysApply: false
+---
+
+# Rule content starts here...
+</example>
+
+<example>
+# Auto Select+desc rule
+---
+description: Validate Python code style
+globs: *.py, *.pyi, *.pyx
+alwaysApply: false
+---
+
+# Rule content starts here...
+</example>
+
+<example>
+# Manual rule
+---
+description:
+globs:
+alwaysApply: false
+---
+
+# Rule content starts here...
+</example>
+
+<example type="invalid">
+# Missing frontmatter delimiters
+description: Bad example
+globs: *
+alwaysApply: false
+
+# Rule content starts here...
+</example>
+
+<example type="invalid">
+# Missing required fields
+---
+description: Incomplete frontmatter
+---
+
+# Rule content starts here...
+</example>
+
+<example type="invalid">
+# Incorrect glob format
+---
+description: Bad glob formatting
+globs: ["*.py", "*.js"]
+alwaysApply: true
+---
+
+# Rule content starts here...
+</example>
+
+<example type="invalid">
+# Invalid combination (Always rule with description)
+---
+description: This should be empty for Always rules
+globs:
+alwaysApply: true
+---
+
+# Rule content starts here...
+</example>
+
+<example type="invalid">
+# Invalid combination (Auto Select without globs)
+---
+description:
+globs:
+alwaysApply: false
+---
+
+# Rule content starts here...
+</example>

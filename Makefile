@@ -270,6 +270,11 @@ relint-cursor-rules: ## Run relint via pre-commit on all cursor rule files track
 	@echo "🚀 Running relint on cursor rule files"
 	@git ls-files 'hack/drafts/cursor_rules/*.mdc.md' 'hack/drafts/cursor_rules/*.mdc' '.cursor/rules/*.mdc' | xargs uv run pre-commit run relint --files
 
+.PHONY: relint-cursor
+relint-cursor: ## Run relint via pre-commit on .cursor directory
+	@echo "🚀 Running relint on .cursor directory"
+	@find .cursor -type f | xargs uv run pre-commit run relint --files
+
 .DEFAULT_GOAL := help
 
 .PHONY: unittests
@@ -320,7 +325,7 @@ local-open-coverage: ## open coverage report in browser
 
 .PHONY: logs
 logs:
-	tail -f ~/Library/Logs/Claude/mcp-server-prompt_library.log $(shell find "/Users/malcolm/Library/Application Support/Cursor Nightly/logs/" -type f -name "*.log" -mtime 0) | ccze -A
+	tail -f ~/Library/Logs/Claude/mcp-server-prompt_library.log $(shell find "/Users/malcolm/Library/Application Support/Cursor Nightly/logs/" -type f -name "*.log" -mtime 0) $(shell find "/Users/malcolm/Library/Application Support/Cursor/logs/" -type f -name "*.log" -mtime 0) | ccze -A
 
 .PHONY: cursor-logs
 cursor-logs:
