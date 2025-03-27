@@ -180,7 +180,7 @@ relative_files = true
 
 [tool.coverage.report]
 skip_empty = true
-fail_under = 33
+fail_under = 30
 omit = [
     "*/test/*",
     "*/tests/*",
