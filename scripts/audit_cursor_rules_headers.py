@@ -250,7 +250,8 @@ def get_rule_type_color(rule_type: str) -> str:
 
 def print_rule_type_examples(console: Console) -> None:
     """
-    Print examples of valid headers for each rule type using rich formatting.
+    Print examples of valid headers for each rule type using rich formatting,
+    including information about how each rule type works.
 
     Args:
         console: Rich console instance for output
@@ -258,33 +259,53 @@ def print_rule_type_examples(console: Console) -> None:
     console.print("\n[bold]Summary of required header format by rule type:[/bold]")
 
     rule_types = [
-        ("Agent Selected", "cyan"),
-        ("Always", "magenta"),
-        ("Auto Select", "green"),
-        ("Auto Select+desc", "blue"),
-        ("Manual", "yellow")
+        ("Agent Selected", "cyan", "Agent sees description and chooses when to apply. Description field is critical."),
+        ("Always", "magenta", "Applied to every chat and cmd-k request automatically. No need for description or globs."),
+        ("Auto Select", "green", "Applied to matching existing files. Glob pattern is critical."),
+        ("Auto Select+desc", "blue", "Better for new files. Includes description with critical glob pattern."),
+        ("Manual", "yellow", "User must explicitly reference in chat. Not automatically applied.")
     ]
 
-    for rule_type, color in rule_types:
+    for rule_type, color, description in rule_types:
         example_text = ""
+        field_notes = ""
+
         if rule_type == "Agent Selected":
             example_text = "---\ndescription: Description of the cursor rule\nglobs:\nalwaysApply: false\n---"
+            field_notes = "description: [bold green]CRITICAL[/bold green] - Agent uses this to decide when to apply\nglobs: [bold red]BLANK[/bold red]\nalwaysApply: must be false"
         elif rule_type == "Always":
             example_text = "---\ndescription:\nglobs:\nalwaysApply: true\n---"
+            field_notes = "description: [bold red]BLANK[/bold red]\nglobs: [bold red]BLANK[/bold red]\nalwaysApply: must be true"
         elif rule_type == "Auto Select":
             example_text = "---\ndescription:\nglobs: *.py, *.js\nalwaysApply: false\n---"
+            field_notes = "description: [bold red]BLANK[/bold red]\nglobs: [bold green]CRITICAL[/bold green] - Must be valid glob pattern(s)\nalwaysApply: must be false"
         elif rule_type == "Auto Select+desc":
             example_text = "---\ndescription: Description of the cursor rule\nglobs: *.py, *.js\nalwaysApply: false\n---"
+            field_notes = "description: Included to help users understand the rule\nglobs: [bold green]CRITICAL[/bold green] - Must be valid glob pattern(s)\nalwaysApply: must be false"
         elif rule_type == "Manual":
             example_text = "---\ndescription:\nglobs:\nalwaysApply: false\n---"
+            field_notes = "description: [bold red]BLANK[/bold red]\nglobs: [bold red]BLANK[/bold red]\nalwaysApply: must be false"
 
-        panel = Panel.fit(
-            example_text,
+        panel_content = Text()
+        panel_content.append(f"{description}\n\n", style="italic")
+        panel_content.append("YAML Header Example:\n", style="bold")
+        panel_content.append(f"{example_text}\n\n")
+        panel_content.append("Field Requirements:\n", style="bold")
+        panel_content.append(field_notes)
+
+        panel = Panel(
+            panel_content,
             title=f"[bold]{rule_type}[/bold]",
             border_style=color,
             padding=(1, 2)
         )
         console.print(panel)
+
+    # Add note about glob patterns format
+    console.print("\n[bold yellow]Note about glob patterns:[/bold yellow]")
+    console.print(" • Glob patterns should be comma-separated with spaces: '*.py, *.js'")
+    console.print(" • Do not use quotes around patterns: '*.py' is incorrect")
+    console.print(" • Do not use array notation: [*.py, *.js] is incorrect")
 
 
 def parse_arguments() -> argparse.Namespace:
