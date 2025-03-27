@@ -98,7 +98,9 @@ The Mermaid diagram should:
   - Optimal rule organization to minimize context bloat
 - Always include a comprehensive LEGEND section in debugging_rules_mermaid.md with the following rule type details:
 
-```
+<div style="white-space: pre-wrap; word-wrap: break-word; max-width: 100%;">
+
+```markdown
 ## Rule Types
 
 | Rule Type        | Usage                                            | description Field | globs Field           | alwaysApply field |
@@ -109,6 +111,8 @@ The Mermaid diagram should:
 | Auto Select+desc | Better for new files                             | included          | critical glob pattern | false             |
 | Manual           | User must reference in chat                      | blank             | blank                 | false             |
 ```
+
+</div>
 
 ## Example Implementation
 
@@ -125,7 +129,10 @@ For a query like "Update my changelog.md":
 
 3. Generate a Mermaid diagram and save it to debugging_rules_mermaid.md:
 
+<div class="mermaid-container" style="overflow: auto; max-width: 100%;">
+
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'fontSize': '16px', 'fontFamily': 'monospace'}}}%%
 flowchart TD
     Query["User Query: Update my changelog.md"] --> Analysis["Rule Analysis"]
 
@@ -174,3 +181,5 @@ flowchart TD
     classDef activated fill:#afa,stroke:#333,stroke-width:2px
     class AlwaysRules,MarkdownRules,GeneralRules activated
 ```
+
+</div>
