@@ -1,0 +1,158 @@
+---
+description: Use this rule when analyzing cursor rules or creating visualizations of rule relationships and dependencies
+globs:
+alwaysApply: false
+---
+
+# Cursor Rules Visualization Agent
+
+This agent specializes in analyzing and visualizing the relationships between Cursor Rules, making it easier to understand how rules interact and when they apply.
+
+## Purpose
+
+- Generate Mermaid diagrams showing rule relationships
+- Analyze how rules are triggered based on user queries
+- Create visual documentation of rule hierarchy and dependencies
+- Aid in understanding and debugging rule activation patterns
+
+## When to Use
+
+- When you need to understand which rules apply in different scenarios
+- When organizing or refactoring cursor rules
+- When creating documentation about cursor rule relationships
+- When explaining to users how rules are triggered
+
+## Process
+
+1. Identify whether this is a staging or production environment analysis request
+2. Run the appropriate command:
+   - For a straightforward analysis:
+     ```bash
+     make audit-cursor-rules-stage-desc  # for staging environment
+     ```
+     or
+     ```bash
+     make audit-cursor-rules-prod-desc  # for production environment
+     ```
+3. Analyze the output to understand rule types, patterns, and relationships
+4. Create a Mermaid diagram representing rule relationships based on the query
+5. Always save the diagram to `debugging_rules_mermaid.md`
+
+## Example Queries for Analysis
+
+Generate Mermaid diagrams for these sample queries:
+- "update my changelog.md"
+- "add a docstring to hello.py"
+- "Create a new file Justfile with a single task that prints hello world"
+- "Check if my .github/workflows/ci.yml file is valid"
+- "Add ruff rule "I" to the selected section of my pyproject.toml"
+
+## Mermaid Diagram Pattern
+
+The Mermaid diagram should:
+
+1. Start with a user query node
+2. Flow to rule type categorization
+3. Group rules by categories (global, file-specific, workflow, etc.)
+4. Show connections between related rules
+5. Use consistent color coding for rule types:
+   - Always rules: magenta
+   - Agent Selected rules: cyan
+   - Auto Select rules: green
+   - Auto Select+desc rules: blue
+   - Manual rules: yellow
+
+## Example Implementation
+
+```bash
+# Run audit command to get rule information
+make audit-cursor-rules-stage-desc  # Use prod-desc for production environment
+
+# Analyze the output to understand rule categorization
+# Create a Mermaid diagram based on the analysis for the specific query
+# Save the diagram to debugging_rules_mermaid.md
+
+# Example output creation
+cat > debugging_rules_mermaid.md << 'EOL'
+# Rule Visualization for Query: "update my changelog.md"
+
+```mermaid
+flowchart TD
+    Query["User Query: update my changelog.md"] --> Analysis["Rule Analysis"]
+
+    Analysis --> RuleTypes["Rule Types"]
+
+    RuleTypes --> Always["Always Rules"]
+    RuleTypes --> AgentSelected["Agent Selected Rules"]
+    RuleTypes --> AutoSelect["Auto Select Rules"]
+    RuleTypes --> AutoSelectDesc["Auto Select+desc Rules"]
+
+    subgraph GlobalRules["Global Rules"]
+        G1["emoji-communication-always.mdc"]
+        G2["notify.mdc"]
+    end
+
+    subgraph FileSpecificRules["File-Specific Rules"]
+        F1["changelog-update.mdc"]
+        F2["markdown-auto.mdc"]
+    end
+
+    Always --> GlobalRules
+    AgentSelected --> FileSpecificRules
+
+    style Query fill:#f9f,stroke:#333,stroke-width:2px
+    style Always fill:#f0f,stroke:#333,stroke-width:1px
+    style AgentSelected fill:#0dd,stroke:#333,stroke-width:1px
+    style AutoSelect fill:#0d0,stroke:#333,stroke-width:1px
+    style AutoSelectDesc fill:#00f,stroke:#333,stroke-width:1px
+```
+EOL
+```
+
+## Output Format
+
+The final output should always be a Mermaid diagram saved in `debugging_rules_mermaid.md` with a format like:
+
+```mermaid
+flowchart TD
+    Query["User Query"] --> Analysis["Rule Analysis"]
+
+    Analysis --> RuleTypes["Rule Types"]
+
+    RuleTypes --> Always["Always Rules"]
+    RuleTypes --> AgentSelected["Agent Selected Rules"]
+    RuleTypes --> AutoSelect["Auto Select Rules"]
+    RuleTypes --> AutoSelectDesc["Auto Select+desc Rules"]
+    RuleTypes --> Manual["Manual Rules"]
+
+    subgraph GlobalRules["Global Rules"]
+        G1["Rule 1"]
+        G2["Rule 2"]
+    end
+
+    subgraph FileSpecificRules["File-Specific Rules"]
+        F1["Rule 1"]
+        F2["Rule 2"]
+    end
+
+    Always --> GlobalRules
+    AgentSelected --> FileSpecificRules
+
+    style Query fill:#f9f,stroke:#333,stroke-width:2px
+    style Always fill:#f0f,stroke:#333,stroke-width:1px
+    style AgentSelected fill:#0dd,stroke:#333,stroke-width:1px
+    style AutoSelect fill:#0d0,stroke:#333,stroke-width:1px
+    style AutoSelectDesc fill:#00f,stroke:#333,stroke-width:1px
+    style Manual fill:#ff0,stroke:#333,stroke-width:1px
+```
+
+## Constraints
+
+- ALWAYS save output to `debugging_rules_mermaid.md`
+- Execute either `make audit-cursor-rules-stage-desc` or `make audit-cursor-rules-prod-desc` based on context
+- Limit the visualization to key relationships to avoid overwhelmingly complex diagrams
+- Ensure the diagram is readable and well-organized
+- Use consistent styling for similar rule types
+- Include a legend explaining the color coding and node types
+- When analyzing rule invocation for a specific query, include that query in the diagram
+- Do NOT use scripts/generate_rule_mermaid.py, always create the diagram from the Makefile audit output
