@@ -323,3 +323,159 @@ This diagram demonstrates a more complex set of rule relationships where:
 1. GitHub Actions rules incorporate security scanning rules
 2. CI/CD validation rules leverage GitHub Actions rules
 3. Multiple rule categories interact to provide comprehensive validation
+
+# Rule Visualization for Production Environment (Updated)
+
+This visualization shows the current cursor rules in the production environment based on the latest audit results.
+
+```mermaid
+flowchart TD
+    Query["User Query: General cursor rule audit"] --> Analysis["Rule Analysis"]
+
+    Analysis --> RuleTypes["Rule Type Categorization"]
+
+    RuleTypes --> Always["Always Rules (1)"]
+    RuleTypes --> AgentSelected["Agent Selected Rules (5)"]
+    RuleTypes --> AutoSelect["Auto Select Rules (1)"]
+    RuleTypes --> AutoSelectDesc["Auto Select+desc Rules (11)"]
+    RuleTypes --> Manual["Manual Rules (2)"]
+
+    Always --> GlobalRules["global-rules/emoji-communication-always.mdc
+    ~70 tokens"]
+
+    AgentSelected --> AgentRules["bossjones-cursor-tools.mdc (~40 tokens)
+    core-rules/cursor-rules-migration-agent.mdc (~100 tokens)
+    core-rules/prd-prompt-generator-agent.mdc (~90 tokens)
+    core-rules/rule-generating-agent.mdc (~110 tokens)
+    workflows/workflow-rule-visualization-agent-manual.mdc (~800 tokens)"]
+
+    AutoSelect --> SimpleAutoRules["core-rules/cursor-rule-syntax.mdc
+    ~30 tokens"]
+
+    AutoSelectDesc --> ComplexAutoRules["repomix.mdc (~60 tokens)
+    repo_analyzer.mdc (~55 tokens)
+    uv.mdc (~120 tokens)
+    tdd.mdc (~150 tokens)
+    uv-workspace.mdc (~70 tokens)
+    suggest-cursor-rule.mdc (~80 tokens)
+    project_layout.mdc (~150 tokens)
+    notify.mdc (~30 tokens)
+    tree.mdc (~40 tokens)
+    cursor_rules_location.mdc (~50 tokens)
+    documentation/markdown-auto.mdc (~200 tokens)"]
+
+    Manual --> ManualRules["workflows/workflow-migration-agent.mdc (~50 tokens)
+    tool-rules/visualization-tool-rules.mdc (~60 tokens)"]
+
+    %% Overlapping rules with similar glob patterns
+    subgraph OverlappingGlobs["Overlapping Rules (Similar Globs)"]
+        repomix["repomix.mdc (*) ~60 tokens"]
+        repo_analyzer["repo_analyzer.mdc (*) ~55 tokens"]
+        notify["notify.mdc (*) ~30 tokens"]
+        tree["tree.mdc (*) ~30 tokens"]
+    end
+
+    %% Specialized rules for specific file types
+    subgraph SpecializedRules["Specialized Rules"]
+        markdown["documentation/markdown-auto.mdc (**/*.md) ~200 tokens"]
+        python["uv.mdc (*.py, pyproject.toml, Makefile, *.mk) ~120 tokens"]
+        code["tdd.mdc (**/*.py, **/*.js, etc.) ~150 tokens"]
+        mdc["cursor_rules_location.mdc (*.mdc) ~50 tokens"]
+    end
+
+    ComplexAutoRules --> OverlappingGlobs
+    ComplexAutoRules --> SpecializedRules
+
+    %% Estimated total context bloat
+    Analysis --> ContextBloat["Estimated Context Bloat:
+    - Minimal query: ~250 tokens (Always + basic rules)
+    - Markdown file query: ~550 tokens
+    - Python file query: ~650 tokens
+    - Cursor rule query: ~1,300 tokens (all rules may activate)"]
+
+    %% Recommendations
+    Analysis --> Recommendations["Recommendations:
+    - Consider consolidating 'repomix', 'repo_analyzer', 'notify', and 'tree' rules with (*) glob
+    - Convert some Auto Select+desc rules to Manual if rarely used
+    - Limit overlap between 'project_layout' and 'documentation/markdown-auto'"]
+
+    style Query fill:#f9f,stroke:#333,stroke-width:2px
+    style Always fill:#f0f,stroke:#333,stroke-width:1px
+    style AgentSelected fill:#0dd,stroke:#333,stroke-width:1px
+    style AutoSelect fill:#0d0,stroke:#333,stroke-width:1px
+    style AutoSelectDesc fill:#00f,stroke:#333,stroke-width:1px
+    style Manual fill:#ff0,stroke:#333,stroke-width:1px
+    style ContextBloat fill:#fdd,stroke:#f00,stroke-width:1px
+    style Recommendations fill:#dfd,stroke:#0a0,stroke-width:1px
+    style OverlappingGlobs fill:#ffd,stroke:#333,stroke-width:1px,stroke-dasharray: 5 5
+    style SpecializedRules fill:#dff,stroke:#333,stroke-width:1px
+
+    classDef activated fill:#afa,stroke:#333,stroke-width:2px
+    class GlobalRules,AgentRules,SimpleAutoRules,ComplexAutoRules activated
+
+    classDef consolidate fill:#faa,stroke:#f00,stroke-width:1px,stroke-dasharray: 3 3
+    class repomix,repo_analyzer,notify,tree consolidate
+```
+
+## Rule Types
+
+| Rule Type        | Usage                                            | description Field | globs Field           | alwaysApply field |
+| ---- | --- | ----- | --- | ----- |
+| Agent Selected   | Agent sees description and chooses when to apply | critical          | blank                 | false             |
+| Always           | Applied to every chat and cmd-k request          | blank             | blank                 | true              |
+| Auto Select      | Applied to matching existing files               | blank             | critical glob pattern | false             |
+| Auto Select+desc | Better for new files                             | included          | critical glob pattern | false             |
+| Manual           | User must reference in chat                      | blank             | blank                 | false             |
+
+## Color and Border Legend
+
+- ![#f9f](https://via.placeholder.com/15/f9f/000000?text=+) User Query
+- ![#f0f](https://via.placeholder.com/15/f0f/000000?text=+) Always Rules
+- ![#0dd](https://via.placeholder.com/15/0dd/000000?text=+) Agent Selected Rules
+- ![#0d0](https://via.placeholder.com/15/0d0/000000?text=+) Auto Select Rules
+- ![#00f](https://via.placeholder.com/15/00f/000000?text=+) Auto Select+desc Rules
+- ![#ff0](https://via.placeholder.com/15/ff0/000000?text=+) Manual Rules
+- Dashed border: Consider converting to manual invocation
+- Dotted border: Consider removing or consolidating
+- Bold border: Keep as automatic trigger
+
+## Analysis of Rule Overlap
+
+The production environment contains several rules with overlapping glob patterns:
+
+1. **Universal Glob Pattern (*) Rules:**
+   - repomix.mdc
+   - repo_analyzer.mdc
+   - notify.mdc
+   - tree.mdc
+
+   These rules all use the same glob pattern and could potentially be consolidated or some converted to manual invocation to reduce context bloat.
+
+2. **Specialized Rules with Potential Overlap:**
+   - documentation/markdown-auto.mdc and project_layout.mdc both target Markdown files
+   - tdd.mdc and uv.mdc both target Python files
+
+3. **High-Token Rules:**
+   - workflows/workflow-rule-visualization-agent-manual.mdc (~800 tokens)
+   - documentation/markdown-auto.mdc (~200 tokens)
+   - tdd.mdc and project_layout.mdc (~150 tokens each)
+
+## Recommendations for Optimization
+
+1. **Consider consolidating universal glob (*) rules:**
+   - Combine functionality of repomix, repo_analyzer, notify, and tree into a single rule
+   - Alternatively, convert some to manual invocation if rarely used
+
+2. **Optimize high-token rules:**
+   - Split workflow-rule-visualization-agent-manual.mdc into smaller, more focused rules
+   - Streamline documentation/markdown-auto.mdc to reduce token count
+
+3. **Convert to manual invocation:**
+   - Rules that are only occasionally useful should be converted to Manual type
+   - Rules with very specific use cases (like prd-prompt-generator-agent) are better as manual invocation
+
+4. **Rule organization:**
+   - Group related rules into directories for better organization
+   - Use consistent naming conventions for all rules
+
+This analysis provides a comprehensive view of the current cursor rule structure in the production environment and offers specific recommendations to optimize the rule set for reduced context bloat and improved organization 🧠
