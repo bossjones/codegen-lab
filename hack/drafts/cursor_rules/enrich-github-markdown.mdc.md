@@ -1,12 +1,12 @@
 ---
-description: Automatically update README.md files with nested directory structures
+description:
 globs:
-  - "**/README.md"
-  - "**/*.md"
 alwaysApply: false
 ---
 
 # Update Markdown Nested Lists 📝
+
+Automatically update README.md files with nested directory structures
 
 > Use the @tree.mdc rule to get accurate directory structure before updating README files.
 

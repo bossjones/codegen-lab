@@ -1,9 +1,11 @@
 ---
-description: Changelog Management Guidelines for Codegen Lab
-globs: docs/changelog.md,*.md
+description:
+globs:
 alwaysApply: false
 ---
 # Changelog Management Guidelines
+
+Changelog Management Guidelines for Codegen Lab
 
 Standards and workflows for maintaining the project changelog, including automation for generating entries from Git history.
 

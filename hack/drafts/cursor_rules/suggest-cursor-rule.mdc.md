@@ -1,10 +1,12 @@
 ---
-description: Intelligent cursor rule recommendation based on user queries
-globs: "**/*"
+description:
+globs:
 alwaysApply: false
 ---
 
 # Cursor Rule Recommender
+
+Intelligent cursor rule recommendation based on user queries
 
 This rule intelligently analyzes user queries and suggests the most appropriate cursor rules to apply, optimizing queries for Claude and providing contextual recommendations.
 

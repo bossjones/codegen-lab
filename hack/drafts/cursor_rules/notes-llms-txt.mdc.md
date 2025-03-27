@@ -1,10 +1,12 @@
 ---
-description: LLM-friendly markdown format for notes directories
-globs: notes/**/*.md,**/notes/**/*.md
+description:
+globs:
 alwaysApply: false
 ---
 
 # Instructions for Generating LLM-Optimized Markdown Content
+
+LLM-friendly markdown format for notes directories
 
 When creating or editing markdown files within the specified directories, adhere to the following guidelines to ensure the content is optimized for LLM understanding and efficient token usage:
 
