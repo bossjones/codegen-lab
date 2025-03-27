@@ -1,7 +1,7 @@
 ---
 description: Python code refactoring and modularization guidelines with mandatory TDD practices
-globs: "*.py"
-alwaysApply: true
+globs: *.py
+alwaysApply: false
 ---
 # Python Code Refactoring Guide
 

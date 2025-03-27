@@ -1,7 +1,7 @@
 ---
 description: Guidelines for AI assistants to explain code modifications, especially deletions and changes
 globs: *.*
-alwaysApply: true
+alwaysApply: false
 ---
 
 # AI Assistant Guidelines for Code Modifications

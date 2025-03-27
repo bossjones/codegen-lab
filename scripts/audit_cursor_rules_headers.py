@@ -7,6 +7,7 @@ This script checks for:
 2. Required fields: description, globs, and alwaysApply
 3. Correct combinations of fields based on rule type
 4. Proper formatting of fields
+5. Absence of quotes around glob patterns
 """
 
 import os
@@ -65,6 +66,31 @@ def determine_rule_type(description: str, globs: str, always_apply: bool) -> tup
         issues.append("Invalid combination of frontmatter fields")
 
     return rule_type, issues
+
+
+def check_for_quoted_globs(globs: str) -> list[str]:
+    """
+    Check if glob patterns are surrounded by quotes, which is incorrect.
+
+    Args:
+        globs: Content of the globs field
+
+    Returns:
+        List of issues found (empty if no quotes detected)
+    """
+    issues = []
+
+    # Check for entire field being quoted
+    if globs.strip().startswith('"') and globs.strip().endswith('"'):
+        issues.append("Glob patterns should not be enclosed in double quotes")
+    elif globs.strip().startswith("'") and globs.strip().endswith("'"):
+        issues.append("Glob patterns should not be enclosed in single quotes")
+
+    # Check for individual patterns being quoted
+    if re.search(r'["\'][^,]*["\']', globs):
+        issues.append("Individual glob patterns should not be quoted")
+
+    return issues
 
 
 def check_yaml_header(file_path: str) -> tuple[bool, list[str], dict[str, Any]]:
@@ -128,6 +154,9 @@ def check_yaml_header(file_path: str) -> tuple[bool, list[str], dict[str, Any]]:
                 # Check for missing spaces after commas
                 if globs and "," in globs and not re.search(r",\s+", globs):
                     issues.append("Missing spaces after commas in glob list")
+
+                # Check for quoted globs
+                issues.extend(check_for_quoted_globs(globs))
 
         if "alwaysApply:" not in yaml_content:
             issues.append("Missing 'alwaysApply' field")

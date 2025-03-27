@@ -176,7 +176,34 @@ update-cursor-rules:  ## Update cursor rules from prompts/drafts/cursor_rules
 	# Exclude README.md files from being copied
 	find hack/drafts/cursor_rules -type f -name "*.md" ! -name "README.md" -exec sh -c 'for file; do target=$${file%.md}; cp -a "$$file" ".cursor/rules/$$(basename "$$target")"; done' sh {} +
 
-
+.PHONY: update-cursor-rules-dry-run
+update-cursor-rules-dry-run:  ## Show which cursor rules would be updated (dry run)
+	@echo "🔍 Checking which cursor rules would be updated..."
+	@find hack/drafts/cursor_rules -type f -name "*.md" ! -name "README.md" -exec sh -c '\
+		RED="\x1b[31m"; \
+		GREEN="\x1b[32m"; \
+		YELLOW="\x1b[33m"; \
+		RESET="\x1b[0m"; \
+		for file do \
+			source="$$file"; \
+			target=".cursor/rules/$$(basename "$${file%.md}")"; \
+			if [ -f "$$target" ]; then \
+				if ! diff -q "$$source" "$$target" >/dev/null 2>&1; then \
+					printf "$${YELLOW}⚠️  Would update: %s$${RESET}\n" "$$target"; \
+					echo "   Changes:"; \
+					diff -u "$$target" "$$source" | tail -n +3 | grep "^[+-]" | sed -E "\
+						s/^\\+(.*)/$${GREEN}   +\\1$${RESET}/; \
+						s/^-(.*)/$${RED}   -\\1$${RESET}/"; \
+					echo; \
+				fi; \
+			else \
+				printf "$${GREEN}✨ Would create new file: %s$${RESET}\n" "$$target"; \
+				printf "   Content from: %s\n" "$$source"; \
+				echo; \
+			fi; \
+		done \
+	' _ {} +
+	@echo "\n🔍 Dry run complete. Run 'make update-cursor-rules' to apply these changes."
 
 # Documentation targets
 .PHONY: docs-serve docs-build docs-deploy docs-clean
@@ -358,3 +385,6 @@ release: clean
 
 check-rule-lines:
 	./scripts/check_rule_lines.py .cursor/rules/
+
+audit-cursor-rules:
+	uv run scripts/audit_cursor_rules_headers.py
