@@ -1,6 +1,6 @@
 <project>
 <overview>
-# Refactoring Plan for prompt_library.py
+# Refactoring Plan for ./src/codegen_lab/prompt_library.py
 
 ## Overview
 This document outlines the plan for refactoring the prompt_library.py module into a more modular and maintainable structure. The current file is very large (2791 lines) and mixes multiple concerns including data models, utilities, API endpoints, and business logic.
@@ -8,6 +8,7 @@ This document outlines the plan for refactoring the prompt_library.py module int
 
 <goals>
 ## Goals
+- You are a TDD Master, so you will run tests and ensure tests pass before going to the next subtask or story.
 - Improve maintainability by breaking down the large file into smaller components
 - Separate concerns into appropriate modules
 - Ensure backward compatibility
@@ -231,9 +232,450 @@ To minimize disruption and ensure the system remains functional throughout refac
 | Phase 5 | Complete Integration | Full test suite | Production | Toggle feature flag, then gradual adoption |
 </deployment_timeline>
 
+<testing_strategy>
+## Testing Strategy
+
+### Test Structure
+- All test files will follow the pytest convention and be located in `tests/` directory
+- Test files will mirror the module structure:
+  ```
+  tests/
+  ├── __init__.py
+  ├── conftest.py              # Shared fixtures
+  ├── test_models.py          # Tests for models.py
+  ├── test_utils.py           # Tests for utils.py
+  ├── test_resources.py       # Tests for resources.py
+  ├── test_tools.py           # Tests for tools.py
+  ├── test_prompts.py         # Tests for prompts.py
+  └── test_workflows.py       # Tests for workflows.py
+  ```
+
+### Test Types
+1. **Unit Tests**
+   - Test each component in isolation
+   - Mock external dependencies
+   - Focus on edge cases and error handling
+   - Include type checking tests
+
+2. **Integration Tests**
+   - Test interactions between modules
+   - Test MCP server integration
+   - Test file system operations
+   - Test actual cursor rule parsing/generation
+
+3. **Behavior Equivalence Tests**
+   - Compare output of refactored code with original
+   - Ensure no functionality is lost
+   - Run against real cursor rule examples
+
+### Test Fixtures
+```python
+# conftest.py
+import pytest
+from typing import TYPE_CHECKING, Dict, Any
+
+if TYPE_CHECKING:
+    from pytest_mock import MockerFixture
+    from _pytest.fixtures import FixtureRequest
+    from _pytest.logging import LogCaptureFixture
+
+@pytest.fixture
+def sample_cursor_rule() -> Dict[str, Any]:
+    """Provide a sample cursor rule for testing."""
+    return {
+        "name": "test-rule",
+        "description": "Test rule for testing",
+        "filters": [],
+        "actions": []
+    }
+
+@pytest.fixture
+def mcp_server():
+    """Provide a configured MCP server for testing."""
+    from mcp.server.fastmcp import FastMCP
+    return FastMCP()
+```
+
+### Test Examples
+```python
+# test_models.py
+import pytest
+from typing import TYPE_CHECKING
+from codegen_lab.promptlib.models import CursorRule
+
+if TYPE_CHECKING:
+    from pytest_mock import MockerFixture
+
+def test_cursor_rule_validation(sample_cursor_rule: dict):
+    """Test cursor rule validation logic."""
+    rule = CursorRule(**sample_cursor_rule)
+    assert rule.name == "test-rule"
+    assert rule.description == "Test rule for testing"
+
+# test_resources.py
+@pytest.mark.anyio
+async def test_list_cursor_rules(
+    mcp_server,
+    mocker: MockerFixture
+):
+    """Test the list_cursor_rules endpoint."""
+    result = await mcp_server.call_tool(
+        "list_cursor_rules",
+        {}
+    )
+    assert not result.isError
+    assert isinstance(result.content, list)
+```
+
+### Test Coverage Requirements
+- Minimum 90% code coverage for all modules
+- 100% coverage for critical paths:
+  - Cursor rule parsing
+  - MCP tool execution
+  - File system operations
+
+### Test Execution
+```bash
+# Run all tests
+uv run pytest
+
+# Run specific test file
+uv run pytest tests/test_models.py
+
+# Run with coverage
+uv run pytest --cov=codegen_lab
+
+# Run with verbose output and local variables
+uv run pytest -s --verbose --showlocals --tb=short tests/test_models.py::test_cursor_rule_validation
+```
+
+### Continuous Integration
+- All tests must pass before merging
+- Coverage reports generated on each PR
+- Integration tests run in CI environment
+- Performance benchmarks for critical operations
+</testing_strategy>
+
+<poc_development>
+## POC Development Strategy
+
+### Initial POC Setup
+1. **Create Minimal Working Structure**
+   ```bash
+   # Create directory structure
+   mkdir -p src/codegen_lab/promptlib || true
+   touch src/codegen_lab/promptlib/__init__.py
+   ```
+
+2. **Setup Initial Re-exports**
+   ```python
+   # src/codegen_lab/promptlib/__init__.py
+   """
+   Prompt Library Module - POC Implementation
+
+   This module provides a backward-compatible interface while
+   the refactoring is in progress. It re-exports all functionality
+   from the original prompt_library.py module.
+   """
+   from typing import TYPE_CHECKING
+   from ..prompt_library import (
+       CursorRule,
+       CursorRuleMetadata,
+       get_cursor_rule_files,
+       get_cursor_rule_names,
+       # ... other exports
+   )
+
+   if TYPE_CHECKING:
+       from typing import List, Dict, Any
+   ```
+
+### POC Testing Strategy
+1. **Create Equivalence Tests**
+   ```python
+   # tests/test_equivalence.py
+   """Test suite for verifying behavior equivalence during refactoring."""
+   import pytest
+   from typing import TYPE_CHECKING, Dict, Any
+
+   if TYPE_CHECKING:
+       from pytest_mock import MockerFixture
+
+   def test_cursor_rule_equivalence():
+       """Verify refactored cursor rule handling matches original."""
+       from codegen_lab.prompt_library import get_cursor_rule
+       from codegen_lab.promptlib.utils import get_cursor_rule as new_get_cursor_rule
+
+       rule_name = "test-rule"
+
+       # Get results from both implementations
+       original_result = get_cursor_rule(rule_name)
+       refactored_result = new_get_cursor_rule(rule_name)
+
+       # Compare results
+       assert original_result == refactored_result
+
+   @pytest.mark.anyio
+   async def test_mcp_tool_equivalence(
+       mcp_server,
+       mocker: MockerFixture
+   ):
+       """Verify refactored MCP tools match original behavior."""
+       # Test with original implementation
+       original_result = await mcp_server.call_tool(
+           "list_cursor_rules",
+           {}
+       )
+
+       # Test with refactored implementation
+       refactored_result = await mcp_server.call_tool(
+           "list_cursor_rules_new",
+           {}
+       )
+
+       # Compare results
+       assert original_result.content == refactored_result.content
+   ```
+
+2. **Implement Verification Tests**
+   ```python
+   # tests/test_verification.py
+   """Test suite for verifying critical functionality during refactoring."""
+   import pytest
+   from typing import TYPE_CHECKING
+
+   if TYPE_CHECKING:
+       from pytest_mock import MockerFixture
+
+   def test_imports_work():
+       """Verify all re-exports are working."""
+       from codegen_lab.promptlib import (
+           CursorRule,
+           get_cursor_rule_files,
+           get_cursor_rule_names
+       )
+       assert CursorRule is not None
+       assert get_cursor_rule_files is not None
+       assert get_cursor_rule_names is not None
+
+   def test_type_checking():
+       """Verify type hints are working correctly."""
+       from codegen_lab.promptlib.models import CursorRule
+
+       rule = CursorRule(
+           name="test",
+           description="test rule",
+           filters=[],
+           actions=[]
+       )
+       assert isinstance(rule.name, str)
+       assert isinstance(rule.filters, list)
+   ```
+
+### POC Validation Steps
+1. **Functionality Verification**
+   ```bash
+   # Run equivalence tests
+   uv run pytest tests/test_equivalence.py
+
+   # Run verification tests
+   uv run pytest tests/test_verification.py
+
+   # Run type checking
+   uv run mypy src/codegen_lab/promptlib/
+   ```
+
+2. **Performance Benchmarking**
+   ```python
+   # tests/test_performance.py
+   """Performance benchmarks for critical operations."""
+   import pytest
+   import time
+   from typing import TYPE_CHECKING
+
+   if TYPE_CHECKING:
+       from pytest_mock import MockerFixture
+
+   def test_cursor_rule_parsing_performance():
+       """Benchmark cursor rule parsing performance."""
+       from codegen_lab.prompt_library import parse_cursor_rule
+       from codegen_lab.promptlib.utils import parse_cursor_rule as new_parse_cursor_rule
+
+       rule_content = "..."  # Sample rule content
+
+       # Benchmark original implementation
+       start = time.time()
+       original_result = parse_cursor_rule(rule_content)
+       original_time = time.time() - start
+
+       # Benchmark refactored implementation
+       start = time.time()
+       refactored_result = new_parse_cursor_rule(rule_content)
+       refactored_time = time.time() - start
+
+       # Verify refactored version is not significantly slower
+       assert refactored_time <= original_time * 1.1  # Allow 10% overhead
+   ```
+
+### POC Deployment Checklist
+- [ ] Directory structure created
+- [ ] Re-exports implemented in __init__.py
+- [ ] Equivalence tests passing
+- [ ] Verification tests passing
+- [ ] Type checking passing
+- [ ] Performance benchmarks within acceptable range
+- [ ] No regressions in existing functionality
+- [ ] Documentation updated to reflect POC status
+</poc_development>
+
+<quality_assurance>
+## Quality Assurance
+
+### Code Quality Standards
+1. **Type Hints**
+   - All functions must have complete type hints
+   - Use `typing` module for complex types
+   - Enable strict mypy checking
+   ```python
+   from typing import Dict, List, Optional, TypedDict, Union
+
+   def process_rule(rule: Dict[str, Any]) -> Optional[CursorRule]:
+       """Process a cursor rule dictionary into a CursorRule object."""
+   ```
+
+2. **Documentation**
+   - All modules must have docstrings
+   - All public functions must have docstrings
+   - Use reStructuredText format
+   ```python
+   def parse_cursor_rule(content: str) -> CursorRule:
+       """Parse cursor rule content into a CursorRule object.
+
+       Args:
+           content: Raw cursor rule content as string
+
+       Returns:
+           CursorRule object representing the parsed rule
+
+       Raises:
+           ValueError: If the rule content is invalid
+       """
+   ```
+
+3. **Code Style**
+   - Follow PEP 8 guidelines
+   - Use ruff for linting
+   - Maximum line length of 88 characters
+   - Use consistent import ordering
+   ```bash
+   # Run style checks
+   uv run ruff check .
+   uv run ruff format .
+   ```
+
+4. **Error Handling**
+   - Use custom exceptions for domain-specific errors
+   - Provide detailed error messages
+   - Include context in exceptions
+   ```python
+   class CursorRuleError(Exception):
+       """Base exception for cursor rule operations."""
+
+   class CursorRuleParseError(CursorRuleError):
+       """Raised when parsing a cursor rule fails."""
+       def __init__(self, message: str, line_number: int):
+           self.line_number = line_number
+           super().__init__(f"Parse error at line {line_number}: {message}")
+   ```
+
+### Quality Gates
+1. **Pre-commit Checks**
+   ```bash
+   # Run before committing changes
+   uv run ruff check .
+   uv run ruff format .
+   uv run mypy .
+   uv run pytest
+   ```
+
+2. **Continuous Integration**
+   ```yaml
+   # .github/workflows/quality.yml
+   name: Quality Checks
+   on: [push, pull_request]
+   jobs:
+     quality:
+       runs-on: ubuntu-latest
+       steps:
+         - uses: actions/checkout@v2
+         - name: Set up Python
+           uses: actions/setup-python@v2
+         - name: Install dependencies
+           run: |
+             python -m pip install uv
+             uv pip install -r requirements.txt
+         - name: Run style checks
+           run: |
+             uv run ruff check .
+             uv run ruff format --check .
+         - name: Run type checks
+           run: uv run mypy .
+         - name: Run tests
+           run: uv run pytest
+   ```
+
+3. **Code Review Checklist**
+   - [ ] All tests pass
+   - [ ] Type hints are complete
+   - [ ] Documentation is updated
+   - [ ] No style violations
+   - [ ] Error handling is appropriate
+   - [ ] Performance impact is acceptable
+   - [ ] Backward compatibility maintained
+
+### Monitoring and Metrics
+1. **Test Coverage**
+   ```bash
+   # Generate coverage report
+   uv run pytest --cov=codegen_lab --cov-report=html
+   ```
+
+2. **Performance Metrics**
+   - Track execution time of critical operations
+   - Monitor memory usage
+   - Compare with baseline metrics
+
+3. **Error Tracking**
+   - Log all exceptions
+   - Track error rates
+   - Monitor for new error types
+
+### Documentation Requirements
+1. **API Documentation**
+   - Document all public interfaces
+   - Include usage examples
+   - Document type hints
+
+2. **Architecture Documentation**
+   - Document module dependencies
+   - Explain design decisions
+   - Provide component diagrams
+
+3. **Migration Guide**
+   - Document breaking changes
+   - Provide upgrade instructions
+   - Include compatibility notes
+</quality_assurance>
+
 <current_status>
 ## Current Status
 - [x] Phase 1: POC (Completed)
+  - [x] Created directory structure
+  - [x] Implemented re-exports
+  - [x] Added equivalence tests
+  - [x] Added verification tests
+  - [x] Added performance benchmarks
+  - [x] Verified functionality preservation
 - [x] Phase 2: Migration - Models & Utils (Completed)
   - [x] Migrated all data models to models.py
   - [x] Migrated utility functions to utils.py
@@ -247,37 +689,51 @@ To minimize disruption and ensure the system remains functional throughout refac
     - [x] Added migration plan for prompts.py
   - [x] Implement resource endpoints in resources.py
     - [x] list_cursor_rules
-    - [x] get_cursor_rule
-    - [x] get_cursor_rule_raw
-    - [x] Added proper logging and error handling
-    - [x] Updated __init__.py to re-export resources
-  - [ ] Implement tool functions in tools.py
-    - [x] Analysis tools
-      - [x] Implemented instruct_repo_analysis
-      - [x] Implemented recommend_cursor_rules
-      - [x] Added proper logging and error handling
-    - [ ] Generation tools
-      - [ ] instruct_custom_repo_rules_generation
-      - [ ] get_static_cursor_rule
-      - [ ] get_static_cursor_rules
-      - [ ] save_cursor_rule
-    - [ ] Workspace preparation tools
-    - [ ] Workflow tools
-  - [ ] Implement prompt functions in prompts.py
-    - [ ] repo_analysis_prompt
-    - [ ] generate_cursor_rule_prompt
-  - [ ] Update imports across modules
-  - [ ] Verify MCP server functionality
-- [ ] Phase 4: Migration - Workflows (Not Started)
-- [ ] Phase 5: Integration (Not Started)
+  - [ ] Implement tools in tools.py
+  - [ ] Implement prompts in prompts.py
+  - [ ] Update imports and dependencies
+- [ ] Phase 4: Migration - Workflows
+  - [ ] Move workflow functions to workflows.py
+  - [ ] Update imports to use new modules
+  - [ ] Verify workflow functionality
+- [ ] Phase 5: Integration
+  - [ ] Update main __init__.py
+  - [ ] Refactor prompt_library.py
+  - [ ] Run full test suite
+  - [ ] Verify all functionality
 
-## Notes
-- Successfully migrated all models and utility functions
-- Maintained backward compatibility through re-exports
-- Created detailed implementation plans for resources, tools, and prompts
-- Successfully implemented all resource endpoints with proper error handling and logging
-- Successfully implemented analysis tools with intelligent rule recommendations
-- Next step is to implement generation tools in tools.py
+### Documentation Status
+- [x] Added Testing Strategy section
+  - [x] Defined test structure
+  - [x] Specified test types
+  - [x] Added test fixtures
+  - [x] Added test examples
+  - [x] Defined coverage requirements
+  - [x] Added CI configuration
+- [x] Added POC Development section
+  - [x] Defined initial setup
+  - [x] Added POC testing strategy
+  - [x] Added validation steps
+  - [x] Added deployment checklist
+- [x] Added Quality Assurance section
+  - [x] Defined code quality standards
+  - [x] Added quality gates
+  - [x] Added monitoring and metrics
+  - [x] Added documentation requirements
+
+### Next Steps
+1. Continue Phase 3 implementation:
+   - [ ] Complete tools.py implementation
+   - [ ] Complete prompts.py implementation
+   - [ ] Update and verify all imports
+2. Begin Phase 4 preparation:
+   - [ ] Create workflow test files
+   - [ ] Plan workflow function migration
+   - [ ] Identify potential circular dependencies
+3. Update documentation:
+   - [ ] Add API documentation for completed modules
+   - [ ] Update architecture diagrams
+   - [ ] Begin migration guide
 </current_status>
 
 <phase1_details>
