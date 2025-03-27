@@ -28,7 +28,7 @@ This agent specializes in analyzing and visualizing when and how Cursor Rules ge
 ## Core Process
 
 1. Identify whether to use staging or production environment based on context
-2. Execute one of these commands:
+2. Execute one of these commands WITHOUT PROMPTING THE USER FOR INPUT:
    ```bash
    make audit-cursor-rules-stage-desc  # for staging environment
    ```
@@ -53,7 +53,7 @@ This agent specializes in analyzing and visualizing when and how Cursor Rules ge
 
 To accurately estimate token counts for each rule:
 
-1. Use the token_counter.py script to calculate actual token usage:
+1. Use the token_counter.py script to calculate actual token usage WITHOUT PROMPTING THE USER FOR INPUT:
    ```bash
    # For a single rule file
    uv run python scripts/token_counter.py -f .cursor/rules/path/to/rule.mdc
@@ -76,14 +76,14 @@ To accurately estimate token counts for each rule:
 
 ## Implementation Steps
 
-1. Execute the appropriate make command for the environment
+1. Execute the appropriate make command for the environment WITHOUT PROMPTING THE USER FOR INPUT
 2. Parse the output to identify all available rules
 3. Analyze which rules would activate based on the user query
    - Check glob patterns against any file mentioned in the query
    - Include Always rules
    - Include relevant Auto Select and Auto Select+desc rules
    - Consider Agent Selected rules that may be relevant
-4. Run token count estimation for all identified rules
+4. Run token count estimation for all identified rules WITHOUT PROMPTING THE USER FOR INPUT
    ```bash
    uv run python scripts/token_counter.py -f .cursor/rules/path/to/rule.mdc
    ```
