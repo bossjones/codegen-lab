@@ -676,12 +676,15 @@ uv run pytest -s --verbose --showlocals --tb=short tests/test_models.py::test_cu
   - [x] Added verification tests
   - [x] Added performance benchmarks
   - [x] Verified functionality preservation
+  - [x] Created test_poc_exports.py (empty, ready for implementation)
 - [x] Phase 2: Migration - Models & Utils (Completed)
   - [x] Migrated all data models to models.py
   - [x] Migrated utility functions to utils.py
   - [x] Implemented full parse_cursor_rule function
   - [x] Implemented full generate_cursor_rule function
   - [x] Updated imports between modules
+  - [x] Created test_promptlib_models.py (4.5KB, 153 lines)
+  - [x] Created test_promptlib_utils.py (5.5KB, 185 lines)
 - [ ] Phase 3: Migration - Resources, Tools & Prompts (In Progress)
   - [x] Created detailed migration plans for all Phase 3 files:
     - [x] Added migration plan for resources.py
@@ -689,10 +692,14 @@ uv run pytest -s --verbose --showlocals --tb=short tests/test_models.py::test_cu
     - [x] Added migration plan for prompts.py
   - [x] Implement resource endpoints in resources.py
     - [x] list_cursor_rules
-  - [ ] Implement tools in tools.py
-  - [ ] Implement prompts in prompts.py
+    - [x] Created test_promptlib_resources.py (5.9KB, 203 lines)
+  - [x] Implement tools in tools.py
+    - [x] Created test_promptlib_tools.py (8.1KB, 278 lines)
+  - [x] Implement prompts in prompts.py
+    - [x] Created test_promptlib_prompts.py (6.7KB, 219 lines)
   - [ ] Update imports and dependencies
 - [ ] Phase 4: Migration - Workflows
+  - [x] Created test_promptlib_workflows.py (9.4KB, 295 lines)
   - [ ] Move workflow functions to workflows.py
   - [ ] Update imports to use new modules
   - [ ] Verify workflow functionality
@@ -702,38 +709,30 @@ uv run pytest -s --verbose --showlocals --tb=short tests/test_models.py::test_cu
   - [ ] Run full test suite
   - [ ] Verify all functionality
 
-### Documentation Status
-- [x] Added Testing Strategy section
-  - [x] Defined test structure
-  - [x] Specified test types
-  - [x] Added test fixtures
-  - [x] Added test examples
-  - [x] Defined coverage requirements
-  - [x] Added CI configuration
-- [x] Added POC Development section
-  - [x] Defined initial setup
-  - [x] Added POC testing strategy
-  - [x] Added validation steps
-  - [x] Added deployment checklist
-- [x] Added Quality Assurance section
-  - [x] Defined code quality standards
-  - [x] Added quality gates
-  - [x] Added monitoring and metrics
-  - [x] Added documentation requirements
+### Test Suite Status
+- [x] test_promptlib_tools.py (8.1KB, 278 lines) - Implemented
+- [x] test_promptlib_utils.py (5.5KB, 185 lines) - Implemented
+- [x] test_promptlib_workflows.py (9.4KB, 295 lines) - Implemented
+- [x] test_promptlib_prompts.py (6.7KB, 219 lines) - Implemented
+- [x] test_promptlib_resources.py (5.9KB, 203 lines) - Implemented
+- [x] test_promptlib_models.py (4.5KB, 153 lines) - Implemented
+- [ ] test_poc_exports.py (empty) - Ready for implementation
 
 ### Next Steps
-1. Continue Phase 3 implementation:
-   - [ ] Complete tools.py implementation
-   - [ ] Complete prompts.py implementation
-   - [ ] Update and verify all imports
-2. Begin Phase 4 preparation:
-   - [ ] Create workflow test files
-   - [ ] Plan workflow function migration
-   - [ ] Identify potential circular dependencies
+1. Complete Phase 3 implementation:
+   - [ ] Finish updating imports and dependencies
+   - [ ] Verify all tests pass after import updates
+2. Begin Phase 4 implementation:
+   - [ ] Implement workflow functions in workflows.py
+   - [ ] Verify workflow tests pass
 3. Update documentation:
    - [ ] Add API documentation for completed modules
    - [ ] Update architecture diagrams
    - [ ] Begin migration guide
+4. Implement test_poc_exports.py:
+   - [ ] Add tests to verify re-exports
+   - [ ] Verify backward compatibility
+   - [ ] Add performance comparison tests
 </current_status>
 
 <phase1_details>
@@ -1071,4 +1070,142 @@ Phase 2 will be considered complete when:
    - Performance requirements in MVP
    - Complex rule interactions
 </prd_analysis>
+
+# Test Refactoring Plan
+
+## Overview
+This section outlines the plan for breaking down unit tests in the `tests/unit` directory into smaller, more manageable files with a maximum of 150 lines per file.
+
+## Goals
+- Improve test maintainability by breaking down large test files
+- Keep each test file focused on a specific feature or component
+- Maintain a maximum of 150 lines per test file
+- Ensure proper test organization and naming conventions
+- Preserve all existing test coverage
+- Make it easier to locate and update specific tests
+
+## Test Organization Strategy
+
+### Directory Structure
+```
+tests/
+├── unit/                           # Unit tests directory (150 line limit enforced)
+│   ├── test_models/               # Tests for data models
+│   │   ├── __init__.py
+│   │   ├── test_user_model.py
+│   │   ├── test_message_model.py
+│   │   └── test_rule_model.py
+│   ├── test_services/             # Tests for service layer
+│   │   ├── __init__.py
+│   │   ├── test_auth_service.py
+│   │   └── test_message_service.py
+│   └── test_utils/                # Tests for utilities
+│       ├── __init__.py
+│       ├── test_string_utils.py
+│       └── test_file_utils.py
+├── unittests/                     # Legacy unit tests directory (excluded from 150 line limit)
+├── integration/                    # Integration tests
+└── conftest.py                    # Shared test fixtures
+```
+
+### Scope
+1. The 150-line limit applies only to tests in the `tests/unit/` directory
+2. The `tests/unittests/` directory is considered legacy code and is excluded from this refactoring
+3. New tests should be written in `tests/unit/` following the 150-line limit
+4. Legacy tests in `tests/unittests/` will be migrated gradually in future sprints
+
+### File Organization Rules
+1. Each test file in `tests/unit/` should focus on a single component or feature
+2. Maximum of 150 lines per test file (applies only to `tests/unit/`)
+3. Group related tests in subdirectories
+4. Use clear, descriptive file names
+5. Include __init__.py in each test directory
+6. Share fixtures via conftest.py files
+
+### Implementation Steps
+1. **Analysis Phase**
+   - [ ] Identify all test files in `tests/unit/` over 150 lines
+   - [ ] Analyze test groupings and dependencies
+   - [ ] Map out new directory structure
+   - [ ] Create list of new test files needed
+   - [ ] Exclude `tests/unittests/` from analysis
+
+2. **Setup Phase**
+   - [ ] Create new test directories under `tests/unit/`
+   - [ ] Add __init__.py files
+   - [ ] Set up conftest.py files for shared fixtures
+   - [ ] Update pytest configuration if needed
+
+3. **Migration Phase**
+   - [ ] Move tests to new files based on functionality (only for `tests/unit/`)
+   - [ ] Update imports and dependencies
+   - [ ] Ensure fixtures are properly shared
+   - [ ] Verify all tests still pass
+
+4. **Verification Phase**
+   - [ ] Run full test suite
+   - [ ] Check coverage reports
+   - [ ] Verify no tests were lost
+   - [ ] Update documentation
+   - [ ] Verify `tests/unittests/` remains unchanged
+
+### Test File Template
+```python
+"""Unit tests for [component name].
+
+This module contains tests for [specific functionality]
+within the [component name] module.
+"""
+from typing import TYPE_CHECKING
+
+import pytest
+
+if TYPE_CHECKING:
+    from _pytest.fixtures import FixtureRequest
+    from _pytest.monkeypatch import MonkeyPatch
+    from pytest_mock.plugin import MockerFixture
+
+@pytest.fixture
+def component_fixture():
+    """Create an isolated component instance for testing."""
+    return ComponentUnderTest()
+
+def test_specific_functionality(
+    component_fixture: ComponentUnderTest,
+    mocker: MockerFixture,
+) -> None:
+    """Test a specific aspect of the component's behavior."""
+    # Test implementation
+```
+
+### Success Criteria
+- All test files are 150 lines or less
+- All tests pass after migration
+- Coverage remains the same or improves
+- Directory structure is clear and logical
+- Documentation is updated to reflect new structure
+- No duplicate test code or fixtures
+
+### Quality Checks
+1. **Before Migration**
+   ```bash
+   # Get baseline metrics
+   uv run pytest --cov=codegen_lab
+   ```
+
+2. **After Each File Migration**
+   ```bash
+   # Run affected tests
+   uv run pytest path/to/new/test_file.py -v
+   ```
+
+3. **After Complete Migration**
+   ```bash
+   # Run full test suite
+   uv run pytest
+   # Check coverage
+   uv run pytest --cov=codegen_lab
+   # Verify no files exceed line limit
+   find tests/unit -name "test_*.py" -exec wc -l {} \; | sort -nr
+   ```
 </project>
