@@ -10,13 +10,14 @@ This script checks if the default port is in use, and either:
 import argparse
 import os
 import shutil
+import signal
+import socket
 import subprocess
 import sys
-import socket
 import time
-import signal
-import psutil
 from typing import List, Optional, Union
+
+import psutil
 
 
 def parse_args() -> argparse.Namespace:

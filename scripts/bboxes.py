@@ -9,31 +9,31 @@ This script uses Google's Generative AI (Gemini) to analyze images and:
 The script supports command-line arguments for customizing detection mode, input/output paths,
 and appearance of the bounding boxes.
 """
+import argparse
+import functools
+import io
+import json
+import logging
+import os
+import re
+import sys
+from collections.abc import Callable
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Set, Tuple, TypeVar, Union, cast
+
 import google.generativeai as genai
 import PIL.Image
 import PIL.ImageDraw
-import io
-import os
-import json
-import argparse
-import sys
-import re
-import functools
-from typing import Dict, List, Union, Optional, Any, Tuple, Set, TypeVar, cast
-from collections.abc import Callable
-import logging
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pathlib import Path
 from tenacity import (
+    RetryCallState,
+    before_sleep_log,
     retry,
+    retry_if_exception_type,
     stop_after_attempt,
     wait_exponential,
-    retry_if_exception_type,
-    before_sleep_log,
-    RetryCallState
 )
-
 
 # Setup logging
 logger = logging.getLogger('bboxes')
@@ -41,6 +41,7 @@ logger = logging.getLogger('bboxes')
 # Define a custom exception for Gemini API errors
 class GeminiAPIError(Exception):
     """Exception raised for errors in the Gemini API."""
+
     pass
 
 class Settings(BaseSettings):
@@ -58,6 +59,7 @@ class Settings(BaseSettings):
         GEMINI_MIN_WAIT: Minimum wait time between retries in seconds.
         GEMINI_MAX_WAIT: Maximum wait time between retries in seconds.
     """
+
     GEMINI_API_KEY: SecretStr
     GEMINI_MODEL: str = 'gemini-2.0-flash'
     GEMINI_TEMPERATURE: float = 0.0  # Default to deterministic (0.0)
@@ -135,7 +137,7 @@ def gemini_retry(
 
         # Log the full exception details at debug level
         if exception:
-            logger.debug(f"Exception details: {str(exception)}")
+            logger.debug(f"Exception details: {exception!s}")
 
     # Create the retry decorator
     return retry(
@@ -176,7 +178,7 @@ def generate_gemini_content(
         return response
     except Exception as e:
         # Wrap the original exception in our custom exception
-        raise GeminiAPIError(f"Error in Gemini API call: {str(e)}") from e
+        raise GeminiAPIError(f"Error in Gemini API call: {e!s}") from e
 
 
 # Configure Gemini with the API key from settings

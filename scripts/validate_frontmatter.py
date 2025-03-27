@@ -2,11 +2,13 @@
 """Script to validate frontmatter in cursor rule files."""
 
 import os
+import re
 import sys
 from pathlib import Path
-import yaml
-import re
 from typing import Dict, List, Optional, Tuple
+
+import yaml
+
 
 def validate_frontmatter(content: str) -> tuple[bool, list[str]]:
     """Validate frontmatter content against rules.
@@ -36,7 +38,7 @@ def validate_frontmatter(content: str) -> tuple[bool, list[str]]:
     try:
         fm_data = yaml.safe_load(fm_content)
     except yaml.YAMLError as e:
-        errors.append(f"Invalid YAML format: {str(e)}")
+        errors.append(f"Invalid YAML format: {e!s}")
         return False, errors
 
     if not isinstance(fm_data, dict):
@@ -95,7 +97,7 @@ def validate_file(file_path: Path) -> tuple[bool, list[str]]:
         content = file_path.read_text()
         return validate_frontmatter(content)
     except Exception as e:
-        return False, [f"Error reading file: {str(e)}"]
+        return False, [f"Error reading file: {e!s}"]
 
 def main():
     """Validate all MDC files in the .cursor/rules directory."""
