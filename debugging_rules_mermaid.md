@@ -28,6 +28,90 @@ flowchart TD
 - **Auto Select+desc Rules (Blue)**: Automatically selected with descriptions
 - **Manual Rules (Yellow)**: Manually specified rules
 
+# Rule Visualization for Query: "update our mermaid documentation"
+
+```mermaid
+flowchart TD
+    Query["User Query: update our mermaid documentation"] --> Analysis["Rule Analysis"]
+
+    Analysis --> RuleTypes["Rule Type Categorization"]
+
+    RuleTypes --> Always["Always Rules"]
+    RuleTypes --> AgentSelected["Agent Selected Rules"]
+    RuleTypes --> AutoSelect["Auto Select Rules"]
+    RuleTypes --> AutoSelectDesc["Auto Select+desc Rules"]
+    RuleTypes --> Manual["Manual Rules"]
+
+    Always --> AlwaysRules["global-rules/emoji-communication-always.mdc"]
+
+    AgentSelected --> AgentSelectedRules["bossjones-cursor-tools.mdc
+    core-rules/cursor-rules-migration-agent.mdc
+    core-rules/prd-prompt-generator-agent.mdc
+    core-rules/rule-generating-agent.mdc
+    workflows/workflow-rule-visualization-agent-manual.mdc"]
+
+    AutoSelect --> AutoSelectRules["core-rules/cursor-rule-syntax.mdc"]
+
+    AutoSelectDesc --> AutoSelectDescRules["documentation/markdown-auto.mdc
+    project_layout.mdc
+    cursor_rules_location.mdc
+    repomix.mdc
+    repo_analyzer.mdc
+    notify.mdc
+    tree.mdc"]
+
+    Manual --> ManualRules["workflows/workflow-migration-agent.mdc
+    tool-rules/visualization-tool-rules.mdc"]
+
+    style Query fill:#f9f,stroke:#333,stroke-width:2px
+    style Always fill:#f0f,stroke:#333,stroke-width:1px
+    style AgentSelected fill:#0dd,stroke:#333,stroke-width:1px
+    style AutoSelect fill:#0d0,stroke:#333,stroke-width:1px
+    style AutoSelectDesc fill:#00f,stroke:#333,stroke-width:1px
+    style Manual fill:#ff0,stroke:#333,stroke-width:1px
+
+    classDef activated fill:#afa,stroke:#333,stroke-width:2px
+    class AlwaysRules,AgentSelectedRules,AutoSelectDescRules activated
+```
+
+## Rule Types
+
+| Rule Type        | Usage                                            | description Field | globs Field           | alwaysApply field |
+| ---- | --- | ----- | --- | ----- |
+| Agent Selected   | Agent sees description and chooses when to apply | critical          | blank                 | false             |
+| Always           | Applied to every chat and cmd-k request          | blank             | blank                 | true              |
+| Auto Select      | Applied to matching existing files               | blank             | critical glob pattern | false             |
+| Auto Select+desc | Better for new files                             | included          | critical glob pattern | false             |
+| Manual           | User must reference in chat                      | blank             | blank                 | false             |
+
+## Color Legend
+
+- ![#f9f](https://via.placeholder.com/15/f9f/000000?text=+) User Query
+- ![#f0f](https://via.placeholder.com/15/f0f/000000?text=+) Always Rules
+- ![#0dd](https://via.placeholder.com/15/0dd/000000?text=+) Agent Selected Rules
+- ![#0d0](https://via.placeholder.com/15/0d0/000000?text=+) Auto Select Rules
+- ![#00f](https://via.placeholder.com/15/00f/000000?text=+) Auto Select+desc Rules
+- ![#ff0](https://via.placeholder.com/15/ff0/000000?text=+) Manual Rules
+
+## Rule Application Analysis
+
+For the query "update our mermaid documentation":
+
+- **Always Rules**: The `global-rules/emoji-communication-always.mdc` rule is applied to every query
+- **Agent Selected Rules**: The workflow-rule-visualization-agent-manual.mdc rule is particularly relevant for this query about mermaid documentation
+- **Auto Select+desc Rules**: The documentation/markdown-auto.mdc, project_layout.mdc, and cursor_rules_location.mdc rules apply due to working with Markdown files and cursor rules
+- **Manual Rules**: While not automatically applied, the visualization-tool-rules.mdc may be relevant if manually referenced
+
+## Understanding Rule Activation
+
+The diagram shows how this query activates different rule types:
+1. Always rules are automatically applied regardless of query context
+2. Agent Selected rules like workflow-rule-visualization-agent-manual.mdc are chosen by the AI because they're specifically relevant to mermaid diagrams and cursor rule visualization
+3. Auto Select+desc rules related to Markdown and documentation are applied since we're working with mermaid documentation
+4. Manual rules require explicit reference and are not automatically applied
+
+Note: Rules are identified based on the make audit-cursor-rules-prod-desc command output.
+
 # Rule Visualization for Query: "update my changelog.md"
 
 ```mermaid

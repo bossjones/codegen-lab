@@ -1,0 +1,136 @@
+---
+description: Visualizes cursor rule relationships and activation patterns based on user queries
+globs:
+alwaysApply: false
+---
+
+# Cursor Rules Visualization Agent
+
+This agent specializes in analyzing and visualizing the relationships between Cursor Rules, making it easier to understand how rules interact and when they apply based on specific user queries.
+
+## Primary Purpose
+
+- Execute the appropriate make task to audit cursor rules
+- Analyze the command output to understand rule relationships
+- Generate a Mermaid diagram showing which rules can be invoked based on a user query
+- Create a visual representation of rule hierarchy and dependencies
+- Save the visualization to `debugging_rules_mermaid.md`
+
+## When to Use
+
+- When you need to understand which rules apply in different user query scenarios
+- When analyzing how cursor rules interact with each other
+- When visualizing the rule activation patterns for specific user inputs
+
+## Core Process
+
+1. Identify whether to use staging or production environment based on context
+2. Execute one of these commands:
+   ```bash
+   make audit-cursor-rules-stage-desc  # for staging environment
+   ```
+   or
+   ```bash
+   make audit-cursor-rules-prod-desc  # for production environment
+   ```
+3. Analyze the command output to determine:
+   - Which rules exist in the system
+   - Rule types and their glob patterns
+   - Which rules would be triggered by the specified user query
+4. Create a Mermaid diagram that shows these relationships
+5. Save the diagram to `debugging_rules_mermaid.md`
+
+## Implementation Steps
+
+1. Execute the appropriate make command for the environment
+2. Parse the output to identify all available rules
+3. Analyze which rules would activate based on the user query
+   - Check glob patterns against any file mentioned in the query
+   - Include Always rules
+   - Include relevant Auto Select and Auto Select+desc rules
+   - Consider Agent Selected rules that may be relevant
+4. Generate a Mermaid diagram showing the relationships
+5. Write the diagram to `debugging_rules_mermaid.md`
+
+## Mermaid Diagram Structure
+
+The Mermaid diagram should:
+
+1. Start with the specific user query node
+2. Show rule activation flow based on the query
+3. Group rules by their types (Always, Agent Selected, Auto Select, etc.)
+4. Indicate which rules would be triggered by the query
+5. Use consistent color coding for rule types:
+   - Always rules: magenta (#f0f)
+   - Agent Selected rules: cyan (#0dd)
+   - Auto Select rules: green (#0d0)
+   - Auto Select+desc rules: blue (#00f)
+   - Manual rules: yellow (#ff0)
+6. Include a comprehensive legend section that explains rule types and their attributes
+
+## Important Notes
+
+- DO NOT use scripts/generate_rule_mermaid.py
+- Generate all diagrams directly through LLM analysis of the make command output
+- Always save the output to `debugging_rules_mermaid.md`
+- Include the specific user query in the diagram and analysis
+- Show which rules would activate for that specific query
+- Always include a comprehensive LEGEND section in debugging_rules_mermaid.md with the following rule type details:
+
+```
+## Rule Types
+
+| Rule Type        | Usage                                            | description Field | globs Field           | alwaysApply field |
+| ---------------- | ------------------------------------------------ | ----------------- | --------------------- | ----------------- |
+| Agent Selected   | Agent sees description and chooses when to apply | critical          | blank                 | false             |
+| Always           | Applied to every chat and cmd-k request          | blank             | blank                 | true              |
+| Auto Select      | Applied to matching existing files               | blank             | critical glob pattern | false             |
+| Auto Select+desc | Better for new files                             | included          | critical glob pattern | false             |
+| Manual           | User must reference in chat                      | blank             | blank                 | false             |
+```
+
+## Example Implementation
+
+For a query like "Update my changelog.md":
+
+1. Execute:
+   ```bash
+   make audit-cursor-rules-prod-desc
+   ```
+2. Analyze the output to determine which rules apply:
+   - Always rules always apply
+   - Rules with glob patterns matching *.md would apply
+   - Other relevant rules based on context
+
+3. Generate a Mermaid diagram and save it to debugging_rules_mermaid.md:
+
+```mermaid
+flowchart TD
+    Query["User Query: Update my changelog.md"] --> Analysis["Rule Analysis"]
+
+    Analysis --> RuleTypes["Rule Type Categorization"]
+
+    RuleTypes --> Always["Always Rules"]
+    RuleTypes --> AutoSelect["Auto Select Rules"]
+    RuleTypes --> AutoSelectDesc["Auto Select+desc Rules"]
+    RuleTypes --> AgentSelected["Agent Selected Rules"]
+    RuleTypes --> Manual["Manual Rules"]
+
+    Always --> AlwaysRules["emoji-communication-always.mdc"]
+
+    AutoSelectDesc --> MarkdownRules["documentation/markdown-auto.mdc"]
+    AutoSelectDesc --> GeneralRules["repomix.mdc
+    repo_analyzer.mdc
+    notify.mdc
+    tree.mdc"]
+
+    style Query fill:#f9f,stroke:#333,stroke-width:2px
+    style Always fill:#f0f,stroke:#333,stroke-width:1px
+    style AutoSelect fill:#0d0,stroke:#333,stroke-width:1px
+    style AutoSelectDesc fill:#00f,stroke:#333,stroke-width:1px
+    style AgentSelected fill:#0dd,stroke:#333,stroke-width:1px
+    style Manual fill:#ff0,stroke:#333,stroke-width:1px
+
+    classDef activated fill:#afa,stroke:#333,stroke-width:2px
+    class AlwaysRules,MarkdownRules,GeneralRules activated
+```
