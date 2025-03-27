@@ -1,7 +1,7 @@
 ---
 description: LLM-friendly markdown format for notes directories
 globs: notes/**/*.md,**/notes/**/*.md
-alwaysApply: true
+alwaysApply: false
 ---
 
 # Instructions for Generating LLM-Optimized Markdown Content

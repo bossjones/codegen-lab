@@ -1,10 +1,10 @@
 ---
-description: Core concepts and basic usage of dpytest for Discord bot testing
-globs: *.py
+description:
+globs:
 alwaysApply: false
 ---
 # dpytest Core Concepts and Basic Usage
-
+Core concepts and basic usage of dpytest for Discord bot testing
 Core documentation for dpytest, a testing framework for Discord bots built with discord.py.
 
 <rule>

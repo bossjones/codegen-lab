@@ -1,4 +1,12 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+
 # Python POC Development Guide
+
+Guidelines and best practices for developing Python proof-of-concept implementations during refactoring
 
 This rule provides guidance for creating proof of concept implementations during Python refactoring.
 

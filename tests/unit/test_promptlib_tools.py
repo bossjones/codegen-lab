@@ -1,6 +1,7 @@
 # """Unit tests for promptlib tools.
 
 # This test suite verifies the behavior of MCP tools for cursor rule operations.
+# It covers repository analysis, rule generation, rule management, and workspace setup.
 # """
 
 # import os
@@ -9,8 +10,8 @@
 
 # import pytest
 # from mcp.server.fastmcp import FastMCP
-# from mcp.server.fastmcp.testing import client_session
 
+# # from mcp.server.fastmcp.testing import client_session
 # from codegen_lab.promptlib.tools import (
 #     create_cursor_rule_files,
 #     cursor_rules_workflow,
@@ -117,6 +118,11 @@
 # ) -> None:
 #     """Test the repository analysis tool.
 
+#     This test verifies that the repository analysis tool:
+#     1. Successfully analyzes a basic repository structure
+#     2. Returns a valid analysis result with repository structure
+#     3. Properly identifies Python files in the workspace
+
 #     Args:
 #         mcp_server: Fixture providing a configured FastMCP server.
 #         temp_workspace: Fixture providing a temporary workspace.
@@ -136,6 +142,15 @@
 #     temp_workspace: Path,
 # ) -> None:
 #     """Test the custom rules generation tool.
+
+#     This test verifies that the rule generation tool:
+#     1. Successfully reads an AI analysis report
+#     2. Generates appropriate cursor rules based on the report
+#     3. Returns a valid list of generated rules
+
+#     Edge cases covered:
+#     - Basic repository structure with minimal files
+#     - Simple AI report format
 
 #     Args:
 #         mcp_server: Fixture providing a configured FastMCP server.
@@ -163,6 +178,15 @@
 # ) -> None:
 #     """Test getting a static cursor rule.
 
+#     This test verifies that:
+#     1. Static cursor rules can be retrieved by name
+#     2. Retrieved rules contain valid rule syntax
+#     3. Rule content matches expected format
+
+#     Edge cases covered:
+#     - Rule exists and is properly formatted
+#     - Rule contains all required sections (name, description, filters, actions)
+
 #     Args:
 #         mcp_server: Fixture providing a configured FastMCP server.
 #         temp_workspace: Fixture providing a temporary workspace.
@@ -182,6 +206,17 @@
 #     temp_workspace: Path,
 # ) -> None:
 #     """Test saving a cursor rule.
+
+#     This test verifies that:
+#     1. Rules can be saved to the workspace
+#     2. Saved rules are written with correct content
+#     3. Rule files are created in the proper location
+#     4. Overwrite parameter is respected
+
+#     Edge cases covered:
+#     - New rule creation
+#     - Rule overwrite with overwrite=True
+#     - Proper file permissions and structure
 
 #     Args:
 #         mcp_server: Fixture providing a configured FastMCP server.
@@ -215,63 +250,63 @@
 #         assert rule_file.read_text() == rule_content
 
 
-# @pytest.mark.anyio
-# async def test_get_static_cursor_rule_nonexistent(
-#     mcp_server: FastMCP,
-#     temp_workspace: Path,
-# ) -> None:
-#     """Test getting a nonexistent static cursor rule.
+# # @pytest.mark.anyio
+# # async def test_get_static_cursor_rule_nonexistent(
+# #     mcp_server: FastMCP,
+# #     temp_workspace: Path,
+# # ) -> None:
+# #     """Test getting a nonexistent static cursor rule.
 
-#     Args:
-#         mcp_server: Fixture providing a configured FastMCP server.
-#         temp_workspace: Fixture providing a temporary workspace.
+# #     Args:
+# #         mcp_server: Fixture providing a configured FastMCP server.
+# #         temp_workspace: Fixture providing a temporary workspace.
 
-#     """
-#     async with client_session(mcp_server._mcp_server) as client:
-#         result = await client.call_tool("get_rule", {"rule_name": "nonexistent-rule"})
-#         assert result.isError
-#         assert "Rule not found" in result.error.message
+# #     """
+# #     async with client_session(mcp_server._mcp_server) as client:
+# #         result = await client.call_tool("get_rule", {"rule_name": "nonexistent-rule"})
+# #         assert result.isError
+# #         assert "Rule not found" in result.error.message
 
 
-# @pytest.mark.anyio
-# async def test_save_cursor_rule_no_overwrite(
-#     mcp_server: FastMCP,
-#     temp_workspace: Path,
-# ) -> None:
-#     """Test saving a cursor rule without overwriting.
+# # @pytest.mark.anyio
+# # async def test_save_cursor_rule_no_overwrite(
+# #     mcp_server: FastMCP,
+# #     temp_workspace: Path,
+# # ) -> None:
+# #     """Test saving a cursor rule without overwriting.
 
-#     Args:
-#         mcp_server: Fixture providing a configured FastMCP server.
-#         temp_workspace: Fixture providing a temporary workspace.
+# #     Args:
+# #         mcp_server: Fixture providing a configured FastMCP server.
+# #         temp_workspace: Fixture providing a temporary workspace.
 
-#     """
-#     rule_content = """# Test Rule
+# #     """
+# #     rule_content = """# Test Rule
 
-# <rule>
-# name: test-rule
-# description: Test rule description
-# filters:
-#   - type: file_extension
-#     pattern: \\.py$
-# actions:
-#   - type: suggest
-#     message: Original message
-# </rule>
-# """
+# # <rule>
+# # name: test-rule
+# # description: Test rule description
+# # filters:
+# #   - type: file_extension
+# #     pattern: \\.py$
+# # actions:
+# #   - type: suggest
+# #     message: Original message
+# # </rule>
+# # """
 
-#     # Create initial rule
-#     rule_file = temp_workspace / ".cursor" / "rules" / "test-rule.mdc"
-#     rule_file.write_text(rule_content)
+# #     # Create initial rule
+# #     rule_file = temp_workspace / ".cursor" / "rules" / "test-rule.mdc"
+# #     rule_file.write_text(rule_content)
 
-#     # Try to save new content without overwrite
-#     new_content = rule_content.replace("Original message", "New message")
+# #     # Try to save new content without overwrite
+# #     new_content = rule_content.replace("Original message", "New message")
 
-#     async with client_session(mcp_server._mcp_server) as client:
-#         result = await client.call_tool(
-#             "save_rule", {"rule_name": "test-rule", "rule_content": new_content, "overwrite": False}
-#         )
-#         assert result.isError
-#         assert "Rule already exists" in result.error.message
+# #     async with client_session(mcp_server._mcp_server) as client:
+# #         result = await client.call_tool(
+# #             "save_rule", {"rule_name": "test-rule", "rule_content": new_content, "overwrite": False}
+# #         )
+# #         assert result.isError
+# #         assert "Rule already exists" in result.error.message
 
-#         # Verify original content was preserved
-#         assert rule_file.read_text() == rule_content
+# #         # Verify original content was preserved
+# #         assert rule_file.read_text() == rule_content

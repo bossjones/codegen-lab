@@ -1,6 +1,6 @@
 ---
-description: Fast Python MCP Server Development
-globs: *.py
+description:
+globs:
 alwaysApply: false
 ---
 # Fast Python MCP Server Development

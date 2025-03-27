@@ -1,10 +1,10 @@
 ---
-description: Comprehensive guide to dpytest's error handling and custom exceptions
-globs: *.py
+description:
+globs:
 alwaysApply: false
 ---
 # dpytest Error Handling
-
+Comprehensive guide to dpytest's error handling and custom exceptions
 Documentation of dpytest's error handling system, custom exceptions, and error recovery patterns.
 
 <rule>

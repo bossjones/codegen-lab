@@ -1,9 +1,11 @@
 ---
-description: Guide to testing Discord voice channels and voice functionality with dpytest
-globs: *.py
+description:
+globs:
 alwaysApply: false
 ---
 # dpytest Voice Testing Guide
+
+Guide to testing Discord voice channels and voice functionality with dpytest
 
 Documentation for testing Discord voice channels and voice functionality using dpytest.
 

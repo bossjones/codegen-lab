@@ -78,7 +78,7 @@ repos:
         types_or:
           - python
           # - jupyter
-        exclude: ^(scripts|typings)/.*
+        exclude: ^(.tasks|typings)/.*
 
       # Run the formatter.
       - id: ruff-format
@@ -89,7 +89,7 @@ repos:
         args:
           - --config=pyproject.toml
         files: ^((src|tests|notebooks)/.+)?[^/]+\.(py|ipynb)$
-        exclude: (.tasks|hack|scripts)
+        exclude: (.tasks|hack)
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:

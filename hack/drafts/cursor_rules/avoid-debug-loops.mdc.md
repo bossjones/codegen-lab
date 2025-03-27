@@ -1,9 +1,11 @@
 ---
-description: When stuck in debugging loops, break the cycle by minimizing to an MVP, removing debugging cruft, and documenting the issue completely for a fresh approach
-globs: *.py
+description:
+globs:
 alwaysApply: false
 ---
 # Avoid Debug Loops
+
+When stuck in debugging loops, break the cycle by minimizing to an MVP, removing debugging cruft, and documenting the issue completely for a fresh approach
 
 When debugging becomes circular and unproductive, follow these steps:
 

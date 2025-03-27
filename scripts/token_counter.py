@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-import typer
 from pathlib import Path
-from typing import Optional, List
+from typing import List, Optional
+
 import tiktoken
+import typer
 
 MODEL_ENCODINGS = {
     "gpt-4o": "o200k_base",

@@ -1,0 +1,48 @@
+---
+description: Use this rule when generating starter prompts for PRD creation that incorporate AI report summaries
+globs:
+alwaysApply: false
+---
+
+# PRD Prompt Generator with AI Report Integration
+
+## Context
+- Used when needing to generate structured prompts for PRD creation
+- Requires an ai_report.md file in the workspace for context
+- Helps maintain consistency in PRD requests while incorporating existing project insights
+
+## Critical Rules
+
+- Always reference workflows with @ symbol (e.g. @workflow-agile-manual)
+- Focus on MVP features first, then future epics/enhancements
+- Structure prompts to follow the pattern: "@workflow -> PRD -> MVP -> Future Epics"
+- Include specific sections for:
+  - Core MVP functionality
+  - Test coverage requirements
+  - Future enhancement epics
+  - Technical constraints
+  - Integration points
+- Maintain clear separation between MVP and future enhancements
+- Use concrete examples in feature descriptions
+- Reference specific file paths and code patterns
+- Include search query examples where relevant
+- Ensure prompts encourage iterative development 🔄
+- Focus on measurable deliverables 🎯
+
+## Examples
+
+<example>
+"Let's follow the @workflows/workflow-agile-manual.mdc to create a PRD for a new project I want to create that will house various scripts to automate data retrieval/modification using python. scripts will be the main directory. Lets focus on just the MVP feature first will be to deliver tests for all python scripts in ./scripts/ minimally, but lets also plan to have some epics for fast follows or future enhancements such as modified github cli search code queries and github search query changes eg instead of '(langchain OR langgraph) language:python' use '(Gin OR Beego OR Iris OR Echo OR Fiber OR Revel) language:golang'"
+
+"Following @workflows/workflow-agile-manual.mdc, let's develop a PRD for our data pipeline automation project. MVP will focus on implementing core ETL functionality in ./data/pipelines/ with 90% test coverage, while future epics include adding real-time processing capabilities and custom monitoring dashboards."
+
+"Based on our technical assessment, let's use @workflows/workflow-agile-manual.mdc to craft a PRD for our API migration tool. Initial MVP will deliver basic endpoint conversion with test coverage, planning future epics for advanced pattern matching and automated documentation generation."
+</example>
+
+<example type="invalid">
+"Let's create a PRD without referencing the workflow manual"
+
+"Create a full product spec without distinguishing MVP from future epics"
+
+"Let's write a PRD that doesn't specify concrete file paths or examples"
+</example>

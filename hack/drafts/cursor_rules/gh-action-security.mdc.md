@@ -1,7 +1,7 @@
 ---
 description: Security rule for GitHub Actions to address tj-actions/changed-files vulnerability and implement security best practices
 globs: .github/workflows/*.yml, .github/workflows/*.yaml
-alwaysApply: true
+alwaysApply: false
 ---
 
 # GitHub Actions Security Rule

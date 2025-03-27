@@ -1,0 +1,91 @@
+---
+description:
+globs: *.py, *.js, *.ts, *.tsx, *.jsx
+alwaysApply: false
+---
+
+# Code Deletion Analysis Rule
+
+## Context
+
+- Applies whenever code is being deleted from a file
+- Ensures thorough analysis and documentation of code removals
+- Prevents accidental deletion of critical functionality
+- Maintains codebase knowledge and history
+
+## Critical Rules
+
+- Always wrap deleted code in `<old_code>` tags
+- Provide detailed explanation in `<explanation>` tags for why code is being removed
+- Document how functionality is preserved (if applicable) in `<preservation>` tags
+- Analyze and document dependencies in `<dependencies>` tags
+- Verify no critical functionality is lost
+- If replacement code exists, document it in `<new_code>` tags
+- Include impact analysis in `<impact>` tags
+- For large deletions (>10 lines), provide step-by-step reasoning
+- Suggest tests to verify no regressions in `<testing>` tags
+
+## Examples
+
+<example>
+<old_code>
+def legacy_process_data(data: dict) -> list:
+    """Process data using old algorithm."""
+    results = []
+    for item in data.items():
+        results.append(transform_item(item))
+    return results
+</old_code>
+
+<explanation>
+This function is being removed because:
+1. It uses an inefficient item-by-item processing approach
+2. The transform_item function is no longer maintained
+3. New process_data_batch function provides better performance
+</explanation>
+
+<preservation>
+Functionality is preserved by the new process_data_batch function which:
+- Handles data processing in efficient batches
+- Includes improved error handling
+- Maintains backward compatible interface
+</preservation>
+
+<dependencies>
+- transform_item function can be safely removed
+- No other functions depend on this implementation
+- All callers have been migrated to process_data_batch
+</dependencies>
+
+<new_code>
+def process_data_batch(data: dict) -> list:
+    """Process data in efficient batches."""
+    return [transform_batch(items) for items in batch(data.items(), size=100)]
+</new_code>
+
+<impact>
+- 30% performance improvement
+- Reduced memory usage
+- Better error handling
+- No functionality loss
+</impact>
+
+<testing>
+Verify no regressions:
+1. Test process_data_batch with legacy test cases
+2. Verify batch processing maintains data integrity
+3. Check error handling with invalid inputs
+</testing>
+</example>
+
+<example type="invalid">
+# Just deleting without analysis
+def old_function():
+    # Some old code
+    pass
+
+# New function replaces it
+def new_function():
+    # New implementation
+    pass
+</example>

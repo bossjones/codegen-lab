@@ -1,9 +1,11 @@
 ---
-description: Python code refactoring and modularization guidelines with mandatory TDD practices
-globs: "*.py"
-alwaysApply: true
+description:
+globs:
+alwaysApply: false
 ---
 # Python Code Refactoring Guide
+
+Python code refactoring and modularization guidelines with mandatory TDD practices
 
 This rule provides mandatory guidance for refactoring Python code using Test-Driven Development (TDD), with a focus on breaking down large files into smaller, more manageable components.
 

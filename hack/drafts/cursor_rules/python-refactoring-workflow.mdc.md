@@ -1,4 +1,12 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+
 # Python Refactoring Workflow Guide
+
+Step-by-step workflow guide for Python code refactoring projects
 
 This rule provides a step-by-step workflow for Python code refactoring.
 

@@ -1,2 +1,22 @@
+# ----------------------------------
+# .cursorignore: Makes a best-effort attempt to exclude files from both AI features and indexing
+
+# The .cursorignore file makes a best-effort attempt to exclude files from both AI features and indexing. This is useful for:
+
+# Attempting to exclude sensitive files from AI access and indexing
+# Excluding configuration files with secrets
+# Limiting access to proprietary code
+# Files listed in .cursorignore will be excluded from Cursor's AI features in a best-effort way:
+
+# Not included in tab and chat requests
+# Not included in context for AI features
+# Not indexed for search or context features
+# Not available through @-symbols or other context tools
+# ----------------------------------
+
 !local-research/*.md
 !output.txt
+!.venv
+
+# Project notes and templates
+xnotes/

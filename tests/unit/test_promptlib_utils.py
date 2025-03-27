@@ -134,29 +134,108 @@
 #     assert rule["actions"][0]["message"] == "Follow Python best practices"
 
 
-# def test_generate_cursor_rule() -> None:
-#     """Test generating a cursor rule from components."""
-#     rule_data = {
-#         "name": "test-rule",
-#         "description": "Test rule description",
-#         "filters": [{"type": "file_extension", "pattern": "\\.py$"}],
-#         "actions": [{"type": "suggest", "message": "Test message"}],
-#     }
+# @pytest.mark.parametrize(
+#     "rule_data,expected_content",
+#     [
+#         (
+#             {
+#                 "name": "test-rule",
+#                 "description": "Test description",
+#                 "filters": [{"type": "file_extension", "pattern": "\\.py$"}],
+#                 "actions": [{"type": "suggest", "message": "Test message"}],
+#             },
+#             ["name: test-rule", "description: Test description", "type: file_extension", "pattern: \\.py$"],
+#         ),
+#         (
+#             {
+#                 "name": "complex-rule",
+#                 "description": "Complex test rule",
+#                 "filters": [
+#                     {"type": "file_extension", "pattern": "\\.py$"},
+#                     {"type": "content", "pattern": "def|class"},
+#                 ],
+#                 "actions": [
+#                     {"type": "suggest", "message": "First message"},
+#                     {"type": "suggest", "message": "Second message"},
+#                 ],
+#             },
+#             [
+#                 "name: complex-rule",
+#                 "description: Complex test rule",
+#                 "type: file_extension",
+#                 "pattern: \\.py$",
+#                 "type: content",
+#                 "pattern: def|class",
+#                 "First message",
+#                 "Second message",
+#             ],
+#         ),
+#     ],
+#     ids=["simple_rule", "complex_rule"],
+# )
+# def test_generate_cursor_rule_variations(
+#     rule_data: dict,
+#     expected_content: list[str],
+# ) -> None:
+#     """Test generating cursor rules with various configurations.
 
+#     This test verifies that generate_cursor_rule properly handles:
+#     1. Simple rules with single filter and action
+#     2. Complex rules with multiple filters and actions
+#     3. Proper YAML formatting of nested structures
+
+#     Args:
+#         rule_data: The rule data to generate
+#         expected_content: List of strings that should appear in the generated content
+
+#     """
 #     rule_content = generate_cursor_rule(rule_data)
-#     assert "# Test rule description" in rule_content
-#     assert "<rule>" in rule_content
-#     assert "name: test-rule" in rule_content
-#     assert "type: file_extension" in rule_content
-#     assert "pattern: \\.py$" in rule_content
-#     assert "type: suggest" in rule_content
-#     assert "message: Test message" in rule_content
+#     for expected in expected_content:
+#         assert expected in rule_content
 
 
-# def test_parse_cursor_rule_invalid_content() -> None:
-#     """Test parsing invalid cursor rule content."""
-#     with pytest.raises(ValueError, match="Invalid cursor rule content"):
-#         parse_cursor_rule("Invalid content without <rule> tag")
+# @pytest.mark.parametrize(
+#     "rule_content,expected_error",
+#     [
+#         (
+#             "Invalid content without rule tag",
+#             "Invalid cursor rule content",
+#         ),
+#         (
+#             "<rule>\nname: test\n</rule>",
+#             "Missing required fields in cursor rule",
+#         ),
+#         (
+#             "<rule>\ndescription: test\n</rule>",
+#             "Missing required fields in cursor rule",
+#         ),
+#         (
+#             "<rule>\nname: test\ndescription: test\n</rule>",
+#             "Missing required fields in cursor rule",
+#         ),
+#     ],
+#     ids=[
+#         "no_rule_tag",
+#         "missing_description_and_filters",
+#         "missing_name_and_filters",
+#         "missing_filters",
+#     ],
+# )
+# def test_parse_cursor_rule_invalid_content(rule_content: str, expected_error: str) -> None:
+#     """Test parsing invalid cursor rule content.
+
+#     This test verifies that parse_cursor_rule properly handles various invalid inputs:
+#     1. Content without <rule> tag
+#     2. Rule missing required fields
+#     3. Rule with partial required fields
+
+#     Args:
+#         rule_content: The invalid rule content to test
+#         expected_error: The expected error message
+
+#     """
+#     with pytest.raises(ValueError, match=expected_error):
+#         parse_cursor_rule(rule_content)
 
 
 # def test_get_cursor_rule_files_empty_dir(tmp_path: Path) -> None:

@@ -14,8 +14,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple, Union, Any, cast
-from typing import TypedDict
+from typing import Any, Dict, List, Optional, Set, Tuple, TypedDict, Union, cast
 
 import yaml
 
@@ -415,7 +414,7 @@ def update_changelog_content(
 
     # Add sections and entries in the same order as they were in the original file
     for section_name in unreleased_section_order:
-        if section_name in sections and sections[section_name]:
+        if sections.get(section_name):
             new_content.append("")
             new_content.append(f"### {section_name}")
 

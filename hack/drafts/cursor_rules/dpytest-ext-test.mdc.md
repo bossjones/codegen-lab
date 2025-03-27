@@ -1,10 +1,10 @@
 ---
-description: Best practices and reference for testing Discord bots with dpytest
-globs: *.py
+description:
+globs:
 alwaysApply: false
 ---
 # dpytest Discord Bot Testing Framework
-
+Best practices and reference for testing Discord bots with dpytest
 Guidelines for testing Discord bots using the dpytest framework with discord.py.
 
 <rule>

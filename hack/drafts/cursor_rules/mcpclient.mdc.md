@@ -1,10 +1,12 @@
 ---
-description: Expert guidance for building and working with MCP clients
-globs: *.py, *.md
+description:
+globs:
 alwaysApply: false
 ---
 
 # MCP Client Expert
+
+ Expert guidance for building and working with MCP clients
 
 This rule provides guidance for building and working with Model Context Protocol (MCP) clients.
 

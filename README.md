@@ -152,7 +152,7 @@ Follow the Greenfield development workflow:
 │       └── src/                 # Package source code
 │           └── cursor_rules_mcp_server/ # Package code
 ├── src/                         # Python source code
-│   └── goob_ai/                 # Core application modules
+│   └── codegen_lab/                 # Core application modules
 ├── tests/                       # Test suites
 │   ├── integration/             # Integration tests
 │   └── unittests/               # Unit tests
@@ -404,3 +404,7 @@ Here's how you might use these rules in a typical development session:
 ## Credits
 
 These rules are based on Harper Reed's blog post ["My LLM codegen workflow atm"](https://harper.blog/2025/02/16/my-llm-codegen-workflow-atm/) which describes an effective iterative development workflow using LLMs.
+
+## Documentation
+
+- [Cursor Rules Styles and Migration](docs/cursor-rules-styles.md) - Guide to cursor rule formats and migration process

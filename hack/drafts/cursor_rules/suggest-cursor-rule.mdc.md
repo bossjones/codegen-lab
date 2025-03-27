@@ -1,6 +1,7 @@
 ---
 description: Intelligent cursor rule recommendation based on user queries
 globs: "**/*"
+alwaysApply: false
 ---
 
 # Cursor Rule Recommender

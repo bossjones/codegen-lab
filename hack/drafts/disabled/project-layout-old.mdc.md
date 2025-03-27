@@ -47,7 +47,7 @@ globs: ["**/*.md", "**/*.py", "**/*.mdc"]
         "src": {
             "description": "Python source code",
             "subdirectories": {
-                "goob_ai": "Core application code"
+                "codegen_lab": "Core application code"
             }
         },
         "packages": {
@@ -105,7 +105,7 @@ This repository implements the Greenfield development methodology for AI-augment
 │       └── src/                 # Package source code
 │           └── cursor_rules_mcp_server/ # Package code
 ├── src/                         # Python source code
-│   └── goob_ai/                 # Core application modules
+│   └── codegen_lab/                 # Core application modules
 ├── tests/                       # Test suites
 │   ├── integration/             # Integration tests
 │   └── unittests/               # Unit tests
@@ -127,7 +127,7 @@ This repository implements the Greenfield development methodology for AI-augment
         docstrings, and modular organization.
     </description>
     <structure>
-        - goob_ai/: Core application modules
+        - codegen_lab/: Core application modules
     </structure>
 </component>
 

@@ -1,8 +1,6 @@
 ---
 description: Automatically update README.md files with nested directory structures
-globs:
-  - "**/README.md"
-  - "**/*.md"
+globs: **/README.md, **/*.md
 alwaysApply: false
 ---
 # Update Markdown Nested Lists

@@ -5,32 +5,33 @@ This module contains MCP prompt functions for cursor rule generation, including:
 - generate_cursor_rule_prompt: Generate a custom cursor rule based on repository information
 
 Migration Plan for prompts.py:
-- [ ] Import all necessary dependencies
-- [ ] Update type imports to use models and utils modules
-- [ ] Implement repo_analysis_prompt:
-  - [ ] Set up proper context handling
-  - [ ] Create prompt structure with clear instructions
-  - [ ] Define system message with detailed analysis instructions
-  - [ ] Handle user input formatting and validation
-  - [ ] Process and format assistant response
-  - [ ] Add error handling for API failures
-  - [ ] Add logging for debugging
-- [ ] Implement generate_cursor_rule_prompt:
-  - [ ] Set up proper context handling
-  - [ ] Create prompt structure with rule generation instructions
-  - [ ] Define system message with formatting guidelines
-  - [ ] Incorporate template rule if provided
-  - [ ] Process and validate user inputs
-  - [ ] Format AI response into proper structure
-  - [ ] Add error handling for API failures
-  - [ ] Add logging for debugging
-- [ ] Add proper docstrings and type hints
-- [ ] Update __init__.py to re-export prompts
-- [ ] Verify functionality through manual testing
+- [x] Import all necessary dependencies
+- [x] Update type imports to use models and utils modules
+- [x] Implement repo_analysis_prompt:
+  - [x] Set up proper context handling
+  - [x] Create prompt structure with clear instructions
+  - [x] Define system message with detailed analysis instructions
+  - [x] Handle user input formatting and validation
+  - [x] Process and format assistant response
+  - [x] Add error handling for API failures
+  - [x] Add logging for debugging
+- [x] Implement generate_cursor_rule_prompt:
+  - [x] Set up proper context handling
+  - [x] Create prompt structure with rule generation instructions
+  - [x] Define system message with formatting guidelines
+  - [x] Incorporate template rule if provided
+  - [x] Process and validate user inputs
+  - [x] Format AI response into proper structure
+  - [x] Add error handling for API failures
+  - [x] Add logging for debugging
+- [x] Add proper docstrings and type hints
+- [x] Update __init__.py to re-export prompts
+- [x] Verify functionality through manual testing
 """
 
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 if TYPE_CHECKING:
@@ -40,10 +41,17 @@ if TYPE_CHECKING:
 
 from codegen_lab.promptlib import mcp
 
+# Set up logging
+logger = logging.getLogger(__name__)
+
 
 @mcp.prompt(name="repo-analysis", description="Analyze a repository to gather information for cursor rule creation")
 def repo_analysis_prompt(
-    repo_description: str, main_languages: str, file_patterns: str, key_features: str, ctx: Context | None = None
+    repo_description: str,
+    main_languages: str,
+    file_patterns: str,
+    key_features: str,
+    ctx: Context | None = None,
 ) -> list[dict[str, Any]]:
     """Analyze a repository to gather information for cursor rule creation.
 
@@ -58,17 +66,69 @@ def repo_analysis_prompt(
         List[Dict[str, Any]]: Analysis results
 
     """
-    # This function will be implemented in a later phase
-    # For now, it's a placeholder that references the original implementation
-    from codegen_lab.promptlib import repo_analysis_prompt as original_repo_analysis_prompt
+    try:
+        logger.debug("Starting repository analysis prompt")
+        logger.debug(f"Repository description: {repo_description}")
+        logger.debug(f"Main languages: {main_languages}")
+        logger.debug(f"File patterns: {file_patterns}")
+        logger.debug(f"Key features: {key_features}")
 
-    return original_repo_analysis_prompt(
-        repo_description=repo_description,
-        main_languages=main_languages,
-        file_patterns=file_patterns,
-        key_features=key_features,
-        ctx=ctx,
-    )
+        # Create system message
+        system_message = """You are an expert code analyzer tasked with analyzing repository information to identify:
+1. Common patterns and best practices that should be enforced
+2. Potential issues that should be prevented
+3. Architectural guidelines that should be followed
+4. Testing and documentation requirements
+5. Security considerations
+
+Based on the repository information provided, generate a comprehensive analysis that will be used to create cursor rules."""
+
+        # Create user message with repository information
+        user_message = f"""Please analyze this repository:
+
+Description: {repo_description}
+Main Languages: {main_languages}
+File Patterns: {file_patterns}
+Key Features: {key_features}
+
+Provide the following analysis sections:
+1. Repository Overview
+2. Common Patterns Identified
+3. Recommended Rule Categories
+4. Analysis Summary"""
+
+        # Create messages list
+        messages = [
+            {"role": "system", "content": system_message},
+            {"role": "user", "content": user_message},
+        ]
+
+        # Call the LLM through the context
+        if ctx:
+            response = ctx.llm.create_chat_completion(
+                model="gpt-4",
+                messages=messages,
+                temperature=0.7,
+                max_tokens=2000,
+            )
+
+            # Process and format the response
+            analysis_sections = response.choices[0].message.content.split("\n\n")
+            formatted_response = []
+
+            for section in analysis_sections:
+                if section.strip():
+                    formatted_response.append({"text": section.strip()})
+
+            logger.debug("Repository analysis prompt completed successfully")
+            return formatted_response
+        else:
+            logger.error("No context provided for LLM interaction")
+            return [{"text": "Error: No context provided for LLM interaction"}]
+
+    except Exception as e:
+        logger.error(f"Error in repository analysis prompt: {e!s}", exc_info=True)
+        return [{"text": f"Error: {e!s}"}]
 
 
 @mcp.prompt(name="generate-cursor-rule", description="Generate a custom cursor rule based on repository information")
@@ -102,19 +162,70 @@ def generate_cursor_rule_prompt(
         List[Dict[str, Any]]: Generated cursor rule
 
     """
-    # This function will be implemented in a later phase
-    # For now, it's a placeholder that references the original implementation
-    from codegen_lab.promptlib import generate_cursor_rule_prompt as original_generate_cursor_rule_prompt
+    try:
+        logger.debug("Starting cursor rule generation prompt")
+        logger.debug(f"Rule name: {rule_name}")
+        logger.debug(f"Description: {description}")
+        logger.debug(f"File patterns: {file_patterns}")
+        logger.debug(f"Content patterns: {content_patterns}")
 
-    return original_generate_cursor_rule_prompt(
-        rule_name=rule_name,
-        description=description,
-        file_patterns=file_patterns,
-        content_patterns=content_patterns,
-        action_message=action_message,
-        examples=examples,
-        tags=tags,
-        priority=priority,
-        template_rule=template_rule,
-        ctx=ctx,
-    )
+        # Create system message
+        system_message = """You are an expert in creating cursor rules that help maintain code quality and consistency.
+Your task is to generate a well-structured cursor rule in MDC format that includes:
+1. A clear description of the rule's purpose
+2. Appropriate file and content pattern matching
+3. Helpful action messages that guide developers
+4. Relevant examples demonstrating the rule's application
+5. Proper metadata including tags and priority
+
+Follow these guidelines:
+- Use clear and concise language
+- Include specific pattern matching
+- Provide actionable guidance
+- Use realistic examples
+- Ensure proper MDC formatting"""
+
+        # Create user message with rule information
+        user_message = f"""Please generate a cursor rule with the following specifications:
+
+Name: {rule_name}
+Description: {description}
+File Patterns: {file_patterns}
+Content Patterns: {content_patterns}
+Action Message: {action_message}
+Examples: {examples}
+Tags: {tags}
+Priority: {priority}
+
+{f"Use this template as a starting point:\n\n{template_rule}" if template_rule else ""}
+
+Generate the complete cursor rule in MDC format."""
+
+        # Create messages list
+        messages = [
+            {"role": "system", "content": system_message},
+            {"role": "user", "content": user_message},
+        ]
+
+        # Call the LLM through the context
+        if ctx:
+            response = ctx.llm.create_chat_completion(
+                model="gpt-4",
+                messages=messages,
+                temperature=0.7,
+                max_tokens=2000,
+            )
+
+            # Process and format the response
+            rule_content = response.choices[0].message.content.strip()
+            formatted_response = [{"text": rule_content}]
+
+            logger.debug("Cursor rule generation completed successfully")
+            return formatted_response
+        else:
+            logger.error("No context provided for LLM interaction")
+            return [{"text": "Error: No context provided for LLM interaction"}]
+
+    except Exception as e:
+        logger.error(f"Error in cursor rule generation prompt: {e!s}", exc_info=True)
+        return [{"text": f"Error: {e!s}"}]

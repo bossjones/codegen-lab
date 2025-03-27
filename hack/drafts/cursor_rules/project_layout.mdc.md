@@ -1,9 +1,11 @@
 ---
-description: Documentation of the Codegen Lab project structure, organization, and Greenfield development process
-globs: **/*.md, **/*.py, **/*.mdc
+description:
+globs:
 alwaysApply: false
 ---
 # Codegen Lab Project Layout
+
+ Documentation of the Codegen Lab project structure, organization, and Greenfield development process
 
 Rules for understanding and navigating the Codegen Lab project structure.
 
@@ -51,7 +53,7 @@ actions:
       │       └── src/                 # Package source code
       │           └── cursor_rules_mcp_server/ # Package code
       ├── src/                         # Python source code
-      │   └── goob_ai/                 # Core application modules
+      │   └── codegen_lab/                 # Core application modules
       ├── tests/                       # Test suites
       │   ├── integration/             # Integration tests
       │   └── unittests/               # Unit tests
@@ -101,7 +103,7 @@ examples:
   - input: |
       # I'm new to the project, where should I put my Python code?
     output: |
-      For core application code, use the `src/goob_ai/` directory.
+      For core application code, use the `src/codegen_lab/` directory.
 
       For modular packages that might be reused or published separately, create a new package in the `packages/` directory using:
       ```bash

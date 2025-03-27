@@ -1,4 +1,12 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+
 # Python Modularization Guide
+
+Code organization patterns and best practices for Python projects
 
 This rule provides guidance for organizing Python code into well-structured modules and packages.
 

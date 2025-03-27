@@ -1,4 +1,12 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+
 # Python TDD Basics
+
+ Core Test-Driven Development (TDD) workflow and testing practices for Python projects
 
 This rule provides guidance for Test-Driven Development (TDD) in Python projects, focusing on core testing practices and workflow.
 

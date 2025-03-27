@@ -176,7 +176,34 @@ update-cursor-rules:  ## Update cursor rules from prompts/drafts/cursor_rules
 	# Exclude README.md files from being copied
 	find hack/drafts/cursor_rules -type f -name "*.md" ! -name "README.md" -exec sh -c 'for file; do target=$${file%.md}; cp -a "$$file" ".cursor/rules/$$(basename "$$target")"; done' sh {} +
 
-
+.PHONY: update-cursor-rules-dry-run
+update-cursor-rules-dry-run:  ## Show which cursor rules would be updated (dry run)
+	@echo "🔍 Checking which cursor rules would be updated..."
+	@find hack/drafts/cursor_rules -type f -name "*.md" ! -name "README.md" -exec sh -c '\
+		RED="\x1b[31m"; \
+		GREEN="\x1b[32m"; \
+		YELLOW="\x1b[33m"; \
+		RESET="\x1b[0m"; \
+		for file do \
+			source="$$file"; \
+			target=".cursor/rules/$$(basename "$${file%.md}")"; \
+			if [ -f "$$target" ]; then \
+				if ! diff -q "$$source" "$$target" >/dev/null 2>&1; then \
+					printf "$${YELLOW}⚠️  Would update: %s$${RESET}\n" "$$target"; \
+					echo "   Changes:"; \
+					diff -u "$$target" "$$source" | tail -n +3 | grep "^[+-]" | sed -E "\
+						s/^\\+(.*)/$${GREEN}   +\\1$${RESET}/; \
+						s/^-(.*)/$${RED}   -\\1$${RESET}/"; \
+					echo; \
+				fi; \
+			else \
+				printf "$${GREEN}✨ Would create new file: %s$${RESET}\n" "$$target"; \
+				printf "   Content from: %s\n" "$$source"; \
+				echo; \
+			fi; \
+		done \
+	' _ {} +
+	@echo "\n🔍 Dry run complete. Run 'make update-cursor-rules' to apply these changes."
 
 # Documentation targets
 .PHONY: docs-serve docs-build docs-deploy docs-clean
@@ -270,6 +297,11 @@ relint-cursor-rules: ## Run relint via pre-commit on all cursor rule files track
 	@echo "🚀 Running relint on cursor rule files"
 	@git ls-files 'hack/drafts/cursor_rules/*.mdc.md' 'hack/drafts/cursor_rules/*.mdc' '.cursor/rules/*.mdc' | xargs uv run pre-commit run relint --files
 
+.PHONY: relint-cursor
+relint-cursor: ## Run relint via pre-commit on .cursor directory
+	@echo "🚀 Running relint on .cursor directory"
+	@find .cursor -type f | xargs uv run pre-commit run relint --files
+
 .DEFAULT_GOAL := help
 
 .PHONY: unittests
@@ -319,11 +351,11 @@ local-open-coverage: ## open coverage report in browser
 	./scripts/open-browser.py file://${PWD}/htmlcov/index.html
 
 .PHONY: logs
-logs:
-	tail -f ~/Library/Logs/Claude/mcp-server-prompt_library.log $(shell find "/Users/malcolm/Library/Application Support/Cursor Nightly/logs/" -type f -name "*.log" -mtime 0) | ccze -A
+logs: ## Open the cursor logs in the browser
+	./scripts/cursor-logs.sh
 
 .PHONY: cursor-logs
-cursor-logs:
+cursor-logs: ## Open the cursor logs in the browser
 	./scripts/cursor-logs.sh
 
 # Pre-commit Tasks
@@ -340,13 +372,26 @@ pre-commit-update:  ## Update pre-commit hooks to latest versions
 	uv run pre-commit autoupdate
 
 
-# Bump
-# Used if we want a minor release.
-bump-minor:
+bump-minor: ## Bump the version to the next minor version
 	bump-my-version bump minor
 
 # Release
 # 1. Create release-commit: bump-version to stable + changelog-update + build package
 # 2. Create bump-commit: bump-version to next cycle
-release: clean
+release: clean ## Release a new version
 	./scripts/release-main.sh
+
+check-rule-lines: ## Check the number of lines in each cursor rule file
+	./scripts/check_rule_lines.py .cursor/rules/
+
+audit-cursor-rules-stage: ## Audit the cursor rules in the staging environment
+	uv run scripts/audit_cursor_rules_headers.py
+
+audit-cursor-rules-stage-desc: ## Audit the cursor rules in the staging environment with descriptions
+	uv run scripts/audit_cursor_rules_headers.py --desc
+
+audit-cursor-rules-prod: ## Audit the cursor rules in the production environment
+	uv run scripts/audit_cursor_rules_headers.py --prod
+
+audit-cursor-rules-prod-desc: ## Audit the cursor rules in the production environment with descriptions
+	uv run scripts/audit_cursor_rules_headers.py --prod --desc

@@ -1,9 +1,10 @@
 ---
-description: Guide to integrating dpytest with other testing tools and CI/CD systems
-globs: *.py
+description:
+globs:
 alwaysApply: false
 ---
 # dpytest Integration Guide
+Guide to integrating dpytest with other testing tools and CI/CD systems
 
 Documentation for integrating dpytest with other testing tools and CI/CD systems.
 

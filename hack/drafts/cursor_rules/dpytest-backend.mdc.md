@@ -1,10 +1,10 @@
 ---
-description: Comprehensive guide to dpytest's backend simulation system for Discord bot testing
-globs: *.py
+description:
+globs:
 alwaysApply: false
 ---
 # dpytest Backend System
-
+Comprehensive guide to dpytest's backend simulation system for Discord bot testing
 Detailed documentation of how dpytest simulates Discord's backend for testing.
 
 <rule>

@@ -1,9 +1,11 @@
 ---
-description: This rule provides comprehensive best practices for using pyright and BasedPyright in Python projects, covering code organization, patterns, performance, security, testing, common pitfalls, and tooling.
-globs: **/*.py
+description:
+globs:
 alwaysApply: false
 ---
 # pyright and BasedPyright Best Practices: A Comprehensive Guide
+
+This rule provides comprehensive best practices for using pyright and BasedPyright in Python projects, covering code organization, patterns, performance, security, testing, common pitfalls, and tooling.
 
 This guide provides comprehensive best practices for using pyright and BasedPyright in Python projects. These practices cover code organization, design patterns, performance optimization, security considerations, testing strategies, common pitfalls, and recommended tooling.
 

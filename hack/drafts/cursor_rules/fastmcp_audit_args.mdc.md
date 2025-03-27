@@ -1,10 +1,12 @@
 ---
-description: Fast Python MCP Server Development
-globs: *.py
+description:
+globs:
 alwaysApply: false
 ---
 
 # FastMCP Tool and Resource Argument Audit Guide
+
+Fast Python MCP Server Development
 
 This rule provides a systematic approach for auditing, improving, and maintaining FastMCP tool and resource decorators with proper argument descriptions, return type annotations, and error handling.
 
