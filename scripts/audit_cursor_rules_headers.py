@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Script to audit cursor rule files in hack/drafts/cursor_rules directory for proper YAML frontmatter headers.
+Script to audit cursor rule files in hack/drafts/cursor_rules or .cursor/rules directory
+for proper YAML frontmatter headers.
 
 This script checks for:
 1. Presence of YAML frontmatter (enclosed by ---)
@@ -10,6 +11,7 @@ This script checks for:
 5. Absence of quotes around glob patterns
 """
 
+import argparse
 import os
 import re
 from typing import Any, Dict, List, Optional, Tuple
@@ -201,6 +203,9 @@ def audit_cursor_rules(directory: str) -> tuple[dict[str, list[str]], dict[str, 
     results = {}
     frontmatter_info = {}
 
+    if not os.path.exists(directory):
+        return {directory: [f"Directory not found: {directory}"]}, {}
+
     for root, _, files in os.walk(directory):
         for file in files:
             if file.endswith(".mdc.md") or file.endswith(".mdc"):
@@ -274,16 +279,48 @@ def print_rule_type_examples(console: Console) -> None:
         console.print(panel)
 
 
+def parse_arguments() -> argparse.Namespace:
+    """
+    Parse command line arguments.
+
+    Returns:
+        Parsed arguments
+    """
+    parser = argparse.ArgumentParser(
+        description="Audit cursor rule files for proper YAML frontmatter headers."
+    )
+    parser.add_argument(
+        "--prod",
+        action="store_true",
+        help="Check production directory (.cursor/rules) instead of staging (hack/drafts/cursor_rules)"
+    )
+    return parser.parse_args()
+
+
 def main() -> None:
     """Main function to audit cursor rule headers."""
-    console = Console()
-    directory = "hack/drafts/cursor_rules"
+    args = parse_arguments()
 
-    console.print(f"[bold]Auditing cursor rule headers in [blue]{directory}[/blue]...[/bold]")
+    # Set directory based on args
+    if args.prod:
+        directory = ".cursor/rules"
+        env_name = "production"
+    else:
+        directory = "hack/drafts/cursor_rules"
+        env_name = "staging"
+
+    console = Console()
+    console.print(f"[bold]Auditing cursor rule headers in [blue]{directory}[/blue] ({env_name} environment)...[/bold]")
+
     results, frontmatter_info = audit_cursor_rules(directory)
 
+    # Handle directory not found
+    if directory in results:
+        console.print(f"[bold red]Error:[/bold red] {results[directory][0]}")
+        return
+
     # Create a table for rule types
-    rule_table = Table(title="Cursor Rule Types", box=box.ROUNDED)
+    rule_table = Table(title=f"Cursor Rule Types in {env_name} environment", box=box.ROUNDED)
     rule_table.add_column("File", style="dim")
     rule_table.add_column("Rule Type")
 

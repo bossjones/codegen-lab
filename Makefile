@@ -388,3 +388,6 @@ check-rule-lines:
 
 audit-cursor-rules:
 	uv run scripts/audit_cursor_rules_headers.py
+
+audit-cursor-rules-prod:
+	uv run scripts/audit_cursor_rules_headers.py --prod

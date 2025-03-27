@@ -1,7 +1,7 @@
 ---
 description: Validate and fix frontmatter in cursor rule files
 globs: *.mdc, *.mdc.md
-alwaysApply: true
+alwaysApply: false
 ---
 
 # Cursor Rule Frontmatter Validator
