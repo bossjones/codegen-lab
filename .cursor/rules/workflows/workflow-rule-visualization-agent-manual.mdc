@@ -82,6 +82,7 @@ The Mermaid diagram should:
    - Dotted border: Consider removing or consolidating
    - Bold border: Keep as automatic trigger
 9. Include a comprehensive legend section that explains rule types and their attributes
+10. Add a consolidated context load subgraph at the end that shows all active rules grouped together and their total context impact
 
 ## Important Notes
 
@@ -144,12 +145,31 @@ flowchart TD
     notify.mdc
     tree.mdc"]
 
+    %% Add context load summary subgraph
+    subgraph ContextLoad["Total Context Load (estimated 15,200 tokens)"]
+        AllActiveRules["All Active Rules"] --> ActiveAlways["Always Rules (2,300 tokens)
+        - emoji-communication-always.mdc (2,300)"]
+
+        AllActiveRules --> ActiveAutoSelect["Auto Select Rules (5,700 tokens)
+        - changelog-specific.mdc (2,800)
+        - documentation-standards.mdc (2,900)"]
+
+        AllActiveRules --> ActiveAutoDesc["Auto Select+desc Rules (7,200 tokens)
+        - markdown-auto.mdc (3,500)
+        - repomix.mdc (1,800)
+        - notify.mdc (900)
+        - tree.mdc (1,000)"]
+    end
+
     style Query fill:#f9f,stroke:#333,stroke-width:2px
     style Always fill:#f0f,stroke:#333,stroke-width:1px
     style AutoSelect fill:#0d0,stroke:#333,stroke-width:1px
     style AutoSelectDesc fill:#00f,stroke:#333,stroke-width:1px
     style AgentSelected fill:#0dd,stroke:#333,stroke-width:1px
     style Manual fill:#ff0,stroke:#333,stroke-width:1px
+    style ContextLoad fill:#ffd,stroke:#f00,stroke-width:3px
+    style AllActiveRules fill:#faa,stroke:#333,stroke-width:2px
+    style ActiveAlways,ActiveAutoSelect,ActiveAutoDesc fill:#afa,stroke:#333,stroke-width:1px
 
     classDef activated fill:#afa,stroke:#333,stroke-width:2px
     class AlwaysRules,MarkdownRules,GeneralRules activated
