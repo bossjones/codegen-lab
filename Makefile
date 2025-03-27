@@ -351,11 +351,11 @@ local-open-coverage: ## open coverage report in browser
 	./scripts/open-browser.py file://${PWD}/htmlcov/index.html
 
 .PHONY: logs
-logs:
-	tail -f ~/Library/Logs/Claude/mcp-server-prompt_library.log $(shell find "/Users/malcolm/Library/Application Support/Cursor Nightly/logs/" -type f -name "*.log" -mtime 0) $(shell find "/Users/malcolm/Library/Application Support/Cursor/logs/" -type f -name "*.log" -mtime 0) | ccze -A
+logs: ## Open the cursor logs in the browser
+	./scripts/cursor-logs.sh
 
 .PHONY: cursor-logs
-cursor-logs:
+cursor-logs: ## Open the cursor logs in the browser
 	./scripts/cursor-logs.sh
 
 # Pre-commit Tasks
@@ -372,26 +372,26 @@ pre-commit-update:  ## Update pre-commit hooks to latest versions
 	uv run pre-commit autoupdate
 
 
-# Bump
-# Used if we want a minor release.
-bump-minor:
+bump-minor: ## Bump the version to the next minor version
 	bump-my-version bump minor
 
 # Release
 # 1. Create release-commit: bump-version to stable + changelog-update + build package
 # 2. Create bump-commit: bump-version to next cycle
-release: clean
+release: clean ## Release a new version
 	./scripts/release-main.sh
 
-check-rule-lines:
+check-rule-lines: ## Check the number of lines in each cursor rule file
 	./scripts/check_rule_lines.py .cursor/rules/
 
-audit-cursor-rules:
+audit-cursor-rules-stage: ## Audit the cursor rules in the staging environment
 	uv run scripts/audit_cursor_rules_headers.py
 
-audit-cursor-rules-prod:
+audit-cursor-rules-stage-desc: ## Audit the cursor rules in the staging environment with descriptions
+	uv run scripts/audit_cursor_rules_headers.py --desc
+
+audit-cursor-rules-prod: ## Audit the cursor rules in the production environment
 	uv run scripts/audit_cursor_rules_headers.py --prod
 
-
-audit-cursor-rules-prod-desc:
+audit-cursor-rules-prod-desc: ## Audit the cursor rules in the production environment with descriptions
 	uv run scripts/audit_cursor_rules_headers.py --prod --desc
