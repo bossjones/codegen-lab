@@ -49,6 +49,31 @@ This agent specializes in analyzing and visualizing when and how Cursor Rules ge
 6. Recommend rules to convert to manual invocation or remove
 7. Save the analysis to `debugging_rules_mermaid.md`
 
+## Token Count Estimation
+
+To accurately estimate token counts for each rule:
+
+1. Use the token_counter.py script to calculate actual token usage:
+   ```bash
+   # For a single rule file
+   uv run python scripts/token_counter.py -f .cursor/rules/path/to/rule.mdc
+
+   # For multiple rule files in a directory
+   uv run python scripts/token_counter.py -f .cursor/rules/path/to/*.mdc
+   ```
+
+2. Include token counts in the analysis:
+   - For each rule in the diagram
+   - For total context bloat calculations
+   - For optimization recommendations
+
+3. Categorize rules by token usage:
+   - Low impact: < 500 tokens
+   - Medium impact: 500-2000 tokens
+   - High impact: > 2000 tokens
+
+4. Integrate these counts into the Mermaid diagram to visualize context load
+
 ## Implementation Steps
 
 1. Execute the appropriate make command for the environment
@@ -58,8 +83,12 @@ This agent specializes in analyzing and visualizing when and how Cursor Rules ge
    - Include Always rules
    - Include relevant Auto Select and Auto Select+desc rules
    - Consider Agent Selected rules that may be relevant
-4. Generate a Mermaid diagram showing the relationships
-5. Write the diagram to `debugging_rules_mermaid.md`
+4. Run token count estimation for all identified rules
+   ```bash
+   uv run python scripts/token_counter.py -f .cursor/rules/path/to/rule.mdc
+   ```
+5. Generate a Mermaid diagram showing the relationships and token counts
+6. Write the diagram to `debugging_rules_mermaid.md`
 
 ## Mermaid Diagram Structure
 
@@ -91,7 +120,7 @@ The Mermaid diagram should:
 - Always save the output to `debugging_rules_mermaid.md`
 - Include the specific query or file type in the diagram and analysis
 - Show which rules would automatically activate in that scenario
-- Estimate token count for each rule and total context bloat
+- Use token_counter.py for accurate token count estimates rather than guessing
 - Provide specific recommendations for:
   - Rules to convert to manual invocation (via @rule-name)
   - Rules to consolidate or remove due to overlap
@@ -127,7 +156,16 @@ For a query like "Update my changelog.md":
    - Rules with glob patterns matching *.md would apply
    - Other relevant rules based on context
 
-3. Generate a Mermaid diagram and save it to debugging_rules_mermaid.md:
+3. Run token count for each identified rule:
+   ```bash
+   # Example for getting token counts
+   uv run python scripts/token_counter.py -f .cursor/rules/global-rules/emoji-communication-always.mdc
+   uv run python scripts/token_counter.py -f .cursor/rules/documentation/markdown-auto.mdc
+   ```
+
+4. Generate a Mermaid diagram with actual token counts and save it to debugging_rules_mermaid.md:
+
+<example>
 
 <div class="mermaid-container" style="overflow: auto; max-width: 100%;">
 
@@ -144,28 +182,30 @@ flowchart TD
     RuleTypes --> AgentSelected["Agent Selected Rules"]
     RuleTypes --> Manual["Manual Rules"]
 
-    Always --> AlwaysRules["emoji-communication-always.mdc"]
+    Always --> AlwaysRules["emoji-communication-always.mdc
+    (782 tokens)"]
 
-    AutoSelectDesc --> MarkdownRules["documentation/markdown-auto.mdc"]
-    AutoSelectDesc --> GeneralRules["repomix.mdc
-    repo_analyzer.mdc
-    notify.mdc
-    tree.mdc"]
+    AutoSelectDesc --> MarkdownRules["documentation/markdown-auto.mdc
+    (2,347 tokens)"]
+    AutoSelectDesc --> GeneralRules["repomix.mdc (1,426 tokens)
+    repo_analyzer.mdc (1,853 tokens)
+    notify.mdc (634 tokens)
+    tree.mdc (972 tokens)"]
 
     %% Add context load summary subgraph
-    subgraph ContextLoad["Total Context Load (estimated 15,200 tokens)"]
-        AllActiveRules["All Active Rules"] --> ActiveAlways["Always Rules (2,300 tokens)
-        - emoji-communication-always.mdc (2,300)"]
+    subgraph ContextLoad["Total Context Load (8,014 tokens)"]
+        AllActiveRules["All Active Rules"] --> ActiveAlways["Always Rules (782 tokens)
+        - emoji-communication-always.mdc (782)"]
 
-        AllActiveRules --> ActiveAutoSelect["Auto Select Rules (5,700 tokens)
-        - changelog-specific.mdc (2,800)
-        - documentation-standards.mdc (2,900)"]
+        AllActiveRules --> ActiveAutoSelect["Auto Select Rules (0 tokens)
+        - No active rules"]
 
-        AllActiveRules --> ActiveAutoDesc["Auto Select+desc Rules (7,200 tokens)
-        - markdown-auto.mdc (3,500)
-        - repomix.mdc (1,800)
-        - notify.mdc (900)
-        - tree.mdc (1,000)"]
+        AllActiveRules --> ActiveAutoDesc["Auto Select+desc Rules (7,232 tokens)
+        - markdown-auto.mdc (2,347)
+        - repomix.mdc (1,426)
+        - repo_analyzer.mdc (1,853)
+        - notify.mdc (634)
+        - tree.mdc (972)"]
     end
 
     style Query fill:#f9f,stroke:#333,stroke-width:2px
@@ -183,3 +223,9 @@ flowchart TD
 ```
 
 </div>
+
+</example>
+
+<example type="invalid">
+fixed stuff
+</example>
