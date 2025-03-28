@@ -12,3 +12,6 @@
 # ----------------------------------
 # Templates - accessible but not indexed
 .cursor/templates/
+# NOTE:  I have updated the repo to properly add .cursor/rules/* to the .cursorindexingignore - without this, you will run into a lot of flakiness when trying to edit or tweak an existing rule or change its type without reindexing the whole project. This will make A BIG difference.
+# SOURCE: https://github.com/bmadcode/cursor-auto-rules-agile-workflow/commit/9f6cd28458251927b6548d5dc8f9e7c04e89202b
+.cursor/rules/*
