@@ -228,3 +228,19 @@ doc-build format="google" output="gh-docs": clean-docs
 [group('doc')]
 doc-serve format="google" port="8088":
     uv run pdoc --docformat={{format}} --port={{port}} {{SOURCES}}/{{PACKAGE}}
+
+# run release tasks
+[group('release')]
+release: release-create
+
+# create a GitHub release with version from pyproject.toml
+[group('release')]
+release-create:
+    #!/usr/bin/env zsh
+    VERSION=$({{GREP_CMD}} -h '^version = ".*"' pyproject.toml | {{SED_CMD}} 's/^version = "\(.*\)"/\1/')
+    uv run gh release create "v$VERSION" --generate-notes
+
+# list all GitHub releases
+[group('release')]
+release-list:
+    uv run gh release list
