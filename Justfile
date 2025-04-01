@@ -238,7 +238,22 @@ release: release-create
 release-create:
     #!/usr/bin/env zsh
     VERSION=$({{GREP_CMD}} -h '^version = ".*"' pyproject.toml | {{SED_CMD}} 's/^version = "\(.*\)"/\1/')
+    if [ -z "$VERSION" ]; then
+        echo "Error: Could not extract version from pyproject.toml"
+        exit 1
+    fi
     uv run gh release create "v$VERSION" --generate-notes
+
+# dry run of creating a GitHub release (echoes the command instead of executing it)
+[group('release')]
+release-create-dry-run:
+    #!/usr/bin/env zsh
+    VERSION=$({{GREP_CMD}} -h '^version = ".*"' pyproject.toml | {{SED_CMD}} 's/^version = "\(.*\)"/\1/')
+    if [ -z "$VERSION" ]; then
+        echo "Error: Could not extract version from pyproject.toml"
+        exit 1
+    fi
+    echo "Would run: gh release create \"v$VERSION\" --generate-notes"
 
 # list all GitHub releases
 [group('release')]
