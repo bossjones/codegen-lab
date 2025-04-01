@@ -42,7 +42,7 @@ import os
 import sys
 import traceback
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union, cast
+from typing import Any, Dict, List, Literal, Optional, Tuple, Union, cast
 
 import typer
 from mcp import ClientSession, StdioServerParameters
@@ -120,7 +120,7 @@ class InputValidationError(MCPClientError):
 class StdioServerConfig(BaseModel):
     """Configuration for a stdio server."""
 
-    type: str = Field("stdio", const=True)
+    type: Literal["stdio"] = "stdio"
     command: str
     args: list[str] = Field(default_factory=list)
     env: dict[str, str] = Field(default_factory=dict)
@@ -129,7 +129,7 @@ class StdioServerConfig(BaseModel):
 class SSEServerConfig(BaseModel):
     """Configuration for an SSE server."""
 
-    type: str = Field("sse", const=True)
+    type: Literal["sse"] = "sse"
     url: str
     headers: dict[str, str] = Field(default_factory=dict)
 

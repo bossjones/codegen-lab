@@ -57,7 +57,7 @@ jobs:
           brew install zsh || true
 
       - name: Sync dependencies with UV
-        run: uv sync --all-groups
+        run: uv sync --dev
 
       - name: Build documentation
         run: uv run just doc
