@@ -7,11 +7,6 @@ runs:
       uses: astral-sh/setup-uv@v5
       with:
         enable-cache: true
-        persist-credentials: false
-        cache-dependency-glob: |
-          **/requirements*.txt
-          **/pyproject.toml
-          **/uv.lock
     - name: Setup Python
       uses: actions/setup-python@v5
       with:

@@ -173,6 +173,11 @@ repos:
       - id: commitizen-branch
         stages: [pre-push]
 
+  # - repo: https://github.com/rhysd/actionlint
+  #   rev: v1.7.7
+  #   hooks:
+  #     - id: actionlint
+
   # - repo: local
   #   hooks:
   #       - id: uv-lock-check
