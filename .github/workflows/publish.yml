@@ -52,6 +52,11 @@ jobs:
         with:
           limit-access-to-actor: true
 
+      - name: Install additional ubuntu dependencies zsh etc
+        run: |
+          apt-get update
+          apt-get install zsh -y
+
       - name: Sync dependencies with UV
         run: uv sync --all-groups
 
