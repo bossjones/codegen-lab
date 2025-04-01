@@ -94,7 +94,7 @@ check-type:
 
 # run clean tasks
 [group('clean')]
-clean: clean-build clean-cache clean-constraints clean-coverage clean-docs clean-environment clean-mlruns clean-mypy clean-outputs clean-pytest clean-python clean-requirements clean-ruff
+clean: clean-build clean-cache clean-constraints clean-coverage clean-gh-docs clean-environment clean-mlruns clean-mypy clean-outputs clean-pytest clean-python clean-requirements clean-ruff
 
 # clean build folders
 [group('clean')]
@@ -117,10 +117,10 @@ clean-constraints:
 clean-coverage:
 	rm -rf .coverage*
 
-# clean docs folder
+# clean gh-docs folder
 [group('clean')]
-clean-docs:
-	rm -rf docs/
+clean-gh-docs:
+	rm -rf gh-docs/
 
 # clean environment file
 [group('clean')]
@@ -221,7 +221,7 @@ doc: doc-build
 
 # build documentation
 [group('doc')]
-doc-build format="google" output="gh-docs": clean-docs
+doc-build format="google" output="gh-docs": clean-gh-docs
     uv run pdoc --docformat={{format}} --output-directory={{output}} {{SOURCES}}/{{PACKAGE}}
 
 # serve documentation
@@ -281,3 +281,7 @@ release-delete-dry-run:
         exit 1
     fi
     echo "Would run: gh release delete \"v$VERSION\" --cleanup-tag"
+
+# reset (delete and recreate) a GitHub release with version from pyproject.toml. Use this task to completely reset a release if something went wrong during the initial creation.
+[group('release')]
+release-reset: release-delete release-create
