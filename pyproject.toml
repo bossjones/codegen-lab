@@ -6,6 +6,8 @@ readme = "README.md"
 authors = [
     { name = "Malcolm Jones", email = "bossjones@theblacktonystark.com" }
 ]
+license = { file = "LICENSE.txt" }
+keywords = ["codegen", "lab", "llm", "ai"]
 requires-python = ">=3.12"
 dependencies = [
     "better-exceptions>=0.3.3",
@@ -42,9 +44,14 @@ dependencies = [
 ]
 
 [project.urls]
-"Changelog" = "https://github.com/bossjones/codegen-lab/blob/main/CHANGES.rst"
 "Code" = "https://github.com/bossjones/codegen-lab"
 "Issue tracker" = "https://github.com/bossjones/codegen-lab/issues"
+Homepage = "https://github.com/bossjones/codegen-lab"
+Documentation = "https://bossjones.github.io/codegen-lab/bikes.html"
+Repository = "https://github.com/bossjones/codegen-lab"
+"Bug Tracker" = "https://github.com/bossjones/codegen-lab/issues"
+Changelog = "https://github.com/bossjones/codegen-lab/blob/main/CHANGELOG.md"
+
 
 [project.scripts]
 codegen-lab = "codegen_lab.cli:main"
@@ -65,10 +72,12 @@ packages = ["codegen_lab"]
 [dependency-groups]
 dev = [
     "bpython>=0.25",
+    "commitizen>=4.4.1",
     "coverage[toml]>=7.6.12",
     "debugpy>=1.8.12",
     "mkdocs>=1.6.1",
     "mkdocs-material>=9.6.6",
+    "pdoc>=15.0.1",
     "pre-commit>=4.1.0",
     "pydocstyle>=6.3.0",
     "pylint-per-file-ignores>=1.4.0",
@@ -95,6 +104,7 @@ dev = [
     "requests-mock>=1.12.1",
     "respx>=0.22.0",
     "ruff>=0.9.9",
+    "rust-just>=1.40.0",
     "towncrier>=24.8.0",
     "tox-uv>=1.25.0",
     "types-aiofiles>=24.1.0.20241221",
@@ -168,6 +178,12 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 # Template handling
 "**/import_templates.py" = ["C901", "D401"]
 "scripts/**" = ["UP038", "RUF005", "D103"]
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 
 # ===========================[ COVERAGE CONFIGURATION ]========================
 [tool.coverage.run]
@@ -345,3 +361,18 @@ markers = [
     "chatbotonly: marks tests that run code that utilizes the chatbot module (deselect with '-m \"not chatbotonly\"')",
     "agenticonly: marks tests that run code that utilizes the agentic module (deselect with '-m \"not agenticonly\"')",
 ]
+
+# SOURCE: https://github.com/fmind/mlops-python-package/blob/2a9741f0f97e2213aafb9f3e9bb5b0a9092738cd/pyproject.toml
+[tool.commitizen]
+# Specifies the commitizen plugin to use for creating conventional commits.
+name = "cz_conventional_commits"
+# Defines the format for version tags (e.g., v1.2.3).
+tag_format = "v$version"
+# Declares the versioning scheme to be compliant with PEP 440.
+version_scheme = "pep440"
+# Specifies that the version is defined in pyproject.toml as per PEP 621.
+version_provider = "pep621"
+# Indicates the commit from which to start generating the changelog.
+changelog_start_rev = "v0.1.0"
+# Automatically update the changelog file on version bumps.
+update_changelog_on_bump = true

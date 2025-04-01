@@ -357,6 +357,102 @@ for file in .cursor/rules/*.mdc.md; do
 done
 ```
 
+
+# Tools
+
+This sections motivates the use of developer tools to improve your coding experience.
+
+## Automation
+
+Pre-defined actions to automate your project development.
+
+### AI Assistant: [Gemini Code Assist](https://developers.google.com/gemini-code-assist/docs/review-github-code)
+
+- **Motivations**:
+  - Increase your coding productivity
+  - Get code suggestions and completions
+  - Reduce the time spent on reviewing code
+- **Limitations**:
+  - Can generate wrong code, reviews, or summaries
+
+### Commits: [Commitizen](https://commitizen-tools.github.io/commitizen/)
+
+- **Motivations**:
+  - Format your code commits
+  - Generate a standard changelog
+  - Integrate well with [SemVer](https://semver.org/) and [PEP 440](https://peps.python.org/pep-0440/)
+- **Limitations**:
+  - Learning curve for new users
+- **Alternatives**:
+  - Do It Yourself (DIY)
+
+### Dependabot: [Dependabot](https://docs.github.com/en/code-security/getting-started/dependabot-quickstart-guide)
+
+- **Motivations**:
+  - Avoid security issues
+  - Avoid breaking changes
+  - Update your dependencies
+- **Limitations**:
+  - Can break your code
+- **Alternatives**:
+  - Do It Yourself (DIY)
+
+### Git Hooks: [Pre-Commit](https://pre-commit.com/)
+
+- **Motivations**:
+  - Check your code locally before a commit
+  - Avoid wasting resources on your CI/CD
+  - Can perform extra actions (e.g., file cleanup)
+- **Limitations**:
+  - Add overhead before your commit
+- **Alternatives**:
+  - [Git Hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks): less convenient to use
+
+### Tasks: [Just](https://just.systems/man/en/introduction.html)
+
+- **Motivations**:
+  - Automate project workflows
+  - Sane syntax compared to alternatives
+  - Good trade-off between power and simplicity
+- **Limitations**:
+  - Not familiar to most developers
+- **Alternatives**:
+  - [Make](https://www.gnu.org/software/make/manual/make.html): most popular, but awful syntax
+  - [PyInvoke](https://www.pyinvoke.org/): pythonic, but verbose and less straightforward.
+
+## CI/CD
+
+Execution of automated workflows on code push and releases.
+
+### Runner: [GitHub Actions](https://github.com/features/actions)
+
+- **Motivations**:
+  - Native on GitHub
+  - Simple workflow syntax
+  - Lots of configs if needed
+- **Limitations**:
+  - SaaS Service
+- **Alternatives**:
+  - [GitLab](https://about.gitlab.com/): can be installed on-premise
+
+## CLI
+
+Integrations with the Command-Line Interface (CLI) of your system.
+
+### Parser: [Argparse](https://docs.python.org/3/library/argparse.html)
+
+- **Motivations**:
+  - Provide CLI arguments
+  - Included in Python runtime
+  - Sufficient for providing configs
+- **Limitations**:
+  - More verbose for advanced parsing
+- **Alternatives**:
+  - [Typer](https://typer.tiangolo.com/): code typing for the win
+  - [Fire](https://github.com/google/python-fire): simple but no typing
+  - [Click](https://click.palletsprojects.com/en/latest/): more verbose
+
+
 ## Original README Content
 
 # Non-Greenfield Iterative Development Cursor Rules
