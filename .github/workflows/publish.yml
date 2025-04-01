@@ -15,13 +15,15 @@ env:
 concurrency:
   cancel-in-progress: true
   group: publish-workflow
+permissions:
+  contents: write
 jobs:
   pages:
     name: Test ${{ matrix.os }} / Python ${{ matrix.python-version }}
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest]
+        os: [ubuntu-latest]
         python-version: ["3.12"]
     runs-on: ${{ matrix.os }}
     steps:
@@ -52,9 +54,13 @@ jobs:
         with:
           limit-access-to-actor: true
 
+      # - name: Install additional macos dependencies zsh etc
+      #   run: |
+      #     brew install zsh || true
       - name: Install additional macos dependencies zsh etc
         run: |
-          brew install zsh || true
+          sudo apt-get update
+          sudo apt-get install zsh -y
 
       - name: Sync dependencies with UV
         run: uv sync --dev
@@ -68,11 +74,17 @@ jobs:
           folder: gh-docs/
           branch: gh-pages-pdoc
   packages:
+    name: Test ${{ matrix.os }} / Python ${{ matrix.python-version }}
     permissions:
       # If you do not supply the action with an access token or an SSH key, you must access your repositories settings and provide Read and Write Permissions to the provided GITHUB_TOKEN, otherwise you'll potentially run into permission issues. Alternatively you can set the following in your workflow file to grant the action the permissions it needs.
       # SOURCE: https://github.com/JamesIves/github-pages-deploy-action/tree/v4/
       packages: write
-    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ["3.12"]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -81,11 +93,16 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Sync dev dependencies
-        run: uv sync --only-dev
+        run: uv sync --dev
 
       - name: Install additional macos dependencies zsh etc
         run: |
-          brew install zsh || true
+          sudo apt-get update
+          sudo apt-get install zsh rsync -y
+
+      # - name: Install additional macos dependencies zsh etc
+      #   run: |
+      #     brew install zsh || true
 
       - name: Build package
         run: uv run just package
