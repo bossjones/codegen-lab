@@ -27,7 +27,7 @@ GREP_CMD := if "{{os()}}" =~ "macos" { "ggrep" } else { "grep" }
 SED_CMD := if "{{os()}}" =~ "macos" { "gsed" } else { "sed" }
 PYTHON := "uv run python"
 UV_RUN := "uv run"
-LANGGRAPH_REPLACEMENT := if "{{os()}}" =~ "macos" { `ggrep -h 'langgraph-sdk>=.*",' pyproject.toml | gsed 's/^[[:space:]]*"//; s/",$//'` } else { `grep -h 'langgraph-sdk>=.*",' pyproject.toml | sed 's/^[[:space:]]*"//; s/",$//'` }
+# LANGGRAPH_REPLACEMENT := if "{{os()}}" =~ "macos" { `ggrep -h 'langgraph-sdk>=.*",' pyproject.toml | gsed 's/^[[:space:]]*"//; s/",$//'` } else { `grep -h 'langgraph-sdk>=.*",' pyproject.toml | sed 's/^[[:space:]]*"//; s/",$//'` }
 EXTERNAL_DOCS_PATH := "limbo/bindings/python"
 EXTERNAL_DOCS_MODEL := "claude-3.5-sonnet"
 
