@@ -117,7 +117,7 @@ clean-constraints:
 clean-coverage:
 	rm -rf .coverage*
 
-# clean docs folder
+# clean gh-docs folder
 [group('clean')]
 clean-gh-docs:
 	rm -rf gh-docs/
@@ -282,6 +282,6 @@ release-delete-dry-run:
     fi
     echo "Would run: gh release delete \"v$VERSION\" --cleanup-tag"
 
-# reset (delete and recreate) a GitHub release with version from pyproject.toml
+# reset (delete and recreate) a GitHub release with version from pyproject.toml. Use this task to completely reset a release if something went wrong during the initial creation.
 [group('release')]
 release-reset: release-delete release-create
