@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [macos-latest]
         python-version: ["3.12"]
     runs-on: ${{ matrix.os }}
     steps:
@@ -52,10 +52,9 @@ jobs:
         with:
           limit-access-to-actor: true
 
-      - name: Install additional ubuntu dependencies zsh etc
+      - name: Install additional macos dependencies zsh etc
         run: |
-          sudo apt-get update
-          sudo apt-get install zsh -y
+          brew install zsh || true
 
       - name: Sync dependencies with UV
         run: uv sync --all-groups
@@ -73,7 +72,7 @@ jobs:
       # If you do not supply the action with an access token or an SSH key, you must access your repositories settings and provide Read and Write Permissions to the provided GITHUB_TOKEN, otherwise you'll potentially run into permission issues. Alternatively you can set the following in your workflow file to grant the action the permissions it needs.
       # SOURCE: https://github.com/JamesIves/github-pages-deploy-action/tree/v4/
       packages: write
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -83,6 +82,10 @@ jobs:
 
       - name: Sync dev dependencies
         run: uv sync --only-dev
+
+      - name: Install additional macos dependencies zsh etc
+        run: |
+          brew install zsh || true
 
       - name: Build package
         run: uv run just package
