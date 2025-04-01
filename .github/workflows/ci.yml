@@ -56,6 +56,11 @@ jobs:
             **/pyproject.toml
             **/uv.lock
 
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
       # Setup tmate session for debugging when requested
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
