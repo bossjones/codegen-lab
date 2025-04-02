@@ -11,12 +11,28 @@ on:
       - "Makefile.ci"
   # Allow manual triggering
   workflow_dispatch:
+    inputs:
+      debug_enabled:
+        description: Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)
+        required: false
+        default: "false"
+concurrency:
+  cancel-in-progress: true
+  group: publish-workflow
 
 permissions:
   contents: write
 
 jobs:
   deploy:
+    name: Mkdocs ${{ matrix.os }} / Python ${{ matrix.python-version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ["3.12"]
+        # Uncomment to run on multiple platforms:
+        # os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     env:
       # Set GH_PAGER to prevent interactive output
@@ -25,11 +41,6 @@ jobs:
       UV_NO_PROMPT: 1
       # Use project environment settings
       UV_PROJECT_ENVIRONMENT: true
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        # Uncomment to run on multiple platforms:
-        # os: [ubuntu-latest, macos-latest]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -38,7 +49,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python-version }}
 
       - name: Set shell path
         id: set-shell
@@ -55,7 +66,26 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
-          version: "0.6.3"
+          version: "0.6.11"
+
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Setup debug tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled == 'true' }}
+        with:
+          limit-access-to-actor: true
+
+      - name: Install additional macos dependencies zsh etc
+        run: |
+          sudo apt-get update
+          sudo apt-get install zsh -y
+
+      - name: Sync dependencies with UV
+        run: uv sync --dev
 
       - name: Display environment information
         run: |
@@ -65,9 +95,13 @@ jobs:
         run: |
           make -f Makefile.ci ci-install
 
-      - name: Build documentation
+      - name: build mkdocs documentation site
         run: |
-          make -f Makefile.ci ci-docs
+          uv run mkdocs build
+
+      # - name: Build documentation
+      #   run: |
+      #     make -f Makefile.ci ci-docs
 
       - name: Configure git for deployment
         run: |
@@ -77,11 +111,6 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      # TODO: Uncomment this when we have a way to deploy the docs
-      # - name: Deploy documentation
-      #   run: |
-      #     # Use makefile target for deployment
-      #     make -f Makefile.ci docs-deploy
-
-      # - name: Prune cache
-      #   run: uv cache prune --ci
+      - name: Deploy mkdocs
+        run: |
+          uv run mkdocs gh-deploy --force --message 'docs(mkdocs): update documentation [skip ci]'

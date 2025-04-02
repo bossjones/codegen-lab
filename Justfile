@@ -213,7 +213,7 @@ install-hooks:
 # install the project
 [group('install')]
 install-project:
-	uv sync --all-groups
+	uv sync --dev
 
 # run doc tasks
 [group('doc')]

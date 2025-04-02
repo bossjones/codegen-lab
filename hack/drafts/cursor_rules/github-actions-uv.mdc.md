@@ -36,7 +36,7 @@ actions:
         uses: astral-sh/setup-uv@v5
         with:
           # Pin to a specific version for stability
-          version: "0.6.3"
+          version: "0.6.11"
       ```
 
       ### Alternative: Manual Installation
@@ -428,7 +428,7 @@ jobs:
       uses: astral-sh/setup-uv@v5
       with:
         cache: true
-        version: "0.6.3"
+        version: "0.6.11"
 
     - name: Install dependencies
       env:
