@@ -397,6 +397,7 @@ update_changelog_on_bump = true
 
 
 [tool.towncrier]
+# Core configuration
 package = "codegen_lab"
 package_dir = "src"
 directory = "changes"
@@ -404,16 +405,86 @@ template = "changes/.template.md.jinja"
 filename = "CHANGELOG.md"
 issue_format = "[#{issue}](https://github.com/bossjones/codegen-lab/issues/{issue})"
 title_format = "{version} ({project_date})"
-# We use these values for headers in the template
 underlines = [2, 3]
-type = [
-    { name = "Breaking Changes", directory = "breaking", showcontent = true },
-    { name = "Deprecation", directory = "deprecation", showcontent = true },
-    { name = "Features", directory = "feature", showcontent = true },
-    { name = "Optimizations", directory = "optimization", showcontent = true },
-    { name = "Bugfixes", directory = "bugfix", showcontent = true },
-    { name = "Documentation Improvements", directory = "documentation", showcontent = true },
-    { name = "Development", directory = "development", showcontent = true },
-    { name = "Security", directory = "security", showcontent = true },
-    { name = "Testing", directory = "testing", showcontent = true }
+
+# File handling configuration
+create_eof_newline = true
+create_add_extension = true
+
+# Validation and ignore patterns
+issue_pattern = "\\d+"  # Only allow numeric issue IDs
+ignore = [
+    ".gitignore",
+    ".gitkeep",
+    ".keep",
+    "README",
+    "README.md",
+    "README.rst"
 ]
+
+# Custom fragment types using TOML array for defined order
+[[tool.towncrier.type]]
+directory = "breaking"
+name = "Breaking Changes"
+showcontent = true
+check = true
+
+[[tool.towncrier.type]]
+directory = "feature"
+name = "Features"
+showcontent = true
+check = true
+
+[[tool.towncrier.type]]
+directory = "bugfix"
+name = "Bug Fixes"
+showcontent = true
+check = true
+
+[[tool.towncrier.type]]
+directory = "docs"
+name = "Documentation"
+showcontent = true
+check = true
+
+[[tool.towncrier.type]]
+directory = "chore"
+name = "Chores"
+showcontent = true
+check = true
+
+[[tool.towncrier.type]]
+directory = "refactor"
+name = "Code Refactoring"
+showcontent = true
+check = true
+
+[[tool.towncrier.type]]
+directory = "perf"
+name = "Performance Improvements"
+showcontent = true
+check = true
+
+[[tool.towncrier.type]]
+directory = "ci"
+name = "CI/CD Improvements"
+showcontent = true
+check = true
+
+[[tool.towncrier.type]]
+directory = "deps"
+name = "Dependencies"
+showcontent = true
+check = true
+
+[[tool.towncrier.type]]
+directory = "security"
+name = "Security"
+showcontent = true
+check = true
+
+[[tool.towncrier.type]]
+directory = "test"
+name = "Testing"
+showcontent = true
+check = true
