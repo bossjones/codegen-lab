@@ -1,99 +1,147 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://bossjones.github.io/codegen-lab/</loc>
-         <lastmod>2025-03-27</lastmod>
+         <loc>https://bossjones.github.io/codegen-lab/docs/</loc>
+         <lastmod>2025-04-02</lastmod>
     </url>
     <url>
-         <loc>https://bossjones.github.io/codegen-lab/api-reference/</loc>
-         <lastmod>2025-03-27</lastmod>
+         <loc>https://bossjones.github.io/codegen-lab/docs/api-reference/</loc>
+         <lastmod>2025-04-02</lastmod>
     </url>
     <url>
-         <loc>https://bossjones.github.io/codegen-lab/changelog/</loc>
-         <lastmod>2025-03-27</lastmod>
+         <loc>https://bossjones.github.io/codegen-lab/docs/changelog/</loc>
+         <lastmod>2025-04-02</lastmod>
     </url>
     <url>
-         <loc>https://bossjones.github.io/codegen-lab/contributing/</loc>
-         <lastmod>2025-03-27</lastmod>
+         <loc>https://bossjones.github.io/codegen-lab/docs/comitizen/</loc>
+         <lastmod>2025-04-02</lastmod>
     </url>
     <url>
-         <loc>https://bossjones.github.io/codegen-lab/cursor-rules-styles/</loc>
-         <lastmod>2025-03-27</lastmod>
+         <loc>https://bossjones.github.io/codegen-lab/docs/contributing/</loc>
+         <lastmod>2025-04-02</lastmod>
     </url>
     <url>
-         <loc>https://bossjones.github.io/codegen-lab/getting-started/</loc>
-         <lastmod>2025-03-27</lastmod>
+         <loc>https://bossjones.github.io/codegen-lab/docs/cursor-rules-styles/</loc>
+         <lastmod>2025-04-02</lastmod>
     </url>
     <url>
-         <loc>https://bossjones.github.io/codegen-lab/prompt_library_mcp_server/</loc>
-         <lastmod>2025-03-27</lastmod>
+         <loc>https://bossjones.github.io/codegen-lab/docs/environment/</loc>
+         <lastmod>2025-04-02</lastmod>
     </url>
     <url>
-         <loc>https://bossjones.github.io/codegen-lab/rule-deps/</loc>
-         <lastmod>2025-03-27</lastmod>
+         <loc>https://bossjones.github.io/codegen-lab/docs/getting-started/</loc>
+         <lastmod>2025-04-02</lastmod>
     </url>
     <url>
-         <loc>https://bossjones.github.io/codegen-lab/troubleshooting/</loc>
-         <lastmod>2025-03-27</lastmod>
+         <loc>https://bossjones.github.io/codegen-lab/docs/info/</loc>
+         <lastmod>2025-04-02</lastmod>
     </url>
     <url>
-         <loc>https://bossjones.github.io/codegen-lab/workflow-rules/</loc>
-         <lastmod>2025-03-27</lastmod>
+         <loc>https://bossjones.github.io/codegen-lab/docs/inspiration/</loc>
+         <lastmod>2025-04-02</lastmod>
     </url>
     <url>
-         <loc>https://bossjones.github.io/codegen-lab/cursor-auto-rules-agile-workflow/</loc>
-         <lastmod>2025-03-27</lastmod>
+         <loc>https://bossjones.github.io/codegen-lab/docs/pre_commit/</loc>
+         <lastmod>2025-04-02</lastmod>
     </url>
     <url>
-         <loc>https://bossjones.github.io/codegen-lab/cursor-auto-rules-agile-workflow/agile-readme/</loc>
-         <lastmod>2025-03-27</lastmod>
+         <loc>https://bossjones.github.io/codegen-lab/docs/prompt_library_mcp_server/</loc>
+         <lastmod>2025-04-02</lastmod>
     </url>
     <url>
-         <loc>https://bossjones.github.io/codegen-lab/cursor-auto-rules-agile-workflow/cursor-rules-readme/</loc>
-         <lastmod>2025-03-27</lastmod>
+         <loc>https://bossjones.github.io/codegen-lab/docs/rule-deps/</loc>
+         <lastmod>2025-04-02</lastmod>
     </url>
     <url>
-         <loc>https://bossjones.github.io/codegen-lab/cursor-auto-rules-agile-workflow/templates-readme/</loc>
-         <lastmod>2025-03-27</lastmod>
+         <loc>https://bossjones.github.io/codegen-lab/docs/troubleshooting/</loc>
+         <lastmod>2025-04-02</lastmod>
     </url>
     <url>
-         <loc>https://bossjones.github.io/codegen-lab/cursor-auto-rules-agile-workflow/workflows-readme/</loc>
-         <lastmod>2025-03-27</lastmod>
+         <loc>https://bossjones.github.io/codegen-lab/docs/workflow-rules/</loc>
+         <lastmod>2025-04-02</lastmod>
     </url>
     <url>
-         <loc>https://bossjones.github.io/codegen-lab/cursor-auto-rules-agile-workflow/xnotes-readme/</loc>
-         <lastmod>2025-03-27</lastmod>
+         <loc>https://bossjones.github.io/codegen-lab/docs/cursor-auto-rules-agile-workflow/</loc>
+         <lastmod>2025-04-02</lastmod>
     </url>
     <url>
-         <loc>https://bossjones.github.io/codegen-lab/mcp-servers/prompt_library_mcp/</loc>
-         <lastmod>2025-03-27</lastmod>
+         <loc>https://bossjones.github.io/codegen-lab/docs/cursor-auto-rules-agile-workflow/agile-readme/</loc>
+         <lastmod>2025-04-02</lastmod>
     </url>
     <url>
-         <loc>https://bossjones.github.io/codegen-lab/mcp-servers/prompt_library_mcp_server_tools/</loc>
-         <lastmod>2025-03-27</lastmod>
+         <loc>https://bossjones.github.io/codegen-lab/docs/cursor-auto-rules-agile-workflow/cursor-rules-readme/</loc>
+         <lastmod>2025-04-02</lastmod>
     </url>
     <url>
-         <loc>https://bossjones.github.io/codegen-lab/tools/cursor-rules/</loc>
-         <lastmod>2025-03-27</lastmod>
+         <loc>https://bossjones.github.io/codegen-lab/docs/cursor-auto-rules-agile-workflow/templates-readme/</loc>
+         <lastmod>2025-04-02</lastmod>
     </url>
     <url>
-         <loc>https://bossjones.github.io/codegen-lab/tools/uv-workspace/</loc>
-         <lastmod>2025-03-27</lastmod>
+         <loc>https://bossjones.github.io/codegen-lab/docs/cursor-auto-rules-agile-workflow/workflows-readme/</loc>
+         <lastmod>2025-04-02</lastmod>
     </url>
     <url>
-         <loc>https://bossjones.github.io/codegen-lab/user-guide/configuration/</loc>
-         <lastmod>2025-03-27</lastmod>
+         <loc>https://bossjones.github.io/codegen-lab/docs/cursor-auto-rules-agile-workflow/xnotes-readme/</loc>
+         <lastmod>2025-04-02</lastmod>
     </url>
     <url>
-         <loc>https://bossjones.github.io/codegen-lab/user-guide/docs-automation/</loc>
-         <lastmod>2025-03-27</lastmod>
+         <loc>https://bossjones.github.io/codegen-lab/docs/external/software_development/might_be_interesting/minio/</loc>
+         <lastmod>2025-04-02</lastmod>
     </url>
     <url>
-         <loc>https://bossjones.github.io/codegen-lab/user-guide/installation/</loc>
-         <lastmod>2025-03-27</lastmod>
+         <loc>https://bossjones.github.io/codegen-lab/docs/external/software_development/mkdocs_stuff/diagrams/</loc>
+         <lastmod>2025-04-02</lastmod>
     </url>
     <url>
-         <loc>https://bossjones.github.io/codegen-lab/user-guide/ai-workflows/autogenerate_cursor_rules/</loc>
-         <lastmod>2025-03-27</lastmod>
+         <loc>https://bossjones.github.io/codegen-lab/docs/external/software_development/python/pyenv/</loc>
+         <lastmod>2025-04-02</lastmod>
+    </url>
+    <url>
+         <loc>https://bossjones.github.io/codegen-lab/docs/external/software_development/python/UV/00_index/</loc>
+         <lastmod>2025-04-02</lastmod>
+    </url>
+    <url>
+         <loc>https://bossjones.github.io/codegen-lab/docs/external/software_development/python/rapid_prototyping/dash/</loc>
+         <lastmod>2025-04-02</lastmod>
+    </url>
+    <url>
+         <loc>https://bossjones.github.io/codegen-lab/docs/external/software_development/python/rapid_prototyping/gradio/</loc>
+         <lastmod>2025-04-02</lastmod>
+    </url>
+    <url>
+         <loc>https://bossjones.github.io/codegen-lab/docs/external/software_development/python/rapid_prototyping/taipy/</loc>
+         <lastmod>2025-04-02</lastmod>
+    </url>
+    <url>
+         <loc>https://bossjones.github.io/codegen-lab/docs/mcp-servers/prompt_library_mcp/</loc>
+         <lastmod>2025-04-02</lastmod>
+    </url>
+    <url>
+         <loc>https://bossjones.github.io/codegen-lab/docs/mcp-servers/prompt_library_mcp_server_tools/</loc>
+         <lastmod>2025-04-02</lastmod>
+    </url>
+    <url>
+         <loc>https://bossjones.github.io/codegen-lab/docs/tools/cursor-rules/</loc>
+         <lastmod>2025-04-02</lastmod>
+    </url>
+    <url>
+         <loc>https://bossjones.github.io/codegen-lab/docs/tools/uv-workspace/</loc>
+         <lastmod>2025-04-02</lastmod>
+    </url>
+    <url>
+         <loc>https://bossjones.github.io/codegen-lab/docs/user-guide/configuration/</loc>
+         <lastmod>2025-04-02</lastmod>
+    </url>
+    <url>
+         <loc>https://bossjones.github.io/codegen-lab/docs/user-guide/docs-automation/</loc>
+         <lastmod>2025-04-02</lastmod>
+    </url>
+    <url>
+         <loc>https://bossjones.github.io/codegen-lab/docs/user-guide/installation/</loc>
+         <lastmod>2025-04-02</lastmod>
+    </url>
+    <url>
+         <loc>https://bossjones.github.io/codegen-lab/docs/user-guide/ai-workflows/autogenerate_cursor_rules/</loc>
+         <lastmod>2025-04-02</lastmod>
     </url>
 </urlset>

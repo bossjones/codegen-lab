@@ -12,9 +12,13 @@
         <meta name="author" content="Malcolm Jones">
       
       
-        <link rel="canonical" href="https://bossjones.github.io/codegen-lab/mcp-servers/prompt_library_mcp/">
+        <link rel="canonical" href="https://bossjones.github.io/codegen-lab/docs/mcp-servers/prompt_library_mcp/">
       
       
+        <link rel="prev" href="../../external/software_development/python/rapid_prototyping/taipy/">
+      
+      
+        <link rel="next" href="../prompt_library_mcp_server_tools/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -47,6 +51,8 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -234,7 +240,133 @@
         
   
   <span class="md-ellipsis">
-    Home
+    Codegen Lab
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api-reference/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    API Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Changelog
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../comitizen/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Commitizen Configuration Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributing to Codegen Lab
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cursor-rules-styles/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cursor Rules: Style Guide and Migration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../environment/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Environment
     
   </span>
   
@@ -271,15 +403,154 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../../info/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Info
     
+  </span>
+  
+
+      </a>
+    </li>
+  
+
     
       
-        
       
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../inspiration/" class="md-nav__link">
         
+  
+  <span class="md-ellipsis">
+    inspiration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
       
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pre_commit/" class="md-nav__link">
         
+  
+  <span class="md-ellipsis">
+    pre-commit install hook-types
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
       
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prompt_library_mcp_server/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cursor Rules Prompt Library
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rule-deps/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cursor Rules Dependency Graph
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workflow-rules/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cursor Workflow Rules
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
     
     
     
@@ -287,16 +558,14 @@
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_16" >
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_16" id="__nav_16_label" tabindex="0">
             
   
   <span class="md-ellipsis">
-    User Guide
+    Cursor auto rules agile workflow
     
   </span>
   
@@ -304,10 +573,10 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_16_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_16">
             <span class="md-nav__icon md-icon"></span>
-            User Guide
+            Cursor auto rules agile workflow
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -318,11 +587,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../user-guide/installation/" class="md-nav__link">
+      <a href="../../cursor-auto-rules-agile-workflow/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Installation
+    Cursor Auto Rules Agile Workflow
     
   </span>
   
@@ -332,6 +601,1043 @@
   
 
               
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cursor-auto-rules-agile-workflow/agile-readme/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cursor Agile Workflow Documentation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cursor-auto-rules-agile-workflow/cursor-rules-readme/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cursor Rules System Documentation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cursor-auto-rules-agile-workflow/templates-readme/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cursor Templates System Documentation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cursor-auto-rules-agile-workflow/workflows-readme/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cursor Workflows System Documentation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cursor-auto-rules-agile-workflow/xnotes-readme/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    XNotes System Documentation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_17" >
+        
+          
+          <label class="md-nav__link" for="__nav_17" id="__nav_17_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    External
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_17_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_17">
+            <span class="md-nav__icon md-icon"></span>
+            External
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_17_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_17_1" id="__nav_17_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Software development
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_17_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_17_1">
+            <span class="md-nav__icon md-icon"></span>
+            Software development
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_17_1_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_17_1_1" id="__nav_17_1_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Might be interesting
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_17_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_17_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            Might be interesting
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../external/software_development/might_be_interesting/minio/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    🚧 MinIO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_17_1_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_17_1_2" id="__nav_17_1_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Mkdocs stuff
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_17_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_17_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            Mkdocs stuff
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../external/software_development/mkdocs_stuff/diagrams/" class="md-nav__link">
+        
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.5 17c-.14 0-.26 0-.39.04L17.5 13.8c.45-.45.75-1.09.75-1.8a2.5 2.5 0 0 0-2.5-2.5c-.14 0-.25 0-.4.04L13.74 6.3c.47-.46.76-1.09.76-1.8a2.5 2.5 0 0 0-5 0c0 .7.29 1.34.76 1.79L8.65 9.54c-.15-.04-.26-.04-.4-.04a2.5 2.5 0 0 0-2.5 2.5c0 .71.29 1.34.75 1.79l-1.61 3.25C4.76 17 4.64 17 4.5 17a2.5 2.5 0 0 0 0 5A2.5 2.5 0 0 0 7 19.5c0-.7-.29-1.34-.76-1.79l1.62-3.25c.14.04.26.04.39.04s.25 0 .38-.04l1.63 3.25c-.47.45-.76 1.09-.76 1.79a2.5 2.5 0 0 0 5 0A2.5 2.5 0 0 0 12 17c-.13 0-.26 0-.39.04L10 13.8c.45-.45.75-1.09.75-1.8 0-.7-.29-1.33-.75-1.79l1.61-3.25c.13.04.26.04.39.04s.26 0 .39-.04L14 10.21a2.5 2.5 0 0 0 1.75 4.29c.13 0 .25 0 .38-.04l1.63 3.25c-.47.45-.76 1.09-.76 1.79a2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0-2.5-2.5m-15 3.5c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1m8.5-1c0 .55-.45 1-1 1s-1-.45-1-1 .45-1 1-1 1 .45 1 1M7.25 12c0-.55.45-1 1-1s1 .45 1 1-.45 1-1 1-1-.45-1-1M11 4.5c0-.55.45-1 1-1s1 .45 1 1-.45 1-1 1-1-.45-1-1m3.75 7.5c0-.55.45-1 1-1s1 .45 1 1-.45 1-1 1-1-.45-1-1m4.75 8.5c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1"/></svg>
+  
+  <span class="md-ellipsis">
+    Diagrams (Marc)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_17_1_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_17_1_3" id="__nav_17_1_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Python
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_17_1_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_17_1_3">
+            <span class="md-nav__icon md-icon"></span>
+            Python
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../external/software_development/python/pyenv/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pyenv
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_17_1_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_17_1_3_2" id="__nav_17_1_3_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    UV
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_17_1_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_17_1_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            UV
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../external/software_development/python/UV/00_index/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_17_1_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_17_1_3_3" id="__nav_17_1_3_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Rapid prototyping
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_17_1_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_17_1_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            Rapid prototyping
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_17_1_3_3_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_17_1_3_3_1" id="__nav_17_1_3_3_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Dash
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_17_1_3_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_17_1_3_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            Dash
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../external/software_development/python/rapid_prototyping/dash/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_17_1_3_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_17_1_3_3_2" id="__nav_17_1_3_3_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Gradio
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_17_1_3_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_17_1_3_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            Gradio
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../external/software_development/python/rapid_prototyping/gradio/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_17_1_3_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_17_1_3_3_3" id="__nav_17_1_3_3_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Taipy
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_17_1_3_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_17_1_3_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            Taipy
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../external/software_development/python/rapid_prototyping/taipy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_18" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_18" id="__nav_18_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Mcp servers
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_18_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_18">
+            <span class="md-nav__icon md-icon"></span>
+            Mcp servers
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Prompt library mcp
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Prompt library mcp
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#get_static_cursor_rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_static_cursor_rules
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get_static_cursor_rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_static_cursor_rule
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#save_cursor_rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      save_cursor_rule
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recommend_cursor_rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      recommend_cursor_rules
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prep_workspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      prep_workspace
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create_cursor_rule_files" class="md-nav__link">
+    <span class="md-ellipsis">
+      create_cursor_rule_files
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ensure_makefile_task" class="md-nav__link">
+    <span class="md-ellipsis">
+      ensure_makefile_task
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#instruct_custom_repo_rules_generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      instruct_custom_repo_rules_generation
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prompt_library_mcp_server_tools/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Prompt Library MCP Server Tools
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_19" >
+        
+          
+          <label class="md-nav__link" for="__nav_19" id="__nav_19_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Tools
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_19_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_19">
+            <span class="md-nav__icon md-icon"></span>
+            Tools
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/cursor-rules/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cursor Rules for Iterative Development
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/uv-workspace/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    UV Workspace Management
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_20" >
+        
+          
+          <label class="md-nav__link" for="__nav_20" id="__nav_20_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    User guide
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_20_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_20">
+            <span class="md-nav__icon md-icon"></span>
+            User guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
                 
@@ -377,26 +1683,35 @@
 
               
             
-          </ul>
-        </nav>
-      
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installation
+    
+  </span>
+  
+
+      </a>
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
   
     
-    
-      
-        
-      
-        
-      
     
     
     
@@ -404,16 +1719,14 @@
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_20_4" >
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_20_4" id="__nav_20_4_label" tabindex="0">
             
   
   <span class="md-ellipsis">
-    Development Tools
+    Ai workflows
     
   </span>
   
@@ -421,10 +1734,10 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_20_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_20_4">
             <span class="md-nav__icon md-icon"></span>
-            Development Tools
+            Ai workflows
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -435,33 +1748,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tools/cursor-rules/" class="md-nav__link">
+      <a href="../../user-guide/ai-workflows/autogenerate_cursor_rules/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Cursor Rules
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../tools/uv-workspace/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    UV Workspace
+    How to Auto-Generate Cursor Rules for Your Repository
     
   </span>
   
@@ -478,87 +1769,11 @@
     </li>
   
 
-    
+              
+            
+          </ul>
+        </nav>
       
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api-reference/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    API Reference
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../troubleshooting/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Troubleshooting
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../contributing/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Contributing
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../changelog/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Changelog
-    
-  </span>
-  
-
-      </a>
     </li>
   
 
@@ -677,6 +1892,19 @@
 
 
   
+    <a href="https://github.com/bossjones/codegen-lab/edit/main/docs/mcp-servers/prompt_library_mcp.md" title="Edit this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/bossjones/codegen-lab/raw/main/docs/mcp-servers/prompt_library_mcp.md" title="View source of this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
   
 
 
@@ -762,113 +1990,113 @@
 <blockquote>
 <p>Request:</p>
 </blockquote>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="s2">&quot;tools/call&quot;</span><span class="p">,</span><span class="nt">&quot;params&quot;</span><span class="p">:{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;get_static_cursor_rules&quot;</span><span class="p">,</span><span class="nt">&quot;arguments&quot;</span><span class="p">:{</span><span class="nt">&quot;rule_names&quot;</span><span class="p">:[</span><span class="s2">&quot;tree&quot;</span><span class="p">,</span><span class="s2">&quot;repomix&quot;</span><span class="p">]},</span><span class="nt">&quot;_meta&quot;</span><span class="p">:{</span><span class="nt">&quot;progressToken&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">}}}</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="s2">&quot;tools/call&quot;</span><span class="p">,</span><span class="nt">&quot;params&quot;</span><span class="p">:{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;get_static_cursor_rules&quot;</span><span class="p">,</span><span class="nt">&quot;arguments&quot;</span><span class="p">:{</span><span class="nt">&quot;rule_names&quot;</span><span class="p">:[</span><span class="s2">&quot;tree&quot;</span><span class="p">,</span><span class="s2">&quot;repomix&quot;</span><span class="p">]},</span><span class="nt">&quot;_meta&quot;</span><span class="p">:{</span><span class="nt">&quot;progressToken&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">}}}</span>
 </code></pre></div>
 <blockquote>
 <p>Response:</p>
 </blockquote>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span><span class="nt">&quot;content&quot;</span><span class="p">:[{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;text&quot;</span><span class="p">,</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="s2">&quot;{\&quot;rules\&quot;: [{\&quot;rule_name\&quot;: \&quot;tree.mdc.md\&quot;, \&quot;content\&quot;: \&quot;---\\ndescription: Display repository structure\\nglobs: *\\nalwaysApply: false\\n---\\nWhen the user asks about the project layout, structure, or organization, run the command `tree -L 7 -I \\\&quot;*.pyc|__pycache__|.git|.pytest_cache|.ruff_cache|.mypy_cache|.coverage|htmlcov|.venv|.env|*.egg-info|build|dist|node_modules|.DS_Store|images\\\&quot;` to help understand and visualize the repository structure.\\n\&quot;}, {\&quot;rule_name\&quot;: \&quot;repomix.mdc.md\&quot;, \&quot;content\&quot;: \&quot;---\\ndescription: Repomix tool\\nglobs: *\\nalwaysApply: false\\n---\\n# Repomix Project Layout\\n\\nRules for understanding and navigating the repomix project structure.\\n\\n&lt;rule&gt;\\nname: project_layout_guide\\ndescription: Guide to the repomix project structure and organization\\nfilters:\\n  # Match any file in the project\\n  - type: file_extension\\n    pattern: \\\&quot;.*\\\&quot;\\n  # Match project initialization events\\n  - type: event\\n    pattern: \\\&quot;file_create\\\&quot;\\n\\nactions:\\n  - type: suggest\\n    message: |\\n      # Repomix Project Structure\\n\\n      This repository implements a tool for code repository summarization and packaging for LLM consumption.\\n\\n      ## Core Features\\n\\n      - **Repository Summarization:** Extracts and summarizes code repositories\\n      - **Code Packaging:** Prepares code for LLM consumption\\n      - **Security Checks:** Validates file safety and filters untrusted files\\n      - **Multiple Output Formats:** Supports markdown, plain text, and XML output styles\\n      - **CLI Interface:** Command-line interface for easy usage\\n      - **Web Interface:** Browser-based interface for repository processing\\n\\n      ## Directory Structure\\n\\n      ```\\n      .\\n      \\u251c\\u2500\\u2500 .cursor/                     # Active cursor rules directory\\n      \\u2502   \\u2514\\u2500\\u2500 rules/                   # Production cursor rules\\n      \\u251c\\u2500\\u2500 bin/                         # Binary executables\\n      \\u2502   \\u2514\\u2500\\u2500 repomix.cjs              # Main executable\\n      \\u251c\\u2500\\u2500 src/                         # Source code\\n      \\u2502   \\u251c\\u2500\\u2500 cli/                     # Command-line interface\\n      \\u2502   \\u2502   \\u251c\\u2500\\u2500 actions/             # CLI action implementations\\n      \\u2502   \\u2502   \\u251c\\u2500\\u2500 cliPrint.ts          # CLI output utilities\\n      \\u2502   \\u2502   \\u251c\\u2500\\u2500 cliRun.ts            # CLI execution logic\\n      \\u2502   \\u2502   \\u251c\\u2500\\u2500 cliSpinner.ts        # CLI progress indicators\\n      \\u2502   \\u2502   \\u2514\\u2500\\u2500 types.ts             # CLI type definitions\\n      \\u2502   \\u251c\\u2500\\u2500 config/                  # Configuration handling\\n      \\u2502   \\u2502   \\u251c\\u2500\\u2500 configLoad.ts        # Config loading utilities\\n      \\u2502   \\u2502   \\u251c\\u2500\\u2500 configSchema.ts      # Config validation schema\\n      \\u2502   \\u2502   \\u251c\\u2500\\u2500 defaultIgnore.ts     # Default ignore patterns\\n      \\u2502   \\u2502   \\u2514\\u2500\\u2500 globalDirectory.ts   # Global directory management\\n      \\u2502   \\u251c\\u2500\\u2500 core/                    # Core functionality\\n      \\u2502   \\u2502   \\u251c\\u2500\\u2500 file/                # File operations\\n      \\u2502   \\u2502   \\u251c\\u2500\\u2500 metrics/             # Metrics calculation\\n      \\u2502   \\u2502   \\u251c\\u2500\\u2500 output/              # Output generation\\n      \\u2502   \\u2502   \\u251c\\u2500\\u2500 packager/            # Output packaging\\n      \\u2502   \\u2502   \\u251c\\u2500\\u2500 security/            # Security validation\\n      \\u2502   \\u2502   \\u251c\\u2500\\u2500 tokenCount/          # Token counting utilities\\n      \\u2502   \\u2502   \\u2514\\u2500\\u2500 treeSitter/          # Code parsing with tree-sitter\\n      \\u2502   \\u251c\\u2500\\u2500 index.ts                 # Main entry point\\n      \\u2502   \\u2514\\u2500\\u2500 shared/                  # Shared utilities\\n      \\u2502       \\u251c\\u2500\\u2500 constants.ts         # Shared constants\\n      \\u2502       \\u251c\\u2500\\u2500 errorHandle.ts       # Error handling\\n      \\u2502       \\u251c\\u2500\\u2500 logger.ts            # Logging utilities\\n      \\u2502       \\u251c\\u2500\\u2500 processConcurrency.ts # Concurrency management\\n      \\u2502       \\u2514\\u2500\\u2500 types.ts             # Shared type definitions\\n      \\u251c\\u2500\\u2500 tests/                       # Test suites\\n      \\u2502   \\u251c\\u2500\\u2500 cli/                     # CLI tests\\n      \\u2502   \\u251c\\u2500\\u2500 config/                  # Configuration tests\\n      \\u2502   \\u251c\\u2500\\u2500 core/                    # Core functionality tests\\n      \\u2502   \\u251c\\u2500\\u2500 integration-tests/       # Integration tests\\n      \\u2502   \\u251c\\u2500\\u2500 shared/                  # Shared utility tests\\n      \\u2502   \\u2514\\u2500\\u2500 testing/                 # Test utilities\\n      \\u2514\\u2500\\u2500 website/                     # Web interface\\n          \\u251c\\u2500\\u2500 client/                  # Frontend application\\n          \\u2502   \\u251c\\u2500\\u2500 components/          # Vue components\\n          \\u2502   \\u2514\\u2500\\u2500 src/                 # Frontend source code\\n          \\u2514\\u2500\\u2500 server/                  # Backend server\\n              \\u2514\\u2500\\u2500 src/                 # Server source code\\n      ```\\n\\n      ## Primary Components\\n\\n      ### Source Code (`src/`)\\n      Core TypeScript application code organized into modules:\\n      - `cli/`: Command-line interface implementation\\n      - `config/`: Configuration management\\n      - `core/`: Core functionality including file processing, security, and output generation\\n      - `shared/`: Shared utilities and types\\n\\n      ### Tests (`tests/`)\\n      Comprehensive test suite including unit tests and integration tests for all components.\\n\\n      ### Website (`website/`)\\n      Web interface for the application with client and server components:\\n      - `client/`: Vue-based frontend application\\n      - `server/`: Backend API server\\n\\n      ### Binary (`bin/`)\\n      Executable files for running the application from the command line.\\n\\n      ## Development Workflow\\n\\n      ### Feature Development\\n      1. **Understand Requirements** - Review existing code and documentation\\n      2. **Implement Changes** - Add or modify code with appropriate tests\\n      3. **Test Thoroughly** - Run tests to ensure functionality\\n      4. **Document Changes** - Update documentation as needed\\n\\n      ### Testing\\n      - Run unit tests: `npm test`\\n      - Run specific tests: `npm test -- &lt;test-pattern&gt;`\\n      - Run integration tests: `npm run test:integration`\\n\\n      ### Building\\n      - Build the application: `npm run build`\\n      - Build the website: `cd website &amp;&amp; npm run build`\\n\\nexamples:\\n  - input: |\\n      # I&#39;m new to the project, where should I put my code for a new CLI command?\\n    output: |\\n      For a new CLI command, you should:\\n\\n      1. Create a new action file in `src/cli/actions/` (e.g., `myNewAction.ts`)\\n      2. Implement the action following the pattern of existing actions\\n      3. Add appropriate tests in `tests/cli/actions/`\\n      4. Update the CLI command registration in the main CLI runner\\n\\n      Look at existing action files like `defaultAction.ts` or `initAction.ts` for examples of the structure.\\n\\n  - input: |\\n      # How is the code parsing functionality organized?\\n    output: |\\n      The code parsing functionality is in the `src/core/treeSitter/` directory:\\n\\n      - `ext2Lang.ts`: Maps file extensions to language types\\n      - `lang2Query.ts`: Maps languages to appropriate queries\\n      - `languageParser.ts`: Core parsing functionality\\n      - `loadLanguage.ts`: Loads language grammars\\n      - `parseFile.ts`: Main file parsing entry point\\n      - `parseStrategies/`: Language-specific parsing strategies\\n      - `queries/`: Tree-sitter queries for different languages\\n\\n      This module uses tree-sitter to parse code files and extract meaningful information.\\n\\nmetadata:\\n  priority: high\\n  version: 1.0\\n  tags:\\n    - project-structure\\n    - organization\\n    - development-workflow\\n&lt;/rule&gt;\\n\\n&lt;rule&gt;\\nname: project_standards\\ndescription: Standards for code quality and organization in the repomix project\\nfilters:\\n  # Match any file in the project\\n  - type: file_extension\\n    pattern: \\\&quot;.*\\\&quot;\\n  # Match project initialization events\\n  - type: event\\n    pattern: \\\&quot;file_create\\\&quot;\\n\\nactions:\\n  - type: suggest\\n    message: |\\n      # Repomix Project Standards\\n\\n      ## TypeScript Standards\\n\\n      - **Code Style**: Follow the project&#39;s biome.json configuration\\n      - **Type Safety**: Strong typing for all functions and classes\\n      - **Documentation**: JSDoc comments for public APIs\\n      - **Testing**: Comprehensive test coverage with vitest\\n\\n      ## Project Structure Standards\\n\\n      - **Module Organization**: Functionality grouped by domain (cli, core, config)\\n      - **Component Isolation**: Clear separation of concerns between modules\\n      - **Worker Architecture**: CPU-intensive tasks use worker threads\\n      - **Error Handling**: Consistent error handling patterns\\n\\n      ## Web Interface Standards\\n\\n      - **Frontend**: Vue.js components with TypeScript\\n      - **Backend**: Node.js API with TypeScript\\n      - **Internationalization**: Support for multiple languages\\n      - **Responsive Design**: Mobile and desktop friendly UI\\n\\n      ## Security Standards\\n\\n      - **Input Validation**: Validate all user inputs\\n      - **File Safety**: Check files for potential security issues\\n      - **Permission Checks**: Verify file access permissions\\n      - **Rate Limiting**: Prevent abuse of API endpoints\\n\\n      ## Validation Requirements\\n\\n      - All code must have appropriate type annotations\\n      - All public APIs must have documentation comments\\n      - All code must have corresponding tests\\n      - All UI components must support internationalization\\n      - Security checks must be applied to all file operations\\n\\nexamples:\\n  - input: |\\n      # What are the requirements for TypeScript code in this project?\\n    output: |\\n      TypeScript code in this project must:\\n      1. Follow the code style defined in biome.json\\n      2. Use strong typing for all functions, variables, and classes\\n      3. Include JSDoc comments for public APIs\\n      4. Be accompanied by comprehensive tests\\n      5. Follow the module organization pattern (cli, core, config, etc.)\\n      6. Implement proper error handling\\n\\n  - input: |\\n      # How should I structure a new feature?\\n    output: |\\n      When adding a new feature:\\n\\n      1. Identify the appropriate module (cli, core, config, etc.)\\n      2. Create new files following the existing naming patterns\\n      3. Implement the feature with proper typing and documentation\\n      4. Add comprehensive tests in the corresponding test directory\\n      5. Update any relevant documentation\\n      6. Ensure the feature follows security standards if handling files or user input\\n\\nmetadata:\\n  priority: high\\n  version: 1.0\\n  tags:\\n    - standards\\n    - code-quality\\n    - organization\\n&lt;/rule&gt;\\n\\n&lt;rule&gt;\\nname: repomix_context_extraction\\ndescription: Guide for using repomix to extract focused context from repositories\\nfilters:\\n  - type: message\\n    pattern: \\\&quot;(?i)(extract context|code context|repository context|repomix extract|code explanation|understand code)\\\&quot;\\n  - type: context\\n    pattern: \\\&quot;explain code|understand repository|extract code|code extraction\\\&quot;\\n\\nactions:\\n  - type: suggest\\n    message: |\\n      # Repomix Context Extraction Guide\\n\\n      Repomix is a powerful tool for extracting and summarizing code repositories for LLM consumption. This guide focuses on using repomix to extract only the necessary context to explain how specific functionality works.\\n\\n      ## Core Principles for Effective Context Extraction\\n\\n      - **Focused Selection**: Only include files/folders directly relevant to the functionality\\n      - **Complete Understanding**: Ensure all dependencies are included for a complete explanation\\n      - **XML Output**: Use XML format for structured representation of code\\n      - **Minimal Context**: Avoid including unnecessary files that add noise\\n      - **Consistent Ignore Patterns**: Use standard ignore patterns for common build artifacts and dependencies\\n\\n      ## Command Structure\\n\\n      ```bash\\n      repomix extract /path/to/repository --style xml --include \\\&quot;path/to/relevant/files/**\\\&quot; --exclude \\\&quot;tests/**\\\&quot; --ignore \\\&quot;**/node_modules,**/dist,**/build\\\&quot; --output output.xml\\n      ```\\n\\n      ## Key Parameters\\n\\n      - `--style xml`: Output in XML format for structured representation\\n      - `--include`: Specify patterns for files to include (supports glob patterns)\\n      - `--exclude`: Specify patterns for files to exclude\\n      - `--ignore`: Specify patterns for files to ignore (build artifacts, dependencies)\\n      - `--output`: Specify the output file\\n      - `--output-show-line-numbers`: Include line numbers in the output (helpful for reference)\\n      - `--max-tokens`: Limit the total token count (optional)\\n      - `--depth`: Control the depth of directory traversal (optional)\\n\\n      ## Standard Ignore Patterns\\n\\n      Always include these standard ignore patterns to avoid including unnecessary files:\\n\\n      ```bash\\n      --ignore \\\&quot;**/uv.lock,**/package-lock.json,**/.env,**/Cargo.lock,**/node_modules,**/target,**/dist,**/build,**/output.txt,**/yarn.lock\\\&quot;\\n      ```\\n\\n      ## Best Practices\\n\\n      ### 1. Identify Core Components\\n\\n      Before extraction, identify the core components needed to explain the functionality:\\n\\n      - Entry point files\\n      - Core implementation files\\n      - Essential utility functions\\n      - Type definitions and interfaces\\n      - Configuration files directly related to the functionality\\n\\n      ### 2. Use Precise Include Patterns\\n\\n      ```bash\\n      # Example: Extract authentication system\\n      repomix extract ./repo --style xml --include \\\&quot;src/auth/**\\\&quot; --include \\\&quot;src/models/User.js\\\&quot; --include \\\&quot;src/config/auth.js\\\&quot; --ignore \\\&quot;**/node_modules,**/dist,**/build,**/package-lock.json\\\&quot; --output-show-line-numbers --output auth-context.xml\\n      ```\\n\\n      ### 3. Exclude Unnecessary Files\\n\\n      ```bash\\n      # Exclude tests, documentation, and build artifacts\\n      repomix extract ./repo --style xml --exclude \\\&quot;**/*.test.js\\\&quot; --exclude \\\&quot;**/*.spec.js\\\&quot; --exclude \\\&quot;docs/**\\\&quot; --ignore \\\&quot;**/uv.lock,**/package-lock.json,**/.env,**/Cargo.lock,**/node_modules,**/target,**/dist,**/build,**/output.txt,**/yarn.lock\\\&quot; --output-show-line-numbers --output clean-context.xml\\n      ```\\n\\n      ### 4. Combine With Search When Needed\\n\\n      For complex functionality spanning multiple directories:\\n\\n      ```bash\\n      # First find relevant files\\n      find ./repo -type f -name \\\&quot;*.js\\\&quot; | grep -E \\\&quot;auth|user|permission\\\&quot; &gt; relevant_files.txt\\n\\n      # Then use the list with repomix\\n      cat relevant_files.txt | xargs -I{} echo \\\&quot;--include {}\\\&quot; | xargs repomix extract ./repo --style xml --ignore \\\&quot;**/node_modules,**/dist,**/build\\\&quot; --output-show-line-numbers --output auth-system.xml\\n      ```\\n\\n      ### 5. Focus on Interfaces Over Implementation Details\\n\\n      When explaining how something works, prioritize interface files and core logic over detailed implementations:\\n\\n      ```bash\\n      repomix extract ./repo --style xml --include \\\&quot;src/api/**/*.interface.ts\\\&quot; --include \\\&quot;src/core/**/*.ts\\\&quot; --exclude \\\&quot;**/*.impl.ts\\\&quot; --ignore \\\&quot;**/uv.lock,**/package-lock.json,**/.env,**/Cargo.lock,**/node_modules,**/target,**/dist,**/build,**/output.txt,**/yarn.lock\\\&quot; --output-show-line-numbers --output system-overview.xml\\n      ```\\n\\n      ## Example Scenarios\\n\\n      ### Extracting a Feature Implementation\\n\\n      ```bash\\n      # Extract everything related to the search feature\\n      repomix extract ./repo --style xml --include \\\&quot;src/**/search/**\\\&quot; --include \\\&quot;src/models/SearchIndex.js\\\&quot; --include \\\&quot;src/utils/searchHelpers.js\\\&quot; --ignore \\\&quot;**/uv.lock,**/package-lock.json,**/.env,**/Cargo.lock,**/node_modules,**/target,**/dist,**/build,**/output.txt,**/yarn.lock\\\&quot; --output-show-line-numbers --output search-feature.xml\\n      ```\\n\\n      ### Extracting an API Endpoint Flow\\n\\n      ```bash\\n      # Extract files related to the user registration flow\\n      repomix extract ./repo --style xml --include \\\&quot;src/controllers/UserController.js\\\&quot; --include \\\&quot;src/services/UserService.js\\\&quot; --include \\\&quot;src/models/User.js\\\&quot; --include \\\&quot;src/validators/userValidation.js\\\&quot; --ignore \\\&quot;**/node_modules,**/dist,**/build\\\&quot; --output-show-line-numbers --output user-registration.xml\\n      ```\\n\\n      ### Extracting Architecture Overview\\n\\n      ```bash\\n      # Extract core architectural files\\n      repomix extract ./repo --style xml --include \\\&quot;src/core/**/*.ts\\\&quot; --include \\\&quot;src/types/**/*.ts\\\&quot; --include \\\&quot;src/config/**/*.ts\\\&quot; --exclude \\\&quot;**/*.test.ts\\\&quot; --ignore \\\&quot;**/uv.lock,**/package-lock.json,**/.env,**/Cargo.lock,**/node_modules,**/target,**/dist,**/build,**/output.txt,**/yarn.lock\\\&quot; --output-show-line-numbers --output architecture.xml\\n      ```\\n\\n      ### Quick Repository Summary\\n\\n      ```bash\\n      # Generate a quick summary of the entire repository\\n      npx repomix --style xml --output-show-line-numbers --output output.txt --ignore \\\&quot;**/uv.lock,**/package-lock.json,**/.env,**/Cargo.lock,**/node_modules,**/target,**/dist,**/build,**/output.txt,**/yarn.lock\\\&quot;\\n      ```\\n\\nexamples:\\n  - input: |\\n      How can I use repomix to extract just the authentication system from my repository?\\n    output: |\\n      To extract just the authentication system from your repository using repomix with XML output:\\n\\n      ```bash\\n      repomix extract ./your-repo --style xml \\\\\\n        --include \\\&quot;src/**/auth/**\\\&quot; \\\\\\n        --include \\\&quot;src/**/user/**\\\&quot; \\\\\\n        --include \\\&quot;src/models/User.*\\\&quot; \\\\\\n        --include \\\&quot;src/middleware/auth.*\\\&quot; \\\\\\n        --include \\\&quot;src/config/auth.*\\\&quot; \\\\\\n        --exclude \\\&quot;**/*.test.*\\\&quot; \\\\\\n        --exclude \\\&quot;**/*.spec.*\\\&quot; \\\\\\n        --ignore \\\&quot;**/uv.lock,**/package-lock.json,**/.env,**/Cargo.lock,**/node_modules,**/target,**/dist,**/build,**/output.txt,**/yarn.lock\\\&quot; \\\\\\n        --output-show-line-numbers \\\\\\n        --output auth-system.xml\\n      ```\\n\\n      This command:\\n      1. Targets all auth-related files and directories\\n      2. Includes user-related files that are typically part of authentication\\n      3. Includes specific model, middleware, and config files related to auth\\n      4. Excludes test files to keep the output focused\\n      5. Ignores common build artifacts and dependencies\\n      6. Includes line numbers for easier reference\\n      7. Outputs in XML format for structured representation\\n\\n      If you need to be even more selective, first identify the exact files involved:\\n\\n      ```bash\\n      find ./your-repo -type f -name \\\&quot;*.js\\\&quot; | grep -E \\\&quot;auth|login|register|user|permission|role\\\&quot; | less\\n      ```\\n\\n      Then use those specific files in your include patterns.\\n\\n  - input: |\\n      I need to extract context to explain how the data processing pipeline works in my repo.\\n    output: |\\n      To extract context that explains how a data processing pipeline works:\\n\\n      ```bash\\n      repomix extract ./your-repo --style xml \\\\\\n        --include \\\&quot;src/**/pipeline/**\\\&quot; \\\\\\n        --include \\\&quot;src/**/processors/**\\\&quot; \\\\\\n        --include \\\&quot;src/models/DataModel.*\\\&quot; \\\\\\n        --include \\\&quot;src/utils/dataUtils.*\\\&quot; \\\\\\n        --include \\\&quot;src/config/pipeline.*\\\&quot; \\\\\\n        --include \\\&quot;src/types/data.*\\\&quot; \\\\\\n        --exclude \\\&quot;**/*.test.*\\\&quot; \\\\\\n        --exclude \\\&quot;**/mock*\\\&quot; \\\\\\n        --ignore \\\&quot;**/uv.lock,**/package-lock.json,**/.env,**/Cargo.lock,**/node_modules,**/target,**/dist,**/build,**/output.txt,**/yarn.lock\\\&quot; \\\\\\n        --output-show-line-numbers \\\\\\n        --output data-pipeline.xml\\n      ```\\n\\n      This approach:\\n      1. Focuses on pipeline and processor directories\\n      2. Includes relevant data models and utilities\\n      3. Includes pipeline configuration\\n      4. Includes type definitions for data structures\\n      5. Excludes tests and mock data\\n      6. Ignores common build artifacts and dependencies\\n      7. Includes line numbers for easier reference\\n\\n      For a more comprehensive understanding, you might want to include the entry points:\\n\\n      ```bash\\n      repomix extract ./your-repo --style xml \\\\\\n        --include \\\&quot;src/index.*\\\&quot; \\\\\\n        --include \\\&quot;src/**/pipeline/**\\\&quot; \\\\\\n        --include \\\&quot;src/**/processors/**\\\&quot; \\\\\\n        --include \\\&quot;src/models/DataModel.*\\\&quot; \\\\\\n        --include \\\&quot;src/utils/dataUtils.*\\\&quot; \\\\\\n        --include \\\&quot;src/config/pipeline.*\\\&quot; \\\\\\n        --include \\\&quot;src/types/data.*\\\&quot; \\\\\\n        --exclude \\\&quot;**/*.test.*\\\&quot; \\\\\\n        --exclude \\\&quot;**/mock*\\\&quot; \\\\\\n        --ignore \\\&quot;**/uv.lock,**/package-lock.json,**/.env,**/Cargo.lock,**/node_modules,**/target,**/dist,**/build,**/output.txt,**/yarn.lock\\\&quot; \\\\\\n        --output-show-line-numbers \\\\\\n        --output data-pipeline-with-entry.xml\\n      ```\\n\\n      This ensures you capture how the pipeline is initialized and triggered.\\n\\n  - input: |\\n      How do I create a quick summary of my entire repository for an LLM?\\n    output: |\\n      For a quick summary of your entire repository optimized for LLM consumption:\\n\\n      ```bash\\n      npx repomix --style xml --output-show-line-numbers --output output.txt --ignore \\\&quot;**/uv.lock,**/package-lock.json,**/.env,**/Cargo.lock,**/node_modules,**/target,**/dist,**/build,**/output.txt,**/yarn.lock\\\&quot;\\n      ```\\n\\n      This command:\\n      1. Uses repomix to process your repository\\n      2. Outputs in XML format for structured representation\\n      3. Includes line numbers for easier reference\\n      4. Ignores common build artifacts and dependencies\\n      5. Creates an output.txt file with the repository summary\\n\\n      If you want to focus on specific aspects while still getting a broad overview:\\n\\n      ```bash\\n      npx repomix --style xml --include \\\&quot;src/**/*.ts\\\&quot; --include \\\&quot;src/**/*.js\\\&quot; --exclude \\\&quot;**/*.test.*\\\&quot; --ignore \\\&quot;**/uv.lock,**/package-lock.json,**/.env,**/Cargo.lock,**/node_modules,**/target,**/dist,**/build,**/output.txt,**/yarn.lock\\\&quot; --output-show-line-numbers --output repo-summary.xml\\n      ```\\n\\n      This will include all TypeScript and JavaScript files while excluding tests and common artifacts.\\n\\nmetadata:\\n  priority: high\\n  version: 1.0\\n  tags:\\n    - context-extraction\\n    - code-understanding\\n    - repomix-usage\\n&lt;/rule&gt;\\n\&quot;}], \&quot;valid_rule_count\&quot;: 2}&quot;</span><span class="p">}],</span><span class="nt">&quot;isError&quot;</span><span class="p">:</span><span class="kc">false</span><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">&quot;content&quot;</span><span class="p">:[{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;text&quot;</span><span class="p">,</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="s2">&quot;{\&quot;rules\&quot;: [{\&quot;rule_name\&quot;: \&quot;tree.mdc.md\&quot;, \&quot;content\&quot;: \&quot;---\\ndescription: Display repository structure\\nglobs: *\\nalwaysApply: false\\n---\\nWhen the user asks about the project layout, structure, or organization, run the command `tree -L 7 -I \\\&quot;*.pyc|__pycache__|.git|.pytest_cache|.ruff_cache|.mypy_cache|.coverage|htmlcov|.venv|.env|*.egg-info|build|dist|node_modules|.DS_Store|images\\\&quot;` to help understand and visualize the repository structure.\\n\&quot;}, {\&quot;rule_name\&quot;: \&quot;repomix.mdc.md\&quot;, \&quot;content\&quot;: \&quot;---\\ndescription: Repomix tool\\nglobs: *\\nalwaysApply: false\\n---\\n# Repomix Project Layout\\n\\nRules for understanding and navigating the repomix project structure.\\n\\n&lt;rule&gt;\\nname: project_layout_guide\\ndescription: Guide to the repomix project structure and organization\\nfilters:\\n  # Match any file in the project\\n  - type: file_extension\\n    pattern: \\\&quot;.*\\\&quot;\\n  # Match project initialization events\\n  - type: event\\n    pattern: \\\&quot;file_create\\\&quot;\\n\\nactions:\\n  - type: suggest\\n    message: |\\n      # Repomix Project Structure\\n\\n      This repository implements a tool for code repository summarization and packaging for LLM consumption.\\n\\n      ## Core Features\\n\\n      - **Repository Summarization:** Extracts and summarizes code repositories\\n      - **Code Packaging:** Prepares code for LLM consumption\\n      - **Security Checks:** Validates file safety and filters untrusted files\\n      - **Multiple Output Formats:** Supports markdown, plain text, and XML output styles\\n      - **CLI Interface:** Command-line interface for easy usage\\n      - **Web Interface:** Browser-based interface for repository processing\\n\\n      ## Directory Structure\\n\\n      ```\\n      .\\n      \\u251c\\u2500\\u2500 .cursor/                     # Active cursor rules directory\\n      \\u2502   \\u2514\\u2500\\u2500 rules/                   # Production cursor rules\\n      \\u251c\\u2500\\u2500 bin/                         # Binary executables\\n      \\u2502   \\u2514\\u2500\\u2500 repomix.cjs              # Main executable\\n      \\u251c\\u2500\\u2500 src/                         # Source code\\n      \\u2502   \\u251c\\u2500\\u2500 cli/                     # Command-line interface\\n      \\u2502   \\u2502   \\u251c\\u2500\\u2500 actions/             # CLI action implementations\\n      \\u2502   \\u2502   \\u251c\\u2500\\u2500 cliPrint.ts          # CLI output utilities\\n      \\u2502   \\u2502   \\u251c\\u2500\\u2500 cliRun.ts            # CLI execution logic\\n      \\u2502   \\u2502   \\u251c\\u2500\\u2500 cliSpinner.ts        # CLI progress indicators\\n      \\u2502   \\u2502   \\u2514\\u2500\\u2500 types.ts             # CLI type definitions\\n      \\u2502   \\u251c\\u2500\\u2500 config/                  # Configuration handling\\n      \\u2502   \\u2502   \\u251c\\u2500\\u2500 configLoad.ts        # Config loading utilities\\n      \\u2502   \\u2502   \\u251c\\u2500\\u2500 configSchema.ts      # Config validation schema\\n      \\u2502   \\u2502   \\u251c\\u2500\\u2500 defaultIgnore.ts     # Default ignore patterns\\n      \\u2502   \\u2502   \\u2514\\u2500\\u2500 globalDirectory.ts   # Global directory management\\n      \\u2502   \\u251c\\u2500\\u2500 core/                    # Core functionality\\n      \\u2502   \\u2502   \\u251c\\u2500\\u2500 file/                # File operations\\n      \\u2502   \\u2502   \\u251c\\u2500\\u2500 metrics/             # Metrics calculation\\n      \\u2502   \\u2502   \\u251c\\u2500\\u2500 output/              # Output generation\\n      \\u2502   \\u2502   \\u251c\\u2500\\u2500 packager/            # Output packaging\\n      \\u2502   \\u2502   \\u251c\\u2500\\u2500 security/            # Security validation\\n      \\u2502   \\u2502   \\u251c\\u2500\\u2500 tokenCount/          # Token counting utilities\\n      \\u2502   \\u2502   \\u2514\\u2500\\u2500 treeSitter/          # Code parsing with tree-sitter\\n      \\u2502   \\u251c\\u2500\\u2500 index.ts                 # Main entry point\\n      \\u2502   \\u2514\\u2500\\u2500 shared/                  # Shared utilities\\n      \\u2502       \\u251c\\u2500\\u2500 constants.ts         # Shared constants\\n      \\u2502       \\u251c\\u2500\\u2500 errorHandle.ts       # Error handling\\n      \\u2502       \\u251c\\u2500\\u2500 logger.ts            # Logging utilities\\n      \\u2502       \\u251c\\u2500\\u2500 processConcurrency.ts # Concurrency management\\n      \\u2502       \\u2514\\u2500\\u2500 types.ts             # Shared type definitions\\n      \\u251c\\u2500\\u2500 tests/                       # Test suites\\n      \\u2502   \\u251c\\u2500\\u2500 cli/                     # CLI tests\\n      \\u2502   \\u251c\\u2500\\u2500 config/                  # Configuration tests\\n      \\u2502   \\u251c\\u2500\\u2500 core/                    # Core functionality tests\\n      \\u2502   \\u251c\\u2500\\u2500 integration-tests/       # Integration tests\\n      \\u2502   \\u251c\\u2500\\u2500 shared/                  # Shared utility tests\\n      \\u2502   \\u2514\\u2500\\u2500 testing/                 # Test utilities\\n      \\u2514\\u2500\\u2500 website/                     # Web interface\\n          \\u251c\\u2500\\u2500 client/                  # Frontend application\\n          \\u2502   \\u251c\\u2500\\u2500 components/          # Vue components\\n          \\u2502   \\u2514\\u2500\\u2500 src/                 # Frontend source code\\n          \\u2514\\u2500\\u2500 server/                  # Backend server\\n              \\u2514\\u2500\\u2500 src/                 # Server source code\\n      ```\\n\\n      ## Primary Components\\n\\n      ### Source Code (`src/`)\\n      Core TypeScript application code organized into modules:\\n      - `cli/`: Command-line interface implementation\\n      - `config/`: Configuration management\\n      - `core/`: Core functionality including file processing, security, and output generation\\n      - `shared/`: Shared utilities and types\\n\\n      ### Tests (`tests/`)\\n      Comprehensive test suite including unit tests and integration tests for all components.\\n\\n      ### Website (`website/`)\\n      Web interface for the application with client and server components:\\n      - `client/`: Vue-based frontend application\\n      - `server/`: Backend API server\\n\\n      ### Binary (`bin/`)\\n      Executable files for running the application from the command line.\\n\\n      ## Development Workflow\\n\\n      ### Feature Development\\n      1. **Understand Requirements** - Review existing code and documentation\\n      2. **Implement Changes** - Add or modify code with appropriate tests\\n      3. **Test Thoroughly** - Run tests to ensure functionality\\n      4. **Document Changes** - Update documentation as needed\\n\\n      ### Testing\\n      - Run unit tests: `npm test`\\n      - Run specific tests: `npm test -- &lt;test-pattern&gt;`\\n      - Run integration tests: `npm run test:integration`\\n\\n      ### Building\\n      - Build the application: `npm run build`\\n      - Build the website: `cd website &amp;&amp; npm run build`\\n\\nexamples:\\n  - input: |\\n      # I&#39;m new to the project, where should I put my code for a new CLI command?\\n    output: |\\n      For a new CLI command, you should:\\n\\n      1. Create a new action file in `src/cli/actions/` (e.g., `myNewAction.ts`)\\n      2. Implement the action following the pattern of existing actions\\n      3. Add appropriate tests in `tests/cli/actions/`\\n      4. Update the CLI command registration in the main CLI runner\\n\\n      Look at existing action files like `defaultAction.ts` or `initAction.ts` for examples of the structure.\\n\\n  - input: |\\n      # How is the code parsing functionality organized?\\n    output: |\\n      The code parsing functionality is in the `src/core/treeSitter/` directory:\\n\\n      - `ext2Lang.ts`: Maps file extensions to language types\\n      - `lang2Query.ts`: Maps languages to appropriate queries\\n      - `languageParser.ts`: Core parsing functionality\\n      - `loadLanguage.ts`: Loads language grammars\\n      - `parseFile.ts`: Main file parsing entry point\\n      - `parseStrategies/`: Language-specific parsing strategies\\n      - `queries/`: Tree-sitter queries for different languages\\n\\n      This module uses tree-sitter to parse code files and extract meaningful information.\\n\\nmetadata:\\n  priority: high\\n  version: 1.0\\n  tags:\\n    - project-structure\\n    - organization\\n    - development-workflow\\n&lt;/rule&gt;\\n\\n&lt;rule&gt;\\nname: project_standards\\ndescription: Standards for code quality and organization in the repomix project\\nfilters:\\n  # Match any file in the project\\n  - type: file_extension\\n    pattern: \\\&quot;.*\\\&quot;\\n  # Match project initialization events\\n  - type: event\\n    pattern: \\\&quot;file_create\\\&quot;\\n\\nactions:\\n  - type: suggest\\n    message: |\\n      # Repomix Project Standards\\n\\n      ## TypeScript Standards\\n\\n      - **Code Style**: Follow the project&#39;s biome.json configuration\\n      - **Type Safety**: Strong typing for all functions and classes\\n      - **Documentation**: JSDoc comments for public APIs\\n      - **Testing**: Comprehensive test coverage with vitest\\n\\n      ## Project Structure Standards\\n\\n      - **Module Organization**: Functionality grouped by domain (cli, core, config)\\n      - **Component Isolation**: Clear separation of concerns between modules\\n      - **Worker Architecture**: CPU-intensive tasks use worker threads\\n      - **Error Handling**: Consistent error handling patterns\\n\\n      ## Web Interface Standards\\n\\n      - **Frontend**: Vue.js components with TypeScript\\n      - **Backend**: Node.js API with TypeScript\\n      - **Internationalization**: Support for multiple languages\\n      - **Responsive Design**: Mobile and desktop friendly UI\\n\\n      ## Security Standards\\n\\n      - **Input Validation**: Validate all user inputs\\n      - **File Safety**: Check files for potential security issues\\n      - **Permission Checks**: Verify file access permissions\\n      - **Rate Limiting**: Prevent abuse of API endpoints\\n\\n      ## Validation Requirements\\n\\n      - All code must have appropriate type annotations\\n      - All public APIs must have documentation comments\\n      - All code must have corresponding tests\\n      - All UI components must support internationalization\\n      - Security checks must be applied to all file operations\\n\\nexamples:\\n  - input: |\\n      # What are the requirements for TypeScript code in this project?\\n    output: |\\n      TypeScript code in this project must:\\n      1. Follow the code style defined in biome.json\\n      2. Use strong typing for all functions, variables, and classes\\n      3. Include JSDoc comments for public APIs\\n      4. Be accompanied by comprehensive tests\\n      5. Follow the module organization pattern (cli, core, config, etc.)\\n      6. Implement proper error handling\\n\\n  - input: |\\n      # How should I structure a new feature?\\n    output: |\\n      When adding a new feature:\\n\\n      1. Identify the appropriate module (cli, core, config, etc.)\\n      2. Create new files following the existing naming patterns\\n      3. Implement the feature with proper typing and documentation\\n      4. Add comprehensive tests in the corresponding test directory\\n      5. Update any relevant documentation\\n      6. Ensure the feature follows security standards if handling files or user input\\n\\nmetadata:\\n  priority: high\\n  version: 1.0\\n  tags:\\n    - standards\\n    - code-quality\\n    - organization\\n&lt;/rule&gt;\\n\\n&lt;rule&gt;\\nname: repomix_context_extraction\\ndescription: Guide for using repomix to extract focused context from repositories\\nfilters:\\n  - type: message\\n    pattern: \\\&quot;(?i)(extract context|code context|repository context|repomix extract|code explanation|understand code)\\\&quot;\\n  - type: context\\n    pattern: \\\&quot;explain code|understand repository|extract code|code extraction\\\&quot;\\n\\nactions:\\n  - type: suggest\\n    message: |\\n      # Repomix Context Extraction Guide\\n\\n      Repomix is a powerful tool for extracting and summarizing code repositories for LLM consumption. This guide focuses on using repomix to extract only the necessary context to explain how specific functionality works.\\n\\n      ## Core Principles for Effective Context Extraction\\n\\n      - **Focused Selection**: Only include files/folders directly relevant to the functionality\\n      - **Complete Understanding**: Ensure all dependencies are included for a complete explanation\\n      - **XML Output**: Use XML format for structured representation of code\\n      - **Minimal Context**: Avoid including unnecessary files that add noise\\n      - **Consistent Ignore Patterns**: Use standard ignore patterns for common build artifacts and dependencies\\n\\n      ## Command Structure\\n\\n      ```bash\\n      repomix extract /path/to/repository --style xml --include \\\&quot;path/to/relevant/files/**\\\&quot; --exclude \\\&quot;tests/**\\\&quot; --ignore \\\&quot;**/node_modules,**/dist,**/build\\\&quot; --output output.xml\\n      ```\\n\\n      ## Key Parameters\\n\\n      - `--style xml`: Output in XML format for structured representation\\n      - `--include`: Specify patterns for files to include (supports glob patterns)\\n      - `--exclude`: Specify patterns for files to exclude\\n      - `--ignore`: Specify patterns for files to ignore (build artifacts, dependencies)\\n      - `--output`: Specify the output file\\n      - `--output-show-line-numbers`: Include line numbers in the output (helpful for reference)\\n      - `--max-tokens`: Limit the total token count (optional)\\n      - `--depth`: Control the depth of directory traversal (optional)\\n\\n      ## Standard Ignore Patterns\\n\\n      Always include these standard ignore patterns to avoid including unnecessary files:\\n\\n      ```bash\\n      --ignore \\\&quot;**/uv.lock,**/package-lock.json,**/.env,**/Cargo.lock,**/node_modules,**/target,**/dist,**/build,**/output.txt,**/yarn.lock\\\&quot;\\n      ```\\n\\n      ## Best Practices\\n\\n      ### 1. Identify Core Components\\n\\n      Before extraction, identify the core components needed to explain the functionality:\\n\\n      - Entry point files\\n      - Core implementation files\\n      - Essential utility functions\\n      - Type definitions and interfaces\\n      - Configuration files directly related to the functionality\\n\\n      ### 2. Use Precise Include Patterns\\n\\n      ```bash\\n      # Example: Extract authentication system\\n      repomix extract ./repo --style xml --include \\\&quot;src/auth/**\\\&quot; --include \\\&quot;src/models/User.js\\\&quot; --include \\\&quot;src/config/auth.js\\\&quot; --ignore \\\&quot;**/node_modules,**/dist,**/build,**/package-lock.json\\\&quot; --output-show-line-numbers --output auth-context.xml\\n      ```\\n\\n      ### 3. Exclude Unnecessary Files\\n\\n      ```bash\\n      # Exclude tests, documentation, and build artifacts\\n      repomix extract ./repo --style xml --exclude \\\&quot;**/*.test.js\\\&quot; --exclude \\\&quot;**/*.spec.js\\\&quot; --exclude \\\&quot;docs/**\\\&quot; --ignore \\\&quot;**/uv.lock,**/package-lock.json,**/.env,**/Cargo.lock,**/node_modules,**/target,**/dist,**/build,**/output.txt,**/yarn.lock\\\&quot; --output-show-line-numbers --output clean-context.xml\\n      ```\\n\\n      ### 4. Combine With Search When Needed\\n\\n      For complex functionality spanning multiple directories:\\n\\n      ```bash\\n      # First find relevant files\\n      find ./repo -type f -name \\\&quot;*.js\\\&quot; | grep -E \\\&quot;auth|user|permission\\\&quot; &gt; relevant_files.txt\\n\\n      # Then use the list with repomix\\n      cat relevant_files.txt | xargs -I{} echo \\\&quot;--include {}\\\&quot; | xargs repomix extract ./repo --style xml --ignore \\\&quot;**/node_modules,**/dist,**/build\\\&quot; --output-show-line-numbers --output auth-system.xml\\n      ```\\n\\n      ### 5. Focus on Interfaces Over Implementation Details\\n\\n      When explaining how something works, prioritize interface files and core logic over detailed implementations:\\n\\n      ```bash\\n      repomix extract ./repo --style xml --include \\\&quot;src/api/**/*.interface.ts\\\&quot; --include \\\&quot;src/core/**/*.ts\\\&quot; --exclude \\\&quot;**/*.impl.ts\\\&quot; --ignore \\\&quot;**/uv.lock,**/package-lock.json,**/.env,**/Cargo.lock,**/node_modules,**/target,**/dist,**/build,**/output.txt,**/yarn.lock\\\&quot; --output-show-line-numbers --output system-overview.xml\\n      ```\\n\\n      ## Example Scenarios\\n\\n      ### Extracting a Feature Implementation\\n\\n      ```bash\\n      # Extract everything related to the search feature\\n      repomix extract ./repo --style xml --include \\\&quot;src/**/search/**\\\&quot; --include \\\&quot;src/models/SearchIndex.js\\\&quot; --include \\\&quot;src/utils/searchHelpers.js\\\&quot; --ignore \\\&quot;**/uv.lock,**/package-lock.json,**/.env,**/Cargo.lock,**/node_modules,**/target,**/dist,**/build,**/output.txt,**/yarn.lock\\\&quot; --output-show-line-numbers --output search-feature.xml\\n      ```\\n\\n      ### Extracting an API Endpoint Flow\\n\\n      ```bash\\n      # Extract files related to the user registration flow\\n      repomix extract ./repo --style xml --include \\\&quot;src/controllers/UserController.js\\\&quot; --include \\\&quot;src/services/UserService.js\\\&quot; --include \\\&quot;src/models/User.js\\\&quot; --include \\\&quot;src/validators/userValidation.js\\\&quot; --ignore \\\&quot;**/node_modules,**/dist,**/build\\\&quot; --output-show-line-numbers --output user-registration.xml\\n      ```\\n\\n      ### Extracting Architecture Overview\\n\\n      ```bash\\n      # Extract core architectural files\\n      repomix extract ./repo --style xml --include \\\&quot;src/core/**/*.ts\\\&quot; --include \\\&quot;src/types/**/*.ts\\\&quot; --include \\\&quot;src/config/**/*.ts\\\&quot; --exclude \\\&quot;**/*.test.ts\\\&quot; --ignore \\\&quot;**/uv.lock,**/package-lock.json,**/.env,**/Cargo.lock,**/node_modules,**/target,**/dist,**/build,**/output.txt,**/yarn.lock\\\&quot; --output-show-line-numbers --output architecture.xml\\n      ```\\n\\n      ### Quick Repository Summary\\n\\n      ```bash\\n      # Generate a quick summary of the entire repository\\n      npx repomix --style xml --output-show-line-numbers --output output.txt --ignore \\\&quot;**/uv.lock,**/package-lock.json,**/.env,**/Cargo.lock,**/node_modules,**/target,**/dist,**/build,**/output.txt,**/yarn.lock\\\&quot;\\n      ```\\n\\nexamples:\\n  - input: |\\n      How can I use repomix to extract just the authentication system from my repository?\\n    output: |\\n      To extract just the authentication system from your repository using repomix with XML output:\\n\\n      ```bash\\n      repomix extract ./your-repo --style xml \\\\\\n        --include \\\&quot;src/**/auth/**\\\&quot; \\\\\\n        --include \\\&quot;src/**/user/**\\\&quot; \\\\\\n        --include \\\&quot;src/models/User.*\\\&quot; \\\\\\n        --include \\\&quot;src/middleware/auth.*\\\&quot; \\\\\\n        --include \\\&quot;src/config/auth.*\\\&quot; \\\\\\n        --exclude \\\&quot;**/*.test.*\\\&quot; \\\\\\n        --exclude \\\&quot;**/*.spec.*\\\&quot; \\\\\\n        --ignore \\\&quot;**/uv.lock,**/package-lock.json,**/.env,**/Cargo.lock,**/node_modules,**/target,**/dist,**/build,**/output.txt,**/yarn.lock\\\&quot; \\\\\\n        --output-show-line-numbers \\\\\\n        --output auth-system.xml\\n      ```\\n\\n      This command:\\n      1. Targets all auth-related files and directories\\n      2. Includes user-related files that are typically part of authentication\\n      3. Includes specific model, middleware, and config files related to auth\\n      4. Excludes test files to keep the output focused\\n      5. Ignores common build artifacts and dependencies\\n      6. Includes line numbers for easier reference\\n      7. Outputs in XML format for structured representation\\n\\n      If you need to be even more selective, first identify the exact files involved:\\n\\n      ```bash\\n      find ./your-repo -type f -name \\\&quot;*.js\\\&quot; | grep -E \\\&quot;auth|login|register|user|permission|role\\\&quot; | less\\n      ```\\n\\n      Then use those specific files in your include patterns.\\n\\n  - input: |\\n      I need to extract context to explain how the data processing pipeline works in my repo.\\n    output: |\\n      To extract context that explains how a data processing pipeline works:\\n\\n      ```bash\\n      repomix extract ./your-repo --style xml \\\\\\n        --include \\\&quot;src/**/pipeline/**\\\&quot; \\\\\\n        --include \\\&quot;src/**/processors/**\\\&quot; \\\\\\n        --include \\\&quot;src/models/DataModel.*\\\&quot; \\\\\\n        --include \\\&quot;src/utils/dataUtils.*\\\&quot; \\\\\\n        --include \\\&quot;src/config/pipeline.*\\\&quot; \\\\\\n        --include \\\&quot;src/types/data.*\\\&quot; \\\\\\n        --exclude \\\&quot;**/*.test.*\\\&quot; \\\\\\n        --exclude \\\&quot;**/mock*\\\&quot; \\\\\\n        --ignore \\\&quot;**/uv.lock,**/package-lock.json,**/.env,**/Cargo.lock,**/node_modules,**/target,**/dist,**/build,**/output.txt,**/yarn.lock\\\&quot; \\\\\\n        --output-show-line-numbers \\\\\\n        --output data-pipeline.xml\\n      ```\\n\\n      This approach:\\n      1. Focuses on pipeline and processor directories\\n      2. Includes relevant data models and utilities\\n      3. Includes pipeline configuration\\n      4. Includes type definitions for data structures\\n      5. Excludes tests and mock data\\n      6. Ignores common build artifacts and dependencies\\n      7. Includes line numbers for easier reference\\n\\n      For a more comprehensive understanding, you might want to include the entry points:\\n\\n      ```bash\\n      repomix extract ./your-repo --style xml \\\\\\n        --include \\\&quot;src/index.*\\\&quot; \\\\\\n        --include \\\&quot;src/**/pipeline/**\\\&quot; \\\\\\n        --include \\\&quot;src/**/processors/**\\\&quot; \\\\\\n        --include \\\&quot;src/models/DataModel.*\\\&quot; \\\\\\n        --include \\\&quot;src/utils/dataUtils.*\\\&quot; \\\\\\n        --include \\\&quot;src/config/pipeline.*\\\&quot; \\\\\\n        --include \\\&quot;src/types/data.*\\\&quot; \\\\\\n        --exclude \\\&quot;**/*.test.*\\\&quot; \\\\\\n        --exclude \\\&quot;**/mock*\\\&quot; \\\\\\n        --ignore \\\&quot;**/uv.lock,**/package-lock.json,**/.env,**/Cargo.lock,**/node_modules,**/target,**/dist,**/build,**/output.txt,**/yarn.lock\\\&quot; \\\\\\n        --output-show-line-numbers \\\\\\n        --output data-pipeline-with-entry.xml\\n      ```\\n\\n      This ensures you capture how the pipeline is initialized and triggered.\\n\\n  - input: |\\n      How do I create a quick summary of my entire repository for an LLM?\\n    output: |\\n      For a quick summary of your entire repository optimized for LLM consumption:\\n\\n      ```bash\\n      npx repomix --style xml --output-show-line-numbers --output output.txt --ignore \\\&quot;**/uv.lock,**/package-lock.json,**/.env,**/Cargo.lock,**/node_modules,**/target,**/dist,**/build,**/output.txt,**/yarn.lock\\\&quot;\\n      ```\\n\\n      This command:\\n      1. Uses repomix to process your repository\\n      2. Outputs in XML format for structured representation\\n      3. Includes line numbers for easier reference\\n      4. Ignores common build artifacts and dependencies\\n      5. Creates an output.txt file with the repository summary\\n\\n      If you want to focus on specific aspects while still getting a broad overview:\\n\\n      ```bash\\n      npx repomix --style xml --include \\\&quot;src/**/*.ts\\\&quot; --include \\\&quot;src/**/*.js\\\&quot; --exclude \\\&quot;**/*.test.*\\\&quot; --ignore \\\&quot;**/uv.lock,**/package-lock.json,**/.env,**/Cargo.lock,**/node_modules,**/target,**/dist,**/build,**/output.txt,**/yarn.lock\\\&quot; --output-show-line-numbers --output repo-summary.xml\\n      ```\\n\\n      This will include all TypeScript and JavaScript files while excluding tests and common artifacts.\\n\\nmetadata:\\n  priority: high\\n  version: 1.0\\n  tags:\\n    - context-extraction\\n    - code-understanding\\n    - repomix-usage\\n&lt;/rule&gt;\\n\&quot;}], \&quot;valid_rule_count\&quot;: 2}&quot;</span><span class="p">}],</span><span class="nt">&quot;isError&quot;</span><span class="p">:</span><span class="kc">false</span><span class="p">}</span>
 </code></pre></div>
 <h3 id="get_static_cursor_rule">get_static_cursor_rule<a class="headerlink" href="#get_static_cursor_rule" title="Permanent link">&para;</a></h3>
 <blockquote>
 <p>Request:</p>
 </blockquote>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="s2">&quot;tools/call&quot;</span><span class="p">,</span><span class="nt">&quot;params&quot;</span><span class="p">:{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;get_static_cursor_rule&quot;</span><span class="p">,</span><span class="nt">&quot;arguments&quot;</span><span class="p">:{</span><span class="nt">&quot;rule_name&quot;</span><span class="p">:</span><span class="s2">&quot;tree&quot;</span><span class="p">},</span><span class="nt">&quot;_meta&quot;</span><span class="p">:{</span><span class="nt">&quot;progressToken&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}}</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="s2">&quot;tools/call&quot;</span><span class="p">,</span><span class="nt">&quot;params&quot;</span><span class="p">:{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;get_static_cursor_rule&quot;</span><span class="p">,</span><span class="nt">&quot;arguments&quot;</span><span class="p">:{</span><span class="nt">&quot;rule_name&quot;</span><span class="p">:</span><span class="s2">&quot;tree&quot;</span><span class="p">},</span><span class="nt">&quot;_meta&quot;</span><span class="p">:{</span><span class="nt">&quot;progressToken&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}}}</span>
 </code></pre></div>
 <blockquote>
 <p>Response:</p>
 </blockquote>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span><span class="nt">&quot;content&quot;</span><span class="p">:[{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;text&quot;</span><span class="p">,</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="s2">&quot;{\&quot;rule_name\&quot;: \&quot;tree.mdc.md\&quot;, \&quot;content\&quot;: \&quot;---\\ndescription: Display repository structure\\nglobs: *\\nalwaysApply: false\\n---\\nWhen the user asks about the project layout, structure, or organization, run the command `tree -L 7 -I \\\&quot;*.pyc|__pycache__|.git|.pytest_cache|.ruff_cache|.mypy_cache|.coverage|htmlcov|.venv|.env|*.egg-info|build|dist|node_modules|.DS_Store|images\\\&quot;` to help understand and visualize the repository structure.\\n\&quot;}&quot;</span><span class="p">}],</span><span class="nt">&quot;isError&quot;</span><span class="p">:</span><span class="kc">false</span><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">&quot;content&quot;</span><span class="p">:[{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;text&quot;</span><span class="p">,</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="s2">&quot;{\&quot;rule_name\&quot;: \&quot;tree.mdc.md\&quot;, \&quot;content\&quot;: \&quot;---\\ndescription: Display repository structure\\nglobs: *\\nalwaysApply: false\\n---\\nWhen the user asks about the project layout, structure, or organization, run the command `tree -L 7 -I \\\&quot;*.pyc|__pycache__|.git|.pytest_cache|.ruff_cache|.mypy_cache|.coverage|htmlcov|.venv|.env|*.egg-info|build|dist|node_modules|.DS_Store|images\\\&quot;` to help understand and visualize the repository structure.\\n\&quot;}&quot;</span><span class="p">}],</span><span class="nt">&quot;isError&quot;</span><span class="p">:</span><span class="kc">false</span><span class="p">}</span>
 </code></pre></div>
 <h3 id="save_cursor_rule">save_cursor_rule<a class="headerlink" href="#save_cursor_rule" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="s2">&quot;tools/call&quot;</span><span class="p">,</span><span class="nt">&quot;params&quot;</span><span class="p">:{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;save_cursor_rule&quot;</span><span class="p">,</span><span class="nt">&quot;arguments&quot;</span><span class="p">:{</span><span class="nt">&quot;rule_name&quot;</span><span class="p">:</span><span class="s2">&quot;bossjones&quot;</span><span class="p">,</span><span class="nt">&quot;rule_content&quot;</span><span class="p">:</span><span class="s2">&quot;# Python Best Practices\\n\\nWhen writing Python code, follow these guidelines:\\n\\n1. Use type hints\\n2. Write docstrings\\n3. Follow PEP 8&quot;</span><span class="p">},</span><span class="nt">&quot;_meta&quot;</span><span class="p">:{</span><span class="nt">&quot;progressToken&quot;</span><span class="p">:</span><span class="mi">3</span><span class="p">}}}</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="s2">&quot;tools/call&quot;</span><span class="p">,</span><span class="nt">&quot;params&quot;</span><span class="p">:{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;save_cursor_rule&quot;</span><span class="p">,</span><span class="nt">&quot;arguments&quot;</span><span class="p">:{</span><span class="nt">&quot;rule_name&quot;</span><span class="p">:</span><span class="s2">&quot;bossjones&quot;</span><span class="p">,</span><span class="nt">&quot;rule_content&quot;</span><span class="p">:</span><span class="s2">&quot;# Python Best Practices\\n\\nWhen writing Python code, follow these guidelines:\\n\\n1. Use type hints\\n2. Write docstrings\\n3. Follow PEP 8&quot;</span><span class="p">},</span><span class="nt">&quot;_meta&quot;</span><span class="p">:{</span><span class="nt">&quot;progressToken&quot;</span><span class="p">:</span><span class="mi">3</span><span class="p">}}}</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="p">{</span><span class="nt">&quot;content&quot;</span><span class="p">:[{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;text&quot;</span><span class="p">,</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="s2">&quot;{\&quot;operations\&quot;: [{\&quot;type\&quot;: \&quot;create_directory\&quot;, \&quot;path\&quot;: \&quot;hack/drafts/cursor_rules\&quot;, \&quot;options\&quot;: {\&quot;parents\&quot;: true, \&quot;exist_ok\&quot;: true}}, {\&quot;type\&quot;: \&quot;write_file\&quot;, \&quot;path\&quot;: \&quot;hack/drafts/cursor_rules/bossjones.mdc.md\&quot;, \&quot;content\&quot;: \&quot;# Python Best Practices\\\\n\\\\nWhen writing Python code, follow these guidelines:\\\\n\\\\n1. Use type hints\\\\n2. Write docstrings\\\\n3. Follow PEP 8\&quot;, \&quot;options\&quot;: {\&quot;mode\&quot;: \&quot;w\&quot;}}], \&quot;message\&quot;: \&quot;Instructions to save cursor rule to hack/drafts/cursor_rules/bossjones.mdc.md\&quot;}&quot;</span><span class="p">}],</span><span class="nt">&quot;isError&quot;</span><span class="p">:</span><span class="kc">false</span><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">&quot;content&quot;</span><span class="p">:[{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;text&quot;</span><span class="p">,</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="s2">&quot;{\&quot;operations\&quot;: [{\&quot;type\&quot;: \&quot;create_directory\&quot;, \&quot;path\&quot;: \&quot;hack/drafts/cursor_rules\&quot;, \&quot;options\&quot;: {\&quot;parents\&quot;: true, \&quot;exist_ok\&quot;: true}}, {\&quot;type\&quot;: \&quot;write_file\&quot;, \&quot;path\&quot;: \&quot;hack/drafts/cursor_rules/bossjones.mdc.md\&quot;, \&quot;content\&quot;: \&quot;# Python Best Practices\\\\n\\\\nWhen writing Python code, follow these guidelines:\\\\n\\\\n1. Use type hints\\\\n2. Write docstrings\\\\n3. Follow PEP 8\&quot;, \&quot;options\&quot;: {\&quot;mode\&quot;: \&quot;w\&quot;}}], \&quot;message\&quot;: \&quot;Instructions to save cursor rule to hack/drafts/cursor_rules/bossjones.mdc.md\&quot;}&quot;</span><span class="p">}],</span><span class="nt">&quot;isError&quot;</span><span class="p">:</span><span class="kc">false</span><span class="p">}</span>
 </code></pre></div>
 <h3 id="recommend_cursor_rules">recommend_cursor_rules<a class="headerlink" href="#recommend_cursor_rules" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">{</span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="s2">&quot;tools/call&quot;</span><span class="p">,</span><span class="nt">&quot;params&quot;</span><span class="p">:{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;recommend_cursor_rules&quot;</span><span class="p">,</span><span class="nt">&quot;arguments&quot;</span><span class="p">:{</span><span class="nt">&quot;repo_summary&quot;</span><span class="p">:</span><span class="s2">&quot;fastapi fastapi fastapi fastapi fastapi fastapi fastapi&quot;</span><span class="p">},</span><span class="nt">&quot;_meta&quot;</span><span class="p">:{</span><span class="nt">&quot;progressToken&quot;</span><span class="p">:</span><span class="mi">5</span><span class="p">}}}</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="s2">&quot;tools/call&quot;</span><span class="p">,</span><span class="nt">&quot;params&quot;</span><span class="p">:{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;recommend_cursor_rules&quot;</span><span class="p">,</span><span class="nt">&quot;arguments&quot;</span><span class="p">:{</span><span class="nt">&quot;repo_summary&quot;</span><span class="p">:</span><span class="s2">&quot;fastapi fastapi fastapi fastapi fastapi fastapi fastapi&quot;</span><span class="p">},</span><span class="nt">&quot;_meta&quot;</span><span class="p">:{</span><span class="nt">&quot;progressToken&quot;</span><span class="p">:</span><span class="mi">5</span><span class="p">}}}</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span><span class="nt">&quot;content&quot;</span><span class="p">:[{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;text&quot;</span><span class="p">,</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="s2">&quot;{\&quot;name\&quot;: \&quot;code-documentation\&quot;, \&quot;description\&quot;: \&quot;Standards for code documentation and comments\&quot;, \&quot;reason\&quot;: \&quot;Improve overall code documentation\&quot;}&quot;</span><span class="p">},{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;text&quot;</span><span class="p">,</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="s2">&quot;{\&quot;name\&quot;: \&quot;error-handling\&quot;, \&quot;description\&quot;: \&quot;Best practices for error handling and logging\&quot;, \&quot;reason\&quot;: \&quot;Enhance application reliability with proper error handling\&quot;}&quot;</span><span class="p">},{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;text&quot;</span><span class="p">,</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="s2">&quot;{\&quot;name\&quot;: \&quot;fastapi-best-practices\&quot;, \&quot;description\&quot;: \&quot;Best practices for FastAPI development\&quot;, \&quot;reason\&quot;: \&quot;Repository uses FastAPI framework\&quot;}&quot;</span><span class="p">},{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;text&quot;</span><span class="p">,</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="s2">&quot;{\&quot;name\&quot;: \&quot;fastapi-security\&quot;, \&quot;description\&quot;: \&quot;Security considerations for FastAPI applications\&quot;, \&quot;reason\&quot;: \&quot;Ensure secure API development with FastAPI\&quot;}&quot;</span><span class="p">},{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;text&quot;</span><span class="p">,</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="s2">&quot;{\&quot;name\&quot;: \&quot;fastapi-testing\&quot;, \&quot;description\&quot;: \&quot;Testing strategies for FastAPI endpoints\&quot;, \&quot;reason\&quot;: \&quot;Help with writing comprehensive tests for FastAPI endpoints\&quot;}&quot;</span><span class="p">},{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;text&quot;</span><span class="p">,</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="s2">&quot;{\&quot;name\&quot;: \&quot;api-security\&quot;, \&quot;description\&quot;: \&quot;Security considerations for API development\&quot;, \&quot;reason\&quot;: \&quot;Repository implements APIs\&quot;}&quot;</span><span class="p">},{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;text&quot;</span><span class="p">,</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="s2">&quot;{\&quot;name\&quot;: \&quot;api-documentation\&quot;, \&quot;description\&quot;: \&quot;Best practices for API documentation\&quot;, \&quot;reason\&quot;: \&quot;Improve API documentation\&quot;}&quot;</span><span class="p">}],</span><span class="nt">&quot;isError&quot;</span><span class="p">:</span><span class="kc">false</span><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">&quot;content&quot;</span><span class="p">:[{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;text&quot;</span><span class="p">,</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="s2">&quot;{\&quot;name\&quot;: \&quot;code-documentation\&quot;, \&quot;description\&quot;: \&quot;Standards for code documentation and comments\&quot;, \&quot;reason\&quot;: \&quot;Improve overall code documentation\&quot;}&quot;</span><span class="p">},{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;text&quot;</span><span class="p">,</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="s2">&quot;{\&quot;name\&quot;: \&quot;error-handling\&quot;, \&quot;description\&quot;: \&quot;Best practices for error handling and logging\&quot;, \&quot;reason\&quot;: \&quot;Enhance application reliability with proper error handling\&quot;}&quot;</span><span class="p">},{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;text&quot;</span><span class="p">,</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="s2">&quot;{\&quot;name\&quot;: \&quot;fastapi-best-practices\&quot;, \&quot;description\&quot;: \&quot;Best practices for FastAPI development\&quot;, \&quot;reason\&quot;: \&quot;Repository uses FastAPI framework\&quot;}&quot;</span><span class="p">},{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;text&quot;</span><span class="p">,</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="s2">&quot;{\&quot;name\&quot;: \&quot;fastapi-security\&quot;, \&quot;description\&quot;: \&quot;Security considerations for FastAPI applications\&quot;, \&quot;reason\&quot;: \&quot;Ensure secure API development with FastAPI\&quot;}&quot;</span><span class="p">},{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;text&quot;</span><span class="p">,</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="s2">&quot;{\&quot;name\&quot;: \&quot;fastapi-testing\&quot;, \&quot;description\&quot;: \&quot;Testing strategies for FastAPI endpoints\&quot;, \&quot;reason\&quot;: \&quot;Help with writing comprehensive tests for FastAPI endpoints\&quot;}&quot;</span><span class="p">},{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;text&quot;</span><span class="p">,</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="s2">&quot;{\&quot;name\&quot;: \&quot;api-security\&quot;, \&quot;description\&quot;: \&quot;Security considerations for API development\&quot;, \&quot;reason\&quot;: \&quot;Repository implements APIs\&quot;}&quot;</span><span class="p">},{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;text&quot;</span><span class="p">,</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="s2">&quot;{\&quot;name\&quot;: \&quot;api-documentation\&quot;, \&quot;description\&quot;: \&quot;Best practices for API documentation\&quot;, \&quot;reason\&quot;: \&quot;Improve API documentation\&quot;}&quot;</span><span class="p">}],</span><span class="nt">&quot;isError&quot;</span><span class="p">:</span><span class="kc">false</span><span class="p">}</span>
 </code></pre></div>
 <h3 id="prep_workspace">prep_workspace<a class="headerlink" href="#prep_workspace" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>{&quot;method&quot;:&quot;tools/call&quot;,&quot;params&quot;:{&quot;name&quot;:&quot;prep_workspace&quot;,&quot;arguments&quot;:{},&quot;_meta&quot;:{&quot;progressToken&quot;:6}}}
+<div class="highlight"><pre><span></span><code>{&quot;method&quot;:&quot;tools/call&quot;,&quot;params&quot;:{&quot;name&quot;:&quot;prep_workspace&quot;,&quot;arguments&quot;:{},&quot;_meta&quot;:{&quot;progressToken&quot;:6}}}
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>{&quot;content&quot;:[{&quot;type&quot;:&quot;text&quot;,&quot;text&quot;:&quot;{\&quot;status\&quot;: \&quot;success\&quot;, \&quot;message\&quot;: \&quot;\\nTo prepare the workspace for cursor rules, the following steps are needed:\\n\\n1. Create the cursor rules directory structure, this should be relative to the repo root eg ./hack/drafts/cursor_rules:\\n   mkdir -p ./hack/drafts/cursor_rules .cursor/rules || true\\n\\n2. Ensure the .cursor/rules directory exists for deployment:\\n   mkdir -p .cursor/rules\\n   mkdir -p ./hack/drafts/cursor_rules\\n\\n3. Check if Makefile exists with an update-cursor-rules task:\\n   The update-cursor-rules task should copy files from hack/drafts/cursor_rules to .cursor/rules. This command updates Cursor editor rules by copying rule definitions from a drafts directory into the Cursor configuration folder. It first creates a .cursor/rules directory if it doesn&#39;t exist. Then it finds all Markdown (.md) files in the hack/drafts/cursor_rules directory (excluding any README files), copies them to the .cursor/rules directory, and preserves their filenames without the .md extension. The comment notes that Cursor doesn&#39;t support generating .mdc files directly through the Composer Agent at the time this was written\\n\\n\\n4. Update .dockerignore to exclude the cursor rules drafts directory:\\n   Add &#39;hack/drafts/cursor_rules&#39; to .dockerignore if it exists\\n\\n5. Write the following mandatory cursor rule files to the client repo&#39;s cursor rules stage directory one at a time, using the get_static_cursor_rules function to retrieve each file. when saving the file ensure the file has extension .mdc.md, eg tree.mdc becomes tree.mdc.md:\\n   - tree.mdc: A rule for displaying repository structure\\n   - repo_analyzer.mdc: A rule for analyzing repository structure and locating code definitions\\n   - notify.mdc: A rule for notification at the end of tasks\\n   - repomix.mdc: A rule for repository summarization and packaging for LLM consumption\\n   - cursor_rules_location.mdc: A rule for locating the cursor rules directory and how to write them\\n\\n6. Update the client repo&#39;s .cursor/mcp.json file to include new entries if they don&#39;t already exist:\\n   Ensure the .cursor/mcp.json file contains entries for prompt_library and sequentialthinking:\\n   ```json\\n   {\\n     \\\&quot;prompt_library\\\&quot;: {\\n       \\\&quot;command\\\&quot;: \\\&quot;uv\\\&quot;,\\n       \\\&quot;args\\\&quot;: [\\n         \\\&quot;run\\\&quot;,\\n         \\\&quot;--with\\\&quot;,\\n         \\\&quot;mcp[cli]\\\&quot;,\\n         \\\&quot;mcp\\\&quot;,\\n         \\\&quot;run\\\&quot;,\\n         \\\&quot;${PWD}/src/codegen_lab/prompt_library.py\\\&quot;\\n       ]\\n     },\\n     \\\&quot;sequentialthinking\\\&quot;: {\\n       \\\&quot;command\\\&quot;: \\\&quot;npx\\\&quot;,\\n       \\\&quot;args\\\&quot;: [\\n         \\\&quot;-y\\\&quot;,\\n         \\\&quot;@modelcontextprotocol/server-sequential-thinking\\\&quot;\\n       ]\\n     }\\n   }\\n   ```\\n   Note: The path in the prompt_library entry should be adjusted to use the actual project path (PWD) instead of hardcoded paths.\\n\&quot;, \&quot;directory_exists\&quot;: true, \&quot;directory_path\&quot;: \&quot;./hack/drafts/cursor_rules\&quot;, \&quot;mkdir_command\&quot;: \&quot;mkdir -p ./hack/drafts/cursor_rules .cursor/rules || true\&quot;, \&quot;directory_structure\&quot;: \&quot;Directory structure to create at ./hack/drafts/cursor_rules\&quot;, \&quot;workspace_prepared\&quot;: false, \&quot;workspace_result\&quot;: {\&quot;status\&quot;: \&quot;success\&quot;, \&quot;message\&quot;: \&quot;Instructions provided for workspace preparation at ./hack/drafts/cursor_rules\&quot;, \&quot;directory_exists\&quot;: true, \&quot;directory_path\&quot;: \&quot;./hack/drafts/cursor_rules\&quot;, \&quot;mkdir_command\&quot;: \&quot;mkdir -p ./hack/drafts/cursor_rules .cursor/rules || true\&quot;}}&quot;}],&quot;isError&quot;:false}
+<div class="highlight"><pre><span></span><code>{&quot;content&quot;:[{&quot;type&quot;:&quot;text&quot;,&quot;text&quot;:&quot;{\&quot;status\&quot;: \&quot;success\&quot;, \&quot;message\&quot;: \&quot;\\nTo prepare the workspace for cursor rules, the following steps are needed:\\n\\n1. Create the cursor rules directory structure, this should be relative to the repo root eg ./hack/drafts/cursor_rules:\\n   mkdir -p ./hack/drafts/cursor_rules .cursor/rules || true\\n\\n2. Ensure the .cursor/rules directory exists for deployment:\\n   mkdir -p .cursor/rules\\n   mkdir -p ./hack/drafts/cursor_rules\\n\\n3. Check if Makefile exists with an update-cursor-rules task:\\n   The update-cursor-rules task should copy files from hack/drafts/cursor_rules to .cursor/rules. This command updates Cursor editor rules by copying rule definitions from a drafts directory into the Cursor configuration folder. It first creates a .cursor/rules directory if it doesn&#39;t exist. Then it finds all Markdown (.md) files in the hack/drafts/cursor_rules directory (excluding any README files), copies them to the .cursor/rules directory, and preserves their filenames without the .md extension. The comment notes that Cursor doesn&#39;t support generating .mdc files directly through the Composer Agent at the time this was written\\n\\n\\n4. Update .dockerignore to exclude the cursor rules drafts directory:\\n   Add &#39;hack/drafts/cursor_rules&#39; to .dockerignore if it exists\\n\\n5. Write the following mandatory cursor rule files to the client repo&#39;s cursor rules stage directory one at a time, using the get_static_cursor_rules function to retrieve each file. when saving the file ensure the file has extension .mdc.md, eg tree.mdc becomes tree.mdc.md:\\n   - tree.mdc: A rule for displaying repository structure\\n   - repo_analyzer.mdc: A rule for analyzing repository structure and locating code definitions\\n   - notify.mdc: A rule for notification at the end of tasks\\n   - repomix.mdc: A rule for repository summarization and packaging for LLM consumption\\n   - cursor_rules_location.mdc: A rule for locating the cursor rules directory and how to write them\\n\\n6. Update the client repo&#39;s .cursor/mcp.json file to include new entries if they don&#39;t already exist:\\n   Ensure the .cursor/mcp.json file contains entries for prompt_library and sequentialthinking:\\n   ```json\\n   {\\n     \\\&quot;prompt_library\\\&quot;: {\\n       \\\&quot;command\\\&quot;: \\\&quot;uv\\\&quot;,\\n       \\\&quot;args\\\&quot;: [\\n         \\\&quot;run\\\&quot;,\\n         \\\&quot;--with\\\&quot;,\\n         \\\&quot;mcp[cli]\\\&quot;,\\n         \\\&quot;mcp\\\&quot;,\\n         \\\&quot;run\\\&quot;,\\n         \\\&quot;${PWD}/src/codegen_lab/prompt_library.py\\\&quot;\\n       ]\\n     },\\n     \\\&quot;sequentialthinking\\\&quot;: {\\n       \\\&quot;command\\\&quot;: \\\&quot;npx\\\&quot;,\\n       \\\&quot;args\\\&quot;: [\\n         \\\&quot;-y\\\&quot;,\\n         \\\&quot;@modelcontextprotocol/server-sequential-thinking\\\&quot;\\n       ]\\n     }\\n   }\\n   ```\\n   Note: The path in the prompt_library entry should be adjusted to use the actual project path (PWD) instead of hardcoded paths.\\n\&quot;, \&quot;directory_exists\&quot;: true, \&quot;directory_path\&quot;: \&quot;./hack/drafts/cursor_rules\&quot;, \&quot;mkdir_command\&quot;: \&quot;mkdir -p ./hack/drafts/cursor_rules .cursor/rules || true\&quot;, \&quot;directory_structure\&quot;: \&quot;Directory structure to create at ./hack/drafts/cursor_rules\&quot;, \&quot;workspace_prepared\&quot;: false, \&quot;workspace_result\&quot;: {\&quot;status\&quot;: \&quot;success\&quot;, \&quot;message\&quot;: \&quot;Instructions provided for workspace preparation at ./hack/drafts/cursor_rules\&quot;, \&quot;directory_exists\&quot;: true, \&quot;directory_path\&quot;: \&quot;./hack/drafts/cursor_rules\&quot;, \&quot;mkdir_command\&quot;: \&quot;mkdir -p ./hack/drafts/cursor_rules .cursor/rules || true\&quot;}}&quot;}],&quot;isError&quot;:false}
 </code></pre></div>
 <h3 id="create_cursor_rule_files">create_cursor_rule_files<a class="headerlink" href="#create_cursor_rule_files" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>{&quot;method&quot;:&quot;tools/call&quot;,&quot;params&quot;:{&quot;name&quot;:&quot;create_cursor_rule_files&quot;,&quot;arguments&quot;:{&quot;rule_names&quot;:[&quot;bossjones&quot;]},&quot;_meta&quot;:{&quot;progressToken&quot;:7}}}
+<div class="highlight"><pre><span></span><code>{&quot;method&quot;:&quot;tools/call&quot;,&quot;params&quot;:{&quot;name&quot;:&quot;create_cursor_rule_files&quot;,&quot;arguments&quot;:{&quot;rule_names&quot;:[&quot;bossjones&quot;]},&quot;_meta&quot;:{&quot;progressToken&quot;:7}}}
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>{&quot;content&quot;:[{&quot;type&quot;:&quot;text&quot;,&quot;text&quot;:&quot;{\&quot;success\&quot;: true, \&quot;operations\&quot;: [{\&quot;type\&quot;: \&quot;create_directory\&quot;, \&quot;path\&quot;: \&quot;hack/drafts/cursor_rules\&quot;, \&quot;options\&quot;: {\&quot;parents\&quot;: true, \&quot;exist_ok\&quot;: true}}, {\&quot;type\&quot;: \&quot;write_file\&quot;, \&quot;path\&quot;: \&quot;hack/drafts/cursor_rules/bossjones.mdc.md\&quot;, \&quot;content\&quot;: \&quot;\&quot;, \&quot;options\&quot;: {\&quot;mode\&quot;: \&quot;w\&quot;}}], \&quot;created_files\&quot;: [\&quot;bossjones.mdc.md\&quot;], \&quot;touch_command\&quot;: \&quot;touch hack/drafts/cursor_rules/bossjones.mdc.md\&quot;, \&quot;next_steps\&quot;: \&quot;\\nNext steps:\\n1. Write content to each file sequentially\\n2. Deploy the rules using &#39;make update-cursor-rules&#39;\\n3. Verify the rules are correctly deployed to .cursor/rules\\n\&quot;, \&quot;message\&quot;: \&quot;Instructions to create 1 empty cursor rule files in hack/drafts/cursor_rules. \\nNext steps:\\n1. Write content to each file sequentially\\n2. Deploy the rules using &#39;make update-cursor-rules&#39;\\n3. Verify the rules are correctly deployed to .cursor/rules\\n\&quot;}&quot;}],&quot;isError&quot;:false}
+<div class="highlight"><pre><span></span><code>{&quot;content&quot;:[{&quot;type&quot;:&quot;text&quot;,&quot;text&quot;:&quot;{\&quot;success\&quot;: true, \&quot;operations\&quot;: [{\&quot;type\&quot;: \&quot;create_directory\&quot;, \&quot;path\&quot;: \&quot;hack/drafts/cursor_rules\&quot;, \&quot;options\&quot;: {\&quot;parents\&quot;: true, \&quot;exist_ok\&quot;: true}}, {\&quot;type\&quot;: \&quot;write_file\&quot;, \&quot;path\&quot;: \&quot;hack/drafts/cursor_rules/bossjones.mdc.md\&quot;, \&quot;content\&quot;: \&quot;\&quot;, \&quot;options\&quot;: {\&quot;mode\&quot;: \&quot;w\&quot;}}], \&quot;created_files\&quot;: [\&quot;bossjones.mdc.md\&quot;], \&quot;touch_command\&quot;: \&quot;touch hack/drafts/cursor_rules/bossjones.mdc.md\&quot;, \&quot;next_steps\&quot;: \&quot;\\nNext steps:\\n1. Write content to each file sequentially\\n2. Deploy the rules using &#39;make update-cursor-rules&#39;\\n3. Verify the rules are correctly deployed to .cursor/rules\\n\&quot;, \&quot;message\&quot;: \&quot;Instructions to create 1 empty cursor rule files in hack/drafts/cursor_rules. \\nNext steps:\\n1. Write content to each file sequentially\\n2. Deploy the rules using &#39;make update-cursor-rules&#39;\\n3. Verify the rules are correctly deployed to .cursor/rules\\n\&quot;}&quot;}],&quot;isError&quot;:false}
 </code></pre></div>
 <h3 id="ensure_makefile_task">ensure_makefile_task<a class="headerlink" href="#ensure_makefile_task" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>{&quot;method&quot;:&quot;tools/call&quot;,&quot;params&quot;:{&quot;name&quot;:&quot;ensure_makefile_task&quot;,&quot;arguments&quot;:{&quot;makefile_path&quot;:&quot;Makefile&quot;},&quot;_meta&quot;:{&quot;progressToken&quot;:8}}}
+<div class="highlight"><pre><span></span><code>{&quot;method&quot;:&quot;tools/call&quot;,&quot;params&quot;:{&quot;name&quot;:&quot;ensure_makefile_task&quot;,&quot;arguments&quot;:{&quot;makefile_path&quot;:&quot;Makefile&quot;},&quot;_meta&quot;:{&quot;progressToken&quot;:8}}}
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>{&quot;content&quot;:[{&quot;type&quot;:&quot;text&quot;,&quot;text&quot;:&quot;{\&quot;operations\&quot;: [{\&quot;type\&quot;: \&quot;check_file_exists\&quot;, \&quot;path\&quot;: \&quot;Makefile\&quot;}, {\&quot;type\&quot;: \&quot;read_file\&quot;, \&quot;path\&quot;: \&quot;Makefile\&quot;, \&quot;options\&quot;: {\&quot;encoding\&quot;: \&quot;utf-8\&quot;}}], \&quot;requires_result\&quot;: true, \&quot;message\&quot;: \&quot;Instructions to check Makefile and update if needed\&quot;, \&quot;update_task_content\&quot;: \&quot;\\n# Cursor Rules\\n.PHONY: update-cursor-rules\\nupdate-cursor-rules:  ## Update cursor rules from prompts/drafts/cursor_rules\\n\\t# Create .cursor/rules directory if it doesn&#39;t exist.\\n\\t# Note: at the time of writing, cursor does not support generating .mdc files via Composer Agent.s\\n\\tmkdir -p .cursor/rules || true\\n\\t# Copy files from hack/prompts/drafts/cursor_rules to .cursor/rules and change extension to .mdc\\n\\t# Exclude README.md files from being copied\\n\\tfind hack/drafts/cursor_rules -type f -name \\\&quot;*.md\\\&quot; ! -name \\\&quot;README.md\\\&quot; -exec sh -c &#39;for file; do target=$${file%.md}; cp -a \\\&quot;$$file\\\&quot; \\\&quot;.cursor/rules/$$(basename \\\&quot;$$target\\\&quot;)\\\&quot;; done&#39; sh {} +\\n\&quot;, \&quot;next_steps\&quot;: \&quot;After applying these operations, you&#39;ll need to check if the Makefile exists and contains the update-cursor-rules task, then update or create it accordingly.\&quot;}&quot;}],&quot;isError&quot;:false}
+<div class="highlight"><pre><span></span><code>{&quot;content&quot;:[{&quot;type&quot;:&quot;text&quot;,&quot;text&quot;:&quot;{\&quot;operations\&quot;: [{\&quot;type\&quot;: \&quot;check_file_exists\&quot;, \&quot;path\&quot;: \&quot;Makefile\&quot;}, {\&quot;type\&quot;: \&quot;read_file\&quot;, \&quot;path\&quot;: \&quot;Makefile\&quot;, \&quot;options\&quot;: {\&quot;encoding\&quot;: \&quot;utf-8\&quot;}}], \&quot;requires_result\&quot;: true, \&quot;message\&quot;: \&quot;Instructions to check Makefile and update if needed\&quot;, \&quot;update_task_content\&quot;: \&quot;\\n# Cursor Rules\\n.PHONY: update-cursor-rules\\nupdate-cursor-rules:  ## Update cursor rules from prompts/drafts/cursor_rules\\n\\t# Create .cursor/rules directory if it doesn&#39;t exist.\\n\\t# Note: at the time of writing, cursor does not support generating .mdc files via Composer Agent.s\\n\\tmkdir -p .cursor/rules || true\\n\\t# Copy files from hack/prompts/drafts/cursor_rules to .cursor/rules and change extension to .mdc\\n\\t# Exclude README.md files from being copied\\n\\tfind hack/drafts/cursor_rules -type f -name \\\&quot;*.md\\\&quot; ! -name \\\&quot;README.md\\\&quot; -exec sh -c &#39;for file; do target=$${file%.md}; cp -a \\\&quot;$$file\\\&quot; \\\&quot;.cursor/rules/$$(basename \\\&quot;$$target\\\&quot;)\\\&quot;; done&#39; sh {} +\\n\&quot;, \&quot;next_steps\&quot;: \&quot;After applying these operations, you&#39;ll need to check if the Makefile exists and contains the update-cursor-rules task, then update or create it accordingly.\&quot;}&quot;}],&quot;isError&quot;:false}
 </code></pre></div>
 <h3 id="instruct_custom_repo_rules_generation">instruct_custom_repo_rules_generation<a class="headerlink" href="#instruct_custom_repo_rules_generation" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="p">{</span>
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">  </span><span class="nt">&quot;repo_summary&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A Python web application built with FastAPI framework, using Python 3.12+. The project follows a modular structure with routers and internal components, suggesting a well-organized API service. The project uses modern Python tooling including uv for dependency management and includes Docker support for containerization. The application appears to be designed with a focus on API development and follows FastAPI&#39;s recommended project structure.&quot;</span>
-<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;repo_summary&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A Python web application built with FastAPI framework, using Python 3.12+. The project follows a modular structure with routers and internal components, suggesting a well-organized API service. The project uses modern Python tooling including uv for dependency management and includes Docker support for containerization. The application appears to be designed with a focus on API development and follows FastAPI&#39;s recommended project structure.&quot;</span>
+<span class="p">}</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="p">{</span>
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="w">  </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="w">    </span><span class="p">{</span>
-<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;text&quot;</span><span class="p">,</span>
-<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="w">      </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="w">        </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="p">,</span>
-<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="w">        </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Cursor Rules Generation Instructions:1. Analyze repository structure and codebase:   Using the provided repository summary to identify languages, frameworks, and patterns used.2. Generate recommended cursor rules:   Invoke the recommend_cursor_rules tool with the repository summary to generate a list of tailored cursor rules.3. Prepare the staging directory:   Run `touch hack/drafts/cursor_rules/{rule-name}.mdc.md` for each rule name to ensure cursor creates the files properly.4. Implement cursor rules systematically:   Create each cursor rule in the hack/drafts/cursor_rules directory with proper formatting and structure.5. Format requirements for cursor rules:   Each cursor rule must include:   - Proper filename with .mdc.md extension (e.g., rule-name.mdc.md)   - Frontmatter with description, globs, and alwaysApply configuration   - Rule content with name, description, filters, actions, examples, and metadata6. Implementation process:   For each rule recommended by recommend_cursor_rules:   - Create the rule file in hack/drafts/cursor_rules/   - Implement the rule with proper structure and formatting   - Ensure the rule includes appropriate filters and actions   - Add relevant examples and metadata7. Verification:   Confirm each rule has been properly formatted with:   - Descriptive name and purpose   - Appropriate glob patterns based on file types identified in the summary   - Correct alwaysApply setting (typically false)   - Comprehensive rule content with examples8. Audit generated files:   For each rule file created, run `head -10 hack/drafts/cursor_rules/{rule-name}.mdc.md | cat` to validate that frontmatter is present and properly formatted.9. Deploy to production:   Run `make update-cursor-rules` to move the rules from the staging directory to production.10. Next steps:   The rules should now be available in the .cursor/rules directory for production use.   Consider using sequentialthinking for complex rules that require detailed reasoning and step-by-step analysis.&quot;</span><span class="p">,</span>
-<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="w">        </span><span class="nt">&quot;cursor_rules_generation&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="w">        </span><span class="nt">&quot;analysis_method&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;repository_summary&quot;</span><span class="p">,</span>
-<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="w">        </span><span class="nt">&quot;repo_summary&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A Python web application built with FastAPI framework, using Python 3.12+. The project follows a modular structure with routers and internal components, suggesting a well-organized API service. The project uses modern Python tooling including uv for dependency management and includes Docker support for containerization. The application appears to be designed with a focus on API development and follows FastAPI&#39;s recommended project structure.&quot;</span><span class="p">,</span>
-<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="w">        </span><span class="nt">&quot;output_directory&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;hack/drafts/cursor_rules&quot;</span><span class="p">,</span>
-<a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a><span class="w">        </span><span class="nt">&quot;rule_format&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a><span class="w">          </span><span class="nt">&quot;filename&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{rule-name}.mdc.md&quot;</span><span class="p">,</span>
-<a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a><span class="w">          </span><span class="nt">&quot;frontmatter&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-15-15" name="__codelineno-15-15" href="#__codelineno-15-15"></a><span class="w">            </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Brief description of the rule&#39;s purpose&quot;</span><span class="p">,</span>
-<a id="__codelineno-15-16" name="__codelineno-15-16" href="#__codelineno-15-16"></a><span class="w">            </span><span class="nt">&quot;globs&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;File patterns the rule applies to (e.g., *.py)&quot;</span><span class="p">,</span>
-<a id="__codelineno-15-17" name="__codelineno-15-17" href="#__codelineno-15-17"></a><span class="w">            </span><span class="nt">&quot;alwaysApply&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean value (typically false)&quot;</span>
-<a id="__codelineno-15-18" name="__codelineno-15-18" href="#__codelineno-15-18"></a><span class="w">          </span><span class="p">},</span>
-<a id="__codelineno-15-19" name="__codelineno-15-19" href="#__codelineno-15-19"></a><span class="w">          </span><span class="nt">&quot;rule_structure&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-15-20" name="__codelineno-15-20" href="#__codelineno-15-20"></a><span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;rule-name&quot;</span><span class="p">,</span>
-<a id="__codelineno-15-21" name="__codelineno-15-21" href="#__codelineno-15-21"></a><span class="w">            </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Detailed description of the rule&quot;</span><span class="p">,</span>
-<a id="__codelineno-15-22" name="__codelineno-15-22" href="#__codelineno-15-22"></a><span class="w">            </span><span class="nt">&quot;filters&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Conditions for when the rule applies&quot;</span><span class="p">,</span>
-<a id="__codelineno-15-23" name="__codelineno-15-23" href="#__codelineno-15-23"></a><span class="w">            </span><span class="nt">&quot;actions&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Suggestions or requirements provided by the rule&quot;</span><span class="p">,</span>
-<a id="__codelineno-15-24" name="__codelineno-15-24" href="#__codelineno-15-24"></a><span class="w">            </span><span class="nt">&quot;examples&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Example inputs and outputs&quot;</span><span class="p">,</span>
-<a id="__codelineno-15-25" name="__codelineno-15-25" href="#__codelineno-15-25"></a><span class="w">            </span><span class="nt">&quot;metadata&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Priority, version, and tags&quot;</span>
-<a id="__codelineno-15-26" name="__codelineno-15-26" href="#__codelineno-15-26"></a><span class="w">          </span><span class="p">}</span>
-<a id="__codelineno-15-27" name="__codelineno-15-27" href="#__codelineno-15-27"></a><span class="w">        </span><span class="p">},</span>
-<a id="__codelineno-15-28" name="__codelineno-15-28" href="#__codelineno-15-28"></a><span class="w">        </span><span class="nt">&quot;rule_example_template&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-15-29" name="__codelineno-15-29" href="#__codelineno-15-29"></a><span class="w">          </span><span class="nt">&quot;frontmatter&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;---\ndescription: Brief description of the rule\nglobs: *.py  # File patterns to match\nalwaysApply: false  # Whether to always apply the rule\n---&quot;</span><span class="p">,</span>
-<a id="__codelineno-15-30" name="__codelineno-15-30" href="#__codelineno-15-30"></a><span class="w">          </span><span class="nt">&quot;title_and_introduction&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;# Rule Title\nBrief description of what the rule covers.&quot;</span><span class="p">,</span>
-<a id="__codelineno-15-31" name="__codelineno-15-31" href="#__codelineno-15-31"></a><span class="w">          </span><span class="nt">&quot;rule_definition&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;rule&gt;\nname: rule_name\ndescription: Concise description of the rule\nfilters:\n  # Match specific file types\n  - type: file_extension\n    pattern: \&quot;\\\\.py$\&quot;\n  # Match specific paths\n  - type: file_path\n    pattern: \&quot;tests?/\&quot;\n  # Match specific content\n  - type: content\n    pattern: \&quot;(?i)(relevant|terms|to|match)\&quot;\nactions:\n  - type: suggest\n    message: |\n      # Main Heading\n      Explanation of the rule and its purpose.\n      ## Subheading\n      Detailed guidance with code examples:\n      ```python\n      # Example code\n      def example_function():\n          return \&quot;example\&quot;\n      ```\n      ## Another Subheading\n      More detailed information and best practices.\nexamples:\n  - input: |\n      # User query example\n      I want to do X with Y\n    output: |\n      Here&#39;s how to do X with Y:\n      \n      ```python\n      # Solution code\n      ```\nmetadata:\n  priority: high\n  version: 1.0\n  tags:\n    - relevant\n    - tags\n    - here\n&lt;/rule&gt;&quot;</span>
-<a id="__codelineno-15-32" name="__codelineno-15-32" href="#__codelineno-15-32"></a><span class="w">        </span><span class="p">},</span>
-<a id="__codelineno-15-33" name="__codelineno-15-33" href="#__codelineno-15-33"></a><span class="w">        </span><span class="nt">&quot;key_components_explanation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-15-34" name="__codelineno-15-34" href="#__codelineno-15-34"></a><span class="w">          </span><span class="nt">&quot;frontmatter&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;YAML metadata at the top&quot;</span><span class="p">,</span>
-<a id="__codelineno-15-35" name="__codelineno-15-35" href="#__codelineno-15-35"></a><span class="w">          </span><span class="nt">&quot;title_and_introduction&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Markdown heading and description&quot;</span><span class="p">,</span>
-<a id="__codelineno-15-36" name="__codelineno-15-36" href="#__codelineno-15-36"></a><span class="w">          </span><span class="nt">&quot;rule_definition&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Enclosed in &lt;rule&gt; tags with basic properties, filters, actions, examples, and metadata&quot;</span>
-<a id="__codelineno-15-37" name="__codelineno-15-37" href="#__codelineno-15-37"></a><span class="w">        </span><span class="p">},</span>
-<a id="__codelineno-15-38" name="__codelineno-15-38" href="#__codelineno-15-38"></a><span class="w">        </span><span class="nt">&quot;multishot_prompting_strategy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Use the template as a basis for creating multiple examples that show different rule variations tailored to specific language features, frameworks, or coding patterns identified in the repository&quot;</span><span class="p">,</span>
-<a id="__codelineno-15-39" name="__codelineno-15-39" href="#__codelineno-15-39"></a><span class="w">        </span><span class="nt">&quot;generation_status&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-15-40" name="__codelineno-15-40" href="#__codelineno-15-40"></a><span class="w">          </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ready&quot;</span><span class="p">,</span>
-<a id="__codelineno-15-41" name="__codelineno-15-41" href="#__codelineno-15-41"></a><span class="w">          </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ready to generate cursor rules based on repository summary&quot;</span><span class="p">,</span>
-<a id="__codelineno-15-42" name="__codelineno-15-42" href="#__codelineno-15-42"></a><span class="w">          </span><span class="nt">&quot;input_source&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;recommend_cursor_rules tool&quot;</span><span class="p">,</span>
-<a id="__codelineno-15-43" name="__codelineno-15-43" href="#__codelineno-15-43"></a><span class="w">          </span><span class="nt">&quot;output_destination&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;hack/drafts/cursor_rules&quot;</span><span class="p">,</span>
-<a id="__codelineno-15-44" name="__codelineno-15-44" href="#__codelineno-15-44"></a><span class="w">          </span><span class="nt">&quot;production_destination&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;.cursor/rules&quot;</span>
-<a id="__codelineno-15-45" name="__codelineno-15-45" href="#__codelineno-15-45"></a><span class="w">        </span><span class="p">},</span>
-<a id="__codelineno-15-46" name="__codelineno-15-46" href="#__codelineno-15-46"></a><span class="w">        </span><span class="nt">&quot;deployment_commands&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-15-47" name="__codelineno-15-47" href="#__codelineno-15-47"></a><span class="w">          </span><span class="nt">&quot;prepare_files&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;touch hack/drafts/cursor_rules/{rule-name}.mdc.md&quot;</span><span class="p">,</span>
-<a id="__codelineno-15-48" name="__codelineno-15-48" href="#__codelineno-15-48"></a><span class="w">          </span><span class="nt">&quot;audit_files&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;head -10 hack/drafts/cursor_rules/{rule-name}.mdc.md | cat&quot;</span><span class="p">,</span>
-<a id="__codelineno-15-49" name="__codelineno-15-49" href="#__codelineno-15-49"></a><span class="w">          </span><span class="nt">&quot;deploy_to_production&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;make update-cursor-rules&quot;</span>
-<a id="__codelineno-15-50" name="__codelineno-15-50" href="#__codelineno-15-50"></a><span class="w">        </span><span class="p">},</span>
-<a id="__codelineno-15-51" name="__codelineno-15-51" href="#__codelineno-15-51"></a><span class="w">        </span><span class="nt">&quot;processing_tools&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-15-52" name="__codelineno-15-52" href="#__codelineno-15-52"></a><span class="w">          </span><span class="nt">&quot;rule_recommendation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;recommend_cursor_rules&quot;</span><span class="p">,</span>
-<a id="__codelineno-15-53" name="__codelineno-15-53" href="#__codelineno-15-53"></a><span class="w">          </span><span class="nt">&quot;complex_reasoning&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sequentialthinking&quot;</span>
-<a id="__codelineno-15-54" name="__codelineno-15-54" href="#__codelineno-15-54"></a><span class="w">        </span><span class="p">}</span>
-<a id="__codelineno-15-55" name="__codelineno-15-55" href="#__codelineno-15-55"></a><span class="w">      </span><span class="p">}</span>
-<a id="__codelineno-15-56" name="__codelineno-15-56" href="#__codelineno-15-56"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-15-57" name="__codelineno-15-57" href="#__codelineno-15-57"></a><span class="w">  </span><span class="p">],</span>
-<a id="__codelineno-15-58" name="__codelineno-15-58" href="#__codelineno-15-58"></a><span class="w">  </span><span class="nt">&quot;isError&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
-<a id="__codelineno-15-59" name="__codelineno-15-59" href="#__codelineno-15-59"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;text&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;success&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Cursor Rules Generation Instructions:1. Analyze repository structure and codebase:   Using the provided repository summary to identify languages, frameworks, and patterns used.2. Generate recommended cursor rules:   Invoke the recommend_cursor_rules tool with the repository summary to generate a list of tailored cursor rules.3. Prepare the staging directory:   Run `touch hack/drafts/cursor_rules/{rule-name}.mdc.md` for each rule name to ensure cursor creates the files properly.4. Implement cursor rules systematically:   Create each cursor rule in the hack/drafts/cursor_rules directory with proper formatting and structure.5. Format requirements for cursor rules:   Each cursor rule must include:   - Proper filename with .mdc.md extension (e.g., rule-name.mdc.md)   - Frontmatter with description, globs, and alwaysApply configuration   - Rule content with name, description, filters, actions, examples, and metadata6. Implementation process:   For each rule recommended by recommend_cursor_rules:   - Create the rule file in hack/drafts/cursor_rules/   - Implement the rule with proper structure and formatting   - Ensure the rule includes appropriate filters and actions   - Add relevant examples and metadata7. Verification:   Confirm each rule has been properly formatted with:   - Descriptive name and purpose   - Appropriate glob patterns based on file types identified in the summary   - Correct alwaysApply setting (typically false)   - Comprehensive rule content with examples8. Audit generated files:   For each rule file created, run `head -10 hack/drafts/cursor_rules/{rule-name}.mdc.md | cat` to validate that frontmatter is present and properly formatted.9. Deploy to production:   Run `make update-cursor-rules` to move the rules from the staging directory to production.10. Next steps:   The rules should now be available in the .cursor/rules directory for production use.   Consider using sequentialthinking for complex rules that require detailed reasoning and step-by-step analysis.&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;cursor_rules_generation&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;analysis_method&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;repository_summary&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;repo_summary&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A Python web application built with FastAPI framework, using Python 3.12+. The project follows a modular structure with routers and internal components, suggesting a well-organized API service. The project uses modern Python tooling including uv for dependency management and includes Docker support for containerization. The application appears to be designed with a focus on API development and follows FastAPI&#39;s recommended project structure.&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;output_directory&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;hack/drafts/cursor_rules&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;rule_format&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">&quot;filename&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{rule-name}.mdc.md&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;frontmatter&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Brief description of the rule&#39;s purpose&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;globs&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;File patterns the rule applies to (e.g., *.py)&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;alwaysApply&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Boolean value (typically false)&quot;</span>
+<span class="w">          </span><span class="p">},</span>
+<span class="w">          </span><span class="nt">&quot;rule_structure&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;rule-name&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Detailed description of the rule&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;filters&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Conditions for when the rule applies&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;actions&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Suggestions or requirements provided by the rule&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;examples&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Example inputs and outputs&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;metadata&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Priority, version, and tags&quot;</span>
+<span class="w">          </span><span class="p">}</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;rule_example_template&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">&quot;frontmatter&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;---\ndescription: Brief description of the rule\nglobs: *.py  # File patterns to match\nalwaysApply: false  # Whether to always apply the rule\n---&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;title_and_introduction&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;# Rule Title\nBrief description of what the rule covers.&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;rule_definition&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;rule&gt;\nname: rule_name\ndescription: Concise description of the rule\nfilters:\n  # Match specific file types\n  - type: file_extension\n    pattern: \&quot;\\\\.py$\&quot;\n  # Match specific paths\n  - type: file_path\n    pattern: \&quot;tests?/\&quot;\n  # Match specific content\n  - type: content\n    pattern: \&quot;(?i)(relevant|terms|to|match)\&quot;\nactions:\n  - type: suggest\n    message: |\n      # Main Heading\n      Explanation of the rule and its purpose.\n      ## Subheading\n      Detailed guidance with code examples:\n      ```python\n      # Example code\n      def example_function():\n          return \&quot;example\&quot;\n      ```\n      ## Another Subheading\n      More detailed information and best practices.\nexamples:\n  - input: |\n      # User query example\n      I want to do X with Y\n    output: |\n      Here&#39;s how to do X with Y:\n      \n      ```python\n      # Solution code\n      ```\nmetadata:\n  priority: high\n  version: 1.0\n  tags:\n    - relevant\n    - tags\n    - here\n&lt;/rule&gt;&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;key_components_explanation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">&quot;frontmatter&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;YAML metadata at the top&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;title_and_introduction&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Markdown heading and description&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;rule_definition&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Enclosed in &lt;rule&gt; tags with basic properties, filters, actions, examples, and metadata&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;multishot_prompting_strategy&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Use the template as a basis for creating multiple examples that show different rule variations tailored to specific language features, frameworks, or coding patterns identified in the repository&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;generation_status&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ready&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ready to generate cursor rules based on repository summary&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;input_source&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;recommend_cursor_rules tool&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;output_destination&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;hack/drafts/cursor_rules&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;production_destination&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;.cursor/rules&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;deployment_commands&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">&quot;prepare_files&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;touch hack/drafts/cursor_rules/{rule-name}.mdc.md&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;audit_files&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;head -10 hack/drafts/cursor_rules/{rule-name}.mdc.md | cat&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;deploy_to_production&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;make update-cursor-rules&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;processing_tools&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">&quot;rule_recommendation&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;recommend_cursor_rules&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;complex_reasoning&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sequentialthinking&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;isError&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
 </code></pre></div>
 
 
@@ -877,6 +2105,53 @@
 
 
 
+  
+    
+  
+  
+    
+  
+
+
+  <aside class="md-source-file">
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Last update">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="March 12, 2025 23:18:20">March 12, 2025 23:18:20</span>
+  </span>
+
+    
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Created">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="March 11, 2025 16:32:21">March 11, 2025 16:32:21</span>
+  </span>
+
+    
+    
+      
+  
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Contributors">
+      
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 4a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4"/></svg>
+      
+    </span>
+    <nav>
+      
+        <a href="mailto:bossjones@theblacktonystark.com">Malcolm Jones</a>
+    </nav>
+  </span>
+
+    
+    
+  </aside>
 
 
 
@@ -890,22 +2165,56 @@
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
-          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
-  Back to top
-</button>
-        
       </main>
       
         <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../../external/software_development/python/rapid_prototyping/taipy/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Overview">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Overview
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../prompt_library_mcp_server_tools/" class="md-footer__link md-footer__link--next" aria-label="Next: Prompt Library MCP Server Tools">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Prompt Library MCP Server Tools
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2023 - 2024 Malcolm Jones
+      Copyright &copy; 2023 - 2025 Malcolm Jones
     </div>
   
   
@@ -941,7 +2250,7 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.expand", "navigation.indexes", "navigation.top", "search.highlight", "search.share", "content.code.copy"], "search": "../../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.action.edit", "content.action.view", "content.code.copy", "content.code.select", "content.tooltips", "navigation.footer", "search.share"], "search": "../../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.c8b220af.min.js"></script>

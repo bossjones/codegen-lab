@@ -1,0 +1,2250 @@
+
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="AI-powered code generation tooling for efficient software development" name="description"/>
+<meta content="Malcolm Jones" name="author"/>
+<link href="https://bossjones.github.io/codegen-lab/docs/environment/" rel="canonical"/>
+<link href="../cursor-rules-styles/" rel="prev"/>
+<link href="../getting-started/" rel="next"/>
+<link href="../assets/images/favicon.png" rel="icon"/>
+<meta content="mkdocs-1.6.1, mkdocs-material-9.6.6" name="generator"/>
+<title>Environment - Codegen Lab</title>
+<link href="../assets/stylesheets/main.8608ea7d.min.css" rel="stylesheet"/>
+<link href="../assets/stylesheets/palette.06af60db.min.css" rel="stylesheet"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<link href="../assets/_mkdocstrings.css" rel="stylesheet"/>
+<script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+</head>
+<body data-md-color-accent="indigo" data-md-color-primary="indigo" data-md-color-scheme="default" dir="ltr">
+<input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+<input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+<label class="md-overlay" for="__drawer"></label>
+<div data-md-component="skip">
+<a class="md-skip" href="#environment">
+          Skip to content
+        </a>
+</div>
+<div data-md-component="announce">
+</div>
+<header class="md-header md-header--shadow" data-md-component="header">
+<nav aria-label="Header" class="md-header__inner md-grid">
+<a aria-label="Codegen Lab" class="md-header__button md-logo" data-md-component="logo" href=".." title="Codegen Lab">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
+<label class="md-header__button md-icon" for="__drawer">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+</label>
+<div class="md-header__title" data-md-component="header-title">
+<div class="md-header__ellipsis">
+<div class="md-header__topic">
+<span class="md-ellipsis">
+            Codegen Lab
+          </span>
+</div>
+<div class="md-header__topic" data-md-component="header-topic">
+<span class="md-ellipsis">
+            
+              Environment
+            
+          </span>
+</div>
+</div>
+</div>
+<label class="md-header__button md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+</label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input aria-label="Search" autocapitalize="off" autocomplete="off" autocorrect="off" class="md-search__input" data-md-component="search-query" name="query" placeholder="Search" required="" spellcheck="false" type="text"/>
+<label class="md-search__icon md-icon" for="__search">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+</label>
+<nav aria-label="Search" class="md-search__options">
+<a aria-label="Share" class="md-search__icon md-icon" data-clipboard="" data-clipboard-text="" data-md-component="search-share" href="javascript:void(0)" tabindex="-1" title="Share">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+</a>
+<button aria-label="Clear" class="md-search__icon md-icon" tabindex="-1" title="Clear" type="reset">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+</button>
+</nav>
+</form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix="" tabindex="0">
+<div class="md-search-result" data-md-component="search-result">
+<div class="md-search-result__meta">
+            Initializing search
+          </div>
+<ol class="md-search-result__list" role="presentation"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="md-header__source">
+<a class="md-source" data-md-component="source" href="https://github.com/bossjones/codegen-lab" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"></path></svg>
+</div>
+<div class="md-source__repository">
+    bossjones/codegen-lab
+  </div>
+</a>
+</div>
+</nav>
+</header>
+<div class="md-container" data-md-component="container">
+<main class="md-main" data-md-component="main">
+<div class="md-main__inner md-grid">
+<div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Navigation" class="md-nav md-nav--primary" data-md-level="0">
+<label class="md-nav__title" for="__drawer">
+<a aria-label="Codegen Lab" class="md-nav__button md-logo" data-md-component="logo" href=".." title="Codegen Lab">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+</a>
+    Codegen Lab
+  </label>
+<div class="md-nav__source">
+<a class="md-source" data-md-component="source" href="https://github.com/bossjones/codegen-lab" title="Go to repository">
+<div class="md-source__icon md-icon">
+<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"></path></svg>
+</div>
+<div class="md-source__repository">
+    bossjones/codegen-lab
+  </div>
+</a>
+</div>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="..">
+<span class="md-ellipsis">
+    Codegen Lab
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../api-reference/">
+<span class="md-ellipsis">
+    API Reference
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../changelog/">
+<span class="md-ellipsis">
+    Changelog
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../comitizen/">
+<span class="md-ellipsis">
+    Commitizen Configuration Guide
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../contributing/">
+<span class="md-ellipsis">
+    Contributing to Codegen Lab
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../cursor-rules-styles/">
+<span class="md-ellipsis">
+    Cursor Rules: Style Guide and Migration
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+<span class="md-ellipsis">
+    Environment
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+<span class="md-ellipsis">
+    Environment
+    
+  </span>
+</a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#macros-plugin-environment">
+<span class="md-ellipsis">
+      Macros Plugin Environment
+    </span>
+</a>
+<nav aria-label="Macros Plugin Environment" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#general-list">
+<span class="md-ellipsis">
+      General List
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#config-information">
+<span class="md-ellipsis">
+      Config Information
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#macros">
+<span class="md-ellipsis">
+      Macros
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#git-information">
+<span class="md-ellipsis">
+      Git Information
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#page-attributes">
+<span class="md-ellipsis">
+      Page Attributes
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#plugin-filters">
+<span class="md-ellipsis">
+      Plugin Filters
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#builtin-jinja2-filters">
+<span class="md-ellipsis">
+      Builtin Jinja2 Filters
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#updates">
+<span class="md-ellipsis">
+      Updates
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#mkdocsyal-file-portion">
+<span class="md-ellipsis">
+      Mkdocs.yal file (portion)
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#list-env-object">
+<span class="md-ellipsis">
+      List env object
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../getting-started/">
+<span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../info/">
+<span class="md-ellipsis">
+    Info
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../inspiration/">
+<span class="md-ellipsis">
+    inspiration
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../pre_commit/">
+<span class="md-ellipsis">
+    pre-commit install hook-types
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../prompt_library_mcp_server/">
+<span class="md-ellipsis">
+    Cursor Rules Prompt Library
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../rule-deps/">
+<span class="md-ellipsis">
+    Cursor Rules Dependency Graph
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../troubleshooting/">
+<span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../workflow-rules/">
+<span class="md-ellipsis">
+    Cursor Workflow Rules
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_16" type="checkbox"/>
+<label class="md-nav__link" for="__nav_16" id="__nav_16_label" tabindex="0">
+<span class="md-ellipsis">
+    Cursor auto rules agile workflow
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_16_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_16">
+<span class="md-nav__icon md-icon"></span>
+            Cursor auto rules agile workflow
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../cursor-auto-rules-agile-workflow/">
+<span class="md-ellipsis">
+    Cursor Auto Rules Agile Workflow
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../cursor-auto-rules-agile-workflow/agile-readme/">
+<span class="md-ellipsis">
+    Cursor Agile Workflow Documentation
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../cursor-auto-rules-agile-workflow/cursor-rules-readme/">
+<span class="md-ellipsis">
+    Cursor Rules System Documentation
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../cursor-auto-rules-agile-workflow/templates-readme/">
+<span class="md-ellipsis">
+    Cursor Templates System Documentation
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../cursor-auto-rules-agile-workflow/workflows-readme/">
+<span class="md-ellipsis">
+    Cursor Workflows System Documentation
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../cursor-auto-rules-agile-workflow/xnotes-readme/">
+<span class="md-ellipsis">
+    XNotes System Documentation
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_17" type="checkbox"/>
+<label class="md-nav__link" for="__nav_17" id="__nav_17_label" tabindex="0">
+<span class="md-ellipsis">
+    External
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_17_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_17">
+<span class="md-nav__icon md-icon"></span>
+            External
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_17_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_17_1" id="__nav_17_1_label" tabindex="0">
+<span class="md-ellipsis">
+    Software development
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_17_1_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_17_1">
+<span class="md-nav__icon md-icon"></span>
+            Software development
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_17_1_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_17_1_1" id="__nav_17_1_1_label" tabindex="0">
+<span class="md-ellipsis">
+    Might be interesting
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_17_1_1_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_17_1_1">
+<span class="md-nav__icon md-icon"></span>
+            Might be interesting
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../external/software_development/might_be_interesting/minio/">
+<span class="md-ellipsis">
+    🚧 MinIO
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_17_1_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_17_1_2" id="__nav_17_1_2_label" tabindex="0">
+<span class="md-ellipsis">
+    Mkdocs stuff
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_17_1_2_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_17_1_2">
+<span class="md-nav__icon md-icon"></span>
+            Mkdocs stuff
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../external/software_development/mkdocs_stuff/diagrams/">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.5 17c-.14 0-.26 0-.39.04L17.5 13.8c.45-.45.75-1.09.75-1.8a2.5 2.5 0 0 0-2.5-2.5c-.14 0-.25 0-.4.04L13.74 6.3c.47-.46.76-1.09.76-1.8a2.5 2.5 0 0 0-5 0c0 .7.29 1.34.76 1.79L8.65 9.54c-.15-.04-.26-.04-.4-.04a2.5 2.5 0 0 0-2.5 2.5c0 .71.29 1.34.75 1.79l-1.61 3.25C4.76 17 4.64 17 4.5 17a2.5 2.5 0 0 0 0 5A2.5 2.5 0 0 0 7 19.5c0-.7-.29-1.34-.76-1.79l1.62-3.25c.14.04.26.04.39.04s.25 0 .38-.04l1.63 3.25c-.47.45-.76 1.09-.76 1.79a2.5 2.5 0 0 0 5 0A2.5 2.5 0 0 0 12 17c-.13 0-.26 0-.39.04L10 13.8c.45-.45.75-1.09.75-1.8 0-.7-.29-1.33-.75-1.79l1.61-3.25c.13.04.26.04.39.04s.26 0 .39-.04L14 10.21a2.5 2.5 0 0 0 1.75 4.29c.13 0 .25 0 .38-.04l1.63 3.25c-.47.45-.76 1.09-.76 1.79a2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0-2.5-2.5m-15 3.5c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1m8.5-1c0 .55-.45 1-1 1s-1-.45-1-1 .45-1 1-1 1 .45 1 1M7.25 12c0-.55.45-1 1-1s1 .45 1 1-.45 1-1 1-1-.45-1-1M11 4.5c0-.55.45-1 1-1s1 .45 1 1-.45 1-1 1-1-.45-1-1m3.75 7.5c0-.55.45-1 1-1s1 .45 1 1-.45 1-1 1-1-.45-1-1m4.75 8.5c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1"></path></svg>
+<span class="md-ellipsis">
+    Diagrams (Marc)
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_17_1_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_17_1_3" id="__nav_17_1_3_label" tabindex="0">
+<span class="md-ellipsis">
+    Python
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_17_1_3_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_17_1_3">
+<span class="md-nav__icon md-icon"></span>
+            Python
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../external/software_development/python/pyenv/">
+<span class="md-ellipsis">
+    pyenv
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_17_1_3_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_17_1_3_2" id="__nav_17_1_3_2_label" tabindex="0">
+<span class="md-ellipsis">
+    UV
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_17_1_3_2_label" class="md-nav" data-md-level="4">
+<label class="md-nav__title" for="__nav_17_1_3_2">
+<span class="md-nav__icon md-icon"></span>
+            UV
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../external/software_development/python/UV/00_index/">
+<span class="md-ellipsis">
+    Overview
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_17_1_3_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_17_1_3_3" id="__nav_17_1_3_3_label" tabindex="0">
+<span class="md-ellipsis">
+    Rapid prototyping
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_17_1_3_3_label" class="md-nav" data-md-level="4">
+<label class="md-nav__title" for="__nav_17_1_3_3">
+<span class="md-nav__icon md-icon"></span>
+            Rapid prototyping
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_17_1_3_3_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_17_1_3_3_1" id="__nav_17_1_3_3_1_label" tabindex="0">
+<span class="md-ellipsis">
+    Dash
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_17_1_3_3_1_label" class="md-nav" data-md-level="5">
+<label class="md-nav__title" for="__nav_17_1_3_3_1">
+<span class="md-nav__icon md-icon"></span>
+            Dash
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../external/software_development/python/rapid_prototyping/dash/">
+<span class="md-ellipsis">
+    Overview
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_17_1_3_3_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_17_1_3_3_2" id="__nav_17_1_3_3_2_label" tabindex="0">
+<span class="md-ellipsis">
+    Gradio
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_17_1_3_3_2_label" class="md-nav" data-md-level="5">
+<label class="md-nav__title" for="__nav_17_1_3_3_2">
+<span class="md-nav__icon md-icon"></span>
+            Gradio
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../external/software_development/python/rapid_prototyping/gradio/">
+<span class="md-ellipsis">
+    Overview
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_17_1_3_3_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_17_1_3_3_3" id="__nav_17_1_3_3_3_label" tabindex="0">
+<span class="md-ellipsis">
+    Taipy
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_17_1_3_3_3_label" class="md-nav" data-md-level="5">
+<label class="md-nav__title" for="__nav_17_1_3_3_3">
+<span class="md-nav__icon md-icon"></span>
+            Taipy
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../external/software_development/python/rapid_prototyping/taipy/">
+<span class="md-ellipsis">
+    Overview
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_18" type="checkbox"/>
+<label class="md-nav__link" for="__nav_18" id="__nav_18_label" tabindex="0">
+<span class="md-ellipsis">
+    Mcp servers
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_18_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_18">
+<span class="md-nav__icon md-icon"></span>
+            Mcp servers
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../mcp-servers/prompt_library_mcp/">
+<span class="md-ellipsis">
+    Prompt library mcp
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../mcp-servers/prompt_library_mcp_server_tools/">
+<span class="md-ellipsis">
+    Prompt Library MCP Server Tools
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_19" type="checkbox"/>
+<label class="md-nav__link" for="__nav_19" id="__nav_19_label" tabindex="0">
+<span class="md-ellipsis">
+    Tools
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_19_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_19">
+<span class="md-nav__icon md-icon"></span>
+            Tools
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../tools/cursor-rules/">
+<span class="md-ellipsis">
+    Cursor Rules for Iterative Development
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../tools/uv-workspace/">
+<span class="md-ellipsis">
+    UV Workspace Management
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_20" type="checkbox"/>
+<label class="md-nav__link" for="__nav_20" id="__nav_20_label" tabindex="0">
+<span class="md-ellipsis">
+    User guide
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_20_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_20">
+<span class="md-nav__icon md-icon"></span>
+            User guide
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../user-guide/configuration/">
+<span class="md-ellipsis">
+    Configuration
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../user-guide/docs-automation/">
+<span class="md-ellipsis">
+    Documentation Automation
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../user-guide/installation/">
+<span class="md-ellipsis">
+    Installation
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_20_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_20_4" id="__nav_20_4_label" tabindex="0">
+<span class="md-ellipsis">
+    Ai workflows
+    
+  </span>
+<span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_20_4_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_20_4">
+<span class="md-nav__icon md-icon"></span>
+            Ai workflows
+          </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../user-guide/ai-workflows/autogenerate_cursor_rules/">
+<span class="md-ellipsis">
+    How to Auto-Generate Cursor Rules for Your Repository
+    
+  </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#macros-plugin-environment">
+<span class="md-ellipsis">
+      Macros Plugin Environment
+    </span>
+</a>
+<nav aria-label="Macros Plugin Environment" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#general-list">
+<span class="md-ellipsis">
+      General List
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#config-information">
+<span class="md-ellipsis">
+      Config Information
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#macros">
+<span class="md-ellipsis">
+      Macros
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#git-information">
+<span class="md-ellipsis">
+      Git Information
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#page-attributes">
+<span class="md-ellipsis">
+      Page Attributes
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#plugin-filters">
+<span class="md-ellipsis">
+      Plugin Filters
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#builtin-jinja2-filters">
+<span class="md-ellipsis">
+      Builtin Jinja2 Filters
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#updates">
+<span class="md-ellipsis">
+      Updates
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#mkdocsyal-file-portion">
+<span class="md-ellipsis">
+      Mkdocs.yal file (portion)
+    </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#list-env-object">
+<span class="md-ellipsis">
+      List env object
+    </span>
+</a>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+</div>
+<div class="md-content" data-md-component="content">
+<article class="md-content__inner md-typeset">
+<a class="md-content__button md-icon" href="https://github.com/bossjones/codegen-lab/edit/main/docs/environment.md" title="Edit this page">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"></path></svg>
+</a>
+<a class="md-content__button md-icon" href="https://github.com/bossjones/codegen-lab/raw/main/docs/environment.md" title="View source of this page">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"></path></svg>
+</a>
+<h1 id="environment">Environment<a class="headerlink" href="#environment" title="Permanent link">¶</a></h1>
+<h2 id="macros-plugin-environment">Macros Plugin Environment<a class="headerlink" href="#macros-plugin-environment" title="Permanent link">¶</a></h2>
+<h3 id="general-list">General List<a class="headerlink" href="#general-list" title="Permanent link">¶</a></h3>
+<p>All available variables and filters within the macros plugin:</p>
+<table class="macros-tb" style="background-color: #F0FFFF; color:#000000; border:1px solid #DCDCDC; padding: 5px">
+<th style="color:#000000; border:1px solid #DCDCDC; padding: 5px">Variable</th>
+<th style="color:#000000; border:1px solid #DCDCDC; padding: 5px">Type</th>
+<th style="color:#000000; border:1px solid #DCDCDC; padding: 5px">Content</th>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>extra</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>dict</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">social = [{'icon': 'fontawesome/brands/github', 'link': 'https://github.com/bossjones/codegen-lab'}]</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>config</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>MkDocsConfig</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">{'config_file_path': '/home/runner/work/codegen-lab/codegen-lab/mkdocs.yml', 'site_name': 'Codegen Lab', 'nav': None, 'pages': None, 'exclude_docs': None, 'draft_docs': None, 'not_in_nav': None, 'site_url': 'https://bossjones.github.io/codegen-lab/docs/', 'site_description': 'AI-powered code generation tooling for efficient software development', 'site_author': 'Malcolm Jones', 'theme': Theme(name='material', dirs=['/home/runner/work/codegen-lab/codegen-lab/true/lib/python3.12/site-packages/material/templates', '/home/runner/work/codegen-lab/codegen-lab/true/lib/python3.12/site-packages/mkdocs/templates'], static_templates={'sitemap.xml', '404.html'}, name='material', locale=Locale('en'), language='en', direction=None, features=['content.action.edit', 'content.action.view', 'content.code.copy', 'content.code.select', 'content.tooltips', 'navigation.footer', 'search.share'], font={'text': 'Roboto', 'code': 'Roboto Mono'}, icon=None, favicon='assets/images/favicon.png', palette={'primary': 'indigo', 'accent': 'indigo'}), 'docs_dir': '/home/runner/work/codegen-lab/codegen-lab/docs', 'site_dir': '/home/runner/work/codegen-lab/codegen-lab/site', 'copyright': 'Copyright © 2023 - 2025 Malcolm Jones', 'google_analytics': None, 'dev_addr': _IpAddressValue(host='127.0.0.1', port=8000), 'use_directory_urls': True, 'repo_url': 'https://github.com/bossjones/codegen-lab', 'repo_name': 'bossjones/codegen-lab', 'edit_uri_template': None, 'edit_uri': 'edit/main/docs/', 'extra_css': ['assets/_mkdocstrings.css'], 'extra_javascript': [], 'extra_templates': [], 'markdown_extensions': ['toc', 'tables', 'fenced_code', 'abbr', 'admonition', 'attr_list', 'neoteroi.cards', 'pymdownx.details', 'pymdownx.emoji', 'pymdownx.highlight', 'pymdownx.inlinehilite', 'pymdownx.magiclink', 'pymdownx.snippets', 'pymdownx.superfences', 'pymdownx.tabbed', <mkdocs_autorefs._internal.references.autorefsextension 0x7f4f3a05d070="" at="" object="">, <mkdocstrings._internal.extension.mkdocstringsextension 0x7f4f38db6210="" at="" object="">], 'mdx_configs': {'toc': {'permalink': True}, 'pymdownx.emoji': {'emoji_index': <function 0x7f4f3a647e20="" at="" twemoji="">, 'emoji_generator': <function 0x7f4f3a6b9620="" at="" to_svg="">}, 'pymdownx.superfences': {'custom_fences': [{'name': 'mermaid', 'class': 'mermaid', 'format': functools.partial(<function 0x7f4f3a1e5620="" at="" fence_mermaid="">, custom=True)}]}, 'pymdownx.tabbed': {'alternate_style': True}}, 'strict': False, 'remote_branch': 'gh-pages', 'remote_name': 'origin', 'extra': {'social': [{'icon': 'fontawesome/brands/github', 'link': 'https://github.com/bossjones/codegen-lab'}]}, 'plugins': {'autorefs': <mkdocs_autorefs._internal.plugin.autorefsplugin 0x7f4f39cdcb00="" at="" object="">, 'awesome-pages': <mkdocs_awesome_pages_plugin.plugin.awesomepagesplugin 0x7f4f3a8ee1b0="" at="" object="">, 'git-revision-date-localized': <mkdocs_git_revision_date_localized_plugin.plugin.gitrevisiondatelocalizedplugin 0x7f4f39bd2180="" at="" object="">, 'git-authors': <mkdocs_git_authors_plugin.plugin.gitauthorsplugin 0x7f4f39318440="" at="" object="">, 'macros': <mkdocs_macros.plugin.macrosplugin 0x7f4f391cdd30="" at="" object="">, 'mermaid2': <mermaid2.plugin.markdownmermaidplugin 0x7f4f3912dfd0="" at="" object="">, 'mkdocstrings': <mkdocstrings._internal.plugin.mkdocstringsplugin 0x7f4f38f79670="" at="" object="">, 'material/search': <material.plugins.search.plugin.searchplugin 0x7f4f38db7830="" at="" object="">, 'material/tags': <material.plugins.tags.plugin.tagsplugin 0x7f4f38cf1b80="" at="" object="">, 'ezlinks': <mkdocs_ezlinks_plugin.plugin.ezlinksplugin 0x7f4f39ac7740="" at="" object="">}, 'hooks': {}, 'watch': ['/home/runner/work/codegen-lab/codegen-lab/mkdocs_macro_plugin.py', '/home/runner/work/codegen-lab/codegen-lab/docs_templates'], 'validation': {'nav': {'omitted_files': 20, 'not_found': 30, 'absolute_links': 20}, 'links': {'not_found': 30, 'absolute_links': 20, 'unrecognized_links': 20, 'anchors': 20}}}</mkdocs_ezlinks_plugin.plugin.ezlinksplugin></material.plugins.tags.plugin.tagsplugin></material.plugins.search.plugin.searchplugin></mkdocstrings._internal.plugin.mkdocstringsplugin></mermaid2.plugin.markdownmermaidplugin></mkdocs_macros.plugin.macrosplugin></mkdocs_git_authors_plugin.plugin.gitauthorsplugin></mkdocs_git_revision_date_localized_plugin.plugin.gitrevisiondatelocalizedplugin></mkdocs_awesome_pages_plugin.plugin.awesomepagesplugin></mkdocs_autorefs._internal.plugin.autorefsplugin></function></function></function></mkdocstrings._internal.extension.mkdocstringsextension></mkdocs_autorefs._internal.references.autorefsextension></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>environment</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>dict</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">system = 'Linux', system_version = '6.8.0-1021-azure', python_version = '3.12.9', mkdocs_version = '1.6.1', macros_plugin_version = '1.3.7', jinja2_version = '3.1.5'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>plugin</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>LegacyConfig</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">{'module_name': 'mkdocs_macro_plugin', 'modules': [], 'render_by_default': True, 'force_render_paths': '', 'include_dir': '', 'include_yaml': [], 'j2_block_start_string': '', 'j2_block_end_string': '', 'j2_variable_start_string': '', 'j2_variable_end_string': '', 'j2_comment_start_string': '', 'j2_comment_end_string': '', 'on_undefined': 'keep', 'on_error_fail': False, 'verbose': True}</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>git</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>dict</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">status = True, <b>date</b> [<i>datetime</i>], short_commit = '8566747', commit = '8566747de893ad96d4c2ef05fbfd2610eeab4f9d', tag = 'v0.1.0-8-g8566747', short_tag = 'v0.1.0', author = 'Malcolm Jones', author_email = 'bossjones@theblacktonystark.com', committer = 'Malcolm Jones', committer_email = 'bossjones@theblacktonystark.com', date_ISO = 'Tue Apr 1 22:04:34 2025 -0400', message = 'chore: Update documentation deployment workflow in GitHub Actions\n\n- Modified the `docs.yml` workflow to skip commitizen checks for gh-pages.\n- Configured Git credentials for the GitHub Actions bot.\n- Added environment variable for GITHUB_TOKEN during deployment.\n- Commented out unused steps for caching and documentation building for clarity.', raw = 'commit 8566747de893ad96d4c2ef05fbfd2610eeab4f9d\nAuthor: Malcolm Jones <bossjones@theblacktonystark.com>\nDate:   Tue Apr 1 22:04:34 2025 -0400\n\n    chore: Update documentation deployment workflow in GitHub Actions\n    \n    - Modified the `docs.yml` workflow to skip commitizen checks for gh-pages.\n    - Configured Git credentials for the GitHub Actions bot.\n    - Added environment variable for GITHUB_TOKEN during deployment.\n    - Commented out unused steps for caching and documentation building for clarity.', root_dir = '/home/runner/work/codegen-lab/codegen-lab'</bossjones@theblacktonystark.com></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>social</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>SuperList</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">[{'icon': 'fontawesome/brands/github', 'link': 'https://github.com/bossjones/codegen-lab'}]</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>macros</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>SuperDict</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>context</b> [<i>function</i>], <b>macros_info</b> [<i>function</i>], <b>now</b> [<i>function</i>], <b>fix_url</b> [<i>function</i>], <b>include_file</b> [<i>function</i>], <b>doc_env</b> [<i>function</i>], <b>render_with_page_template</b> [<i>function</i>]</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>filters</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>dict</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>pretty</b> [<i>function</i>], <b>relative_url</b> [<i>function</i>]</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>filters_builtin</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>dict</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>abs</b> [<i>builtin_function_or_method</i>], <b>attr</b> [<i>function</i>], <b>batch</b> [<i>function</i>], <b>capitalize</b> [<i>function</i>], <b>center</b> [<i>function</i>], <b>count</b> [<i>builtin_function_or_method</i>], <b>d</b> [<i>function</i>], <b>default</b> [<i>function</i>], <b>dictsort</b> [<i>function</i>], <b>e</b> [<i>function</i>], <b>escape</b> [<i>function</i>], <b>filesizeformat</b> [<i>function</i>], <b>first</b> [<i>function</i>], <b>float</b> [<i>function</i>], <b>forceescape</b> [<i>function</i>], <b>format</b> [<i>function</i>], <b>groupby</b> [<i>function</i>], <b>indent</b> [<i>function</i>], <b>int</b> [<i>function</i>], <b>join</b> [<i>function</i>], <b>last</b> [<i>function</i>], <b>length</b> [<i>builtin_function_or_method</i>], <b>list</b> [<i>function</i>], <b>lower</b> [<i>function</i>], <b>items</b> [<i>function</i>], <b>map</b> [<i>function</i>], <b>min</b> [<i>function</i>], <b>max</b> [<i>function</i>], <b>pprint</b> [<i>function</i>], <b>random</b> [<i>function</i>], <b>reject</b> [<i>function</i>], <b>rejectattr</b> [<i>function</i>], <b>replace</b> [<i>function</i>], <b>reverse</b> [<i>function</i>], <b>round</b> [<i>function</i>], <b>safe</b> [<i>function</i>], <b>select</b> [<i>function</i>], <b>selectattr</b> [<i>function</i>], <b>slice</b> [<i>function</i>], <b>sort</b> [<i>function</i>], <b>string</b> [<i>function</i>], <b>striptags</b> [<i>function</i>], <b>sum</b> [<i>function</i>], <b>title</b> [<i>function</i>], <b>trim</b> [<i>function</i>], <b>truncate</b> [<i>function</i>], <b>unique</b> [<i>function</i>], <b>upper</b> [<i>function</i>], <b>urlencode</b> [<i>function</i>], <b>urlize</b> [<i>function</i>], <b>wordcount</b> [<i>function</i>], <b>wordwrap</b> [<i>function</i>], <b>xmlattr</b> [<i>function</i>], <b>tojson</b> [<i>function</i>]</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>navigation</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>Navigation</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><mkdocs.structure.nav.navigation 0x7f4f37e571a0="" at="" object=""></mkdocs.structure.nav.navigation></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>files</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>Files</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><mkdocs.structure.files.files 0x7f4f38a81250="" at="" object=""></mkdocs.structure.files.files></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>page</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>Page</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">Page(title='Environment', url='/codegen-lab/docs/environment/')</td>
+</tr>
+</table>
+<h3 id="config-information">Config Information<a class="headerlink" href="#config-information" title="Permanent link">¶</a></h3>
+<p>Standard MkDocs configuration information. Do not try to modify.</p>
+<p>e.g. <code>{{ config.docs_dir }}</code></p>
+<p>See also the <a href="https://www.MkDocs.org/user-guide/custom-themes/#config">MkDocs documentation on the config object</a>.</p>
+<table class="macros-tb" style="background-color: #F0FFFF; color:#000000; border:1px solid #DCDCDC; padding: 5px">
+<th style="color:#000000; border:1px solid #DCDCDC; padding: 5px">Variable</th>
+<th style="color:#000000; border:1px solid #DCDCDC; padding: 5px">Type</th>
+<th style="color:#000000; border:1px solid #DCDCDC; padding: 5px">Content</th>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>config_file_path</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'/home/runner/work/codegen-lab/codegen-lab/mkdocs.yml'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>site_name</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'Codegen Lab'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>nav</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>NoneType</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">None</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>pages</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>NoneType</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">None</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>exclude_docs</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>NoneType</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">None</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>draft_docs</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>NoneType</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">None</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>not_in_nav</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>NoneType</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">None</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>site_url</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'https://bossjones.github.io/codegen-lab/docs/'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>site_description</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'AI-powered code generation tooling for efficient software development'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>site_author</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'Malcolm Jones'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>theme</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>Theme</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">Theme(name='material', dirs=['/home/runner/work/codegen-lab/codegen-lab/true/lib/python3.12/site-packages/material/templates', '/home/runner/work/codegen-lab/codegen-lab/true/lib/python3.12/site-packages/mkdocs/templates'], static_templates={'sitemap.xml', '404.html'}, name='material', locale=Locale('en'), language='en', direction=None, features=['content.action.edit', 'content.action.view', 'content.code.copy', 'content.code.select', 'content.tooltips', 'navigation.footer', 'search.share'], font={'text': 'Roboto', 'code': 'Roboto Mono'}, icon=None, favicon='assets/images/favicon.png', palette={'primary': 'indigo', 'accent': 'indigo'})</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>docs_dir</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'/home/runner/work/codegen-lab/codegen-lab/docs'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>site_dir</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'/home/runner/work/codegen-lab/codegen-lab/site'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>copyright</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'Copyright © 2023 - 2025 Malcolm Jones'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>google_analytics</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>NoneType</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">None</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>dev_addr</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>_IpAddressValue</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">_IpAddressValue(host='127.0.0.1', port=8000)</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>use_directory_urls</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>bool</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">True</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>repo_url</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'https://github.com/bossjones/codegen-lab'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>repo_name</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'bossjones/codegen-lab'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>edit_uri_template</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>NoneType</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">None</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>edit_uri</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'edit/main/docs/'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>extra_css</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>list</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">['assets/_mkdocstrings.css']</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>extra_javascript</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>list</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">[]</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>extra_templates</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>list</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">[]</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>markdown_extensions</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>list</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">['toc', 'tables', 'fenced_code', 'abbr', 'admonition', 'attr_list', 'neoteroi.cards', 'pymdownx.details', 'pymdownx.emoji', 'pymdownx.highlight', 'pymdownx.inlinehilite', 'pymdownx.magiclink', 'pymdownx.snippets', 'pymdownx.superfences', 'pymdownx.tabbed', <mkdocs_autorefs._internal.references.autorefsextension 0x7f4f3a05d070="" at="" object="">, <mkdocstrings._internal.extension.mkdocstringsextension 0x7f4f38db6210="" at="" object="">]</mkdocstrings._internal.extension.mkdocstringsextension></mkdocs_autorefs._internal.references.autorefsextension></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>mdx_configs</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>dict</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>toc</b> [<i>dict</i>], <b>pymdownx.emoji</b> [<i>dict</i>], <b>pymdownx.superfences</b> [<i>dict</i>], <b>pymdownx.tabbed</b> [<i>dict</i>]</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>strict</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>bool</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">False</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>remote_branch</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'gh-pages'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>remote_name</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'origin'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>extra</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>LegacyConfig</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">{'social': [{'icon': 'fontawesome/brands/github', 'link': 'https://github.com/bossjones/codegen-lab'}]}</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>plugins</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>PluginCollection</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>autorefs</b> [<i>AutorefsPlugin</i>], <b>awesome-pages</b> [<i>AwesomePagesPlugin</i>], <b>git-revision-date-localized</b> [<i>GitRevisionDateLocalizedPlugin</i>], <b>git-authors</b> [<i>GitAuthorsPlugin</i>], <b>macros</b> [<i>MacrosPlugin</i>], <b>mermaid2</b> [<i>MarkdownMermaidPlugin</i>], <b>mkdocstrings</b> [<i>MkdocstringsPlugin</i>], <b>material/search</b> [<i>SearchPlugin</i>], <b>material/tags</b> [<i>TagsPlugin</i>], <b>ezlinks</b> [<i>EzLinksPlugin</i>]</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>hooks</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>dict</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>watch</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>list</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">['/home/runner/work/codegen-lab/codegen-lab/mkdocs_macro_plugin.py', '/home/runner/work/codegen-lab/codegen-lab/docs_templates']</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>validation</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>Validation</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">{'nav': {'omitted_files': 20, 'not_found': 30, 'absolute_links': 20}, 'links': {'not_found': 30, 'absolute_links': 20, 'unrecognized_links': 20, 'anchors': 20}}</td>
+</tr>
+</table>
+<h3 id="macros">Macros<a class="headerlink" href="#macros" title="Permanent link">¶</a></h3>
+<p>These macros have been defined programmatically for this environment
+(module or pluglets). </p>
+<table class="macros-tb" style="background-color: #F0FFFF; color:#000000; border:1px solid #DCDCDC; padding: 5px">
+<th style="color:#000000; border:1px solid #DCDCDC; padding: 5px">Variable</th>
+<th style="color:#000000; border:1px solid #DCDCDC; padding: 5px">Type</th>
+<th style="color:#000000; border:1px solid #DCDCDC; padding: 5px">Content</th>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>context</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>obj, var, value, e</i>)<br/> <p><em>Default Mkdocs-Macro</em>: List an object         (by default the variables)</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>macros_info</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i></i>)<br/> <p><em>Test/debug function</em>:         list useful documentation on the mkdocs_macro environment.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>now</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i></i>)<br/> <p><em>Default Mkdocs-Macro</em>:         Get the current time (at the moment of the project build).         It returns a datetime object.          Used alone, it provides a timestamp.         To get the year use <code>now().year</code>, for the month number          <code>now().month</code>, etc.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>fix_url</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>url, r</i>)<br/> <p>If url is relative, fix it so that it points to the docs directory.     This is necessary because relative links in markdown must be adapted     in html ('img/foo.png' =&gt; '../img/img.png').</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>include_file</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>filename, start_line, end_line, full_filename, f, lines, line_range</i>)<br/> <p>Include a file's contents with optional line range selection.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>doc_env</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>name</i>)<br/> <p>Document the environment by returning visible attributes.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>render_with_page_template</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>page_template, template_file</i>)<br/> <p>Render a page using a template from the templates directory.</p></td>
+</tr>
+</table>
+<h3 id="git-information">Git Information<a class="headerlink" href="#git-information" title="Permanent link">¶</a></h3>
+<p>Information available on the last commit and the git repository containing the
+documentation project:</p>
+<p>e.g. <code>{{ git.message }}</code></p>
+<table class="macros-tb" style="background-color: #F0FFFF; color:#000000; border:1px solid #DCDCDC; padding: 5px">
+<th style="color:#000000; border:1px solid #DCDCDC; padding: 5px">Variable</th>
+<th style="color:#000000; border:1px solid #DCDCDC; padding: 5px">Type</th>
+<th style="color:#000000; border:1px solid #DCDCDC; padding: 5px">Content</th>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>status</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>bool</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">True</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>date</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>datetime</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">datetime.datetime(2025, 4, 1, 22, 4, 34, tzinfo=tzoffset(None, -14400))</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>short_commit</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'8566747'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>commit</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'8566747de893ad96d4c2ef05fbfd2610eeab4f9d'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>tag</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'v0.1.0-8-g8566747'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>short_tag</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'v0.1.0'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>author</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'Malcolm Jones'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>author_email</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'bossjones@theblacktonystark.com'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>committer</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'Malcolm Jones'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>committer_email</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'bossjones@theblacktonystark.com'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>date_ISO</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'Tue Apr 1 22:04:34 2025 -0400'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>message</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'chore: Update documentation deployment workflow in GitHub Actions\n\n- Modified the `docs.yml` workflow to skip commitizen checks for gh-pages.\n- Configured Git credentials for the GitHub Actions bot.\n- Added environment variable for GITHUB_TOKEN during deployment.\n- Commented out unused steps for caching and documentation building for clarity.'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>raw</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'commit 8566747de893ad96d4c2ef05fbfd2610eeab4f9d\nAuthor: Malcolm Jones <bossjones@theblacktonystark.com>\nDate:   Tue Apr 1 22:04:34 2025 -0400\n\n    chore: Update documentation deployment workflow in GitHub Actions\n    \n    - Modified the `docs.yml` workflow to skip commitizen checks for gh-pages.\n    - Configured Git credentials for the GitHub Actions bot.\n    - Added environment variable for GITHUB_TOKEN during deployment.\n    - Commented out unused steps for caching and documentation building for clarity.'</bossjones@theblacktonystark.com></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>root_dir</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'/home/runner/work/codegen-lab/codegen-lab'</td>
+</tr>
+</table>
+<h3 id="page-attributes">Page Attributes<a class="headerlink" href="#page-attributes" title="Permanent link">¶</a></h3>
+<p>Provided by MkDocs. These attributes change for every page
+(the attributes shown are for this page).</p>
+<p>e.g. <code>{{ page.title }}</code></p>
+<p>See also the <a href="https://www.MkDocs.org/user-guide/custom-themes/#page">MkDocs documentation on the page object</a>.</p>
+<table class="macros-tb" style="background-color: #F0FFFF; color:#000000; border:1px solid #DCDCDC; padding: 5px">
+<th style="color:#000000; border:1px solid #DCDCDC; padding: 5px">Variable</th>
+<th style="color:#000000; border:1px solid #DCDCDC; padding: 5px">Type</th>
+<th style="color:#000000; border:1px solid #DCDCDC; padding: 5px">Content</th>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>file</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>File</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">src_uri = 'environment.md', src_dir = '/home/runner/work/codegen-lab/codegen-lab/docs', dest_dir = '/home/runner/work/codegen-lab/codegen-lab/site', use_directory_urls = True, <b>inclusion</b> [<i>InclusionLevel</i>], name = 'environment', dest_uri = 'environment/index.html', abs_src_path = '/home/runner/work/codegen-lab/codegen-lab/docs/environment.md', <b>page</b> [<i>Page</i>], url = 'environment/'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>children</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>NoneType</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">None</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>previous_page</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>Page</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">Page(title='Cursor Rules: Style Guide and Migration', url='/codegen-lab/docs/cursor-rules-styles/')</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>next_page</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>Page</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">Page(title=[blank], url='/codegen-lab/docs/getting-started/')</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>_Page__active</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>bool</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">False</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>update_date</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'2025-04-02'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>canonical_url</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'https://bossjones.github.io/codegen-lab/docs/environment/'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>abs_url</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'/codegen-lab/docs/environment/'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>edit_url</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'https://github.com/bossjones/codegen-lab/edit/main/docs/environment.md'</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>markdown</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">"# Environment\n\n{{ macros_info() }}\n\n\n## Updates\n{% for page in navigation.pages %}\n1. {{ page.title }} ({{ page.update_date }})\n{% endfor %}\n\n\n## Mkdocs.yal file (portion)\n\n```\n{{ include_file('mkdocs.yml', 0, 5)}}\n```\n\n## List env object\n\n```\n{{ doc_env() | pprint }}\n```\n"</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>_title_from_render</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>NoneType</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">None</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>content</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>NoneType</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">None</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>toc</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>list</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">[]</td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>meta</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>dict</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">foo = 'Hello world', <b>bar</b> [<i>dict</i>], bingo = 'Hello', git_revision_date_localized = '<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="April 2, 2025 01:14:46">April 2, 2025 01:14:46</span>', git_revision_date_localized_hash = '34ceecf7712b1bd2e4fa9162e38b540576821e78', git_revision_date_localized_tag = '', git_revision_date_localized_raw_date = 'April 2, 2025', git_revision_date_localized_raw_datetime = 'April 2, 2025 01:14:46', git_revision_date_localized_raw_iso_date = '2025-04-02', git_revision_date_localized_raw_iso_datetime = '2025-04-02 01:14:46', git_revision_date_localized_raw_timeago = '<span class="timeago" datetime="2025-04-02T01:14:46+00:00" locale="en"></span>', git_revision_date_localized_raw_custom = '02. April 2025', git_site_revision_date_localized_hash = 'ef79734f9ceebb4157704b61728496bf2f8b7ed3', git_site_revision_date_localized_tag = '', git_site_revision_date_localized = '<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="April 2, 2025 01:45:52">April 2, 2025 01:45:52</span>', git_site_revision_date_localized_raw_date = 'April 2, 2025', git_site_revision_date_localized_raw_datetime = 'April 2, 2025 01:45:52', git_site_revision_date_localized_raw_iso_date = '2025-04-02', git_site_revision_date_localized_raw_iso_datetime = '2025-04-02 01:45:52', git_site_revision_date_localized_raw_timeago = '<span class="timeago" datetime="2025-04-02T01:45:52+00:00" locale="en"></span>', git_site_revision_date_localized_raw_custom = '02. April 2025', git_creation_date_localized_hash = '', git_creation_date_localized_tag = '', git_creation_date_localized = '<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="April 2, 2025 01:14:46">April 2, 2025 01:14:46</span>', git_creation_date_localized_raw_date = 'April 2, 2025', git_creation_date_localized_raw_datetime = 'April 2, 2025 01:14:46', git_creation_date_localized_raw_iso_date = '2025-04-02', git_creation_date_localized_raw_iso_datetime = '2025-04-02 01:14:46', git_creation_date_localized_raw_timeago = '<span class="timeago" datetime="2025-04-02T01:14:46+00:00" locale="en"></span>', git_creation_date_localized_raw_custom = '02. April 2025'</td>
+</tr>
+</table>
+<p>To have all titles of all pages, use:</p>
+<div class="highlight"><pre><span></span><code>{% for page in navigation.pages %}
+- {{ page.title }}
+{% endfor %}
+</code></pre></div>
+<h3 id="plugin-filters">Plugin Filters<a class="headerlink" href="#plugin-filters" title="Permanent link">¶</a></h3>
+<p>These filters are provided as a standard by the macros plugin.</p>
+<table class="macros-tb" style="background-color: #F0FFFF; color:#000000; border:1px solid #DCDCDC; padding: 5px">
+<th style="color:#000000; border:1px solid #DCDCDC; padding: 5px">Variable</th>
+<th style="color:#000000; border:1px solid #DCDCDC; padding: 5px">Type</th>
+<th style="color:#000000; border:1px solid #DCDCDC; padding: 5px">Content</th>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>pretty</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>var_list, var, var_type, content, rows, header, e</i>)<br/> <p><em>Default Mkdocs-Macro</em>: Prettify a dictionary or object          (used for environment documentation, or debugging).</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>relative_url</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>path</i>)<br/> <p><em>Default Mkdocs-Macro</em>:         convert the path of any page according to MkDoc's internal logic,         into a URL relative to the current page         (implements the <code>normalize_url()</code> function from <code>mkdocs.util</code>).         Typically used to manage custom navigation:         <code>{{ page.url | relative_url }}</code>.</p></td>
+</tr>
+</table>
+<h3 id="builtin-jinja2-filters">Builtin Jinja2 Filters<a class="headerlink" href="#builtin-jinja2-filters" title="Permanent link">¶</a></h3>
+<p>These filters are provided by Jinja2 as a standard.</p>
+<p>See also the <a href="https://jinja.palletsprojects.com/en/3.1.x/templates/#builtin-filterss">Jinja2 documentation on builtin filters</a>.</p>
+<table class="macros-tb" style="background-color: #F0FFFF; color:#000000; border:1px solid #DCDCDC; padding: 5px">
+<th style="color:#000000; border:1px solid #DCDCDC; padding: 5px">Variable</th>
+<th style="color:#000000; border:1px solid #DCDCDC; padding: 5px">Type</th>
+<th style="color:#000000; border:1px solid #DCDCDC; padding: 5px">Content</th>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>abs</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>builtin_function_or_method</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><p>Return the absolute value of the argument.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>attr</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>environment, obj, name, value</i>)<br/> <p>Get an attribute of an object.  <code>foo|attr("bar")</code> works like     <code>foo.bar</code> just that always an attribute is returned and items are not     looked up.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>batch</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>value, linecount, fill_with, tmp, item</i>)<br/> <p>A filter that batches items. It works pretty much like <code>slice</code>     just the other way round. It returns a list of lists with the     given number of items. If you provide a second parameter this     is used to fill up missing items. See this example.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>capitalize</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>s</i>)<br/> <p>Capitalize a value. The first character will be uppercase, all others     lowercase.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>center</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>value, width</i>)<br/> <p>Centers the value in a field of a given width.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>count</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>builtin_function_or_method</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><p>Return the number of items in a container.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>d</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>value, default_value, boolean</i>)<br/> <p>If the value is undefined it will return the passed default value,     otherwise the value of the variable.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>default</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>value, default_value, boolean</i>)<br/> <p>If the value is undefined it will return the passed default value,     otherwise the value of the variable.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>dictsort</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>value, case_sensitive, by, reverse, sort_func</i>)<br/> <p>Sort a dict and yield (key, value) pairs. Python dicts may not     be in the order you want to display them in, so sort them first.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>e</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>s</i>)<br/> <p>Replace the characters <code>&amp;</code>, <code>&lt;</code>, <code>&gt;</code>, <code>'</code>, and <code>"</code> in     the string with HTML-safe sequences. Use this if you need to display     text that might contain such characters in HTML.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>escape</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>s</i>)<br/> <p>Replace the characters <code>&amp;</code>, <code>&lt;</code>, <code>&gt;</code>, <code>'</code>, and <code>"</code> in     the string with HTML-safe sequences. Use this if you need to display     text that might contain such characters in HTML.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>filesizeformat</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>value, binary, bytes, base, prefixes, i, prefix, unit</i>)<br/> <p>Format the value like a 'human-readable' file size (i.e. 13 kB,     4.1 MB, 102 Bytes, etc).  Per default decimal prefixes are used (Mega,     Giga, etc.), if the second parameter is set to <code>True</code> the binary     prefixes are used (Mebi, Gibi).</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>first</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>args, kwargs, b</i>)<br/> <p>Return the first item of a sequence.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>float</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>value, default</i>)<br/> <p>Convert the value into a floating point number. If the     conversion doesn't work it will return <code>0.0</code>. You can     override this default using the first parameter.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>forceescape</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>value</i>)<br/> <p>Enforce HTML escaping.  This will probably double escape variables.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>format</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>value, args, kwargs</i>)<br/> <p>Apply the given values to a <code>printf-style</code>_ format string, like     <code>string % values</code>.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>groupby</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>args, kwargs, b</i>)<br/> <p>Group a sequence of objects by an attribute using Python's     :func:<code>itertools.groupby</code>. The attribute can use dot notation for     nested access, like <code>"address.city"</code>. Unlike Python's <code>groupby</code>,     the values are sorted first so only one group is returned for each     unique value.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>indent</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>s, width, first, blank, newline, rv, lines</i>)<br/> <p>Return a copy of the string with each line indented by 4 spaces. The     first line and blank lines are not indented by default.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>int</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>value, default, base</i>)<br/> <p>Convert the value into an integer. If the     conversion doesn't work it will return <code>0</code>. You can     override this default using the first parameter. You     can also override the default base (10) in the second     parameter, which handles input with prefixes such as     0b, 0o and 0x for bases 2, 8 and 16 respectively.     The base is ignored for decimal numbers and non-string values.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>join</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>args, kwargs, b</i>)<br/> <p>Return a string which is the concatenation of the strings in the     sequence. The separator between elements is an empty string per     default, you can define it with the optional parameter.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>last</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>environment, seq</i>)<br/> <p>Return the last item of a sequence.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>length</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>builtin_function_or_method</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><p>Return the number of items in a container.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>list</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>args, kwargs, b</i>)<br/> <p>Convert the value into a list.  If it was a string the returned list     will be a list of characters.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>lower</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>s</i>)<br/> <p>Convert a value to lowercase.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>items</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>value</i>)<br/> <p>Return an iterator over the <code>(key, value)</code> items of a mapping.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>map</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>args, kwargs, b</i>)<br/> <p>Applies a filter on a sequence of objects or looks up an attribute.     This is useful when dealing with lists of objects but you are really     only interested in a certain value of it.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>min</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>environment, value, case_sensitive, attribute</i>)<br/> <p>Return the smallest item from the sequence.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>max</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>environment, value, case_sensitive, attribute</i>)<br/> <p>Return the largest item from the sequence.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>pprint</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>value</i>)<br/> <p>Pretty print a variable. Useful for debugging.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>random</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>context, seq</i>)<br/> <p>Return a random item from the sequence.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>reject</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>args, kwargs, b</i>)<br/> <p>Filters a sequence of objects by applying a test to each object,     and rejecting the objects with the test succeeding.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>rejectattr</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>args, kwargs, b</i>)<br/> <p>Filters a sequence of objects by applying a test to the specified     attribute of each object, and rejecting the objects with the test     succeeding.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>replace</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>eval_ctx, s, old, new, count</i>)<br/> <p>Return a copy of the value with all occurrences of a substring     replaced with a new one. The first argument is the substring     that should be replaced, the second is the replacement string.     If the optional third argument <code>count</code> is given, only the first     <code>count</code> occurrences are replaced.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>reverse</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>value, rv, e</i>)<br/> <p>Reverse the object or return an iterator that iterates over it the other     way round.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>round</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>value, precision, method, func</i>)<br/> <p>Round the number to a given precision. The first     parameter specifies the precision (default is <code>0</code>), the     second the rounding method.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>safe</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>value</i>)<br/> <p>Mark the value as safe which means that in an environment with automatic     escaping enabled this variable will not be escaped.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>select</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>args, kwargs, b</i>)<br/> <p>Filters a sequence of objects by applying a test to each object,     and only selecting the objects with the test succeeding.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>selectattr</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>args, kwargs, b</i>)<br/> <p>Filters a sequence of objects by applying a test to the specified     attribute of each object, and only selecting the objects with the     test succeeding.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>slice</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>args, kwargs, b</i>)<br/> <p>Slice an iterator and return a list of lists containing     those items. Useful if you want to create a div containing     three ul tags that represent columns.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>sort</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>environment, value, reverse, case_sensitive, attribute, key_func</i>)<br/> <p>Sort an iterable using Python's :func:<code>sorted</code>.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>string</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>s</i>)<br/> <p>Convert an object to a string if it isn't already. This preserves     a :class:<code>Markup</code> string rather than converting it back to a basic     string, so it will still be marked as safe and won't be escaped     again.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>striptags</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>value</i>)<br/> <p>Strip SGML/XML tags and replace adjacent whitespace by one space.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>sum</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>args, kwargs, b</i>)<br/> <p>Returns the sum of a sequence of numbers plus the value of parameter     'start' (which defaults to 0).  When the sequence is empty it returns     start.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>title</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>s, item</i>)<br/> <p>Return a titlecased version of the value. I.e. words will start with     uppercase letters, all remaining characters are lowercase.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>trim</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>value, chars</i>)<br/> <p>Strip leading and trailing characters, by default whitespace.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>truncate</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>env, s, length, killwords, end, leeway, result</i>)<br/> <p>Return a truncated copy of the string. The length is specified     with the first parameter which defaults to <code>255</code>. If the second     parameter is <code>true</code> the filter will cut the text at length. Otherwise     it will discard the last word. If the text was in fact     truncated it will append an ellipsis sign (<code>"..."</code>). If you want a     different ellipsis sign than <code>"..."</code> you can specify it using the     third parameter. Strings that only exceed the length by the tolerance     margin given in the fourth parameter will not be truncated.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>unique</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>args, kwargs, b</i>)<br/> <p>Returns a list of unique items from the given iterable.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>upper</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>s</i>)<br/> <p>Convert a value to uppercase.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>urlencode</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>value, items</i>)<br/> <p>Quote data for use in a URL path or query using UTF-8.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>urlize</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>eval_ctx, value, trim_url_limit, nofollow, target, rel, extra_schemes, policies, rel_parts, scheme, rv</i>)<br/> <p>Convert URLs in text into clickable links.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>wordcount</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>s</i>)<br/> <p>Count the words in that string.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>wordwrap</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>environment, s, width, break_long_words, wrapstring, break_on_hyphens, textwrap, line</i>)<br/> <p>Wrap a string to the given width. Existing newlines are treated     as paragraphs to be wrapped separately.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>xmlattr</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>eval_ctx, d, autospace, items, key, value, rv</i>)<br/> <p>Create an SGML/XML attribute string based on the items in a dict.</p></td>
+</tr>
+<tr>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>tojson</b></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>function</i></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">(<i>eval_ctx, value, indent, policies, dumps, kwargs</i>)<br/> <p>Serialize an object to a string of JSON, and mark it safe to     render in HTML. This filter is only for use in HTML documents.</p></td>
+</tr>
+</table>
+<h2 id="updates">Updates<a class="headerlink" href="#updates" title="Permanent link">¶</a></h2>
+<ol>
+<li>
+<p>Codegen Lab (2025-04-02)</p>
+</li>
+<li>
+<p>API Reference (2025-04-02)</p>
+</li>
+<li>
+<p>Changelog (2025-04-02)</p>
+</li>
+<li>
+<p>Commitizen Configuration Guide (2025-04-02)</p>
+</li>
+<li>
+<p>Contributing to Codegen Lab (2025-04-02)</p>
+</li>
+<li>
+<p>Cursor Rules: Style Guide and Migration (2025-04-02)</p>
+</li>
+<li>
+<p>Environment (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+<li>
+<p>None (2025-04-02)</p>
+</li>
+</ol>
+<h2 id="mkdocsyal-file-portion">Mkdocs.yal file (portion)<a class="headerlink" href="#mkdocsyal-file-portion" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code># Basic site information
+
+site_name: Codegen Lab # The name of your documentation site that appears in the header
+
+site_description: AI-powered code generation tooling for efficient software development # Meta description for SEO
+
+site_author: Malcolm Jones # Site author information
+
+# For GitHub Pages deployment
+</code></pre></div>
+<h2 id="list-env-object">List env object<a class="headerlink" href="#list-env-object" title="Permanent link">¶</a></h2>
+<div class="highlight"><pre><span></span><code>{'J2_STRING': &lt;mkdocs.config.config_options.Type object at 0x7f4f390c7f50&gt;,
+ 'conf': {'config_file_path': '/home/runner/work/codegen-lab/codegen-lab/mkdocs.yml',
+          'copyright': 'Copyright &amp;copy; 2023 - 2025 Malcolm Jones',
+          'dev_addr': _IpAddressValue(host='127.0.0.1', port=8000),
+          'docs_dir': '/home/runner/work/codegen-lab/codegen-lab/docs',
+          'draft_docs': None,
+          'edit_uri': 'edit/main/docs/',
+          'edit_uri_template': None,
+          'exclude_docs': None,
+          'extra': {'social': [{'icon': 'fontawesome/brands/github',
+                                'link': 'https://github.com/bossjones/codegen-lab'}]},
+          'extra_css': ['assets/_mkdocstrings.css'],
+          'extra_javascript': [],
+          'extra_templates': [],
+          'google_analytics': None,
+          'hooks': {},
+          'markdown_extensions': ['toc',
+                                  'tables',
+                                  'fenced_code',
+                                  'abbr',
+                                  'admonition',
+                                  'attr_list',
+                                  'neoteroi.cards',
+                                  'pymdownx.details',
+                                  'pymdownx.emoji',
+                                  'pymdownx.highlight',
+                                  'pymdownx.inlinehilite',
+                                  'pymdownx.magiclink',
+                                  'pymdownx.snippets',
+                                  'pymdownx.superfences',
+                                  'pymdownx.tabbed',
+                                  &lt;mkdocs_autorefs._internal.references.AutorefsExtension object at 0x7f4f3a05d070&gt;,
+                                  &lt;mkdocstrings._internal.extension.MkdocstringsExtension object at 0x7f4f38db6210&gt;],
+          'mdx_configs': {'pymdownx.emoji': {'emoji_generator': &lt;function to_svg at 0x7f4f3a6b9620&gt;,
+                                             'emoji_index': &lt;function twemoji at 0x7f4f3a647e20&gt;},
+                          'pymdownx.superfences': {'custom_fences': [{'class': 'mermaid',
+                                                                      'format': functools.partial(&lt;function fence_mermaid at 0x7f4f3a1e5620&gt;, custom=True),
+                                                                      'name': 'mermaid'}]},
+                          'pymdownx.tabbed': {'alternate_style': True},
+                          'toc': {'permalink': True}},
+          'nav': None,
+          'not_in_nav': None,
+          'pages': None,
+          'plugins': {'autorefs': &lt;mkdocs_autorefs._internal.plugin.AutorefsPlugin object at 0x7f4f39cdcb00&gt;,
+                      'awesome-pages': &lt;mkdocs_awesome_pages_plugin.plugin.AwesomePagesPlugin object at 0x7f4f3a8ee1b0&gt;,
+                      'ezlinks': &lt;mkdocs_ezlinks_plugin.plugin.EzLinksPlugin object at 0x7f4f39ac7740&gt;,
+                      'git-authors': &lt;mkdocs_git_authors_plugin.plugin.GitAuthorsPlugin object at 0x7f4f39318440&gt;,
+                      'git-revision-date-localized': &lt;mkdocs_git_revision_date_localized_plugin.plugin.GitRevisionDateLocalizedPlugin object at 0x7f4f39bd2180&gt;,
+                      'macros': &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f4f391cdd30&gt;,
+                      'material/search': &lt;material.plugins.search.plugin.SearchPlugin object at 0x7f4f38db7830&gt;,
+                      'material/tags': &lt;material.plugins.tags.plugin.TagsPlugin object at 0x7f4f38cf1b80&gt;,
+                      'mermaid2': &lt;mermaid2.plugin.MarkdownMermaidPlugin object at 0x7f4f3912dfd0&gt;,
+                      'mkdocstrings': &lt;mkdocstrings._internal.plugin.MkdocstringsPlugin object at 0x7f4f38f79670&gt;},
+          'remote_branch': 'gh-pages',
+          'remote_name': 'origin',
+          'repo_name': 'bossjones/codegen-lab',
+          'repo_url': 'https://github.com/bossjones/codegen-lab',
+          'site_author': 'Malcolm Jones',
+          'site_description': 'AI-powered code generation tooling for '
+                              'efficient software development',
+          'site_dir': '/home/runner/work/codegen-lab/codegen-lab/site',
+          'site_name': 'Codegen Lab',
+          'site_url': 'https://bossjones.github.io/codegen-lab/docs/',
+          'strict': False,
+          'theme': Theme(name='material', dirs=['/home/runner/work/codegen-lab/codegen-lab/true/lib/python3.12/site-packages/material/templates', '/home/runner/work/codegen-lab/codegen-lab/true/lib/python3.12/site-packages/mkdocs/templates'], static_templates={'sitemap.xml', '404.html'}, name='material', locale=Locale('en'), language='en', direction=None, features=['content.action.edit', 'content.action.view', 'content.code.copy', 'content.code.select', 'content.tooltips', 'navigation.footer', 'search.share'], font={'text': 'Roboto', 'code': 'Roboto Mono'}, icon=None, favicon='assets/images/favicon.png', palette={'primary': 'indigo', 'accent': 'indigo'}),
+          'use_directory_urls': True,
+          'validation': {'links': {'absolute_links': 20,
+                                   'anchors': 20,
+                                   'not_found': 30,
+                                   'unrecognized_links': 20},
+                         'nav': {'absolute_links': 20,
+                                 'not_found': 30,
+                                 'omitted_files': 20}},
+          'watch': ['/home/runner/work/codegen-lab/codegen-lab/mkdocs_macro_plugin.py',
+                    '/home/runner/work/codegen-lab/codegen-lab/docs_templates']},
+ 'config': {'force_render_paths': '',
+            'include_dir': '',
+            'include_yaml': [],
+            'j2_block_end_string': '',
+            'j2_block_start_string': '',
+            'j2_comment_end_string': '',
+            'j2_comment_start_string': '',
+            'j2_variable_end_string': '',
+            'j2_variable_start_string': '',
+            'module_name': 'mkdocs_macro_plugin',
+            'modules': [],
+            'on_error_fail': False,
+            'on_undefined': 'keep',
+            'render_by_default': True,
+            'verbose': True},
+ 'config_class': &lt;class 'mkdocs.config.base.LegacyConfig'&gt;,
+ 'config_scheme': (('module_name',
+                    &lt;mkdocs.config.config_options.Type object at 0x7f4f391b26c0&gt;),
+                   ('modules',
+                    &lt;mkdocs.config.config_options.Type object at 0x7f4f38f7b050&gt;),
+                   ('render_by_default',
+                    &lt;mkdocs.config.config_options.Type object at 0x7f4f38f79d90&gt;),
+                   ('force_render_paths',
+                    &lt;mkdocs.config.config_options.Type object at 0x7f4f390c7f50&gt;),
+                   ('include_dir',
+                    &lt;mkdocs.config.config_options.Type object at 0x7f4f390c7f50&gt;),
+                   ('include_yaml',
+                    &lt;mkdocs.config.config_options.Type object at 0x7f4f38f79dc0&gt;),
+                   ('j2_block_start_string',
+                    &lt;mkdocs.config.config_options.Type object at 0x7f4f390c7f50&gt;),
+                   ('j2_block_end_string',
+                    &lt;mkdocs.config.config_options.Type object at 0x7f4f390c7f50&gt;),
+                   ('j2_variable_start_string',
+                    &lt;mkdocs.config.config_options.Type object at 0x7f4f390c7f50&gt;),
+                   ('j2_variable_end_string',
+                    &lt;mkdocs.config.config_options.Type object at 0x7f4f390c7f50&gt;),
+                   ('j2_comment_start_string',
+                    &lt;mkdocs.config.config_options.Type object at 0x7f4f390c7f50&gt;),
+                   ('j2_comment_end_string',
+                    &lt;mkdocs.config.config_options.Type object at 0x7f4f390c7f50&gt;),
+                   ('on_undefined',
+                    &lt;mkdocs.config.config_options.Type object at 0x7f4f38f79e80&gt;),
+                   ('on_error_fail',
+                    &lt;mkdocs.config.config_options.Type object at 0x7f4f38f9e120&gt;),
+                   ('verbose',
+                    &lt;mkdocs.config.config_options.Type object at 0x7f4f38f9ec90&gt;)),
+ 'env': &lt;jinja2.environment.Environment object at 0x7f4f38a820c0&gt;,
+ 'filter': &lt;bound method MacrosPlugin.filter of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f4f391cdd30&gt;&gt;,
+ 'filters': {'pretty': &lt;function define_env.&lt;locals&gt;.pretty at 0x7f4f38a8b1a0&gt;,
+             'relative_url': &lt;function define_env.&lt;locals&gt;.relative_url at 0x7f4f38a8b420&gt;},
+ 'force_page_rendering': &lt;bound method MacrosPlugin.force_page_rendering of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f4f391cdd30&gt;&gt;,
+ 'load_config': &lt;bound method BasePlugin.load_config of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f4f391cdd30&gt;&gt;,
+ 'macro': &lt;bound method MacrosPlugin.macro of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f4f391cdd30&gt;&gt;,
+ 'macros': {'context': &lt;function define_env.&lt;locals&gt;.context at 0x7f4f38a8b240&gt;,
+            'doc_env': &lt;function define_env.&lt;locals&gt;.doc_env at 0x7f4f38a8b740&gt;,
+            'fix_url': &lt;function fix_url at 0x7f4f38f84400&gt;,
+            'include_file': &lt;function define_env.&lt;locals&gt;.include_file at 0x7f4f38a8b6a0&gt;,
+            'macros_info': &lt;function define_env.&lt;locals&gt;.macros_info at 0x7f4f38a8b2e0&gt;,
+            'now': &lt;function define_env.&lt;locals&gt;.now at 0x7f4f38a8b380&gt;,
+            'render_with_page_template': &lt;function define_env.&lt;locals&gt;.render_with_page_template at 0x7f4f38a8b7e0&gt;},
+ 'markdown': '# Environment\n'
+             '\n'
+             '{{ macros_info() }}\n'
+             '\n'
+             '\n'
+             '## Updates\n'
+             '{% for page in navigation.pages %}\n'
+             '1. {{ page.title }} ({{ page.update_date }})\n'
+             '{% endfor %}\n'
+             '\n'
+             '\n'
+             '## Mkdocs.yal file (portion)\n'
+             '\n'
+             '```\n'
+             "{{ include_file('mkdocs.yml', 0, 5)}}\n"
+             '```\n'
+             '\n'
+             '## List env object\n'
+             '\n'
+             '```\n'
+             '{{ doc_env() | pprint }}\n'
+             '```\n',
+ 'on_config': &lt;bound method MacrosPlugin.on_config of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f4f391cdd30&gt;&gt;,
+ 'on_nav': &lt;bound method MacrosPlugin.on_nav of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f4f391cdd30&gt;&gt;,
+ 'on_page_markdown': &lt;bound method MacrosPlugin.on_page_markdown of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f4f391cdd30&gt;&gt;,
+ 'on_post_build': &lt;bound method MacrosPlugin.on_post_build of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f4f391cdd30&gt;&gt;,
+ 'on_pre_build': &lt;bound method MacrosPlugin.on_pre_build of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f4f391cdd30&gt;&gt;,
+ 'on_serve': &lt;bound method MacrosPlugin.on_serve of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f4f391cdd30&gt;&gt;,
+ 'page': Page(title='Environment', url='/codegen-lab/docs/environment/'),
+ 'post_build_functions': [&lt;function on_post_build at 0x7f4f38a8b600&gt;],
+ 'post_macro_functions': [],
+ 'pre_macro_functions': [],
+ 'project_dir': '/home/runner/work/codegen-lab/codegen-lab',
+ 'raw_markdown': '# Environment\n'
+                 '\n'
+                 '{{ macros_info() }}\n'
+                 '\n'
+                 '\n'
+                 '## Updates\n'
+                 '{% for page in navigation.pages %}\n'
+                 '1. {{ page.title }} ({{ page.update_date }})\n'
+                 '{% endfor %}\n'
+                 '\n'
+                 '\n'
+                 '## Mkdocs.yal file (portion)\n'
+                 '\n'
+                 '```\n'
+                 "{{ include_file('mkdocs.yml', 0, 5)}}\n"
+                 '```\n'
+                 '\n'
+                 '## List env object\n'
+                 '\n'
+                 '```\n'
+                 '{{ doc_env() | pprint }}\n'
+                 '```\n',
+ 'render': &lt;bound method MacrosPlugin.render of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f4f391cdd30&gt;&gt;,
+ 'start_chatting': &lt;bound method MacrosPlugin.start_chatting of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f4f391cdd30&gt;&gt;,
+ 'supports_multiple_instances': False,
+ 'variables': {'config': {'config_file_path': '/home/runner/work/codegen-lab/codegen-lab/mkdocs.yml',
+                          'copyright': 'Copyright &amp;copy; 2023 - 2025 Malcolm '
+                                       'Jones',
+                          'dev_addr': _IpAddressValue(host='127.0.0.1', port=8000),
+                          'docs_dir': '/home/runner/work/codegen-lab/codegen-lab/docs',
+                          'draft_docs': None,
+                          'edit_uri': 'edit/main/docs/',
+                          'edit_uri_template': None,
+                          'exclude_docs': None,
+                          'extra': {'social': [{'icon': 'fontawesome/brands/github',
+                                                'link': 'https://github.com/bossjones/codegen-lab'}]},
+                          'extra_css': ['assets/_mkdocstrings.css'],
+                          'extra_javascript': [],
+                          'extra_templates': [],
+                          'google_analytics': None,
+                          'hooks': {},
+                          'markdown_extensions': ['toc',
+                                                  'tables',
+                                                  'fenced_code',
+                                                  'abbr',
+                                                  'admonition',
+                                                  'attr_list',
+                                                  'neoteroi.cards',
+                                                  'pymdownx.details',
+                                                  'pymdownx.emoji',
+                                                  'pymdownx.highlight',
+                                                  'pymdownx.inlinehilite',
+                                                  'pymdownx.magiclink',
+                                                  'pymdownx.snippets',
+                                                  'pymdownx.superfences',
+                                                  'pymdownx.tabbed',
+                                                  &lt;mkdocs_autorefs._internal.references.AutorefsExtension object at 0x7f4f3a05d070&gt;,
+                                                  &lt;mkdocstrings._internal.extension.MkdocstringsExtension object at 0x7f4f38db6210&gt;],
+                          'mdx_configs': {'pymdownx.emoji': {'emoji_generator': &lt;function to_svg at 0x7f4f3a6b9620&gt;,
+                                                             'emoji_index': &lt;function twemoji at 0x7f4f3a647e20&gt;},
+                                          'pymdownx.superfences': {'custom_fences': [{'class': 'mermaid',
+                                                                                      'format': functools.partial(&lt;function fence_mermaid at 0x7f4f3a1e5620&gt;, custom=True),
+                                                                                      'name': 'mermaid'}]},
+                                          'pymdownx.tabbed': {'alternate_style': True},
+                                          'toc': {'permalink': True}},
+                          'nav': None,
+                          'not_in_nav': None,
+                          'pages': None,
+                          'plugins': {'autorefs': &lt;mkdocs_autorefs._internal.plugin.AutorefsPlugin object at 0x7f4f39cdcb00&gt;,
+                                      'awesome-pages': &lt;mkdocs_awesome_pages_plugin.plugin.AwesomePagesPlugin object at 0x7f4f3a8ee1b0&gt;,
+                                      'ezlinks': &lt;mkdocs_ezlinks_plugin.plugin.EzLinksPlugin object at 0x7f4f39ac7740&gt;,
+                                      'git-authors': &lt;mkdocs_git_authors_plugin.plugin.GitAuthorsPlugin object at 0x7f4f39318440&gt;,
+                                      'git-revision-date-localized': &lt;mkdocs_git_revision_date_localized_plugin.plugin.GitRevisionDateLocalizedPlugin object at 0x7f4f39bd2180&gt;,
+                                      'macros': &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f4f391cdd30&gt;,
+                                      'material/search': &lt;material.plugins.search.plugin.SearchPlugin object at 0x7f4f38db7830&gt;,
+                                      'material/tags': &lt;material.plugins.tags.plugin.TagsPlugin object at 0x7f4f38cf1b80&gt;,
+                                      'mermaid2': &lt;mermaid2.plugin.MarkdownMermaidPlugin object at 0x7f4f3912dfd0&gt;,
+                                      'mkdocstrings': &lt;mkdocstrings._internal.plugin.MkdocstringsPlugin object at 0x7f4f38f79670&gt;},
+                          'remote_branch': 'gh-pages',
+                          'remote_name': 'origin',
+                          'repo_name': 'bossjones/codegen-lab',
+                          'repo_url': 'https://github.com/bossjones/codegen-lab',
+                          'site_author': 'Malcolm Jones',
+                          'site_description': 'AI-powered code generation '
+                                              'tooling for efficient software '
+                                              'development',
+                          'site_dir': '/home/runner/work/codegen-lab/codegen-lab/site',
+                          'site_name': 'Codegen Lab',
+                          'site_url': 'https://bossjones.github.io/codegen-lab/docs/',
+                          'strict': False,
+                          'theme': Theme(name='material', dirs=['/home/runner/work/codegen-lab/codegen-lab/true/lib/python3.12/site-packages/material/templates', '/home/runner/work/codegen-lab/codegen-lab/true/lib/python3.12/site-packages/mkdocs/templates'], static_templates={'sitemap.xml', '404.html'}, name='material', locale=Locale('en'), language='en', direction=None, features=['content.action.edit', 'content.action.view', 'content.code.copy', 'content.code.select', 'content.tooltips', 'navigation.footer', 'search.share'], font={'text': 'Roboto', 'code': 'Roboto Mono'}, icon=None, favicon='assets/images/favicon.png', palette={'primary': 'indigo', 'accent': 'indigo'}),
+                          'use_directory_urls': True,
+                          'validation': {'links': {'absolute_links': 20,
+                                                   'anchors': 20,
+                                                   'not_found': 30,
+                                                   'unrecognized_links': 20},
+                                         'nav': {'absolute_links': 20,
+                                                 'not_found': 30,
+                                                 'omitted_files': 20}},
+                          'watch': ['/home/runner/work/codegen-lab/codegen-lab/mkdocs_macro_plugin.py',
+                                    '/home/runner/work/codegen-lab/codegen-lab/docs_templates']},
+               'environment': {'jinja2_version': '3.1.5',
+                               'macros_plugin_version': '1.3.7',
+                               'mkdocs_version': '1.6.1',
+                               'python_version': '3.12.9',
+                               'system': 'Linux',
+                               'system_version': '6.8.0-1021-azure'},
+               'extra': {'social': [{'icon': 'fontawesome/brands/github',
+                                     'link': 'https://github.com/bossjones/codegen-lab'}]},
+               'files': &lt;mkdocs.structure.files.Files object at 0x7f4f38a81250&gt;,
+               'filters': {'pretty': &lt;function define_env.&lt;locals&gt;.pretty at 0x7f4f38a8b1a0&gt;,
+                           'relative_url': &lt;function define_env.&lt;locals&gt;.relative_url at 0x7f4f38a8b420&gt;},
+               'filters_builtin': {'abs': &lt;built-in function abs&gt;,
+                                   'attr': &lt;function do_attr at 0x7f4f3b00d260&gt;,
+                                   'batch': &lt;function do_batch at 0x7f4f3b007f60&gt;,
+                                   'capitalize': &lt;function do_capitalize at 0x7f4f3b0068e0&gt;,
+                                   'center': &lt;function do_center at 0x7f4f3b007100&gt;,
+                                   'count': &lt;built-in function len&gt;,
+                                   'd': &lt;function do_default at 0x7f4f3b006fc0&gt;,
+                                   'default': &lt;function do_default at 0x7f4f3b006fc0&gt;,
+                                   'dictsort': &lt;function do_dictsort at 0x7f4f3b006a20&gt;,
+                                   'e': &lt;function escape at 0x7f4f3b1c1300&gt;,
+                                   'escape': &lt;function escape at 0x7f4f3b1c1300&gt;,
+                                   'filesizeformat': &lt;function do_filesizeformat at 0x7f4f3b007740&gt;,
+                                   'first': &lt;function do_first at 0x7f4f3b007600&gt;,
+                                   'float': &lt;function do_float at 0x7f4f3b007c40&gt;,
+                                   'forceescape': &lt;function do_forceescape at 0x7f4f3b006480&gt;,
+                                   'format': &lt;function do_format at 0x7f4f3b007ce0&gt;,
+                                   'groupby': &lt;function do_groupby at 0x7f4f3b00c9a0&gt;,
+                                   'indent': &lt;function do_indent at 0x7f4f3b007920&gt;,
+                                   'int': &lt;function do_int at 0x7f4f3b007ba0&gt;,
+                                   'items': &lt;function do_items at 0x7f4f3b0067a0&gt;,
+                                   'join': &lt;function do_join at 0x7f4f3b0072e0&gt;,
+                                   'last': &lt;function do_last at 0x7f4f3b007420&gt;,
+                                   'length': &lt;built-in function len&gt;,
+                                   'list': &lt;function do_list at 0x7f4f3b00cea0&gt;,
+                                   'lower': &lt;function do_lower at 0x7f4f3b006700&gt;,
+                                   'map': &lt;function do_map at 0x7f4f3b00d940&gt;,
+                                   'max': &lt;function do_max at 0x7f4f3b006f20&gt;,
+                                   'min': &lt;function do_min at 0x7f4f3b006e80&gt;,
+                                   'pprint': &lt;function do_pprint at 0x7f4f3b0077e0&gt;,
+                                   'random': &lt;function do_random at 0x7f4f3b0076a0&gt;,
+                                   'reject': &lt;function do_reject at 0x7f4f3b00de40&gt;,
+                                   'rejectattr': &lt;function do_rejectattr at 0x7f4f3b00e340&gt;,
+                                   'replace': &lt;function do_replace at 0x7f4f3b0065c0&gt;,
+                                   'reverse': &lt;function do_reverse at 0x7f4f3b00d1c0&gt;,
+                                   'round': &lt;function do_round at 0x7f4f3b00c220&gt;,
+                                   'safe': &lt;function do_mark_safe at 0x7f4f3b00ccc0&gt;,
+                                   'select': &lt;function do_select at 0x7f4f3b00dbc0&gt;,
+                                   'selectattr': &lt;function do_selectattr at 0x7f4f3b00e0c0&gt;,
+                                   'slice': &lt;function do_slice at 0x7f4f3b00c180&gt;,
+                                   'sort': &lt;function do_sort at 0x7f4f3b006ac0&gt;,
+                                   'string': &lt;function soft_str at 0x7f4f3b1c1580&gt;,
+                                   'striptags': &lt;function do_striptags at 0x7f4f3b007e20&gt;,
+                                   'sum': &lt;function do_sum at 0x7f4f3b00cc20&gt;,
+                                   'title': &lt;function do_title at 0x7f4f3b006980&gt;,
+                                   'tojson': &lt;function do_tojson at 0x7f4f3b00e160&gt;,
+                                   'trim': &lt;function do_trim at 0x7f4f3b007d80&gt;,
+                                   'truncate': &lt;function do_truncate at 0x7f4f3b0079c0&gt;,
+                                   'unique': &lt;function do_unique at 0x7f4f3b006de0&gt;,
+                                   'upper': &lt;function do_upper at 0x7f4f3b006660&gt;,
+                                   'urlencode': &lt;function do_urlencode at 0x7f4f3b006520&gt;,
+                                   'urlize': &lt;function do_urlize at 0x7f4f3b007880&gt;,
+                                   'wordcount': &lt;function do_wordcount at 0x7f4f3b007b00&gt;,
+                                   'wordwrap': &lt;function do_wordwrap at 0x7f4f3b007a60&gt;,
+                                   'xmlattr': &lt;function do_xmlattr at 0x7f4f3b006840&gt;},
+               'git': {'author': 'Malcolm Jones',
+                       'author_email': 'bossjones@theblacktonystark.com',
+                       'commit': '8566747de893ad96d4c2ef05fbfd2610eeab4f9d',
+                       'committer': 'Malcolm Jones',
+                       'committer_email': 'bossjones@theblacktonystark.com',
+                       'date': datetime.datetime(2025, 4, 1, 22, 4, 34, tzinfo=tzoffset(None, -14400)),
+                       'date_ISO': 'Tue Apr 1 22:04:34 2025 -0400',
+                       'message': 'chore: Update documentation deployment '
+                                  'workflow in GitHub Actions\n'
+                                  '\n'
+                                  '- Modified the `docs.yml` workflow to skip '
+                                  'commitizen checks for gh-pages.\n'
+                                  '- Configured Git credentials for the GitHub '
+                                  'Actions bot.\n'
+                                  '- Added environment variable for '
+                                  'GITHUB_TOKEN during deployment.\n'
+                                  '- Commented out unused steps for caching '
+                                  'and documentation building for clarity.',
+                       'raw': 'commit '
+                              '8566747de893ad96d4c2ef05fbfd2610eeab4f9d\n'
+                              'Author: Malcolm Jones '
+                              '&lt;bossjones@theblacktonystark.com&gt;\n'
+                              'Date:   Tue Apr 1 22:04:34 2025 -0400\n'
+                              '\n'
+                              '    chore: Update documentation deployment '
+                              'workflow in GitHub Actions\n'
+                              '    \n'
+                              '    - Modified the `docs.yml` workflow to skip '
+                              'commitizen checks for gh-pages.\n'
+                              '    - Configured Git credentials for the GitHub '
+                              'Actions bot.\n'
+                              '    - Added environment variable for '
+                              'GITHUB_TOKEN during deployment.\n'
+                              '    - Commented out unused steps for caching '
+                              'and documentation building for clarity.',
+                       'root_dir': '/home/runner/work/codegen-lab/codegen-lab',
+                       'short_commit': '8566747',
+                       'short_tag': 'v0.1.0',
+                       'status': True,
+                       'tag': 'v0.1.0-8-g8566747'},
+               'macros': {'context': &lt;function define_env.&lt;locals&gt;.context at 0x7f4f38a8b240&gt;,
+                          'doc_env': &lt;function define_env.&lt;locals&gt;.doc_env at 0x7f4f38a8b740&gt;,
+                          'fix_url': &lt;function fix_url at 0x7f4f38f84400&gt;,
+                          'include_file': &lt;function define_env.&lt;locals&gt;.include_file at 0x7f4f38a8b6a0&gt;,
+                          'macros_info': &lt;function define_env.&lt;locals&gt;.macros_info at 0x7f4f38a8b2e0&gt;,
+                          'now': &lt;function define_env.&lt;locals&gt;.now at 0x7f4f38a8b380&gt;,
+                          'render_with_page_template': &lt;function define_env.&lt;locals&gt;.render_with_page_template at 0x7f4f38a8b7e0&gt;},
+               'navigation': &lt;mkdocs.structure.nav.Navigation object at 0x7f4f37e571a0&gt;,
+               'page': Page(title='Environment', url='/codegen-lab/docs/environment/'),
+               'plugin': {'force_render_paths': '',
+                          'include_dir': '',
+                          'include_yaml': [],
+                          'j2_block_end_string': '',
+                          'j2_block_start_string': '',
+                          'j2_comment_end_string': '',
+                          'j2_comment_start_string': '',
+                          'j2_variable_end_string': '',
+                          'j2_variable_start_string': '',
+                          'module_name': 'mkdocs_macro_plugin',
+                          'modules': [],
+                          'on_error_fail': False,
+                          'on_undefined': 'keep',
+                          'render_by_default': True,
+                          'verbose': True},
+               'social': [{'icon': 'fontawesome/brands/github',
+                           'link': 'https://github.com/bossjones/codegen-lab'}]}}
+</code></pre></div>
+<aside class="md-source-file">
+<span class="md-source-file__fact">
+<span class="md-icon" title="Last update">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
+</span>
+<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="April 2, 2025 01:14:46">April 2, 2025 01:14:46</span>
+</span>
+<span class="md-source-file__fact">
+<span class="md-icon" title="Created">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"></path></svg>
+</span>
+<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="April 2, 2025 01:14:46">April 2, 2025 01:14:46</span>
+</span>
+<span class="md-source-file__fact">
+<span class="md-icon" title="Contributors">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 4a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4"></path></svg>
+</span>
+<nav>
+<a href="mailto:bossjones@theblacktonystark.com">Malcolm Jones</a>
+</nav>
+</span>
+</aside>
+</article>
+</div>
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+</div>
+</main>
+<footer class="md-footer">
+<nav aria-label="Footer" class="md-footer__inner md-grid">
+<a aria-label="Previous: Cursor Rules: Style Guide and Migration" class="md-footer__link md-footer__link--prev" href="../cursor-rules-styles/">
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+</div>
+<div class="md-footer__title">
+<span class="md-footer__direction">
+                Previous
+              </span>
+<div class="md-ellipsis">
+                Cursor Rules: Style Guide and Migration
+              </div>
+</div>
+</a>
+<a aria-label="Next: Getting Started" class="md-footer__link md-footer__link--next" href="../getting-started/">
+<div class="md-footer__title">
+<span class="md-footer__direction">
+                Next
+              </span>
+<div class="md-ellipsis">
+                Getting Started
+              </div>
+</div>
+<div class="md-footer__button md-icon">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
+</div>
+</a>
+</nav>
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-copyright">
+<div class="md-copyright__highlight">
+      Copyright © 2023 - 2025 Malcolm Jones
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" rel="noopener" target="_blank">
+      Material for MkDocs
+    </a>
+</div>
+<div class="md-social">
+<a class="md-social__link" href="https://github.com/bossjones/codegen-lab" rel="noopener" target="_blank" title="github.com">
+<svg viewbox="0 0 496 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+</a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+<div class="md-dialog" data-md-component="dialog">
+<div class="md-dialog__inner md-typeset"></div>
+</div>
+<script id="__config" type="application/json">{"base": "..", "features": ["content.action.edit", "content.action.view", "content.code.copy", "content.code.select", "content.tooltips", "navigation.footer", "search.share"], "search": "../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+<script src="../assets/javascripts/bundle.c8b220af.min.js"></script>
+</body>
+</html>
