@@ -1,4 +1,4 @@
-name: Deploy Documentation
+name: docs-mkdocs-gh-deploy
 
 on:
   push:
@@ -113,6 +113,6 @@ jobs:
       - name: Deploy mkdocs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # touch .nojekyll
         run: |
+          touch .nojekyll
           uv run mkdocs gh-deploy --force --message 'docs(mkdocs): update documentation [skip ci]'
