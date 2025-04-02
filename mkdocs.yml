@@ -1,70 +1,163 @@
-site_name: Codegen Lab
-site_description: AI-powered code generation tooling for efficient software development
-site_author: Malcolm Jones
+# Basic site information
+site_name: Codegen Lab # The name of your documentation site that appears in the header
+site_description: AI-powered code generation tooling for efficient software development # Meta description for SEO
+site_author: Malcolm Jones # Site author information
 # For GitHub Pages deployment
-site_url: https://bossjones.github.io/codegen-lab/
+site_url: https://bossjones.github.io/codegen-lab/docs # The canonical URL of your documentation site
 
-# Repository
-repo_name: bossjones/codegen-lab
-repo_url: https://github.com/bossjones/codegen-lab
-edit_uri: edit/main/docs/
+# Repository information
+repo_name: bossjones/codegen-lab # Display name for the repository link
+repo_url: https://github.com/bossjones/codegen-lab # URL to your GitHub repository
+edit_uri: edit/main/docs/ # Path to edit pages on GitHub
 
-# Set the use_directory_urls to True to ensure proper navigation
-use_directory_urls: true
+# URL configuration
+use_directory_urls: true # Use URLs without .html (e.g., /example/ instead of /example.html)
 
-# Navigation
-nav:
-  - Home: index.md
-  - Getting Started: getting-started.md
-  - User Guide:
-      - Installation: user-guide/installation.md
-      - Configuration: user-guide/configuration.md
-      - Documentation Automation: user-guide/docs-automation.md
-  - Development Tools:
-      - Cursor Rules: tools/cursor-rules.md
-      - UV Workspace: tools/uv-workspace.md
-  - API Reference: api-reference.md
-  - Troubleshooting: troubleshooting.md
-  - Contributing: contributing.md
-  - Changelog: changelog.md
+# What files `mkdocs serve` should watch for changes and then reload
+watch:
+  - mkdocs_macro_plugin.py
+  - docs_templates
+# Navigation structure
+# nav: # Define the navigation/menu structure
+#   - Home: index.md # Homepage link
+#   - Getting Started: getting-started.md # Getting started guide
+#   - User Guide: # User guide section with nested pages
+#       - Installation: user-guide/installation.md # Installation instructions
+#       - Configuration: user-guide/configuration.md # Configuration guide
+#       - Documentation Automation: user-guide/docs-automation.md # Documentation automation guide
+#   - Development Tools: # Development tools section
+#       - Cursor Rules: tools/cursor-rules.md # Cursor rules documentation
+#       - UV Workspace: tools/uv-workspace.md # UV workspace documentation
+#   - API Reference: api-reference.md # API documentation
+#   - Troubleshooting: troubleshooting.md # Troubleshooting guide
+#   - Contributing: contributing.md # Contribution guidelines
+#   - Changelog: changelog.md # Version history
 
-# Theme
-theme:
-  name: material
-  palette:
-    primary: indigo
-    accent: indigo
+# Theme configuration
+theme: # Theme settings
+  name: material # Use Material for MkDocs theme
+  palette: # Color scheme configuration
+    primary: indigo # Primary color
+    accent: indigo # Accent color
+  # features: # Theme feature flags
+  #   - navigation.instant # Enable instant loading of pages
+  #   - navigation.tracking # Enable URL tracking as you scroll
+  #   - navigation.expand # Auto-expand navigation sections
+  #   - navigation.indexes # Allow index pages for sections
+  #   - navigation.top # Add "back to top" button
+  #   - search.highlight # Highlight search results
+  #   - search.share # Enable search result sharing
+  #   - content.code.copy # Add copy button to code blocks
   features:
-    - navigation.instant
-    - navigation.tracking
-    - navigation.expand
-    - navigation.indexes
-    - navigation.top
-    - search.highlight
+    - content.action.edit
+    - content.action.view
+    - content.code.copy # https://squidfunk.github.io/mkdocs-material/reference/code-blocks/#code-copy-button
+    - content.code.select # https://squidfunk.github.io/mkdocs-material/reference/code-blocks/#code-selection-button
+    - content.tooltips
+    - navigation.footer
     - search.share
-    - content.code.copy
 
-# Extensions
+# Plugin configuration
+plugins: # Enable MkDocs plugins
+  - autorefs # recommended by mkdocstrings
+  - awesome-pages # https://github.com/lukasgeiter/mkdocs-awesome-pages-plugin
+  # - blog  # https://squidfunk.github.io/mkdocs-material/plugins/blog/
+  - git-revision-date-localized:
+      enable_creation_date: true
+      type: datetime
+  - git-authors
+  - macros:
+      module_name: mkdocs_macro_plugin # https://mkdocs-macros-plugin.readthedocs.io
+      verbose: true
+  - mermaid2 # https://mkdocs-mermaid2.readthedocs.io/
+  # - mkdocs_apidoc  # https://ecurtin2.github.io/mkdocs-apidoc/
+  - mkdocstrings: # https://mkdocstrings.github.io/
+      handlers:
+        python:
+          import:
+            - https://docs.python.org/3/objects.inv
+            - https://installer.readthedocs.io/en/stable/objects.inv # demonstration purpose in the docs
+            - https://mkdocstrings.github.io/autorefs/objects.inv
+          paths: [src]
+          options:
+            docstring_options:
+              ignore_init_summary: true
+            docstring_section_style: list
+            filters: ["!^_"]
+            heading_level: 1
+            inherited_members: false
+            merge_init_into_class: true
+            separate_signature: true
+            show_root_heading: true
+            show_root_full_path: false
+            show_signature_annotations: true
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            signature_crossrefs: true
+            summary: true
+  - search # https://squidfunk.github.io/mkdocs-material/plugins/search/
+  - tags # https://squidfunk.github.io/mkdocs-material/plugins/tags/
+  # Want to have ezlinks after macros
+  # because macros might return markup with ezlinks that we want expanded - e.g.: for people
+  # - with-pdf  # Lets us export our docs site to a PDF file, which we can then feed to Acrobat Assistant FTW!
+  - ezlinks # https://github.com/orbikm/mkdocs-ezlinks-plugin
+  # - search # Enable search functionality
+  # - macros:
+  #     module_name: mkdocs_macro_plugin
+
+# Markdown extensions
+# markdown_extensions: # Configure Markdown processing
+#   - admonition # Enable admonitions (note, warning, etc.)
+#   - codehilite # Enable code highlighting
+#   - toc: # Table of contents settings
+#       permalink: true # Add permalinks to headers
+#   - pymdownx.highlight: # Python Markdown Extensions for code highlighting
+#       anchor_linenums: true # Add anchors to line numbers
+#   - pymdownx.inlinehilite # Enable inline code highlighting
+#   - pymdownx.snippets # Enable code snippets inclusion
+#   - pymdownx.superfences # Enable nested code blocks
+
 markdown_extensions:
-  - admonition
-  - codehilite
+  # Python Markdown
   - toc:
       permalink: true
+
+  # Python Markdown Extensions
+  - abbr
+  - admonition
+  - attr_list
+  - neoteroi.cards
+  - pymdownx.details
+  # ----------------------------------------------------
+  # Using with MkDocs
+  # This project uses these extensions with MkDocs to generate the documentation. It might not be obvious how to set the index or generator functions in MkDocs' YAML settings file, but it is actually pretty easy. The functions are referenced like you would import them in Python except you also append them with a special prefix to let the YAML module know that the setting value is a Python object. For instance, to specify the to_svg generator, you would simply reference it like this: !!python/name:pymdownx.emoji.to_svg (or you could use your own custom module 😉).
+
+  # markdown_extensions:
+  #   - pymdownx.emoji:
+  #       emoji_generator: !!python/name:pymdownx.emoji.to_svg
+  # ----------------------------------------------------
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.highlight:
-      anchor_linenums: true
   - pymdownx.inlinehilite
+  - pymdownx.magiclink # Allows plain ol' URLs to be links
   - pymdownx.snippets
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      # make exceptions to highlighting of code:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:mermaid2.fence_mermaid_custom
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
 
-# Plugins
-plugins:
-  - search
+# Additional settings
+extra: # Extra customization
+  social: # Social links
+    - icon: fontawesome/brands/github # GitHub icon from FontAwesome
+      link: https://github.com/bossjones/codegen-lab # Link to GitHub profile/repo
 
-# Extra
-extra:
-  social:
-    - icon: fontawesome/brands/github
-      link: https://github.com/bossjones/codegen-lab
-
-# Copyright
-copyright: Copyright &copy; 2023 - 2024 Malcolm Jones
+# Footer configuration
+copyright: Copyright &copy; 2023 - 2025 Malcolm Jones # Copyright notice in footer

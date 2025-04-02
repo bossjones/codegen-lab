@@ -1,0 +1,21 @@
+{% if deployments %}
+## Deployed at
+
+{%- for deployment in deployments %}
+- [{{ deployment.name -}}]({{ deployment.url }}
+"Visit {{ project_name }} ({{ deployment.name }})<br />at {{ deployment.url }}")
+{% endfor %}
+{% endif %}
+
+## Git repo
+
+{{ git_repo }}
+
+## Developer contacts
+
+{%- for developer_contact in developer_contacts %}
+- [{{ developer_contact.name -}}](people/{{ developer_contact.username }})
+
+<!-- This invisible paragraph is so MkDocs search finds hits on the username -->
+<p style="display: none">{{ developer_contact.username }}</p>
+{% endfor %}

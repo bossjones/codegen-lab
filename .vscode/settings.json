@@ -17,7 +17,8 @@
         "https://taskfile.dev/schema.json": "**/Taskfile.yml"
     },
     "files.associations": {
-        "*.cheat": "markdown"
+        "*.cheat": "markdown",
+        "Makefile.ci": "makefile"
     },
     "pylint.interpreter": [
         "${workspaceFolder}/.venv/bin/python3"
@@ -151,6 +152,6 @@
     "python.analysis.autoSearchPaths": true,
     "editor.semanticHighlighting.enabled": true,
     "workbench.editorAssociations": {
-        "*.mdc": "default"
+        "*.mdc": "default",
     }
 }
