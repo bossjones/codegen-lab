@@ -31,25 +31,22 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         python-version: ["3.12"]
-        # Uncomment to run on multiple platforms:
-        # os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     env:
-      # Set GH_PAGER to prevent interactive output
       GH_PAGER: cat
-      # No prompts in UV
       UV_NO_PROMPT: 1
-      # Use project environment settings
       UV_PROJECT_ENVIRONMENT: true
+      SKIP: commitizen-branch # Skip commitizen checks for gh-pages
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
+      - name: Configure Git Credentials
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
 
       - name: Set shell path
         id: set-shell
@@ -84,6 +81,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install zsh -y
 
+      # - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
+      # - uses: actions/cache@v4
+      #   with:
+      #     key: mkdocs-material-${{ env.cache_id }}
+      #     path: .cache
+      #     restore-keys: |
+      #       mkdocs-material-
+
       - name: Sync dependencies with UV
         run: uv sync --dev
 
@@ -99,18 +104,15 @@ jobs:
         run: |
           uv run mkdocs build
 
-      # - name: Build documentation
+      # - name: Configure git for deployment
       #   run: |
-      #     make -f Makefile.ci ci-docs
-
-      - name: Configure git for deployment
-        run: |
-          # Create an empty .nojekyll file to disable Jekyll processing
-          touch .nojekyll
-          # Configure git user
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      #     git config --global user.name "github-actions[bot]"
+      #     git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      #     git config --global --add safe.directory /github/workspace
 
       - name: Deploy mkdocs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # touch .nojekyll
         run: |
           uv run mkdocs gh-deploy --force --message 'docs(mkdocs): update documentation [skip ci]'
