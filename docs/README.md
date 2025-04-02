@@ -1,4 +1,4 @@
-# Welcome to Codegen Lab
+# Codegen Lab
 
 This is the documentation for the Codegen Lab project.
 
@@ -8,11 +8,13 @@ Codegen Lab is a project focused on code generation and AI-assisted development 
 
 ## Features
 
-- Feature 1: Brief description
-- Feature 2: Brief description
-- Feature 3: Brief description
+- **Model Context Protocol (MCP) Server**: FastAPI-based server implementation for efficient AI model interactions
+- **Multi-Model AI Integration**: Seamless integration with Anthropic and OpenAI models for diverse AI capabilities
+- **Repository Analysis Tools**: Utilities for analyzing codebases and extracting relevant context for AI processing
+- **Discord Bot Integration**: Built-in Discord bot functionality for automated interactions and notifications
 - **Cursor Rules**: Custom workflow automations for iterative development in existing codebases
-- **UV Workspace**: Efficient management of multiple packages within a single repository
+- **UV Workspace**: Efficient management of multiple packages within a single repository using UV package manager
+- **Development Tools**: Comprehensive suite including Makefile automation, pre-commit hooks, and CI/CD workflows
 
 ## Quick Start
 

@@ -1,7 +1,7 @@
 ---
-project_name:
+project_name: minio
 deployments:
-  - url:
+  - url: https://github.com/minio/minio
     name: dev
 git_repo:
 developer_contacts:
