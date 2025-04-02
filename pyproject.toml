@@ -75,6 +75,7 @@ dev = [
     "commitizen>=4.4.1",
     "coverage[toml]>=7.6.12",
     "debugpy>=1.8.12",
+    "griffe-inherited-docstrings>=1.1.1",
     "markdown-emdash>=0.2.0",
     "mkdocs>=1.6.1",
     "mkdocs-api-autonav>=0.2.1",
@@ -397,11 +398,12 @@ update_changelog_on_bump = true
 
 [tool.towncrier]
 package = "codegen_lab"
-package_dir = "src/codegen_lab"
+package_dir = "src"
 directory = "changes"
 template = "changes/.template.md.jinja"
 filename = "CHANGELOG.md"
 issue_format = "[#{issue}](https://github.com/bossjones/codegen-lab/issues/{issue})"
+title_format = "{version} ({project_date})"
 # We use these values for headers in the template
 underlines = [2, 3]
 type = [

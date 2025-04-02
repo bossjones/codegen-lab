@@ -534,6 +534,7 @@ dev = [
     { name = "commitizen" },
     { name = "coverage" },
     { name = "debugpy" },
+    { name = "griffe-inherited-docstrings" },
     { name = "markdown-emdash" },
     { name = "mkdocs" },
     { name = "mkdocs-api-autonav" },
@@ -632,6 +633,7 @@ dev = [
     { name = "commitizen", specifier = ">=4.4.1" },
     { name = "coverage", extras = ["toml"], specifier = ">=7.6.12" },
     { name = "debugpy", specifier = ">=1.8.12" },
+    { name = "griffe-inherited-docstrings", specifier = ">=1.1.1" },
     { name = "markdown-emdash", specifier = ">=0.2.0" },
     { name = "mkdocs", specifier = ">=1.6.1" },
     { name = "mkdocs-api-autonav", specifier = ">=0.2.1" },
@@ -1281,6 +1283,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/59/08/7df7e90e34d08ad890bd71d7ba19451052f88dc3d2c483d228d1331a4736/griffe-1.7.2.tar.gz", hash = "sha256:98d396d803fab3b680c2608f300872fd57019ed82f0672f5b5323a9ad18c540c", size = 394919 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b1/5e/38b408f41064c9fcdbb0ea27c1bd13a1c8657c4846e04dab9f5ea770602c/griffe-1.7.2-py3-none-any.whl", hash = "sha256:1ed9c2e338a75741fc82083fe5a1bc89cb6142efe126194cc313e34ee6af5423", size = 129187 },
+]
+
+[[package]]
+name = "griffe-inherited-docstrings"
+version = "1.1.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "griffe" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/7c/9f/098599019b2715e1edad3618305b8acf253e2ee375cbd389507cb23a2a00/griffe_inherited_docstrings-1.1.1.tar.gz", hash = "sha256:d179b6a6b7dc260fb892ad5b857837afd6f9de6193fc26d14463c4e9975a0cd3", size = 24146 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/67/f9/51a3fd7460b95583ff470c7b4fd706bd21f3fda97d521f3770126dc6d1fc/griffe_inherited_docstrings-1.1.1-py3-none-any.whl", hash = "sha256:0cb613ade70793b3589c706269a2cc4ceb91cbc4cfdc651037839cb9506eabe6", size = 6008 },
 ]
 
 [[package]]
