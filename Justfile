@@ -229,6 +229,27 @@ doc-build format="google" output="gh-docs": clean-gh-docs
 doc-serve format="google" port="8088":
     uv run pdoc --docformat={{format}} --port={{port}} {{SOURCES}}/{{PACKAGE}}
 
+# serve mkdocs documentation with live reload
+[group('doc')]
+mkdocs-serve:
+    uv run mkdocs serve
+
+# build mkdocs documentation site
+[group('doc')]
+mkdocs-build:
+    uv run mkdocs build
+
+# show mkdocs help
+[group('doc')]
+mkdocs-help:
+    uv run mkdocs -h
+
+# deploy mkdocs documentation to GitHub Pages
+[group('doc')]
+mkdocs-deploy-docs:
+    #!/usr/bin/env zsh
+    uv run mkdocs gh-deploy --force --message 'docs(mkdocs): update documentation [skip ci]'
+
 # run release tasks
 [group('release')]
 release: release-create
@@ -285,3 +306,76 @@ release-delete-dry-run:
 # reset (delete and recreate) a GitHub release with version from pyproject.toml. Use this task to completely reset a release if something went wrong during the initial creation.
 [group('release')]
 release-reset: release-delete release-create
+
+# UV-specific commands
+[group('uv')]
+uv-add package:
+    {{UV_RUN}} uv add {{package}}
+
+[group('uv')]
+uv-add-dev package:
+    {{UV_RUN}} uv add --dev {{package}}
+
+[group('uv')]
+uv-lock:
+    {{UV_RUN}} uv lock
+
+[group('uv')]
+uv-lock-upgrade:
+    {{UV_RUN}} uv lock --upgrade
+
+[group('uv')]
+uv-lock-upgrade-package package:
+    {{UV_RUN}} uv lock --upgrade-package {{package}}
+
+[group('uv')]
+uv-check-lock:
+    {{UV_RUN}} uv lock --check
+
+[group('uv')]
+uv-sync:
+    {{UV_RUN}} uv sync --frozen
+
+[group('uv')]
+uv-sync-dev:
+    {{UV_RUN}} uv sync --frozen --dev
+
+[group('uv')]
+uv-sync-extras extra:
+    {{UV_RUN}} uv sync --frozen --extra {{extra}}
+
+[group('uv')]
+uv-sync-all-extras:
+    {{UV_RUN}} uv sync --frozen --all-extras
+
+[group('uv')]
+uv-sync-inexact:
+    {{UV_RUN}} uv sync --frozen --inexact
+
+[group('uv')]
+uv-sync-no-deps:
+    {{UV_RUN}} uv sync --frozen --no-deps
+
+[group('uv')]
+uv-sync-no-project:
+    {{UV_RUN}} uv sync --frozen --no-install-project
+
+[group('uv')]
+uv-sync-group group:
+    {{UV_RUN}} uv sync --frozen --group {{group}}
+
+[group('uv')]
+uv-sync-all-groups:
+    {{UV_RUN}} uv sync --frozen --all-groups
+
+[group('uv')]
+uv-outdated:
+    {{UV_RUN}} uv pip list --outdated
+
+[group('uv')]
+uv-tree:
+    {{UV_RUN}} uv tree
+
+# Run a Python script with UV
+run-python +args:
+    {{UV_RUN}} python {{args}}

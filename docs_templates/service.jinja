@@ -1,0 +1,41 @@
+## Service
+
+### Deployed at
+
+{%- for deployment in deployments %}
+#### {{ deployment.name }}
+| Info        |                                          |
+| ----------- | ---------------------------------------- |
+| URL         | `{{ deployment.url }}`                   |
+| Engine id   | `{{ deployment.engine_id }}`             |
+{% endfor %}
+
+### Git repo
+
+{{ git_repo }}
+
+### Developer contacts
+
+{%- for developer_contact in developer_contacts %}
+- [{{ developer_contact.name -}}](people/{{ developer_contact.username }})
+
+<!-- This invisible paragraph is so MkDocs search finds hits on the username -->
+<p style="display: none">{{ developer_contact.username }}</p>
+{% endfor %}
+
+### Links
+
+{%- for link in links %}
+- [{{ link.name -}}](people/{{ link.url }})
+{% endfor %}
+
+## Consumers
+
+{%- for consumer in consumers %}
+### :material-language-python: {{ consumer.name }} - {{ consumer.programming_language }} {{ consumer.type }}
+| Info         |                                          |
+| ------------ | ---------------------------------------- |
+| Git repo URL | {{ consumer.git_repo_url }}              |
+| Type         | {{ consumer.type}}                       |
+| Language     | {{ consumer.programming_language}}       |
+{% endfor %}

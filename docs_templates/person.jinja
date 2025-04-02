@@ -1,0 +1,23 @@
+![Photo][]
+
+| Info        |                                          |
+| ----------- | ---------------------------------------- |
+| Name        | [{{ name }}][Inside Adobe]               |
+| Email       | {{ username }}@adobe.com                 |
+| Slack       | @{{ username }}                          |
+| Location    | {{ location }} &nbsp;[ [Map][Location] ] |
+| Time zone   | [{{ timezone.name }}][]                  |
+{%- if last_day %}
+| Last day :frowning2: | {{ last_day }}                  |
+{%- endif %}
+{%- if personal_email %}
+| Personal email | {{ personal_email }}                  |
+{%- endif %}
+
+[Search for content by {{ username }}][]{ .md-button }
+
+[Photo]: https://s7d2.scene7.com/is/image/IMGDIR/{{ username }}?$165x$
+[Inside Adobe]: https://inside.corp.adobe.com/home.html?flyouttab=employeeDirectory&uid={{ username }} "View in Inside Adobe"
+[Location]: https://adobe.serraview.com/locator/#/people/{{ username }} "View location on a map"
+[{{ timezone.name }}]: {{ timezone.url }} "Check what time it is in this timezone"
+[Search for content by {{ username }}]: ?q={{ username }}

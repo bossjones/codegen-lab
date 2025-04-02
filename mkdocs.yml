@@ -1,70 +1,77 @@
-site_name: Codegen Lab
-site_description: AI-powered code generation tooling for efficient software development
-site_author: Malcolm Jones
+# Basic site information
+site_name: Codegen Lab # The name of your documentation site that appears in the header
+site_description: AI-powered code generation tooling for efficient software development # Meta description for SEO
+site_author: Malcolm Jones # Site author information
 # For GitHub Pages deployment
-site_url: https://bossjones.github.io/codegen-lab/
+site_url: https://bossjones.github.io/codegen-lab/docs # The canonical URL of your documentation site
 
-# Repository
-repo_name: bossjones/codegen-lab
-repo_url: https://github.com/bossjones/codegen-lab
-edit_uri: edit/main/docs/
+# Repository information
+repo_name: bossjones/codegen-lab # Display name for the repository link
+repo_url: https://github.com/bossjones/codegen-lab # URL to your GitHub repository
+edit_uri: edit/main/docs/ # Path to edit pages on GitHub
 
-# Set the use_directory_urls to True to ensure proper navigation
-use_directory_urls: true
+# URL configuration
+use_directory_urls: true # Use URLs without .html (e.g., /example/ instead of /example.html)
 
-# Navigation
-nav:
-  - Home: index.md
-  - Getting Started: getting-started.md
-  - User Guide:
-      - Installation: user-guide/installation.md
-      - Configuration: user-guide/configuration.md
-      - Documentation Automation: user-guide/docs-automation.md
-  - Development Tools:
-      - Cursor Rules: tools/cursor-rules.md
-      - UV Workspace: tools/uv-workspace.md
-  - API Reference: api-reference.md
-  - Troubleshooting: troubleshooting.md
-  - Contributing: contributing.md
-  - Changelog: changelog.md
+# What files `mkdocs serve` should watch for changes and then reload
+watch:
+  - mkdocs_macro_plugin.py
+  - docs_templates
+# Navigation structure
+nav: # Define the navigation/menu structure
+  - Home: index.md # Homepage link
+  - Getting Started: getting-started.md # Getting started guide
+  - User Guide: # User guide section with nested pages
+      - Installation: user-guide/installation.md # Installation instructions
+      - Configuration: user-guide/configuration.md # Configuration guide
+      - Documentation Automation: user-guide/docs-automation.md # Documentation automation guide
+  - Development Tools: # Development tools section
+      - Cursor Rules: tools/cursor-rules.md # Cursor rules documentation
+      - UV Workspace: tools/uv-workspace.md # UV workspace documentation
+  - API Reference: api-reference.md # API documentation
+  - Troubleshooting: troubleshooting.md # Troubleshooting guide
+  - Contributing: contributing.md # Contribution guidelines
+  - Changelog: changelog.md # Version history
 
-# Theme
-theme:
-  name: material
-  palette:
-    primary: indigo
-    accent: indigo
-  features:
-    - navigation.instant
-    - navigation.tracking
-    - navigation.expand
-    - navigation.indexes
-    - navigation.top
-    - search.highlight
-    - search.share
-    - content.code.copy
+# Theme configuration
+theme: # Theme settings
+  name: material # Use Material for MkDocs theme
+  palette: # Color scheme configuration
+    primary: indigo # Primary color
+    accent: indigo # Accent color
+  features: # Theme feature flags
+    - navigation.instant # Enable instant loading of pages
+    - navigation.tracking # Enable URL tracking as you scroll
+    - navigation.expand # Auto-expand navigation sections
+    - navigation.indexes # Allow index pages for sections
+    - navigation.top # Add "back to top" button
+    - search.highlight # Highlight search results
+    - search.share # Enable search result sharing
+    - content.code.copy # Add copy button to code blocks
 
-# Extensions
-markdown_extensions:
-  - admonition
-  - codehilite
-  - toc:
-      permalink: true
-  - pymdownx.highlight:
-      anchor_linenums: true
-  - pymdownx.inlinehilite
-  - pymdownx.snippets
-  - pymdownx.superfences
+# Markdown extensions
+markdown_extensions: # Configure Markdown processing
+  - admonition # Enable admonitions (note, warning, etc.)
+  - codehilite # Enable code highlighting
+  - toc: # Table of contents settings
+      permalink: true # Add permalinks to headers
+  - pymdownx.highlight: # Python Markdown Extensions for code highlighting
+      anchor_linenums: true # Add anchors to line numbers
+  - pymdownx.inlinehilite # Enable inline code highlighting
+  - pymdownx.snippets # Enable code snippets inclusion
+  - pymdownx.superfences # Enable nested code blocks
 
-# Plugins
-plugins:
-  - search
+# Plugin configuration
+plugins: # Enable MkDocs plugins
+  - search # Enable search functionality
+  - macros:
+      module_name: mkdocs_macro_plugin
 
-# Extra
-extra:
-  social:
-    - icon: fontawesome/brands/github
-      link: https://github.com/bossjones/codegen-lab
+# Additional settings
+extra: # Extra customization
+  social: # Social links
+    - icon: fontawesome/brands/github # GitHub icon from FontAwesome
+      link: https://github.com/bossjones/codegen-lab # Link to GitHub profile/repo
 
-# Copyright
-copyright: Copyright &copy; 2023 - 2024 Malcolm Jones
+# Footer configuration
+copyright: Copyright &copy; 2023 - 2025 Malcolm Jones # Copyright notice in footer
