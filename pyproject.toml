@@ -430,13 +430,13 @@ showcontent = true
 check = true
 
 [[tool.towncrier.type]]
-directory = "feature"
+directory = "feat"
 name = "Features"
 showcontent = true
 check = true
 
 [[tool.towncrier.type]]
-directory = "bugfix"
+directory = "fix"
 name = "Bug Fixes"
 showcontent = true
 check = true
@@ -486,5 +486,17 @@ check = true
 [[tool.towncrier.type]]
 directory = "test"
 name = "Testing"
+showcontent = true
+check = true
+
+[[tool.towncrier.type]]
+directory = "style"
+name = "Code Style"
+showcontent = true
+check = true
+
+[[tool.towncrier.type]]
+directory = "build"
+name = "Build System"
 showcontent = true
 check = true
