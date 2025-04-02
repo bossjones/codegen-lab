@@ -66,6 +66,7 @@ theme: # Theme settings
 plugins: # Enable MkDocs plugins
   - autorefs # recommended by mkdocstrings
   - awesome-pages # https://github.com/lukasgeiter/mkdocs-awesome-pages-plugin
+  # - blog  # https://squidfunk.github.io/mkdocs-material/plugins/blog/
   - git-revision-date-localized:
       enable_creation_date: true
       type: datetime
@@ -75,7 +76,7 @@ plugins: # Enable MkDocs plugins
       verbose: true
   - mermaid2 # https://mkdocs-mermaid2.readthedocs.io/
   # - mkdocs_apidoc  # https://ecurtin2.github.io/mkdocs-apidoc/
-  - towncrier
+  # - towncrier
   # # :
   # #     hide_if_empty: !ENV [HIDE_EMPTY_TOWNCRIER_DRAFT, true]
   - gen-files:
@@ -113,6 +114,7 @@ plugins: # Enable MkDocs plugins
       enable_inventory: true # Generates an inventory file for cross-referencing with other projects.
       handlers:
         python: # Configures the Python handler for mkdocstrings.
+          paths: [src]
           import:
             - https://docs.python.org/3/objects.inv # Imports cross-reference data from the official Python documentation.
             - https://docs.aiohttp.org/en/stable/objects.inv # Imports cross-reference data from the aiohttp library documentation.
