@@ -1054,8 +1054,10 @@ def save_cursor_rule(
               }
 
     Examples:
-        >>> result = save_cursor_rule("python-best-practices",
-        ...   "---\\ndescription: Python guidelines\\nglobs: *.py\\nalwaysApply: false\\n---\\n# Python Best Practices\\n...")
+        >>> result = save_cursor_rule(
+        ...     "python-best-practices",
+        ...     "---\\ndescription: Python guidelines\\nglobs: *.py\\nalwaysApply: false\\n---\\n# Python Best Practices\\n...",
+        ... )
         >>> print("operations" in result)
         True
 

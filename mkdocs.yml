@@ -66,7 +66,9 @@ plugins: # Enable MkDocs plugins
       enable_creation_date: true
       type: datetime
   - git-authors
-  - macros # https://mkdocs-macros-plugin.readthedocs.io
+  - macros:
+      module_name: mkdocs_macro_plugin # https://mkdocs-macros-plugin.readthedocs.io
+      verbose: true
   - mermaid2 # https://mkdocs-mermaid2.readthedocs.io/
   # - mkdocs_apidoc  # https://ecurtin2.github.io/mkdocs-apidoc/
   - mkdocstrings: # https://mkdocstrings.github.io/
