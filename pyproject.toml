@@ -77,8 +77,10 @@ dev = [
     "debugpy>=1.8.12",
     "markdown-emdash>=0.2.0",
     "mkdocs>=1.6.1",
+    "mkdocs-api-autonav>=0.2.1",
     "mkdocs-awesome-pages-plugin>=2.10.1",
     "mkdocs-ezlinks-plugin>=0.1.14",
+    "mkdocs-gen-files>=0.5.0",
     "mkdocs-git-authors-plugin>=0.9.4",
     "mkdocs-git-revision-date-localized-plugin>=1.4.5",
     "mkdocs-glightbox>=0.4.0",
@@ -89,6 +91,7 @@ dev = [
     "mkdocs-mermaid2-plugin>=1.2.1",
     "mkdocs-open-in-new-tab>=1.0.8",
     "mkdocs-section-index>=0.3.9",
+    "mkdocs-towncrier>=0.1.4",
     "mkdocstrings[python]>=0.29.1",
     "neoteroi-mkdocs>=1.1.0",
     "pdoc>=15.0.1",
@@ -390,3 +393,25 @@ version_provider = "pep621"
 changelog_start_rev = "v0.1.0"
 # Automatically update the changelog file on version bumps.
 update_changelog_on_bump = true
+
+
+[tool.towncrier]
+package = "codegen_lab"
+package_dir = "src/codegen_lab"
+directory = "changes"
+template = "changes/.template.md.jinja"
+filename = "CHANGELOG.md"
+issue_format = "[#{issue}](https://github.com/bossjones/codegen-lab/issues/{issue})"
+# We use these values for headers in the template
+underlines = [2, 3]
+type = [
+    { name = "Breaking Changes", directory = "breaking", showcontent = true },
+    { name = "Deprecation", directory = "deprecation", showcontent = true },
+    { name = "Features", directory = "feature", showcontent = true },
+    { name = "Optimizations", directory = "optimization", showcontent = true },
+    { name = "Bugfixes", directory = "bugfix", showcontent = true },
+    { name = "Documentation Improvements", directory = "documentation", showcontent = true },
+    { name = "Development", directory = "development", showcontent = true },
+    { name = "Security", directory = "security", showcontent = true },
+    { name = "Testing", directory = "testing", showcontent = true }
+]

@@ -71,6 +71,11 @@ plugins: # Enable MkDocs plugins
       verbose: true
   - mermaid2 # https://mkdocs-mermaid2.readthedocs.io/
   # - mkdocs_apidoc  # https://ecurtin2.github.io/mkdocs-apidoc/
+  - towncrier:
+      hide_if_empty: !ENV [HIDE_EMPTY_TOWNCRIER_DRAFT, true]
+  - gen-files:
+      scripts:
+        - scripts/docs/gen_ref_pages.py
   - mkdocstrings: # https://mkdocstrings.github.io/
       handlers:
         python:
@@ -104,6 +109,13 @@ plugins: # Enable MkDocs plugins
   # - search # Enable search functionality
   # - macros:
   #     module_name: mkdocs_macro_plugin
+  - api-autonav:
+    modules: ["src/codegen_lab"]
+    nav_section_title: "API Reference"
+    api_root_uri: "reference"
+    nav_item_prefix: "<code class='doc-symbol doc-symbol-nav doc-symbol-module'></code>"
+    exclude_private: true
+    on_implicit_namespace_packge: "warn"
 
 # Markdown extensions
 # markdown_extensions: # Configure Markdown processing

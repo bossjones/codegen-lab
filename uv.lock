@@ -536,8 +536,10 @@ dev = [
     { name = "debugpy" },
     { name = "markdown-emdash" },
     { name = "mkdocs" },
+    { name = "mkdocs-api-autonav" },
     { name = "mkdocs-awesome-pages-plugin" },
     { name = "mkdocs-ezlinks-plugin" },
+    { name = "mkdocs-gen-files" },
     { name = "mkdocs-git-authors-plugin" },
     { name = "mkdocs-git-revision-date-localized-plugin" },
     { name = "mkdocs-glightbox" },
@@ -548,6 +550,7 @@ dev = [
     { name = "mkdocs-mermaid2-plugin" },
     { name = "mkdocs-open-in-new-tab" },
     { name = "mkdocs-section-index" },
+    { name = "mkdocs-towncrier" },
     { name = "mkdocstrings", extra = ["python"] },
     { name = "neoteroi-mkdocs" },
     { name = "pdoc" },
@@ -631,8 +634,10 @@ dev = [
     { name = "debugpy", specifier = ">=1.8.12" },
     { name = "markdown-emdash", specifier = ">=0.2.0" },
     { name = "mkdocs", specifier = ">=1.6.1" },
+    { name = "mkdocs-api-autonav", specifier = ">=0.2.1" },
     { name = "mkdocs-awesome-pages-plugin", specifier = ">=2.10.1" },
     { name = "mkdocs-ezlinks-plugin", specifier = ">=0.1.14" },
+    { name = "mkdocs-gen-files", specifier = ">=0.5.0" },
     { name = "mkdocs-git-authors-plugin", specifier = ">=0.9.4" },
     { name = "mkdocs-git-revision-date-localized-plugin", specifier = ">=1.4.5" },
     { name = "mkdocs-glightbox", specifier = ">=0.4.0" },
@@ -643,6 +648,7 @@ dev = [
     { name = "mkdocs-mermaid2-plugin", specifier = ">=1.2.1" },
     { name = "mkdocs-open-in-new-tab", specifier = ">=1.0.8" },
     { name = "mkdocs-section-index", specifier = ">=0.3.9" },
+    { name = "mkdocs-towncrier", specifier = ">=0.1.4" },
     { name = "mkdocstrings", extras = ["python"], specifier = ">=0.29.1" },
     { name = "neoteroi-mkdocs", specifier = ">=1.1.0" },
     { name = "pdoc", specifier = ">=15.0.1" },
@@ -2295,6 +2301,19 @@ wheels = [
 ]
 
 [[package]]
+name = "mkdocs-api-autonav"
+version = "0.2.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "mkdocs" },
+    { name = "mkdocstrings-python" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d4/f1/42fa880bda8c519ce673c116bd4e9226d0f89f3a8c2f214aef70b380336d/mkdocs_api_autonav-0.2.1.tar.gz", hash = "sha256:96a893cb5edeffb1ee25d26ce80616bcc3643059bd3c429ae72352011e0e164b", size = 55489 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c8/7e/fe72268c80464d819fbbbdd3bc6af102acde42e084c69c885a0167de0564/mkdocs_api_autonav-0.2.1-py3-none-any.whl", hash = "sha256:86eb60f2e7a198abe9bcedffc4de67672a978a2adfb57078bd2e2753b0c24f7f", size = 11020 },
+]
+
+[[package]]
 name = "mkdocs-autorefs"
 version = "1.4.1"
 source = { registry = "https://pypi.org/simple" }
@@ -2331,6 +2350,18 @@ dependencies = [
     { name = "pygtrie" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/9a/3b/490d1b51fba7da69394e5a17f2c081eb65a10fb73565dc6793d53e4e4206/mkdocs-ezlinks-plugin-0.1.14.tar.gz", hash = "sha256:3e2085c16a850e022393e80194c17612e7b55de87fb45b3ffb618b5dfdb10811", size = 13366 }
+
+[[package]]
+name = "mkdocs-gen-files"
+version = "0.5.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "mkdocs" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/48/85/2d634462fd59136197d3126ca431ffb666f412e3db38fd5ce3a60566303e/mkdocs_gen_files-0.5.0.tar.gz", hash = "sha256:4c7cf256b5d67062a788f6b1d035e157fc1a9498c2399be9af5257d4ff4d19bc", size = 7539 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e7/0f/1e55b3fd490ad2cecb6e7b31892d27cb9fc4218ec1dab780440ba8579e74/mkdocs_gen_files-0.5.0-py3-none-any.whl", hash = "sha256:7ac060096f3f40bd19039e7277dd3050be9a453c8ac578645844d4d91d7978ea", size = 8380 },
+]
 
 [[package]]
 name = "mkdocs-get-deps"
@@ -2501,6 +2532,19 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/86/09/3cfcfec56740fba157991cd098c76dd08ef9c211db292c7c7d820d16c351/mkdocs_section_index-0.3.9.tar.gz", hash = "sha256:b66128d19108beceb08b226ee1ba0981840d14baf8a652b6c59e650f3f92e4f8", size = 13941 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/d2/19/16f6368f69949ea2d0086197a86beda4d4f27f09bb8c59130922f03d335d/mkdocs_section_index-0.3.9-py3-none-any.whl", hash = "sha256:5e5eb288e8d7984d36c11ead5533f376fdf23498f44e903929d72845b24dfe34", size = 8728 },
+]
+
+[[package]]
+name = "mkdocs-towncrier"
+version = "0.1.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "mkdocs" },
+    { name = "towncrier" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/45/f2/9657996684db90da96c91342c3edd2fff80be938c34a33cd4feab434efd0/mkdocs_towncrier-0.1.4.tar.gz", hash = "sha256:097020b94d0226228800d291bbdd0e96ace7fce9d65b694bd733d2e55876b5c6", size = 17448 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/99/bc/f4cc3e1fb0a218794fa1408a390c350b621a448784c06f764a7d2426dde4/mkdocs_towncrier-0.1.4-py3-none-any.whl", hash = "sha256:6ac60250023d5fd4cee62a0b1681f0cec0ba9303ac25f3ef1f7ad1afa5d16b40", size = 4854 },
 ]
 
 [[package]]

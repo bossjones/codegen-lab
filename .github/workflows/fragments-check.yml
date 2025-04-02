@@ -1,0 +1,52 @@
+# SOURCE: hikari
+name: Fragments check
+
+on:
+  pull_request:
+    types: [labeled, unlabeled, opened, reopened, synchronize]
+    branches:
+      - master
+
+jobs:
+  check-fragment-added:
+    if: github.event.pull_request.user.type != 'Bot' && !contains(github.event.pull_request.labels.*.name, 'skip-fragment-check')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          # `towncrier check` runs `git diff --name-only origin/main...`, which
+          # needs a non-shallow clone.
+          fetch-depth: 0
+
+      - name: Install UV
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          version: "0.6.11"
+          python-version: 3.12
+
+      # - name: Setup uv
+      #   uses: astral-sh/setup-uv@0c5e2b8115b80b4c7c5ddf6ffdd634974642d182 # v5.4.1
+      #   with:
+      #     python-version: 3.9
+
+      - name: Check if changelog fragment was added
+        run: |
+          uv sync --frozen --dev
+
+          if ! towncrier check --compare-with origin/${{ github.base_ref }}; then
+            exit 1
+          fi
+
+      - name: Check if linked to the correct pull request
+        run: |
+          diff=$(git diff origin/${{ github.base_ref }} HEAD --name-only)
+
+          changelog_fragments=$(echo "$diff" | grep "^changes/")
+          valid_changelog_fragments=$(echo "$diff" | grep "^changes/${{ github.event.number }}\.")
+
+          if [ "$changelog_fragments" != "$valid_changelog_fragments" ]; then
+            exit 1
+          fi
