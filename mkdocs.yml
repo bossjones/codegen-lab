@@ -17,6 +17,11 @@ use_directory_urls: true # Use URLs without .html (e.g., /example/ instead of /e
 watch:
   - mkdocs_macro_plugin.py
   - docs_templates
+  - src/codegen_lab
+  - README.md
+  - CHANGELOG.md
+  - changes/
+  - scripts/docs
 # Navigation structure
 # nav: # Define the navigation/menu structure
 #   - Home: index.md # Homepage link
@@ -71,30 +76,71 @@ plugins: # Enable MkDocs plugins
       verbose: true
   - mermaid2 # https://mkdocs-mermaid2.readthedocs.io/
   # - mkdocs_apidoc  # https://ecurtin2.github.io/mkdocs-apidoc/
-  - mkdocstrings: # https://mkdocstrings.github.io/
+  # - towncrier
+  # # :
+  # #     hide_if_empty: !ENV [HIDE_EMPTY_TOWNCRIER_DRAFT, true]
+  - gen-files:
+      scripts:
+        - scripts/docs/gen_ref_pages.py
+  - literate-nav:
+      nav_file: summary.md
+  # - mkdocstrings: # https://mkdocstrings.github.io/
+  #     handlers:
+  #       python:
+  #         import:
+  #           - https://docs.python.org/3/objects.inv # Imports the objects.inv file from the official Python documentation to enable cross-references.
+  #           - https://installer.readthedocs.io/en/stable/objects.inv # demonstration purpose in the docs # Imports another objects.inv file, likely for demonstration, from a different documentation source.
+  #           - https://mkdocstrings.github.io/autorefs/objects.inv # Imports the objects.inv file from the mkdocstrings autorefs documentation.
+  #         paths: [src] # Specifies the source directory where Python modules are located.
+  #         options:
+  #           docstring_options:
+  #             ignore_init_summary: true # Ignores the summary from the __init__ method's docstring.
+  #           docstring_section_style: list # Sets the style for docstring sections to a list format.
+  #           filters: ["!^_"] # Excludes any members that start with an underscore from the documentation.
+  #           heading_level: 1 # Sets the base heading level for documented items to H1.
+  #           inherited_members: false # Does not include inherited members in the documentation by default.
+  #           merge_init_into_class: true # Merges the __init__ docstring into the class docstring.
+  #           separate_signature: true # Displays the function or method signature separately from its documentation.
+  #           show_root_heading: true # Shows a heading for the root-level module.
+  #           show_root_full_path: false # Does not display the full path to the root module in the heading.
+  #           show_signature_annotations: true # Displays signature annotations in the function signatures.
+  #           show_symbol_type_heading: true # Shows a heading indicating the type of symbol being documented.
+  #           show_symbol_type_toc: true # Includes symbol types in the table of contents.
+  #           signature_crossrefs: true # Enables cross-references in signatures.
+  #           summary: true # Displays a summary of each documented item.
+  - mkdocstrings: # Enables the mkdocstrings plugin for automatic API documentation generation.
+      # enabled: !ENV [ENABLE_MKDOCSTRINGS, true] # Activates the plugin based on the `ENABLE_MKDOCSTRINGS` environment variable, defaulting to `true` if not set.
+      default_handler: python # Sets Python as the default handler for processing and rendering documentation.
+      enable_inventory: true # Generates an inventory file for cross-referencing with other projects.
       handlers:
-        python:
-          import:
-            - https://docs.python.org/3/objects.inv
-            - https://installer.readthedocs.io/en/stable/objects.inv # demonstration purpose in the docs
-            - https://mkdocstrings.github.io/autorefs/objects.inv
+        python: # Configures the Python handler for mkdocstrings.
           paths: [src]
+          import:
+            - https://docs.python.org/3/objects.inv # Imports cross-reference data from the official Python documentation.
+            - https://docs.aiohttp.org/en/stable/objects.inv # Imports cross-reference data from the aiohttp library documentation.
+            - https://www.attrs.org/en/stable/objects.inv # Imports cross-reference data from the attrs library documentation.
+            - https://multidict.readthedocs.io/en/stable/objects.inv # Imports cross-reference data from the multidict library documentation.
+            - https://yarl.readthedocs.io/en/stable/objects.inv # Imports cross-reference data from the yarl library documentation.
           options:
-            docstring_options:
-              ignore_init_summary: true
-            docstring_section_style: list
-            filters: ["!^_"]
-            heading_level: 1
-            inherited_members: false
-            merge_init_into_class: true
-            separate_signature: true
-            show_root_heading: true
-            show_root_full_path: false
-            show_signature_annotations: true
-            show_symbol_type_heading: true
-            show_symbol_type_toc: true
-            signature_crossrefs: true
-            summary: true
+            filters: ["!^_"] # Excludes members that start with an underscore from the documentation.
+            heading_level: 3 # Starts headings at level 3 (e.g., `<h3>` in HTML).
+            annotations_path: brief # Displays type annotations in a concise format.
+            docstring_section_style: spacy # Uses a "spacy" style for organizing docstring sections.
+            docstring_style: google # Parses docstrings using the "numpy" style format.
+            inherited_members: false # Disables inclusion of inherited members in the documentation.
+            merge_init_into_class: true # Combines `__init__` method docstrings into their class-level documentation.
+            separate_signature: true # Displays function or method signatures separately from their descriptions.
+            show_signature_annotations: true # Includes annotations in function signatures within the documentation.
+            show_source: false # Hides links to source code files in the rendered documentation.
+            show_submodules: false # Prevents submodules from being listed in the documentation output.
+            signature_crossrefs: true # Enables cross-references within function or method signatures for better navigation.
+            show_symbol_type_heading: true # Displays headings indicating the type of documented symbols (e.g., classes, functions).
+            show_symbol_type_toc: true # Includes symbol types in the table of contents for better organization and navigation.
+            #            show_root_toc_entry: false # (Commented out) Would disable adding a root entry to the table of contents if enabled.
+            find_stubs_package: true # Searches for PEP 561 stub packages to enhance type hinting and documentation accuracy.
+            extensions:
+              - griffe_inherited_docstrings # Adds support for inherited docstrings using Griffe extensions for better clarity and completeness.
+
   - search # https://squidfunk.github.io/mkdocs-material/plugins/search/
   - tags # https://squidfunk.github.io/mkdocs-material/plugins/tags/
   # Want to have ezlinks after macros
@@ -104,6 +150,13 @@ plugins: # Enable MkDocs plugins
   # - search # Enable search functionality
   # - macros:
   #     module_name: mkdocs_macro_plugin
+  # - api-autonav:
+  #   modules: ["src/codegen_lab"]
+  #   nav_section_title: "API Reference"
+  #   api_root_uri: "reference"
+  #   nav_item_prefix: "<code class='doc-symbol doc-symbol-nav doc-symbol-module'></code>"
+  #   exclude_private: true
+  #   on_implicit_namespace_packge: "warn"
 
 # Markdown extensions
 # markdown_extensions: # Configure Markdown processing

@@ -14,7 +14,8 @@
         }
     ],
     "yaml.schemas": {
-        "https://taskfile.dev/schema.json": "**/Taskfile.yml"
+        "https://taskfile.dev/schema.json": "**/Taskfile.yml",
+        // "https://squidfunk.github.io/mkdocs-material/schema.json": "mkdocs.yml"
     },
     "files.associations": {
         "*.cheat": "markdown",
@@ -30,45 +31,22 @@
         "--load-plugins",
         "pylint_pydantic,pylint_per_file_ignores"
     ],
-    // BasedPyright configuration - aligning with pyrightconfig.json
-    "basedpyright.analysis.typeCheckingMode": "recommended",
-    "basedpyright.analysis.diagnosticMode": "openFilesOnly",
-    "basedpyright.analysis.useLibraryCodeForTypes": true,
-    "basedpyright.analysis.autoImportCompletions": true,
-    "basedpyright.analysis.autoSearchPaths": true,
-    "basedpyright.diagnosticsSeverityOverrides": {
-        "reportUnannotatedClassAttribute": "error",
-        "reportPrivateLocalImportUsage": "warning",
-        "reportInvalidCast": "error",
-        "reportUnreachable": "warning",
-        "reportImplicitAbstractClass": "warning",
-        "reportUnusedParameter": "warning",
-        "reportImplicitRelativeImport": "warning",
-        "reportAny": "warning",
-        "reportExplicitAny": "warning"
+    "python.analysis.typeCheckingMode": "strict",
+    "python.analysis.autoFormatStrings": true,
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.inlayHints.functionReturnTypes": true,
+    "python.analysis.inlayHints.variableTypes": true,
+    "python.analysis.inlayHints.callArgumentNames": "all",
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        "**/pycache": true
     },
-    // Inlay hints configuration
-    "basedpyright.analysis.inlayHints.variableTypes": true,
-    "basedpyright.analysis.inlayHints.functionReturnTypes": true,
-    "basedpyright.analysis.inlayHints.callArgumentNames": true,
-    "basedpyright.analysis.inlayHints.genericTypes": true,
     // Editor settings for Python files
     "editor.formatOnSave": true,
-    // "[python]": {
-    //     "editor.formatOnSave": true,
-    //     "editor.codeActionsOnSave": {
-    //         "source.organizeImports": "explicit"
-    //     },
-    //     "editor.defaultFormatter": "charliermarsh.ruff"
-    // },
-    // Python and BasedPyright path settings
     "python.pythonPath": "${workspaceFolder}/.venv/bin/python",
     "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
-    "basedpyright.pythonPlatform": "Darwin",
-    "python.terminal.activateEnvInCurrentTerminal": true,
-    "python.analysis.autoImportCompletions": true,
-    "python.analysis.inlayHints.variableTypes": true,
-    "python.analysis.inlayHints.functionReturnTypes": true,
     "python.analysis.inlayHints.pytestParameters": true,
     "python.analysis.diagnosticSeverityOverrides": {
         "reportUnusedImport": "none",
@@ -78,7 +56,9 @@
         "reportMissingTypeStubs": "none",
         "reportUnknownMemberType": "none",
         "reportUnusedFunction": "warning",
-        "reportUnusedClass": "warning"
+        "reportUnusedClass": "warning",
+        "reportIncompatibleMethodOverride": "none",
+        "reportGeneralTypeIssues": "information"
     },
     "notebook.formatOnSave.enabled": false,
     "[python]": {
@@ -153,5 +133,16 @@
     "editor.semanticHighlighting.enabled": true,
     "workbench.editorAssociations": {
         "*.mdc": "default",
-    }
+    },
+    // SOURCE: https://github.com/allthingslinux/tux/blob/7a7cd918d1c96ef11a8e65e11fee2bd8c692df67/.vscode/settings.json
+    "yaml.customTags": [
+        "!ENV scalar",
+        "!ENV sequence",
+        "!relative scalar",
+        "tag:yaml.org,2002:python/name:material.extensions.emoji.to_svg",
+        "tag:yaml.org,2002:python/name:material.extensions.emoji.twemoji",
+        "tag:yaml.org,2002:python/name:mermaid2.fence_mermaid_custom",
+        "tag:yaml.org,2002:python/name:pymdownx.superfences.fence_code_format",
+        "tag:yaml.org,2002:python/object/apply:pymdownx.slugs.slugify mapping"
+    ]
 }
