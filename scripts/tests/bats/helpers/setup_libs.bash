@@ -17,4 +17,9 @@ if [ ! -d "${LIB_DIR}/bats-assert" ]; then
   git clone https://github.com/bats-core/bats-assert "${LIB_DIR}/bats-assert"
 fi
 
+if [ ! -d "${LIB_DIR}/bats-file" ]; then
+  echo "Cloning bats-file..."
+  git clone https://github.com/bats-core/bats-file "${LIB_DIR}/bats-file"
+fi
+
 echo "Bats libraries are ready to use."

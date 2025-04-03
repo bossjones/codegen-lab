@@ -20,6 +20,10 @@
 # SOFTWARE.
 set -e
 
+# Set DRY_RUN=1 for dry run mode
+DRY_RUN=${DRY_RUN:-1}  # Default to dry run mode
+
+
 # Get the appropriate sed command for the current OS
 if [[ "$OSTYPE" == "darwin"* ]]; then
     SED_CMD="gsed"
@@ -38,35 +42,65 @@ echo "===== UPDATING RELEASE INFORMATION ====="
 echo "-- Bumping repository version to ${VERSION} --"
 
 # Update version in pyproject.toml
-$SED_CMD -i "s/^version = \".*\"/version = \"${VERSION}\"/" pyproject.toml || (echo "Failed to update version in pyproject.toml!" && exit 1)
+# Update version in pyproject.toml
+if [ "$DRY_RUN" -eq 1 ]; then
+    echo "Would execute: $SED_CMD -i \"s/^version = \".*\"/version = \"${VERSION}\"/' pyproject.toml"
+else
+    $SED_CMD -i "s/^version = \".*\"/version = \"${VERSION}\"/" pyproject.toml || (echo "Failed to update version in pyproject.toml!" && exit 1)
+fi
 
 echo "===== UPDATING CHANGELOG ====="
 echo "-- Installing dependencies --"
 # Installing with towncrier group to ensure it's available
-uv sync --frozen --dev
+if [ "$DRY_RUN" -eq 1 ]; then
+    echo "Would execute: uv sync --frozen --dev"
+else
+    uv sync --frozen --dev
+fi
 
 echo "-- Running towncrier --"
 # Build the changelog from news fragments
-uv run towncrier build --yes --version ${VERSION}
+if [ "$DRY_RUN" -eq 1 ]; then
+    echo "Would execute: uv run towncrier build --yes --version ${VERSION}"
+else
+    uv run towncrier build --yes --version ${VERSION}
+fi
 
 echo "===== COMMITTING CHANGES ====="
 echo "-- Checkout branch task/prepare-release-${VERSION} --"
-git checkout -b "task/prepare-release-${VERSION}"
+if [ "$DRY_RUN" -eq 1 ]; then
+    echo "Would execute: git checkout -b \"task/prepare-release-${VERSION}\""
+else
+    git checkout -b "task/prepare-release-${VERSION}"
+fi
 
 echo "-- Committing changes --"
-git commit -am "Prepare for release of version ${VERSION}"
+# Commit all changes with a standardized commit message that includes the version number
+if [ "$DRY_RUN" -eq 1 ]; then
+    echo "Would execute: git commit -am \"Prepare for release of version ${VERSION}\""
+else
+    git commit -am "Prepare for release of version ${VERSION}"
+fi
 
 if [ "${CI}" ]; then
     echo "-- Pushing changes --"
-    git push origin "task/prepare-release-${VERSION}"
+    if [ "$DRY_RUN" -eq 1 ]; then
+        echo "Would execute: git push origin \"task/prepare-release-${VERSION}\""
+    else
+        git push origin "task/prepare-release-${VERSION}"
+    fi
 
     echo "-- Creating pull request --"
     # Use GitHub CLI to create PR if installed
     if command -v gh &> /dev/null; then
-        gh pr create --title "Prepare for release of version ${VERSION}" \
-                     --body "This PR prepares the repository for release of version ${VERSION}." \
-                     --base main \
-                     --head "task/prepare-release-${VERSION}"
+        if [ "$DRY_RUN" -eq 1 ]; then
+            echo "Would execute: gh pr create --title \"Prepare for release of version ${VERSION}\" --body \"This PR prepares the repository for release of version ${VERSION}.\" --base main --head \"task/prepare-release-${VERSION}\""
+        else
+            gh pr create --title "Prepare for release of version ${VERSION}" \
+                         --body "This PR prepares the repository for release of version ${VERSION}." \
+                         --base main \
+                         --head "task/prepare-release-${VERSION}"
+        fi
     else
         echo "GitHub CLI not installed. Please create PR manually."
     fi

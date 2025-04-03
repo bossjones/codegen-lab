@@ -20,6 +20,9 @@
 # SOFTWARE.
 set -e
 
+# Set DRY_RUN=1 for dry run mode
+DRY_RUN=${DRY_RUN:-1}  # Default to dry run mode
+
 # Function to check if required binaries are available
 check_required_binaries() {
   local missing_binaries=()
@@ -105,46 +108,83 @@ echo "Current git reference: ${ref}"
 echo "===== BUILDING PACKAGE ====="
 # Install dependencies
 echo "-- Installing dependencies --"
-uv sync --frozen
+if [ "$DRY_RUN" -eq 1 ]; then
+    echo "Would execute: uv sync --frozen"
+else
+    uv sync --frozen
+fi
 
 echo "-- Building package --"
-uv build
-echo "-- Contents of . --"
-ls -ahl
-echo
-echo "-- Contents of ./dist --"
-ls -ahl dist
+if [ "$DRY_RUN" -eq 1 ]; then
+    echo "Would execute: uv build"
+    echo "Would list contents of . and ./dist"
+else
+    uv build
+    echo "-- Contents of . --"
+    ls -ahl
+    echo
+    echo "-- Contents of ./dist --"
+    ls -ahl dist
+fi
 
 echo "===== UPDATING VERSION IN REPOSITORY ====="
 echo "-- Calculating new development version --"
-new_version="$(uv run python scripts/ci/increase_version_number.py "${VERSION}")"
-echo "New development version: ${new_version}"
+if [ "$DRY_RUN" -eq 1 ]; then
+    echo "Would execute: uv run python scripts/ci/increase_version_number.py \"${VERSION}\""
+    new_version="${VERSION}-dev0"  # Placeholder for dry run
+    echo "Placeholder new development version: ${new_version}"
+else
+    new_version="$(uv run python scripts/ci/increase_version_number.py "${VERSION}")"
+    echo "New development version: ${new_version}"
+fi
 
-# echo "-- Setting up git --"
-# # Retrieve the latest information about the remote repository without modifying local files
-# git fetch origin
-# # Force checkout to the main branch, discarding any local changes that might exist
-# git checkout -f main
+echo "-- Setting up git --"
+# Retrieve the latest information about the remote repository without modifying local files
+if [ "$DRY_RUN" -eq 1 ]; then
+    echo "Would execute: git fetch origin"
+    echo "Would execute: git checkout -f main"
+else
+    git fetch origin
+    # Force checkout to the main branch, discarding any local changes that might exist
+    git checkout -f main
+fi
 
-# echo "-- Bumping to development version (${new_version}) --"
-# # Update version in pyproject.toml
-# $SED_CMD -i "s/^version = \".*\"/version = \"${new_version}\"/" pyproject.toml || (echo "Failed to update version in pyproject.toml!" && exit 1)
+echo "-- Bumping to development version (${new_version}) --"
+# Update version in pyproject.toml
+if [ "$DRY_RUN" -eq 1 ]; then
+    echo "Would execute: $SED_CMD -i \"s/^version = \".*\"/version = \"${new_version}\"/' pyproject.toml"
+else
+    $SED_CMD -i "s/^version = \".*\"/version = \"${new_version}\"/" pyproject.toml || (echo "Failed to update version in pyproject.toml!" && exit 1)
+fi
 
-# echo "-- Pushing to repository --"
-# git commit -am "Bump to development version (${new_version})"
-# git push
+echo "-- Pushing to repository --"
+if [ "$DRY_RUN" -eq 1 ]; then
+    echo "Would execute: git commit -am \"Bump to development version (${new_version})\""
+    echo "Would execute: git push"
+else
+    git commit -am "Bump to development version (${new_version})"
+    git push
+fi
 
-# echo "===== CREATING GITHUB RELEASE ====="
-# echo "-- Creating release v${VERSION} --"
-# # Use GitHub CLI to create a release
-# if command -v gh &> /dev/null; then
-#     gh release create "v${VERSION}" --generate-notes
-#     echo "GitHub release v${VERSION} created successfully!"
-# else
-#     echo "GitHub CLI not installed. Please create release manually with:"
-#     echo "gh release create \"v${VERSION}\" --generate-notes"
-# fi
+echo "===== CREATING GITHUB RELEASE ====="
+echo "-- Creating release v${VERSION} --"
+# Use GitHub CLI to create a release
+if command -v gh &> /dev/null; then
+    if [ "$DRY_RUN" -eq 1 ]; then
+        echo "Would execute: gh release create \"v${VERSION}\" --generate-notes"
+    else
+        gh release create "v${VERSION}" --generate-notes
+        echo "GitHub release v${VERSION} created successfully!"
+    fi
+else
+    echo "GitHub CLI not installed. Please create release manually with:"
+    echo "gh release create \"v${VERSION}\" --generate-notes"
+fi
 
-# echo "===== RELEASE COMPLETED SUCCESSFULLY ====="
-# echo "Version ${VERSION} has been released!"
-# echo "GitHub Release: https://github.com/bossjones/codegen-lab/releases/tag/v${VERSION}"
+echo "===== RELEASE COMPLETED SUCCESSFULLY ====="
+echo "Version ${VERSION} has been released!"
+if [ "$DRY_RUN" -eq 1 ]; then
+    echo "This was a DRY RUN. No changes were actually made."
+else
+    echo "GitHub Release: https://github.com/bossjones/codegen-lab/releases/tag/v${VERSION}"
+fi
