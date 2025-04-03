@@ -37,7 +37,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - uses: scientific-python/action-towncrier-changelog@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BOT_USERNAME: changelog-bot
+      # - uses: scientific-python/action-towncrier-changelog@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     BOT_USERNAME: changelog-bot

@@ -1,0 +1,19 @@
+# Based on my search, I can explain how this file is used in your repository:
+# The .github/release.yaml file is used by GitHub's automated release note generation system. Specifically, it configures which authors should be excluded from the changelog when releases are created. In your case, it excludes contributions from:
+# dependabot (automated dependency updates)
+# pre-commit-ci (automated code style fixes)
+# github-actions (automated actions)
+# This configuration works in conjunction with several GitHub workflows in your repository:
+# The release.yml workflow, which handles building and uploading Python packages when releases are created
+# The check_changelog.yml workflow, which checks for changelog entries in pull requests
+# The autofix.yml workflow, which handles automatic changelog updates
+# The automerge.yml workflow, which automatically merges PRs from the excluded bots
+# The purpose of excluding these automated contributors is to keep the changelog focused on meaningful changes made by human contributors, rather than cluttering it with automated maintenance commits.
+# This is part of GitHub's built-in release management system - when you create a new release in your repository, GitHub will automatically generate release notes that exclude contributions from these automated systems, making the changelog more readable and focused on actual feature changes, bug fixes, and improvements.
+# The configuration helps maintain clean and meaningful release notes by filtering out automated changes while preserving important user-contributed changes in the project's changelog.
+changelog:
+  exclude:
+    authors:
+      - dependabot
+      - pre-commit-ci
+      - github-actions
