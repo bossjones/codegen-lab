@@ -13,6 +13,7 @@ dependencies = [
     "better-exceptions>=0.3.3",
     "bpython>=0.25",
     "files-to-prompt>=0.4",
+    "gitpython>=3.1.44",
     "google-generativeai>=0.8.4",
     "langchain>=0.3.20",
     "langchain-anthropic>=0.3.9",
@@ -35,6 +36,7 @@ dependencies = [
     "pillow>=11.1.0",
     "psutil>=5.9.5",
     "pydantic-settings>=2.8.1",
+    "pygithub>=2.6.1",
     "pytz>=2025.1",
     "rich>=13.9.4",
     "spacy>=3.8.4",
@@ -380,6 +382,14 @@ markers = [
     "agenticonly: marks tests that run code that utilizes the agentic module (deselect with '-m \"not agenticonly\"')",
 ]
 
+
+[tool.changelog-bot]
+
+[tool.changelog-bot.towncrier_changelog]
+changelog_skip_label = "no-changelog-entry-needed"
+enabled = true
+verify_pr_number = true
+
 # SOURCE: https://github.com/fmind/mlops-python-package/blob/2a9741f0f97e2213aafb9f3e9bb5b0a9092738cd/pyproject.toml
 [tool.commitizen]
 # Specifies the commitizen plugin to use for creating conventional commits.
@@ -414,7 +424,8 @@ package = "codegen_lab"
 # package_dir = "src"
 
 # Path to the template for generating the news file
-template = "changes/.template.md.jinja"
+# template = "changes/.template.md.jinja"
+template = "changes/towncrier_template.md.jinja"
 
 # The characters used for underlining headers (empty strings mean no underlining)
 underlines = ["", "", ""]
@@ -423,7 +434,7 @@ underlines = ["", "", ""]
 title_format = "## [{version}](https://github.com/bossjones/codegen-lab/tree/{version}) - {project_date}"
 
 # Format string for rendering the issue/ticket number in newsfiles
-issue_format = "[#{issue}](https://github.com/bossjones/codegen-lab/issues/{issue})"
+issue_format = "[#{issue}](https://github.com/bossjones/codegen-lab/pull/{issue})"
 
 # Commented out alternative formats for reference
 # issue_format = "[#{issue}](https://github.com/bossjones/codegen-lab/issues/{issue})"
@@ -448,69 +459,14 @@ ignore = [
     ".keep",
     "README",
     "README.md",
-    "README.rst"
+    "README.rst",
+    ".template.md.jinja",
+    "towncrier_template.md.jinja",
+    "simple.md.jinja",
 ]
 
 [[tool.towncrier.section]]
-name = "breaking"
-path = "breaking"
-
-[[tool.towncrier.section]]
-name = "feat"
-path = "feat"
-
-[[tool.towncrier.section]]
-name = "fix"
-path = "fix"
-
-[[tool.towncrier.section]]
-name = "docs"
-path = "docs"
-
-[[tool.towncrier.section]]
-name = "style"
-path = "style"
-
-[[tool.towncrier.section]]
-name = "refactor"
-path = "refactor"
-
-[[tool.towncrier.section]]
-name = "perf"
-path = "perf"
-
-[[tool.towncrier.section]]
-name = "ci"
-path = "ci"
-
-[[tool.towncrier.section]]
-name = "deps"
-path = "deps"
-
-[[tool.towncrier.section]]
-name = "security"
-path = "security"
-
-[[tool.towncrier.section]]
-name = "test"
-path = "test"
-
-[[tool.towncrier.section]]
-name = "build"
-path = "build"
-
-[[tool.towncrier.section]]
-name = "chore"
-path = "chore"
-
-[[tool.towncrier.section]]
-name = "misc"
-path = "misc"
-
-
-
-
-
+path = ""
 
 # The order of entries matters! It controls the order in which changelog sections are displayed.
 # https://towncrier.readthedocs.io/en/stable/configuration.html#use-a-toml-array-defined-order

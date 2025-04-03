@@ -1,16 +1,29 @@
 # This file is synced from the `.github` repository, do not modify it directly.
 ---
+# Specifies the version of the Dependabot configuration format
 version: 2
+# List of dependency updates to monitor and manage
 updates:
+  # Configuration for GitHub Actions dependencies
   - package-ecosystem: github-actions
+    # Root directory where GitHub Actions workflows are located
     directory: "/"
+    # How often to check for updates
     schedule:
+      # Check for updates once per week
       interval: weekly
+    # Configure which dependencies can be updated
     allow:
+      # Allow updates for all types of dependencies
       - dependency-type: all
+    # Specify which dependencies to ignore
     ignore:
+      # Ignore updates for the actions/stale action
       - dependency-name: actions/stale
+    # Group related dependencies together
     groups:
+      # Group for artifact-related actions
       artifacts:
+        # Pattern to match artifact-related actions
         patterns:
           - actions/*-artifact

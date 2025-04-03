@@ -398,7 +398,11 @@ towncrier-build:
 # Create a news fragment with towncrier
 [group('towncrier')]
 towncrier-create type issue content:
-    uv run towncrier create {{type}}.{{issue}}.md "{{content}}"
+    #!/usr/bin/env zsh
+    # Escape quotes in content to prevent shell interpretation issues
+    ESCAPED_CONTENT=$(echo "{{content}}" | sed 's/"/\\"/g')
+    # Note: towncrier expects {name}.{type}.md format
+    uv run towncrier create --content "$ESCAPED_CONTENT" "{{issue}}.{{type}}.md"
 
 # Check if any news fragments exist that need to be added to changelog
 [group('towncrier')]
@@ -563,14 +567,19 @@ towncrier-from-commits tag branch="main":
         CLEAN_MSG=$(echo "$commit_msg" | sed -E 's/^(feat|fix|docs|test|refactor|perf|ci|chore|style|security|deps|breaking|build)(\([^)]+\))?://')
         # Trim whitespace
         CLEAN_MSG=$(echo "$CLEAN_MSG" | sed -E 's/^[[:space:]]+|[[:space:]]+$//')
+        # Escape quotes to prevent shell interpretation issues
+        CLEAN_MSG=$(echo "$CLEAN_MSG" | sed 's/"/\\"/g')
 
         echo "Creating entry:"
         echo "  Type: $TYPE"
         echo "  PR/ID: $PR_NUMBER"
         echo "  Message: $CLEAN_MSG"
 
-        # Create the changelog entry
-        just towncrier-create "$TYPE" "$PR_NUMBER" "$CLEAN_MSG"
+        # Create the changelog entry using the corrected format ({name}.{type}.md)
+        uv run towncrier create --content "$CLEAN_MSG" "$PR_NUMBER.$TYPE.md" || {
+            echo "Warning: Failed to create changelog entry for commit $commit_hash"
+            continue
+        }
     done
 
     # Show summary of created entries
@@ -579,3 +588,15 @@ towncrier-from-commits tag branch="main":
 
 validate-pyproject:
     @git ls-files 'pyproject.toml' | xargs uv run pre-commit run --files
+
+# Show towncrier version and build draft changelog for main version
+[group('changelog')]
+changelog-draft:
+    uv run towncrier --version
+    uv run towncrier build --version main --draft
+
+# Show towncrier version and build changelog for main version
+[group('changelog')]
+changelog:
+    uv run towncrier --version
+    uv run towncrier build --version main
