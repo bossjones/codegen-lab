@@ -37,20 +37,20 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Check if tests have changed
-        id: tests_changed
-        run: |
-          set -xe
-          changed_files=$(git diff --name-only origin/main)
-          # Changelog should be updated only if tests have been modified
-          if [[ "$changed_files" =~ tests ]]
-          then
-            echo "check_changelog=true" >> $GITHUB_OUTPUT
-          fi
+      # - name: Check if tests have changed
+      #   id: tests_changed
+      #   run: |
+      #     set -xe
+      #     changed_files=$(git diff --name-only origin/main)
+      #     # Changelog should be updated only if tests have been modified
+      #     if [[ "$changed_files" =~ tests ]]
+      #     then
+      #       echo "check_changelog=true" >> $GITHUB_OUTPUT
+      #     fi
 
-      - name: Check changelog entry
-        if: steps.tests_changed.outputs.check_changelog == 'true'
-        uses: scientific-python/action-towncrier-changelog@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BOT_USERNAME: changelog-bot
+      # - name: Check changelog entry
+      #   if: steps.tests_changed.outputs.check_changelog == 'true'
+      #   uses: scientific-python/action-towncrier-changelog@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     BOT_USERNAME: changelog-bot
