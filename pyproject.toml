@@ -449,7 +449,7 @@ create_add_extension = true
 # Ensure the content of a news fragment file created with towncrier create ends with an empty line
 create_eof_newline = true
 # The directory storing your news fragments
-directory = "changes"
+directory = "changes/"
 # The filename of your news file
 filename = "CHANGELOG.md"
 # A case-insensitive list of filenames in the news fragments directory to ignore
