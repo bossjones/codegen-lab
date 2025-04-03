@@ -146,10 +146,17 @@ repos:
   - repo: https://github.com/twisted/towncrier
     rev: 24.8.0
     hooks:
+      - id: towncrier-check
+        files: $changes/
+
+  - repo: https://github.com/twisted/towncrier
+    rev: 24.8.0
+    hooks:
       - id: towncrier-update
-        files: $changelog\.d/
+        files: $changes/
         args:
           - --keep
+          - --yes
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
     rev: 0.31.2

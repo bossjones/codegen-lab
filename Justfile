@@ -379,3 +379,6 @@ uv-tree:
 # Run a Python script with UV
 run-python +args:
     {{UV_RUN}} python {{args}}
+
+init-changelog:
+    ./scripts/init-changelog.sh

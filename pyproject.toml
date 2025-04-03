@@ -397,22 +397,50 @@ update_changelog_on_bump = true
 
 
 [tool.towncrier]
-# Core configuration
-package = "codegen_lab"
-package_dir = "src"
+# The directory storing your news fragments
 directory = "changes"
-template = "changes/.template.md.jinja"
+
+# The filename of your news file
 filename = "CHANGELOG.md"
+
+# The magic string that towncrier looks for when considering where the release notes should start
+start_string = "<!-- towncrier release notes start -->\n"
+
+# The Python package name of your project - allows name and version to be automatically determined
+package = "codegen_lab"
+
+# The folder your package lives in - some projects might need to use "src"
+package_dir = "src"
+
+# Path to the template for generating the news file
+template = "changes/.template.md.jinja"
+
+# The characters used for underlining headers (empty strings mean no underlining)
+underlines = ["", "", ""]
+
+# Format string for the title of your project, using {name}, {version}, and {project_date}
+title_format = "## [{version}](https://github.com/bossjones/codegen-lab/tree/{version}) - {project_date}"
+
+# Format string for rendering the issue/ticket number in newsfiles
 issue_format = "[#{issue}](https://github.com/bossjones/codegen-lab/issues/{issue})"
-title_format = "{version} ({project_date})"
-underlines = [2, 3]
+
+# Commented out alternative formats for reference
+# issue_format = "[#{issue}](https://github.com/bossjones/codegen-lab/issues/{issue})"
+# title_format = "{version} ({project_date})"
+# underlines = [2, 3]
 
 # File handling configuration
+# Ensure the content of a news fragment file created with towncrier create ends with an empty line
 create_eof_newline = true
+
+# Add the filename option extension to news fragment files created with towncrier create
 create_add_extension = true
 
 # Validation and ignore patterns
+# Ensure the issue name matches a certain regex pattern (digit-only file names in this case)
 issue_pattern = "\\d+"  # Only allow numeric issue IDs
+
+# A case-insensitive list of filenames in the news fragments directory to ignore
 ignore = [
     ".gitignore",
     ".gitkeep",
@@ -424,9 +452,13 @@ ignore = [
 
 # Custom fragment types using TOML array for defined order
 [[tool.towncrier.type]]
+# The type / category of the fragment.
 directory = "breaking"
+# The description of the fragment type, as it must be included in the news file.
 name = "Breaking Changes"
+# A boolean value indicating whether the fragment contents should be included in the news file.
 showcontent = true
+# A boolean value indicating whether the fragment should be considered by the towncrier check command.
 check = true
 
 [[tool.towncrier.type]]
