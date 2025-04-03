@@ -118,40 +118,33 @@ ls -ahl dist
 echo "===== UPDATING VERSION IN REPOSITORY ====="
 echo "-- Calculating new development version --"
 new_version="$(uv run python scripts/ci/increase_version_number.py "${VERSION}")"
+echo "New development version: ${new_version}"
 
-echo "-- Setting up git --"
-git fetch origin
-git checkout -f main
+# echo "-- Setting up git --"
+# # Retrieve the latest information about the remote repository without modifying local files
+# git fetch origin
+# # Force checkout to the main branch, discarding any local changes that might exist
+# git checkout -f main
 
-echo "-- Bumping to development version (${new_version}) --"
-# Update version in pyproject.toml
-$SED_CMD -i "s/^version = \".*\"/version = \"${new_version}\"/" pyproject.toml || (echo "Failed to update version in pyproject.toml!" && exit 1)
+# echo "-- Bumping to development version (${new_version}) --"
+# # Update version in pyproject.toml
+# $SED_CMD -i "s/^version = \".*\"/version = \"${new_version}\"/" pyproject.toml || (echo "Failed to update version in pyproject.toml!" && exit 1)
 
-echo "-- Pushing to repository --"
-git commit -am "Bump to development version (${new_version})"
-git push
+# echo "-- Pushing to repository --"
+# git commit -am "Bump to development version (${new_version})"
+# git push
 
-echo "===== CREATING GITHUB RELEASE ====="
-echo "-- Creating release v${VERSION} --"
-# Use GitHub CLI to create a release
-if command -v gh &> /dev/null; then
-    gh release create "v${VERSION}" --generate-notes
-    echo "GitHub release v${VERSION} created successfully!"
-else
-    echo "GitHub CLI not installed. Please create release manually with:"
-    echo "gh release create \"v${VERSION}\" --generate-notes"
-fi
+# echo "===== CREATING GITHUB RELEASE ====="
+# echo "-- Creating release v${VERSION} --"
+# # Use GitHub CLI to create a release
+# if command -v gh &> /dev/null; then
+#     gh release create "v${VERSION}" --generate-notes
+#     echo "GitHub release v${VERSION} created successfully!"
+# else
+#     echo "GitHub CLI not installed. Please create release manually with:"
+#     echo "gh release create \"v${VERSION}\" --generate-notes"
+# fi
 
-# Uncomment the following section if you want to publish to PyPI
-# echo "===== PUBLISHING TO PYPI ====="
-# if [ -z ${UV_PUBLISH_USERNAME+x} ]; then echo '$UV_PUBLISH_USERNAME environment variable is missing' && exit 1; fi
-# if [ -z "${UV_PUBLISH_USERNAME}" ]; then echo '$UV_PUBLISH_USERNAME environment variable is empty' && exit 1; fi
-# if [ -z ${UV_PUBLISH_PASSWORD+x} ]; then echo '$UV_PUBLISH_PASSWORD environment variable is missing' && exit 1; fi
-# if [ -z "${UV_PUBLISH_PASSWORD}" ]; then echo '$UV_PUBLISH_PASSWORD environment variable is empty' && exit 1; fi
-#
-# echo "-- Publishing to PyPI --"
-# uv run twine upload -u "${UV_PUBLISH_USERNAME}" -p "${UV_PUBLISH_PASSWORD}" dist/*
-
-echo "===== RELEASE COMPLETED SUCCESSFULLY ====="
-echo "Version ${VERSION} has been released!"
-echo "GitHub Release: https://github.com/bossjones/codegen-lab/releases/tag/v${VERSION}"
+# echo "===== RELEASE COMPLETED SUCCESSFULLY ====="
+# echo "Version ${VERSION} has been released!"
+# echo "GitHub Release: https://github.com/bossjones/codegen-lab/releases/tag/v${VERSION}"
