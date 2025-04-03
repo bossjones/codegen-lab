@@ -33,6 +33,14 @@ default_stages:
   - pre-push
 # TODO: Work with team to see when the right time is to enable this
 repos:
+  - repo: https://github.com/abravalheri/validate-pyproject
+    rev: v0.24.1
+    hooks:
+      - id: validate-pyproject
+        # Optional extra validations from SchemaStore:
+        additional_dependencies:
+          ["validate-pyproject[all]", "validate-pyproject-schema-store"]
+
   - repo: https://github.com/sirosen/texthooks
     rev: 0.6.8
     hooks:
@@ -64,7 +72,7 @@ repos:
   # When running with --fix, Ruff's lint hook should be placed before Ruff's formatter hook, and before Black, isort, and other formatting tools, as Ruff's fix behavior can output code changes that require reformatting.
   # SOURCE: https://github.com/astral-sh/ruff-pre-commit
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.9.9
+    rev: v0.11.3
     hooks:
       # Run the linter.
       - id: ruff
@@ -159,7 +167,7 @@ repos:
           - --yes
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.31.2
+    rev: 0.32.1
     hooks:
       - id: check-github-workflows
         exclude: (.tasks|hack|.github/workflows/_python-vulnerability-scan.yml)

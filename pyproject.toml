@@ -397,6 +397,7 @@ update_changelog_on_bump = true
 
 
 [tool.towncrier]
+name = "codegen_lab"
 # The directory storing your news fragments
 directory = "changes"
 
@@ -410,7 +411,7 @@ start_string = "<!-- towncrier release notes start -->\n"
 package = "codegen_lab"
 
 # The folder your package lives in - some projects might need to use "src"
-package_dir = "src"
+# package_dir = "src"
 
 # Path to the template for generating the news file
 template = "changes/.template.md.jinja"
@@ -450,7 +451,70 @@ ignore = [
     "README.rst"
 ]
 
-# Custom fragment types using TOML array for defined order
+[[tool.towncrier.section]]
+name = "breaking"
+path = "breaking"
+
+[[tool.towncrier.section]]
+name = "feat"
+path = "feat"
+
+[[tool.towncrier.section]]
+name = "fix"
+path = "fix"
+
+[[tool.towncrier.section]]
+name = "docs"
+path = "docs"
+
+[[tool.towncrier.section]]
+name = "style"
+path = "style"
+
+[[tool.towncrier.section]]
+name = "refactor"
+path = "refactor"
+
+[[tool.towncrier.section]]
+name = "perf"
+path = "perf"
+
+[[tool.towncrier.section]]
+name = "ci"
+path = "ci"
+
+[[tool.towncrier.section]]
+name = "deps"
+path = "deps"
+
+[[tool.towncrier.section]]
+name = "security"
+path = "security"
+
+[[tool.towncrier.section]]
+name = "test"
+path = "test"
+
+[[tool.towncrier.section]]
+name = "build"
+path = "build"
+
+[[tool.towncrier.section]]
+name = "chore"
+path = "chore"
+
+[[tool.towncrier.section]]
+name = "misc"
+path = "misc"
+
+
+
+
+
+
+# The order of entries matters! It controls the order in which changelog sections are displayed.
+# https://towncrier.readthedocs.io/en/stable/configuration.html#use-a-toml-array-defined-order
+# # Custom fragment types using TOML array for defined order
 [[tool.towncrier.type]]
 # The type / category of the fragment.
 directory = "breaking"
@@ -482,13 +546,13 @@ check = true
 [[tool.towncrier.type]]
 directory = "chore"
 name = "Chores"
-showcontent = true
+showcontent = false
 check = true
 
 [[tool.towncrier.type]]
 directory = "refactor"
 name = "Code Refactoring"
-showcontent = true
+showcontent = false
 check = true
 
 [[tool.towncrier.type]]
