@@ -589,6 +589,10 @@ towncrier-from-commits tag branch="main":
 validate-pyproject:
     @git ls-files 'pyproject.toml' | xargs uv run pre-commit run --files
 
+# Run pre-commit hooks on all files
+pre-commit:
+    @uv run pre-commit run -a --show-diff-on-failure
+
 # Show towncrier version and build draft changelog for main version
 [group('changelog')]
 changelog-draft:

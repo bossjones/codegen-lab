@@ -188,6 +188,25 @@ repos:
       - id: commitizen-branch
         stages: [pre-push]
 
+  - repo: https://github.com/pappasam/toml-sort
+    rev: v0.24.2
+    hooks:
+      - id: toml-sort-fix
+        files: pyproject.toml
+
+  - repo: https://github.com/abravalheri/validate-pyproject
+    rev: v0.24.1
+    hooks:
+      - id: validate-pyproject
+        # Optional extra validations from SchemaStore:
+        additional_dependencies:
+          ["validate-pyproject[all]", "validate-pyproject-schema-store"]
+
+  # - repo: https://github.com/woodruffw/zizmor-pre-commit
+  #   rev: v1.5.1
+  #   hooks:
+  #     - id: zizmor
+
   # - repo: https://github.com/rhysd/actionlint
   #   rev: v1.7.7
   #   hooks:

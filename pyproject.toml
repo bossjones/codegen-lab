@@ -1,387 +1,134 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = ["setuptools>=61"]
+
+[dependency-groups]
+dev = [
+  "bpython>=0.25",
+  "commitizen>=4.4.1",
+  "coverage[toml]>=7.6.12",
+  "debugpy>=1.8.12",
+  "griffe-inherited-docstrings>=1.1.1",
+  "markdown-emdash>=0.2.0",
+  "mkdocs-api-autonav>=0.2.1",
+  "mkdocs-awesome-pages-plugin>=2.10.1",
+  "mkdocs-ezlinks-plugin>=0.1.14",
+  "mkdocs-gen-files>=0.5.0",
+  "mkdocs-git-authors-plugin>=0.9.4",
+  "mkdocs-git-revision-date-localized-plugin>=1.4.5",
+  "mkdocs-glightbox>=0.4.0",
+  "mkdocs-jupyter>=0.25.1",
+  "mkdocs-literate-nav>=0.6.2",
+  "mkdocs-macros-plugin>=1.3.7",
+  "mkdocs-material>=9.6.6",
+  "mkdocs-mermaid2-plugin>=1.2.1",
+  "mkdocs-open-in-new-tab>=1.0.8",
+  "mkdocs-section-index>=0.3.9",
+  "mkdocs-towncrier>=0.1.4",
+  "mkdocs>=1.6.1",
+  "mkdocstrings[python]>=0.29.1",
+  "neoteroi-mkdocs>=1.1.0",
+  "pdoc>=15.0.1",
+  "pre-commit>=4.1.0",
+  "pydocstyle>=6.3.0",
+  "pylint-per-file-ignores>=1.4.0",
+  "pylint-pydantic>=0.3.5",
+  "pyright>=1.1.395",
+  "pytest-aiohttp>=1.1.0",
+  "pytest-aioresponses>=0.3.0",
+  "pytest-asyncio>=0.25.3",
+  "pytest-clarity>=1.0.1",
+  "pytest-cov>=6.0.0",
+  "pytest-freezegun",
+  "pytest-httpx>=0.35.0",
+  "pytest-ignore-flaky>=2.2.1",
+  "pytest-memray>=1.7.0",
+  "pytest-mock>=3.14.0",
+  "pytest-recording>=0.13.2",
+  "pytest-retry>=1.7.0",
+  "pytest-skip-slow>=0.0.5",
+  "pytest-skipuntil>=0.2.0",
+  "pytest-structlog>=1.1",
+  "pytest-sugar>=1.0.0",
+  "pytest>=8.3.4",
+  "pyupgrade>=3.19.1",
+  "requests-mock>=1.12.1",
+  "respx>=0.22.0",
+  "ruff>=0.9.9",
+  "rust-just>=1.40.0",
+  "towncrier>=24.8.0",
+  "tox-uv>=1.25.0",
+  "types-aiofiles>=24.1.0.20241221",
+  "types-beautifulsoup4>=4.12.0.20250204",
+  "types-mock>=5.1.0.20240425",
+  "types-requests>=2.32.0.20250301",
+  "validate-pyproject[all,store]>=0.23",
+  "watchdog[watchmedo]>=6.0.0",
+]
+
 [project]
-name = "codegen-lab"
-version = "0.1.0"
-description = "Adobe Cursor Tools for Prompting"
-readme = "README.md"
 authors = [
-    { name = "Malcolm Jones", email = "bossjones@theblacktonystark.com" }
+  {email = "bossjones@theblacktonystark.com", name = "Malcolm Jones"},
 ]
-license = { file = "LICENSE.txt" }
-keywords = ["codegen", "lab", "llm", "ai"]
-requires-python = ">=3.12"
 dependencies = [
-    "better-exceptions>=0.3.3",
-    "bpython>=0.25",
-    "files-to-prompt>=0.4",
-    "gitpython>=3.1.44",
-    "google-generativeai>=0.8.4",
-    "langchain>=0.3.20",
-    "langchain-anthropic>=0.3.9",
-    "langchain-aws>=0.2.15",
-    "langchain-community>=0.3.19",
-    "langchain-core>=0.3.43",
-    "langchain-openai>=0.3.8",
-    "langchain-pinecone>=0.0.1",
-    "langchain-text-splitters>=0.3.6",
-    "langgraph>=0.3.5",
-    "langsmith>=0.3.13",
-    "llm>=0.19",
-    "llm-anthropic>=0.12",
-    "llm-cmd>=0.2a0",
-    "llm-jq>=0.1.1",
-    "llm-perplexity>=2025.2.0",
-    "llm-python>=0.1",
-    "llm-sentence-transformers>=0.2",
-    "mcp[cli]>=1.3.0",
-    "pillow>=11.1.0",
-    "psutil>=5.9.5",
-    "pydantic-settings>=2.8.1",
-    "pygithub>=2.6.1",
-    "pytz>=2025.1",
-    "rich>=13.9.4",
-    "spacy>=3.8.4",
-    "tenacity>=9.0.0",
-    "ttok>=0.3",
-    "tzlocal>=5.2",
+  "better-exceptions>=0.3.3",
+  "bpython>=0.25",
+  "files-to-prompt>=0.4",
+  "gitpython>=3.1.44",
+  "google-generativeai>=0.8.4",
+  "langchain-anthropic>=0.3.9",
+  "langchain-aws>=0.2.15",
+  "langchain-community>=0.3.19",
+  "langchain-core>=0.3.43",
+  "langchain-openai>=0.3.8",
+  "langchain-pinecone>=0.0.1",
+  "langchain-text-splitters>=0.3.6",
+  "langchain>=0.3.20",
+  "langgraph>=0.3.5",
+  "langsmith>=0.3.13",
+  "llm-anthropic>=0.12",
+  "llm-cmd>=0.2a0",
+  "llm-jq>=0.1.1",
+  "llm-perplexity>=2025.2.0",
+  "llm-python>=0.1",
+  "llm-sentence-transformers>=0.2",
+  "llm>=0.19",
+  "mcp[cli]>=1.3.0",
+  "pillow>=11.1.0",
+  "psutil>=5.9.5",
+  "pydantic-settings>=2.8.1",
+  "pygithub>=2.6.1",
+  "pytz>=2025.1",
+  "rich>=13.9.4",
+  "spacy>=3.8.4",
+  "tenacity>=9.0.0",
+  "ttok>=0.3",
+  "tzlocal>=5.2",
 ]
-
-[project.urls]
-"Code" = "https://github.com/bossjones/codegen-lab"
-"Issue tracker" = "https://github.com/bossjones/codegen-lab/issues"
-Homepage = "https://github.com/bossjones/codegen-lab"
-Documentation = "https://bossjones.github.io/codegen-lab/codegen_lab.html"
-Repository = "https://github.com/bossjones/codegen-lab"
-"Bug Tracker" = "https://github.com/bossjones/codegen-lab/issues"
-Changelog = "https://github.com/bossjones/codegen-lab/blob/main/CHANGELOG.md"
-
+description = "Adobe Cursor Tools for Prompting"
+keywords = ["ai", "codegen", "lab", "llm"]
+license = {file = "LICENSE.txt"}
+name = "codegen-lab"
+readme = "README.md"
+requires-python = ">=3.12"
+version = "0.1.0"
 
 [project.scripts]
-codegen-lab = "codegen_lab.cli:main"
 clctl = "codegen_lab.cli:main"
+codegen-lab = "codegen_lab.cli:main"
 
-[build-system]
-requires = ["setuptools>=61"]
-build-backend = "setuptools.build_meta"
-
-# UV Workspace Configuration
-[tool.uv.workspace]
-members = ["packages/*"]
+[project.urls]
+"Bug Tracker" = "https://github.com/bossjones/codegen-lab/issues"
+Changelog = "https://github.com/bossjones/codegen-lab/blob/main/CHANGELOG.md"
+"Code" = "https://github.com/bossjones/codegen-lab"
+Documentation = "https://bossjones.github.io/codegen-lab/codegen_lab.html"
+Homepage = "https://github.com/bossjones/codegen-lab"
+"Issue tracker" = "https://github.com/bossjones/codegen-lab/issues"
+Repository = "https://github.com/bossjones/codegen-lab"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
 packages = ["codegen_lab"]
-
-[dependency-groups]
-dev = [
-    "bpython>=0.25",
-    "commitizen>=4.4.1",
-    "coverage[toml]>=7.6.12",
-    "debugpy>=1.8.12",
-    "griffe-inherited-docstrings>=1.1.1",
-    "markdown-emdash>=0.2.0",
-    "mkdocs>=1.6.1",
-    "mkdocs-api-autonav>=0.2.1",
-    "mkdocs-awesome-pages-plugin>=2.10.1",
-    "mkdocs-ezlinks-plugin>=0.1.14",
-    "mkdocs-gen-files>=0.5.0",
-    "mkdocs-git-authors-plugin>=0.9.4",
-    "mkdocs-git-revision-date-localized-plugin>=1.4.5",
-    "mkdocs-glightbox>=0.4.0",
-    "mkdocs-jupyter>=0.25.1",
-    "mkdocs-literate-nav>=0.6.2",
-    "mkdocs-macros-plugin>=1.3.7",
-    "mkdocs-material>=9.6.6",
-    "mkdocs-mermaid2-plugin>=1.2.1",
-    "mkdocs-open-in-new-tab>=1.0.8",
-    "mkdocs-section-index>=0.3.9",
-    "mkdocs-towncrier>=0.1.4",
-    "mkdocstrings[python]>=0.29.1",
-    "neoteroi-mkdocs>=1.1.0",
-    "pdoc>=15.0.1",
-    "pre-commit>=4.1.0",
-    "pydocstyle>=6.3.0",
-    "pylint-per-file-ignores>=1.4.0",
-    "pylint-pydantic>=0.3.5",
-    "pyright>=1.1.395",
-    "pytest>=8.3.4",
-    "pytest-aiohttp>=1.1.0",
-    "pytest-aioresponses>=0.3.0",
-    "pytest-asyncio>=0.25.3",
-    "pytest-clarity>=1.0.1",
-    "pytest-cov>=6.0.0",
-    "pytest-freezegun",
-    "pytest-httpx>=0.35.0",
-    "pytest-ignore-flaky>=2.2.1",
-    "pytest-memray>=1.7.0",
-    "pytest-mock>=3.14.0",
-    "pytest-recording>=0.13.2",
-    "pytest-retry>=1.7.0",
-    "pytest-skip-slow>=0.0.5",
-    "pytest-skipuntil>=0.2.0",
-    "pytest-structlog>=1.1",
-    "pytest-sugar>=1.0.0",
-    "pyupgrade>=3.19.1",
-    "requests-mock>=1.12.1",
-    "respx>=0.22.0",
-    "ruff>=0.9.9",
-    "rust-just>=1.40.0",
-    "towncrier>=24.8.0",
-    "tox-uv>=1.25.0",
-    "types-aiofiles>=24.1.0.20241221",
-    "types-beautifulsoup4>=4.12.0.20250204",
-    "types-mock>=5.1.0.20240425",
-    "types-requests>=2.32.0.20250301",
-    "validate-pyproject[all,store]>=0.23",
-    "watchdog[watchmedo]>=6.0.0",
-]
-
-[tool.uv.sources]
-pytest-freezegun = { git = "https://github.com/bossjones/pytest-freezegun" }
-cursor-rules-mcp-server = { workspace = true }
-
-# Basic settings
-[tool.ruff]
-target-version = "py312"
-line-length = 120
-include = ["*.py", "*.pyi", "*.ipynb"]
-exclude = [
-    ".bzr",
-    ".direnv",
-    ".eggs",
-    ".git",
-    ".git-rewrite",
-    ".hg",
-    ".mypy_cache",
-    ".nox",
-    ".pants.d",
-    ".pytype",
-    ".ruff_cache",
-    ".svn",
-    ".tox",
-    ".venv",
-    "__pypackages__",
-    "_build",
-    "buck-out",
-    "build",
-    "dist",
-    "node_modules",
-    "venv",
-]
-src = ["src", "tests", "packages"]
-
-# Linting settings
-[tool.ruff.lint]
-# Existing configuration
-select = [
-    "D", "E", "F", "UP", "B", "I", "S", "YTT", "A",
-    "C4", "T10", "SIM", "C90", "W", "PGH", "RUF", "TID252"
-]
-ignore = [
-    # Existing ignores
-    "B008", "D417", "E501", "UP006", "UP007", "S101", "N812",
-    # New ignores from errors
-    "D100", "D104", "D107", "D200", "D205", "D211", "D213", "D400", "D401", "D415", "D203",
-    "UP035", "C901", "RUF013", "RUF015", "S603", "S607", "E722",
-    "S110", "SIM102", "SIM118", "PGH003", "B904", "F841", "F401", "SIM108", "SIM103", "RUF022", "D212", "D413"
-]
-dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
-
-# Add per-file configurations
-[tool.ruff.lint.per-file-ignores]
-# Init files
-"**/__init__.py" = ["F401", "D104"]
-# Server/complex files
-"**/fserver.py" = ["C901", "D205", "D200", "D400", "D415"]
-"**/server.py" = ["B904", "PGH003"]
-# Repository analysis
-"**/repository_analyzer.py" = ["SIM102", "C901"]
-# Template handling
-"**/import_templates.py" = ["C901", "D401"]
-"scripts/**" = ["UP038", "RUF005", "D103"]
-
-[tool.ruff.format]
-docstring-code-format = true
-
-[tool.ruff.lint.pydocstyle]
-convention = "google"
-
-# ===========================[ COVERAGE CONFIGURATION ]========================
-[tool.coverage.run]
-branch = true
-parallel = true
-concurrency = ["thread", "greenlet", "multiprocessing"]
-source = ["src"]
-data_file = ".coverage"
-relative_files = true
-
-[tool.coverage.report]
-skip_empty = true
-fail_under = 30
-omit = [
-    "*/test/*",
-    "*/tests/*",
-    "*/studio/*",
-]
-exclude_lines = [
-    '\(Protocol\):$',
-    '\s*\.\.\.$',
-    "@(abc.)?abstractmethod",
-    "@overload",
-    "@typing.overload",
-    "assert_never",
-    "def __repr__",
-    "def __str__",
-    "except ImportError:",
-    "if __name__ == .__main__.:",
-    "if not _PANDAS_AVAILABLE:",
-    "if self.debug",
-    "if settings.DEBUG",
-    "if TYPE_CHECKING:",
-    "if TYPE_CHECKING",
-    "if typing.TYPE_CHECKING:",
-    "pragma: $TEST_PLATFORM no cover",
-    "pragma: no cover",
-    "pragma: py$PYTHON_VERSION no cover",
-    "raise AssertionError",
-    "raise NotImplementedError",
-    "return NotImplemented",
-    "typing.assert_never",
-]
-
-# Additional regexes for lines to exclude from consideration
-exclude_also = [
-    # Don't complain about missing debug-only code:
-    "def __repr__",
-    "if self\\.debug",
-
-    # Don't complain if tests don't hit defensive assertion code:
-    "raise AssertionError",
-    "raise NotImplementedError",
-
-    # Don't complain if non-runnable code isn't run:
-    "if 0:",
-    "if __name__ == .__main__.:",
-
-    # Don't complain about abstract methods, they aren't run:
-    "@(abc\\.)?abstractmethod",
-
-    # Exclude specific exception clauses:
-    "except ValueError:\\n\\s*assume\\(False\\)",
-    # Comments to turn coverage on and off:
-    "no cover: start(?s:.)*?no cover: stop",
-    # A pragma comment that excludes an entire file:
-    "\\A(?s:.*# pragma: exclude file.*)\\Z",
-]
-
-# Ignore source code that can't be found, emitting a warning instead of an exception
-ignore_errors = false
-# When running a summary report, show missing lines
-show_missing = true
-# Don't report files that are 100% covered
-skip_covered = false
-
-[tool.coverage.html]
-directory = "htmlcov"
-
-[tool.coverage.xml]
-output = "cov.xml"
-
-[tool.coverage.paths]
-# The first path is the path on the local filesystem
-# The second path is the path as it appears within the Docker container
-source = [
-    "src/",
-    "/usr/src/python-app",
-]
-
-[tool.pytest.ini_options]
-structlog_keep=["add_logger_name", "StackInfoRenderer", "TimeStamper", "ConsoleRenderer"]
-testpaths = ["tests"]
-
-filterwarnings = [
-    'ignore:configuration option "asyncio_default_fixture_loop_scope" is unset',
-    "ignore::DeprecationWarning:.venv.*:",
-    "ignore::pydantic.warnings.PydanticDeprecatedSince20:.venv.*:",
-    "ignore::DeprecationWarning:discord.*:",
-    "ignore::pydantic.warnings.PydanticDeprecatedSince20:pydantic.*:",
-    "ignore::pydantic.warnings.PydanticDeprecatedSince20:fireworks.*:",
-    "ignore::DeprecationWarning:audioop:",
-    "default::DeprecationWarning:democracy_exe.*:",
-    "default::pydantic.warnings.PydanticDeprecatedSince20:democracy_exe.*:",
-    "ignore::ResourceWarning:anyio.streams.memory",
-    "ignore::ResourceWarning:anyio.streams.stapled",
-    "ignore::ResourceWarning:anyio.abc",
-    "ignore::ResourceWarning:asyncio",
-    "ignore::ResourceWarning:aiohttp",
-    "ignore::ResourceWarning:pytest_asyncio"
-]
-
-pythonpath = "."
-asyncio_mode = "auto"
-asyncio_default_fixture_loop_scope = "function"
-addopts = [
-    # Print runtimes of the slowest tests.
-    '--durations=10',
-    '--durations-min=0.05',
-    '--junitxml=junit/test-results.xml',
-    # Coverage reporting options
-    '--cov=src',
-    '--cov-report=term-missing',
-    '--cov-report=xml:cov.xml',
-    '--cov-report=html:htmlcov',
-    '--cov-report=annotate:cov_annotate',
-    '--cov-branch',
-]
-
-log_cli = false
-log_cli_level = "DEBUG"
-# log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
-# log_cli_format = "%(asctime)s [%(levelname)8s] %(module)s.%(funcName)s:%(lineno)d - %(message)s"
-log_cli_format = "%(asctime)s [%(levelname)8s] [%(threadName)s] %(name)s - %(module)s.%(funcName)s (%(filename)s:%(lineno)d) - %(message)s"
-log_cli_date_format = "%Y-%m-%d %H:%M:%S"
-
-# Enable live logging to a file when needed (very useful when debugging evals)
-log_file = "pytest-accuracy-debug.log"
-log_file_date_format = "%Y-%m-%d %H:%M:%S"
-log_file_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
-log_file_level = "DEBUG"
-
-markers = [
-    "cogs: marks tests that run code that utilizes the cogs module (deselect with '-m \"not cogs\"')",
-    "configonly: marks tests that run code that utilizes the config module (deselect with '-m \"not configonly\"')",
-    "e2e: marks tests dealing with e2e testing (deselect with '-m \"not e2e\"')",
-    "evals: marks tests as evals (run with '-m evals')",
-    "fast: marks tests as fast (run with '-m fast')",
-    "httpclientonly: marks tests that run code that utilizes the http_client module (deselect with '-m \"not httpclientonly\"')",
-    "imgops: marks tests as imgops (run with '-m imgops')",
-    "integration: marks tests dealing with integration testing (deselect with '-m \"not integration\"')",
-    "onboardingonly: marks tests that run code that utilizes the new_dev_onboarding_tool module (deselect with '-m \"not onboardingonly\"')",
-    "utilsonly: marks tests that run code that utilizes any utils module (deselect with '-m \"not utilsonly\"')",
-    "retryonly: marks tests that run code that utilizes the retry module (deselect with '-m \"not retryonly\"')",
-    "skip_in_parallel: marks tests that should be run in serial only (deselect with '-m \"not skip_in_parallel\"')",
-    "slow: marks tests as slow (run with '-m slow')",
-    "toolonly: marks tests that run code that utilizes a Custom Langchain tool module in the tools directory (deselect with '-m \"not toolonly\"')",
-    "unittest: marks tests dealing with unittest (deselect with '-m \"not unittest\"')",
-    "vectorstoronly: marks tests that run code that utilizes the flex_vector_store_tool module (deselect with '-m \"not vectorstoronly\"')",
-    "visiontoolonly: marks tests that run code that utilizes vision_tool.py (deselect with '-m \"not visiontoolonly\"')",
-    "webpagetoolonly: marks tests that run code that utilizes the fetch_webpage_tool module (deselect with '-m \"not webpagetoolonly\"')",
-    "vcronly: marks tests that run code that utilizes the vcr module (deselect with '-m \"not vcronly\"')",
-    "vcrcanary: marks tests that run code that utilizes the vcr test canary module (deselect with '-m \"not vcrcanary\"')",
-    "pgvectoronly: marks tests that run code that utilizes the pgvector module (deselect with '-m \"not pgvectoronly\"')",
-    "services: marks tests that run code that belongs to the services module  (deselect with '-m \"not services\"')",
-    "slower: marks tests that run code that belongs to the slower calls at end of pytest run module  (deselect with '-m \"not slower\"')",
-    "discordonly: marks tests that run code that belongs to the discordonly calls at end of pytest run module  (deselect with '-m \"not discordonly\"')",
-    "cursorgenerated: marks tests that are cursor generated (deselect with '-m \"not cursorgenerated\"')",
-    "aidergenerated: marks tests that are aider generated (deselect with '-m \"not aidergenerated\"')",
-    "asynciotyper: marks tests that are asyncio typer generated (deselect with '-m \"not asynciotyper\"')",
-    "cli: marks tests that are cli generated (deselect with '-m \"not cli\"')",
-    "dropboxonly: marks tests that run code that utilizes the dropbox module (deselect with '-m \"not dropboxonly\"')",
-    "gallerydlonly: marks tests that run code that utilizes the gallery-dl module (deselect with '-m \"not gallerydlonly\"')",
-    "logsonly: marks tests that run code that utilizes the logs module (deselect with '-m \"not logsonly\"')",
-    "chatbotonly: marks tests that run code that utilizes the chatbot module (deselect with '-m \"not chatbotonly\"')",
-    "agenticonly: marks tests that run code that utilizes the agentic module (deselect with '-m \"not agenticonly\"')",
-]
-
 
 [tool.changelog-bot]
 
@@ -392,78 +139,348 @@ verify_pr_number = true
 
 # SOURCE: https://github.com/fmind/mlops-python-package/blob/2a9741f0f97e2213aafb9f3e9bb5b0a9092738cd/pyproject.toml
 [tool.commitizen]
+# Indicates the commit from which to start generating the changelog.
+changelog_start_rev = "v0.1.0"
 # Specifies the commitizen plugin to use for creating conventional commits.
 name = "cz_conventional_commits"
 # Defines the format for version tags (e.g., v1.2.3).
 tag_format = "v$version"
-# Declares the versioning scheme to be compliant with PEP 440.
-version_scheme = "pep440"
-# Specifies that the version is defined in pyproject.toml as per PEP 621.
-version_provider = "pep621"
-# Indicates the commit from which to start generating the changelog.
-changelog_start_rev = "v0.1.0"
 # Automatically update the changelog file on version bumps.
 update_changelog_on_bump = true
+# Specifies that the version is defined in pyproject.toml as per PEP 621.
+version_provider = "pep621"
+# Declares the versioning scheme to be compliant with PEP 440.
+version_scheme = "pep440"
 
+[tool.coverage.html]
+directory = "htmlcov"
+
+[tool.coverage.paths]
+# The first path is the path on the local filesystem
+# The second path is the path as it appears within the Docker container
+source = [
+  "/usr/src/python-app",
+  "src/",
+]
+
+[tool.coverage.report]
+# Additional regexes for lines to exclude from consideration
+exclude_also = [
+  # Don't complain about abstract methods, they aren't run:
+  "@(abc\\.)?abstractmethod",
+  # A pragma comment that excludes an entire file:
+  "\\A(?s:.*# pragma: exclude file.*)\\Z",
+  # Don't complain about missing debug-only code:
+  "def __repr__",
+  # Exclude specific exception clauses:
+  "except ValueError:\\n\\s*assume\\(False\\)",
+  # Don't complain if non-runnable code isn't run:
+  "if 0:",
+  "if __name__ == .__main__.:",
+  "if self\\.debug",
+  # Comments to turn coverage on and off:
+  "no cover: start(?s:.)*?no cover: stop",
+  # Don't complain if tests don't hit defensive assertion code:
+  "raise AssertionError",
+  "raise NotImplementedError",
+]
+exclude_lines = [
+  "@(abc.)?abstractmethod",
+  "@overload",
+  "@typing.overload",
+  "assert_never",
+  "def __repr__",
+  "def __str__",
+  "except ImportError:",
+  "if __name__ == .__main__.:",
+  "if not _PANDAS_AVAILABLE:",
+  "if self.debug",
+  "if settings.DEBUG",
+  "if TYPE_CHECKING",
+  "if TYPE_CHECKING:",
+  "if typing.TYPE_CHECKING:",
+  "pragma: $TEST_PLATFORM no cover",
+  "pragma: no cover",
+  "pragma: py$PYTHON_VERSION no cover",
+  "raise AssertionError",
+  "raise NotImplementedError",
+  "return NotImplemented",
+  "typing.assert_never",
+  '\(Protocol\):$',
+  '\s*\.\.\.$',
+]
+fail_under = 30
+# Ignore source code that can't be found, emitting a warning instead of an exception
+ignore_errors = false
+omit = [
+  "*/studio/*",
+  "*/test/*",
+  "*/tests/*",
+]
+# When running a summary report, show missing lines
+show_missing = true
+# Don't report files that are 100% covered
+skip_covered = false
+skip_empty = true
+
+# ===========================[ COVERAGE CONFIGURATION ]========================
+[tool.coverage.run]
+branch = true
+concurrency = ["greenlet", "multiprocessing", "thread"]
+data_file = ".coverage"
+parallel = true
+relative_files = true
+source = ["src"]
+
+[tool.coverage.xml]
+output = "cov.xml"
+
+[tool.pytest]
+
+[tool.pytest.ini_options]
+addopts = [
+  '--cov-branch',
+  '--cov-report=annotate:cov_annotate',
+  '--cov-report=html:htmlcov',
+  '--cov-report=term-missing',
+  '--cov-report=xml:cov.xml',
+  # Coverage reporting options
+  '--cov=src',
+  '--durations-min=0.05',
+  # Print runtimes of the slowest tests.
+  '--durations=10',
+  '--junitxml=junit/test-results.xml',
+]
+asyncio_default_fixture_loop_scope = "function"
+asyncio_mode = "auto"
+filterwarnings = [
+  "default::DeprecationWarning:democracy_exe.*:",
+  "default::pydantic.warnings.PydanticDeprecatedSince20:democracy_exe.*:",
+  "ignore::DeprecationWarning:.venv.*:",
+  "ignore::DeprecationWarning:audioop:",
+  "ignore::DeprecationWarning:discord.*:",
+  "ignore::pydantic.warnings.PydanticDeprecatedSince20:.venv.*:",
+  "ignore::pydantic.warnings.PydanticDeprecatedSince20:fireworks.*:",
+  "ignore::pydantic.warnings.PydanticDeprecatedSince20:pydantic.*:",
+  "ignore::ResourceWarning:aiohttp",
+  "ignore::ResourceWarning:anyio.abc",
+  "ignore::ResourceWarning:anyio.streams.memory",
+  "ignore::ResourceWarning:anyio.streams.stapled",
+  "ignore::ResourceWarning:asyncio",
+  "ignore::ResourceWarning:pytest_asyncio",
+  'ignore:configuration option "asyncio_default_fixture_loop_scope" is unset',
+]
+log_cli = false
+log_cli_date_format = "%Y-%m-%d %H:%M:%S"
+# log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
+# log_cli_format = "%(asctime)s [%(levelname)8s] %(module)s.%(funcName)s:%(lineno)d - %(message)s"
+log_cli_format = "%(asctime)s [%(levelname)8s] [%(threadName)s] %(name)s - %(module)s.%(funcName)s (%(filename)s:%(lineno)d) - %(message)s"
+log_cli_level = "DEBUG"
+# Enable live logging to a file when needed (very useful when debugging evals)
+log_file = "pytest-accuracy-debug.log"
+log_file_date_format = "%Y-%m-%d %H:%M:%S"
+log_file_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
+log_file_level = "DEBUG"
+markers = [
+  "agenticonly: marks tests that run code that utilizes the agentic module (deselect with '-m \"not agenticonly\"')",
+  "aidergenerated: marks tests that are aider generated (deselect with '-m \"not aidergenerated\"')",
+  "asynciotyper: marks tests that are asyncio typer generated (deselect with '-m \"not asynciotyper\"')",
+  "chatbotonly: marks tests that run code that utilizes the chatbot module (deselect with '-m \"not chatbotonly\"')",
+  "cli: marks tests that are cli generated (deselect with '-m \"not cli\"')",
+  "cogs: marks tests that run code that utilizes the cogs module (deselect with '-m \"not cogs\"')",
+  "configonly: marks tests that run code that utilizes the config module (deselect with '-m \"not configonly\"')",
+  "cursorgenerated: marks tests that are cursor generated (deselect with '-m \"not cursorgenerated\"')",
+  "discordonly: marks tests that run code that belongs to the discordonly calls at end of pytest run module  (deselect with '-m \"not discordonly\"')",
+  "dropboxonly: marks tests that run code that utilizes the dropbox module (deselect with '-m \"not dropboxonly\"')",
+  "e2e: marks tests dealing with e2e testing (deselect with '-m \"not e2e\"')",
+  "evals: marks tests as evals (run with '-m evals')",
+  "fast: marks tests as fast (run with '-m fast')",
+  "gallerydlonly: marks tests that run code that utilizes the gallery-dl module (deselect with '-m \"not gallerydlonly\"')",
+  "httpclientonly: marks tests that run code that utilizes the http_client module (deselect with '-m \"not httpclientonly\"')",
+  "imgops: marks tests as imgops (run with '-m imgops')",
+  "integration: marks tests dealing with integration testing (deselect with '-m \"not integration\"')",
+  "logsonly: marks tests that run code that utilizes the logs module (deselect with '-m \"not logsonly\"')",
+  "onboardingonly: marks tests that run code that utilizes the new_dev_onboarding_tool module (deselect with '-m \"not onboardingonly\"')",
+  "pgvectoronly: marks tests that run code that utilizes the pgvector module (deselect with '-m \"not pgvectoronly\"')",
+  "retryonly: marks tests that run code that utilizes the retry module (deselect with '-m \"not retryonly\"')",
+  "services: marks tests that run code that belongs to the services module  (deselect with '-m \"not services\"')",
+  "skip_in_parallel: marks tests that should be run in serial only (deselect with '-m \"not skip_in_parallel\"')",
+  "slow: marks tests as slow (run with '-m slow')",
+  "slower: marks tests that run code that belongs to the slower calls at end of pytest run module  (deselect with '-m \"not slower\"')",
+  "toolonly: marks tests that run code that utilizes a Custom Langchain tool module in the tools directory (deselect with '-m \"not toolonly\"')",
+  "unittest: marks tests dealing with unittest (deselect with '-m \"not unittest\"')",
+  "utilsonly: marks tests that run code that utilizes any utils module (deselect with '-m \"not utilsonly\"')",
+  "vcrcanary: marks tests that run code that utilizes the vcr test canary module (deselect with '-m \"not vcrcanary\"')",
+  "vcronly: marks tests that run code that utilizes the vcr module (deselect with '-m \"not vcronly\"')",
+  "vectorstoronly: marks tests that run code that utilizes the flex_vector_store_tool module (deselect with '-m \"not vectorstoronly\"')",
+  "visiontoolonly: marks tests that run code that utilizes vision_tool.py (deselect with '-m \"not visiontoolonly\"')",
+  "webpagetoolonly: marks tests that run code that utilizes the fetch_webpage_tool module (deselect with '-m \"not webpagetoolonly\"')",
+]
+pythonpath = "."
+structlog_keep = ["add_logger_name", "ConsoleRenderer", "StackInfoRenderer", "TimeStamper"]
+testpaths = ["tests"]
+
+# Basic settings
+[tool.ruff]
+exclude = [
+  ".bzr",
+  ".direnv",
+  ".eggs",
+  ".git",
+  ".git-rewrite",
+  ".hg",
+  ".mypy_cache",
+  ".nox",
+  ".pants.d",
+  ".pytype",
+  ".ruff_cache",
+  ".svn",
+  ".tox",
+  ".venv",
+  "__pypackages__",
+  "_build",
+  "buck-out",
+  "build",
+  "dist",
+  "node_modules",
+  "venv",
+]
+include = ["*.ipynb", "*.py", "*.pyi"]
+line-length = 120
+src = ["packages", "src", "tests"]
+target-version = "py312"
+
+[tool.ruff.format]
+docstring-code-format = true
+
+# Linting settings
+[tool.ruff.lint]
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+ignore = [
+  # Existing ignores
+  "B008",
+  "B904",
+  "C901",
+  # New ignores from errors
+  "D100",
+  "D104",
+  "D107",
+  "D200",
+  "D203",
+  "D205",
+  "D211",
+  "D212",
+  "D213",
+  "D400",
+  "D401",
+  "D413",
+  "D415",
+  "D417",
+  "E501",
+  "E722",
+  "F401",
+  "F841",
+  "N812",
+  "PGH003",
+  "RUF013",
+  "RUF015",
+  "RUF022",
+  "S101",
+  "S110",
+  "S603",
+  "S607",
+  "SIM102",
+  "SIM103",
+  "SIM108",
+  "SIM118",
+  "UP006",
+  "UP007",
+  "UP035",
+]
+# Existing configuration
+select = [
+  "A",
+  "B",
+  "C4",
+  "C90",
+  "D",
+  "E",
+  "F",
+  "I",
+  "PGH",
+  "RUF",
+  "S",
+  "SIM",
+  "T10",
+  "TID252",
+  "UP",
+  "W",
+  "YTT",
+]
+
+# Add per-file configurations
+[tool.ruff.lint.per-file-ignores]
+# Init files
+"**/__init__.py" = ["D104", "F401"]
+"**/__version__.py" = ["D104", "F401", "RUF"]
+# Server/complex files
+"**/fserver.py" = ["C901", "D200", "D205", "D400", "D415"]
+# Template handling
+"**/import_templates.py" = ["C901", "D401"]
+# Repository analysis
+"**/repository_analyzer.py" = ["C901", "SIM102"]
+"**/server.py" = ["B904", "PGH003"]
+"scripts/**" = ["D103", "PGH004", "RUF005", "UP038"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.tomlsort]
+all = true
+ignore_case = true
+sort_first = ["build-system", "dependency-groups", "project", "project.scripts", "project.urls", "tool.setuptools", "tool.uv.sources", "tool.uv.workspace"]
+spaces_before_inline_comment = 2
+trailing_comma_inline_array = true
 
 [tool.towncrier]
-name = "codegen_lab"
-# The directory storing your news fragments
-directory = "changes"
-
-# The filename of your news file
-filename = "CHANGELOG.md"
-
-# The magic string that towncrier looks for when considering where the release notes should start
-start_string = "<!-- towncrier release notes start -->\n"
-
-# The Python package name of your project - allows name and version to be automatically determined
-package = "codegen_lab"
-
-# The folder your package lives in - some projects might need to use "src"
-# package_dir = "src"
-
-# Path to the template for generating the news file
-# template = "changes/.template.md.jinja"
-template = "changes/towncrier_template.md.jinja"
-
-# The characters used for underlining headers (empty strings mean no underlining)
-underlines = ["", "", ""]
-
-# Format string for the title of your project, using {name}, {version}, and {project_date}
-title_format = "## [{version}](https://github.com/bossjones/codegen-lab/tree/{version}) - {project_date}"
-
-# Format string for rendering the issue/ticket number in newsfiles
-issue_format = "[#{issue}](https://github.com/bossjones/codegen-lab/pull/{issue})"
-
-# Commented out alternative formats for reference
-# issue_format = "[#{issue}](https://github.com/bossjones/codegen-lab/issues/{issue})"
-# title_format = "{version} ({project_date})"
-# underlines = [2, 3]
-
+# Add the filename option extension to news fragment files created with towncrier create
+create_add_extension = true
 # File handling configuration
 # Ensure the content of a news fragment file created with towncrier create ends with an empty line
 create_eof_newline = true
-
-# Add the filename option extension to news fragment files created with towncrier create
-create_add_extension = true
-
+# The directory storing your news fragments
+directory = "changes"
+# The filename of your news file
+filename = "CHANGELOG.md"
+# A case-insensitive list of filenames in the news fragments directory to ignore
+ignore = [
+  ".gitignore",
+  ".gitkeep",
+  ".keep",
+  ".template.md.jinja",
+  "README",
+  "README.md",
+  "README.rst",
+  "simple.md.jinja",
+  "towncrier_template.md.jinja",
+]
+# Format string for rendering the issue/ticket number in newsfiles
+issue_format = "[#{issue}](https://github.com/bossjones/codegen-lab/pull/{issue})"
 # Validation and ignore patterns
 # Ensure the issue name matches a certain regex pattern (digit-only file names in this case)
 issue_pattern = "\\d+"  # Only allow numeric issue IDs
-
-# A case-insensitive list of filenames in the news fragments directory to ignore
-ignore = [
-    ".gitignore",
-    ".gitkeep",
-    ".keep",
-    "README",
-    "README.md",
-    "README.rst",
-    ".template.md.jinja",
-    "towncrier_template.md.jinja",
-    "simple.md.jinja",
-]
+name = "codegen_lab"
+# The Python package name of your project - allows name and version to be automatically determined
+package = "codegen_lab"
+# The magic string that towncrier looks for when considering where the release notes should start
+start_string = "<!-- towncrier release notes start -->\n"
+# Path to the template for generating the news file
+# template = "changes/.template.md.jinja"
+template = "changes/towncrier_template.md.jinja"
+# Format string for the title of your project, using {name}, {version}, and {project_date}
+title_format = "## [{version}](https://github.com/bossjones/codegen-lab/tree/{version}) - {project_date}"
+# The characters used for underlining headers (empty strings mean no underlining)
+underlines = ["", "", ""]
 
 [[tool.towncrier.section]]
 path = ""
@@ -472,83 +489,91 @@ path = ""
 # https://towncrier.readthedocs.io/en/stable/configuration.html#use-a-toml-array-defined-order
 # # Custom fragment types using TOML array for defined order
 [[tool.towncrier.type]]
+# A boolean value indicating whether the fragment should be considered by the towncrier check command.
+check = true
 # The type / category of the fragment.
 directory = "breaking"
 # The description of the fragment type, as it must be included in the news file.
 name = "Breaking Changes"
 # A boolean value indicating whether the fragment contents should be included in the news file.
 showcontent = true
-# A boolean value indicating whether the fragment should be considered by the towncrier check command.
-check = true
 
 [[tool.towncrier.type]]
+check = true
 directory = "feat"
 name = "Features"
 showcontent = true
-check = true
 
 [[tool.towncrier.type]]
+check = true
 directory = "fix"
 name = "Bug Fixes"
 showcontent = true
-check = true
 
 [[tool.towncrier.type]]
+check = true
 directory = "docs"
 name = "Documentation"
 showcontent = true
-check = true
 
 [[tool.towncrier.type]]
+check = true
 directory = "chore"
 name = "Chores"
 showcontent = false
-check = true
 
 [[tool.towncrier.type]]
+check = true
 directory = "refactor"
 name = "Code Refactoring"
 showcontent = false
-check = true
 
 [[tool.towncrier.type]]
+check = true
 directory = "perf"
 name = "Performance Improvements"
 showcontent = true
-check = true
 
 [[tool.towncrier.type]]
+check = true
 directory = "ci"
 name = "CI/CD Improvements"
 showcontent = true
-check = true
 
 [[tool.towncrier.type]]
+check = true
 directory = "deps"
 name = "Dependencies"
 showcontent = true
-check = true
 
 [[tool.towncrier.type]]
+check = true
 directory = "security"
 name = "Security"
 showcontent = true
-check = true
 
 [[tool.towncrier.type]]
+check = true
 directory = "test"
 name = "Testing"
 showcontent = true
-check = true
 
 [[tool.towncrier.type]]
+check = true
 directory = "style"
 name = "Code Style"
 showcontent = true
-check = true
 
 [[tool.towncrier.type]]
+check = true
 directory = "build"
 name = "Build System"
 showcontent = true
-check = true
+
+[tool.uv.sources]
+cursor-rules-mcp-server = {workspace = true}
+pytest-freezegun = {git = "https://github.com/bossjones/pytest-freezegun"}
+
+# UV Workspace Configuration
+[tool.uv.workspace]
+members = ["packages/*"]
