@@ -17,6 +17,7 @@ import "justfiles/uv.just"
 import "justfiles/changelog.just"
 import "justfiles/towncrier.just"
 import "justfiles/validate.just"
+import "justfiles/security.just"
 
 # display help information
 default:
