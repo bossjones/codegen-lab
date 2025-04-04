@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "Autorefs configuration",
+  "markdownDescription": "https://mkdocstrings.github.io/autorefs/",
+  "oneOf": [
+    {
+      "type": "string",
+      "const": "autorefs"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "autorefs": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": true,
+              "description": "Enable or disable the plugin"
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    }
+  ]
+}

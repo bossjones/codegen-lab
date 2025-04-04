@@ -15,6 +15,7 @@
     ],
     "yaml.schemas": {
         "https://taskfile.dev/schema.json": "**/Taskfile.yml",
+        "hack/schemas/mkdocs-material/schema.json": "mkdocs.yml"
         // "https://squidfunk.github.io/mkdocs-material/schema.json": "mkdocs.yml"
     },
     "files.associations": {
@@ -141,8 +142,8 @@
         "!relative scalar",
         "tag:yaml.org,2002:python/name:material.extensions.emoji.to_svg",
         "tag:yaml.org,2002:python/name:material.extensions.emoji.twemoji",
-        "tag:yaml.org,2002:python/name:mermaid2.fence_mermaid_custom",
         "tag:yaml.org,2002:python/name:pymdownx.superfences.fence_code_format",
+        "tag:yaml.org,2002:python/name:mermaid2.fence_mermaid_custom",
         "tag:yaml.org,2002:python/object/apply:pymdownx.slugs.slugify mapping"
     ]
 }

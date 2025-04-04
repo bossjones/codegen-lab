@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "Towncrier configuration",
+  "markdownDescription": "https://towncrier.readthedocs.io/",
+  "oneOf": [
+    {
+      "type": "string",
+      "const": "towncrier"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "towncrier": {
+          "type": "object",
+          "properties": {
+            "draft": {
+              "type": "boolean",
+              "default": true,
+              "description": "Whether to include draft entries"
+            },
+            "draft_title": {
+              "type": "string",
+              "description": "Title for the draft section"
+            },
+            "draft_path": {
+              "type": "string",
+              "description": "Path to the draft news fragments"
+            },
+            "hide_if_empty": {
+              "type": "boolean",
+              "default": true,
+              "description": "Hide the section if there are no entries"
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    }
+  ]
+}

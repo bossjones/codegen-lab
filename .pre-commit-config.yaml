@@ -199,20 +199,20 @@ repos:
           - --py310-plus
           - --keep-runtime-typing
 
-  # Changelog management with towncrier
-  - repo: https://github.com/twisted/towncrier
-    rev: 24.8.0
-    hooks:
-      # Check if news fragments are properly formatted
-      - id: towncrier-check
-        entry: uv run towncrier --draft
-        files: changes/
-      # # Update changelog from news fragments
-      # - id: towncrier-update
-      #   entry: uv run towncrier
-      #   files: changes/
-      #   args:
-      #     - --keep
+  # # Changelog management with towncrier
+  # - repo: https://github.com/twisted/towncrier
+  #   rev: 24.8.0
+  #   hooks:
+  #     # Check if news fragments are properly formatted
+  #     - id: towncrier-check
+  #       entry: uv run towncrier --draft
+  #       files: changes/
+  #     # # Update changelog from news fragments
+  #     # - id: towncrier-update
+  #     #   entry: uv run towncrier
+  #     #   files: changes/
+  #     #   args:
+  #     - --keep
 
   # JSON Schema validation for GitHub workflows
   - repo: https://github.com/python-jsonschema/check-jsonschema

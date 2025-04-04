@@ -8,11 +8,6 @@ This project uses [*towncrier*](https://towncrier.readthedocs.io/) and the chang
 
 <!-- towncrier release notes start -->
 
-## [v0.2.0](https://github.com/bossjones/codegen-lab/tree/v0.2.0) - 2025-04-04
-
-## [v0.2.0](https://github.com/bossjones/codegen-lab/tree/v0.2.0) - 2025-04-04
-No significant changes.
-
 ## [main](https://github.com/bossjones/codegen-lab/tree/main) - 2025-04-04
 
 ## Changes for the Upcoming Release
