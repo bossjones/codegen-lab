@@ -14,14 +14,14 @@ install-taplo:
     # Convert architecture names
     case "${ARCH}" in
         x86_64) ARCH="x86_64" ;;
-        aarch64|arm64) ARCH="arm64" ;;
+        aarch64|arm64) ARCH="aarch64" ;;
         *) echo "Unsupported architecture: ${ARCH}" && exit 1 ;;
     esac
 
     # Set download URL based on OS and architecture
     case "${OS}" in
         darwin)
-            URL="https://github.com/tamasfe/taplo/releases/latest/download/taplo-full-macos-${ARCH}.gz"
+            URL="https://github.com/tamasfe/taplo/releases/latest/download/taplo-full-darwin-${ARCH}.gz"
             ;;
         linux)
             URL="https://github.com/tamasfe/taplo/releases/latest/download/taplo-full-linux-${ARCH}.gz"
