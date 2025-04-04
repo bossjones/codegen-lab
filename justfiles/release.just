@@ -1,3 +1,6 @@
+import "common.just"
+import "variables.just"
+
 # run release tasks
 [group('release')]
 release: release-create
@@ -6,7 +9,7 @@ release: release-create
 [group('release')]
 release-create:
     #!/usr/bin/env zsh
-    VERSION=$({{GREP_CMD}} -h '^version = ".*"' pyproject.toml | {{SED_CMD}} 's/^version = "\(.*\)"/\1/')
+    VERSION=$({{GREP_CMD}} -h '^    version = ".*"' pyproject.toml | {{SED_CMD}} 's/^    version = "\(.*\)"/\1/')
     if [ -z "$VERSION" ]; then
         echo "Error: Could not extract version from pyproject.toml"
         exit 1
@@ -17,7 +20,7 @@ release-create:
 [group('release')]
 release-create-dry-run:
     #!/usr/bin/env zsh
-    VERSION=$({{GREP_CMD}} -h '^version = ".*"' pyproject.toml | {{SED_CMD}} 's/^version = "\(.*\)"/\1/')
+    VERSION=$({{GREP_CMD}} -h '^    version = ".*"' pyproject.toml | {{SED_CMD}} 's/^    version = "\(.*\)"/\1/')
     if [ -z "$VERSION" ]; then
         echo "Error: Could not extract version from pyproject.toml"
         exit 1
@@ -33,7 +36,7 @@ release-list:
 [group('release')]
 release-delete:
     #!/usr/bin/env zsh
-    VERSION=$({{GREP_CMD}} -h '^version = ".*"' pyproject.toml | {{SED_CMD}} 's/^version = "\(.*\)"/\1/')
+    VERSION=$({{GREP_CMD}} -h '^    version = ".*"' pyproject.toml | {{SED_CMD}} 's/^    version = "\(.*\)"/\1/')
     if [ -z "$VERSION" ]; then
         echo "Error: Could not extract version from pyproject.toml"
         exit 1
@@ -44,7 +47,7 @@ release-delete:
 [group('release')]
 release-delete-dry-run:
     #!/usr/bin/env zsh
-    VERSION=$({{GREP_CMD}} -h '^version = ".*"' pyproject.toml | {{SED_CMD}} 's/^version = "\(.*\)"/\1/')
+    VERSION=$({{GREP_CMD}} -h '^    version = ".*"' pyproject.toml | {{SED_CMD}} 's/^    version = "\(.*\)"/\1/')
     if [ -z "$VERSION" ]; then
         echo "Error: Could not extract version from pyproject.toml"
         exit 1

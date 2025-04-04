@@ -8,6 +8,44 @@ This project uses [*towncrier*](https://towncrier.readthedocs.io/) and the chang
 
 <!-- towncrier release notes start -->
 
+## [main](https://github.com/bossjones/codegen-lab/tree/main) - 2025-04-04
+
+## Changes for the Upcoming Release
+
+:::{warning}
+These changes reflect the current [development progress](https://github.com/bossjones/codegen-lab/tree/main) and have **not** been part of a PyPI release yet.
+:::
+
+
+### Features
+
+- Enhance mkdocs_macro_plugin with new macros and update configuration
+  [#24](https://github.com/bossjones/codegen-lab/pull/24)
+- Enhance documentation and tooling support
+  [#24](https://github.com/bossjones/codegen-lab/pull/24)
+- Update MkDocs configuration and enhance documentation styling
+  [#24](https://github.com/bossjones/codegen-lab/pull/24)
+
+
+### Documentation
+
+- Revise README and MinIO documentation for clarity and detail
+  [#24](https://github.com/bossjones/codegen-lab/pull/24)
+
+
+### Chores
+
+-
+  [#24](https://github.com/bossjones/codegen-lab/pull/24),
+  [#24](https://github.com/bossjones/codegen-lab/pull/24),
+  [#20250401220434](https://github.com/bossjones/codegen-lab/pull/20250401220434)
+
+
+### Code Refactoring
+
+-
+  [#24](https://github.com/bossjones/codegen-lab/pull/24)
+
 ## [0.1.0](https://github.com/bossjones/codegen-lab/tree/0.1.0) - 2025-04-03
 
 ## 0.1.0 (2025-04-03)

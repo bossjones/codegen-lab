@@ -3,6 +3,11 @@
 commit-bump:
 	uv run cz bump
 
+# dry run bump package
+[group('commit')]
+commit-bump-dry:
+	uv run cz bump --dry-run
+
 # commit package
 [group('commit')]
 commit-files:
