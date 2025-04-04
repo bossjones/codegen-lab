@@ -137,8 +137,6 @@ plugins: # Enable MkDocs plugins
   - mermaid2 # https://mkdocs-mermaid2.readthedocs.io/
   # - mkdocs_apidoc  # https://ecurtin2.github.io/mkdocs-apidoc/
   # - towncrier
-  # # :
-  # #     hide_if_empty: !ENV [HIDE_EMPTY_TOWNCRIER_DRAFT, true]
   - gen-files:
       scripts:
         - scripts/docs/gen_ref_pages.py
@@ -217,6 +215,9 @@ plugins: # Enable MkDocs plugins
   #   nav_item_prefix: "<code class='doc-symbol doc-symbol-nav doc-symbol-module'></code>"
   #   exclude_private: true
   #   on_implicit_namespace_packge: "warn"
+  - coverage:
+      page_path: coverage # default
+      html_report_dir: htmlcov # default
 
 # Markdown extensions
 # markdown_extensions: # Configure Markdown processing

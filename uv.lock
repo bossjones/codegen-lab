@@ -541,6 +541,7 @@ dev = [
     { name = "mkdocs" },
     { name = "mkdocs-api-autonav" },
     { name = "mkdocs-awesome-pages-plugin" },
+    { name = "mkdocs-coverage" },
     { name = "mkdocs-ezlinks-plugin" },
     { name = "mkdocs-gen-files" },
     { name = "mkdocs-git-authors-plugin" },
@@ -642,6 +643,7 @@ dev = [
     { name = "mkdocs", specifier = ">=1.6.1" },
     { name = "mkdocs-api-autonav", specifier = ">=0.2.1" },
     { name = "mkdocs-awesome-pages-plugin", specifier = ">=2.10.1" },
+    { name = "mkdocs-coverage", specifier = ">=1.1.0" },
     { name = "mkdocs-ezlinks-plugin", specifier = ">=0.1.14" },
     { name = "mkdocs-gen-files", specifier = ">=0.5.0" },
     { name = "mkdocs-git-authors-plugin", specifier = ">=0.9.4" },
@@ -2404,6 +2406,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/92/e8/6ae9c18d8174a5d74ce4ade7a7f4c350955063968bc41ff1e5833cff4a2b/mkdocs_awesome_pages_plugin-2.10.1.tar.gz", hash = "sha256:cda2cb88c937ada81a4785225f20ef77ce532762f4500120b67a1433c1cdbb2f", size = 16303 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/73/61/19fc1e9c579dbfd4e8a402748f1d63cab7aabe8f8d91eb0235e45b32d040/mkdocs_awesome_pages_plugin-2.10.1-py3-none-any.whl", hash = "sha256:c6939dbea37383fc3cf8c0a4e892144ec3d2f8a585e16fdc966b34e7c97042a7", size = 15118 },
+]
+
+[[package]]
+name = "mkdocs-coverage"
+version = "1.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "mkdocs" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/93/64/a9fe7d953d6b02944610a5f7361cdab7532a9f5518ffe890287a9f187f08/mkdocs_coverage-1.1.0.tar.gz", hash = "sha256:a67cc6f6d548b8d6b4b21ecd777f2e3768b49e7a95e54c6df158e7c0f179134c", size = 5514 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/eb/f0/96851f1d9809e1cbd1f1545948d3c4bde7abfa3af5965b7ba8d88ec37c11/mkdocs_coverage-1.1.0-py3-none-any.whl", hash = "sha256:168ca4ebc35ba48309c1f734d0cab0359cd95b205d0d18030d27e73b6a4590d9", size = 6853 },
 ]
 
 [[package]]
