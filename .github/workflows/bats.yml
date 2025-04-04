@@ -55,6 +55,25 @@ jobs:
           tree -L 2 $BATS_LIB_PATH || true
           tree ${{ github.workspace }}/scripts/
 
+      - name: verify bats-support regardless of previous step
+        shell: bash
+        continue-on-error: true
+        env:
+          BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
+          TMP_PATH: ${{ steps.setup-bats.outputs.tmp-path }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install tree -y || true
+          echo "BATS_LIB_PATH: $BATS_LIB_PATH"
+          echo "TMP_PATH: $TMP_PATH"
+
+          echo "Remove duplicate paths from BATS_LIB_PATH"
+          export BATS_LIB_PATH=$(echo "$BATS_LIB_PATH" | awk -v RS=':' '!seen[$0]++' | paste -sd ':' -)
+          echo "BATS_LIB_PATH: $BATS_LIB_PATH"
+
+          tree -L 2 $BATS_LIB_PATH || true
+          tree ${{ github.workspace }}/scripts/
+
       # Setup tmate session for debugging when requested
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
