@@ -13,4 +13,4 @@ changelog-draft:
 [group('changelog')]
 changelog:
     uv run towncrier --version
-    uv run towncrier build --version main
+    uv run towncrier build --version v0.2.0
