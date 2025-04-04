@@ -34,86 +34,86 @@ include = ["**/*.toml"]
 
 # Default formatting rules for all TOML files (using official defaults)
 [[rule]]
-# Apply these rules to all TOML files
-include = ["**/*.toml"]
+  # Apply these rules to all TOML files
+  include = ["**/*.toml"]
 
-[rule.formatting]
-# Vertically align entries (default: false)
-align_entries = true
-# Vertically align consecutive comments after entries and array items (default: true)
-align_comments = true
+  [rule.formatting]
+    # Vertically align entries (default: false)
+    align_entries = true
+    # Vertically align consecutive comments after entries and array items (default: true)
+    align_comments = true
 
-# Array formatting settings
-# Automatically collapse arrays if they fit on one line (default: true)
-array_auto_collapse = true
-# Expand arrays to multiple lines when they exceed column_width (default: true)
-array_auto_expand = true
-# Add trailing commas to multiline arrays (default: true)
-array_trailing_comma = true
-# Remove whitespace padding inside single-line arrays (default: true)
-compact_arrays = true
+    # Array formatting settings
+    # Automatically collapse arrays if they fit on one line (default: true)
+    array_auto_collapse = true
+    # Expand arrays to multiple lines when they exceed column_width (default: true)
+    array_auto_expand = true
+    # Add trailing commas to multiline arrays (default: true)
+    array_trailing_comma = true
+    # Remove whitespace padding inside single-line arrays (default: true)
+    compact_arrays = true
 
-# Table formatting settings
-# Remove whitespace padding inside inline tables (default: false)
-compact_inline_tables = false
-# Expand values inside inline tables (default: true)
-inline_table_expand = true
-# Don't indent subtables even if they come in order (default: false)
-indent_tables = true
-# Don't indent entries under tables (default: false)
-indent_entries = true
-# Use 2 spaces for indentation (default)
-indent_string = "  "
+    # Table formatting settings
+    # Remove whitespace padding inside inline tables (default: false)
+    compact_inline_tables = false
+    # Expand values inside inline tables (default: true)
+    inline_table_expand = true
+    # Don't indent subtables even if they come in order (default: false)
+    indent_tables = true
+    # Don't indent entries under tables (default: false)
+    indent_entries = true
+    # Use 2 spaces for indentation (default)
+    indent_string = "  "
 
-# General formatting settings
-# Don't omit whitespace around = (default: false)
-compact_entries = false
-# Maximum line length before wrapping (default: 80)
-column_width = 80
-# Ensure files end with a newline (default: true)
-trailing_newline = true
-# Maximum number of consecutive blank lines allowed (default: 2)
-allowed_blank_lines = 2
-# Use LF line endings (Unix style) instead of CRLF (default: false)
-crlf = false
-# Don't reorder keys (default: false)
-reorder_keys = true
-# Don't reorder arrays (default: false)
-reorder_arrays = true
+    # General formatting settings
+    # Don't omit whitespace around = (default: false)
+    compact_entries = false
+    # Maximum line length before wrapping (default: 80)
+    column_width = 80
+    # Ensure files end with a newline (default: true)
+    trailing_newline = true
+    # Maximum number of consecutive blank lines allowed (default: 2)
+    allowed_blank_lines = 2
+    # Use LF line endings (Unix style) instead of CRLF (default: false)
+    crlf = false
+    # Don't reorder keys (default: false)
+    reorder_keys = true
+    # Don't reorder arrays (default: false)
+    reorder_arrays = true
 
 # Specific rules for pyproject.toml - keeping Python conventions
 [[rule]]
-include = ["pyproject.toml"]
+  include = ["pyproject.toml"]
 
-[rule.formatting]
-# Use Python standard 4-space indentation
-indent_string = "    "
-reorder_arrays = true
-reorder_keys = true
+  [rule.formatting]
+    # Use Python standard 4-space indentation
+    indent_string  = "    "
+    reorder_arrays = true
+    reorder_keys   = true
 
-# Other settings inherit from default rule
+    # Other settings inherit from default rule
 
 # Special formatting rules for specific sections in pyproject.toml
 [[rule]]
-# Apply these rules only to specific keys in pyproject.toml
-include = ["pyproject.toml"]
-# keys = [
-#     "tool.ruff.lint.select",
-#     "tool.ruff.lint.ignore",
-#     "tool.ruff.lint.extend-select",
-#     "tool.ruff.lint.per-file-ignores",
-#     "tool.rye.dev-dependencies",
-#     "dependencies"
-# ]
+  # Apply these rules only to specific keys in pyproject.toml
+  include = ["pyproject.toml"]
+  # keys = [
+  #     "tool.ruff.lint.select",
+  #     "tool.ruff.lint.ignore",
+  #     "tool.ruff.lint.extend-select",
+  #     "tool.ruff.lint.per-file-ignores",
+  #     "tool.rye.dev-dependencies",
+  #     "dependencies"
+  # ]
 
-[rule.formatting]
-# Use Python standard 4-space indentation
-indent_string = "    "
-# Other settings inherit from default rule
+  [rule.formatting]
+    # Use Python standard 4-space indentation
+    indent_string = "    "
+    # Other settings inherit from default rule
 
 [[rule]]
-exclude = ["pyproject.toml"]
-keys    = ["project"]
+  exclude = ["pyproject.toml"]
+  keys    = ["project"]
 
-[rule.formatting]
-reorder_keys = false
+  [rule.formatting]
+    reorder_keys = false

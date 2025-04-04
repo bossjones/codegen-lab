@@ -138,3 +138,14 @@ fmt-check-dir dir:
     set -euo pipefail
     find {{dir}} -name "*.toml" -type f -exec ./bin/taplo fmt --check {} \;
     echo "Checked formatting of all TOML files in {{dir}} 🔍"
+
+# Check formatting of multiple TOML files
+[group('taplo')]
+fmt-check-all:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "Checking formatting of TOML files... 🔍"
+    ./bin/taplo fmt --check --diff pyproject.toml
+    ./bin/taplo fmt --check --diff taplo.toml
+    ./bin/taplo fmt --check --diff mise.toml
+    echo "All TOML files checked successfully ✨"

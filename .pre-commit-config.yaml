@@ -243,14 +243,42 @@ repos:
       - id: commitizen-branch
         stages: [pre-push]
 
-  # TOML file sorting
-  - repo: https://github.com/pappasam/toml-sort
-    rev: v0.24.2
-    hooks:
-      # Sort pyproject.toml sections
-      - id: toml-sort-fix
-        files: pyproject.toml
+  # # TOML file sorting
+  # - repo: https://github.com/pappasam/toml-sort
+  #   rev: v0.24.2
+  #   hooks:
+  #     # Sort pyproject.toml sections
+  #     - id: toml-sort-fix
+  #       files: pyproject.toml
 
+  - repo: https://github.com/ComPWA/taplo-pre-commit
+    rev: v0.9.3
+    hooks:
+      - id: taplo-format
+        entry: taplo fmt
+        args:
+          - --config=taplo.toml
+          - --diff
+      - id: taplo-lint
+        entry: taplo lint
+        args:
+          - --config=taplo.toml
+          - --default-schema-catalogs
+          - --schema=taplo://taplo.toml
+        files: taplo.toml
+      - id: taplo-lint
+        entry: taplo lint
+        args:
+          - --config=taplo.toml
+          - --default-schema-catalogs
+          - --schema=https://json.schemastore.org/pyproject.json
+        files: pyproject.toml
+      - id: taplo-lint
+        entry: taplo lint
+        args:
+          - --config=taplo.toml
+          - --default-schema-catalogs
+        files: mise.toml
   # Additional pyproject.toml validation
   - repo: https://github.com/abravalheri/validate-pyproject
     rev: v0.24.1
