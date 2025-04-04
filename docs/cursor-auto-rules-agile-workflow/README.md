@@ -91,8 +91,8 @@ For more detailed information about specific aspects of the workflow, please ref
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please read our [Contributing Guidelines](../CONTRIBUTING.md) for details on how to submit pull requests.
+Contributions are welcome! Please read our [Contributing Guidelines](../contributing.md) for details on how to submit pull requests.
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](../../LICENSE) file for details.
