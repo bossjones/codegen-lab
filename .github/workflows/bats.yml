@@ -73,12 +73,13 @@ jobs:
           tree -L 2 $BATS_LIB_PATH || true
           tree $BATS_LIB_PATH || true
 
-      - name: set verify-bats-lib-path regardless of previous step
+      - name: run bats tests
         shell: bash
         continue-on-error: true
         env:
-          BATS_LIB_PATH: ${{ steps.verify-bats-lib-path.outputs.bats-lib-path }}
+          BATS_LIB_PATH: ${{ steps.verify-bats-lib-path.outputs.verify-bats-lib-path }}
           TMP_PATH: ${{ steps.setup-bats.outputs.tmp-path }}
+          DRY_RUN: 1
         run: |
           sudo apt-get update
           sudo apt-get install tree -y || true
@@ -87,6 +88,8 @@ jobs:
 
           tree -L 2 $BATS_LIB_PATH || true
           tree $BATS_LIB_PATH || true
+
+          bats -T -p scripts/tests/bats/run_tests.sh
 
       # Setup tmate session for debugging when requested
       - name: Setup tmate session
