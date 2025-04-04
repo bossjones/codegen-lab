@@ -10,18 +10,20 @@
 <link href="https://bossjones.github.io/codegen-lab/docs/environment/" rel="canonical"/>
 <link href="../cursor-rules-styles/" rel="prev"/>
 <link href="../getting-started/" rel="next"/>
-<link href="../assets/images/favicon.png" rel="icon"/>
+<link href="../images/logo2.png" rel="icon"/>
 <meta content="mkdocs-1.6.1, mkdocs-material-9.6.6" name="generator"/>
 <title>Environment - Codegen Lab</title>
 <link href="../assets/stylesheets/main.8608ea7d.min.css" rel="stylesheet"/>
 <link href="../assets/stylesheets/palette.06af60db.min.css" rel="stylesheet"/>
+<style>:root{--md-admonition-icon--note:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M1 7.775V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 0 1 0 2.474l-5.026 5.026a1.75 1.75 0 0 1-2.474 0l-6.25-6.25A1.75 1.75 0 0 1 1 7.775m1.5 0c0 .066.026.13.073.177l6.25 6.25a.25.25 0 0 0 .354 0l5.025-5.025a.25.25 0 0 0 0-.354l-6.25-6.25a.25.25 0 0 0-.177-.073H2.75a.25.25 0 0 0-.25.25ZM6 5a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/></svg>');--md-admonition-icon--abstract:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M2.5 1.75v11.5c0 .138.112.25.25.25h3.17a.75.75 0 0 1 0 1.5H2.75A1.75 1.75 0 0 1 1 13.25V1.75C1 .784 1.784 0 2.75 0h8.5C12.216 0 13 .784 13 1.75v7.736a.75.75 0 0 1-1.5 0V1.75a.25.25 0 0 0-.25-.25h-8.5a.25.25 0 0 0-.25.25m13.274 9.537zl-4.557 4.45a.75.75 0 0 1-1.055-.008l-1.943-1.95a.75.75 0 0 1 1.062-1.058l1.419 1.425 4.026-3.932a.75.75 0 1 1 1.048 1.074M4.75 4h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5M4 7.75A.75.75 0 0 1 4.75 7h2a.75.75 0 0 1 0 1.5h-2A.75.75 0 0 1 4 7.75"/></svg>');--md-admonition-icon--info:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13M6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75M8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2"/></svg>');--md-admonition-icon--tip:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M3.499.75a.75.75 0 0 1 1.5 0v.996C5.9 2.903 6.793 3.65 7.662 4.376l.24.202c-.036-.694.055-1.422.426-2.163C9.1.873 10.794-.045 12.622.26 14.408.558 16 1.94 16 4.25c0 1.278-.954 2.575-2.44 2.734l.146.508.065.22c.203.701.412 1.455.476 2.226.142 1.707-.4 3.03-1.487 3.898C11.714 14.671 10.27 15 8.75 15h-6a.75.75 0 0 1 0-1.5h1.376a4.5 4.5 0 0 1-.563-1.191 3.84 3.84 0 0 1-.05-2.063 4.65 4.65 0 0 1-2.025-.293.75.75 0 0 1 .525-1.406c1.357.507 2.376-.006 2.698-.318l.009-.01a.747.747 0 0 1 1.06 0 .75.75 0 0 1-.012 1.074c-.912.92-.992 1.835-.768 2.586.221.74.745 1.337 1.196 1.621H8.75c1.343 0 2.398-.296 3.074-.836.635-.507 1.036-1.31.928-2.602-.05-.603-.216-1.224-.422-1.93l-.064-.221c-.12-.407-.246-.84-.353-1.29a2.4 2.4 0 0 1-.507-.441 3.1 3.1 0 0 1-.633-1.248.75.75 0 0 1 1.455-.364c.046.185.144.436.31.627.146.168.353.305.712.305.738 0 1.25-.615 1.25-1.25 0-1.47-.95-2.315-2.123-2.51-1.172-.196-2.227.387-2.706 1.345-.46.92-.27 1.774.019 3.062l.042.19.01.05c.348.443.666.949.94 1.553a.75.75 0 1 1-1.365.62c-.553-1.217-1.32-1.94-2.3-2.768L6.7 5.527c-.814-.68-1.75-1.462-2.692-2.619a3.7 3.7 0 0 0-1.023.88c-.406.495-.663 1.036-.722 1.508.116.122.306.21.591.239.388.038.797-.06 1.032-.19a.75.75 0 0 1 .728 1.31c-.515.287-1.23.439-1.906.373-.682-.067-1.473-.38-1.879-1.193L.75 5.677V5.5c0-.984.48-1.94 1.077-2.664.46-.559 1.05-1.055 1.673-1.353z"/></svg>');--md-admonition-icon--success:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 0 1 .018-1.042.75.75 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0"/></svg>');--md-admonition-icon--question:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13M6.92 6.085h.001a.749.749 0 1 1-1.342-.67c.169-.339.436-.701.849-.977C6.845 4.16 7.369 4 8 4a2.76 2.76 0 0 1 1.637.525c.503.377.863.965.863 1.725 0 .448-.115.83-.329 1.15-.205.307-.47.513-.692.662-.109.072-.22.138-.313.195l-.006.004a6 6 0 0 0-.26.16 1 1 0 0 0-.276.245.75.75 0 0 1-1.248-.832c.184-.264.42-.489.692-.661q.154-.1.313-.195l.007-.004c.1-.061.182-.11.258-.161a1 1 0 0 0 .277-.245C8.96 6.514 9 6.427 9 6.25a.61.61 0 0 0-.262-.525A1.27 1.27 0 0 0 8 5.5c-.369 0-.595.09-.74.187a1 1 0 0 0-.34.398M9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/></svg>');--md-admonition-icon--warning:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0M9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/></svg>');--md-admonition-icon--failure:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M2.344 2.343za8 8 0 0 1 11.314 11.314A8.002 8.002 0 0 1 .234 10.089a8 8 0 0 1 2.11-7.746m1.06 10.253a6.5 6.5 0 1 0 9.108-9.275 6.5 6.5 0 0 0-9.108 9.275M6.03 4.97 8 6.94l1.97-1.97a.749.749 0 0 1 1.275.326.75.75 0 0 1-.215.734L9.06 8l1.97 1.97a.749.749 0 0 1-.326 1.275.75.75 0 0 1-.734-.215L8 9.06l-1.97 1.97a.749.749 0 0 1-1.275-.326.75.75 0 0 1 .215-.734L6.94 8 4.97 6.03a.75.75 0 0 1 .018-1.042.75.75 0 0 1 1.042-.018"/></svg>');--md-admonition-icon--danger:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M9.504.43a1.516 1.516 0 0 1 2.437 1.713L10.415 5.5h2.123c1.57 0 2.346 1.909 1.22 3.004l-7.34 7.142a1.25 1.25 0 0 1-.871.354h-.302a1.25 1.25 0 0 1-1.157-1.723L5.633 10.5H3.462c-1.57 0-2.346-1.909-1.22-3.004zm1.047 1.074L3.286 8.571A.25.25 0 0 0 3.462 9H6.75a.75.75 0 0 1 .694 1.034l-1.713 4.188 6.982-6.793A.25.25 0 0 0 12.538 7H9.25a.75.75 0 0 1-.683-1.06l2.008-4.418.003-.006-.004-.009-.006-.006-.008-.001q-.005 0-.009.004"/></svg>');--md-admonition-icon--bug:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M4.72.22a.75.75 0 0 1 1.06 0l1 .999a3.5 3.5 0 0 1 2.441 0l.999-1a.748.748 0 0 1 1.265.332.75.75 0 0 1-.205.729l-.775.776c.616.63.995 1.493.995 2.444v.327q0 .15-.025.292c.408.14.764.392 1.029.722l1.968-.787a.75.75 0 0 1 .556 1.392L13 7.258V9h2.25a.75.75 0 0 1 0 1.5H13v.5q-.002.615-.141 1.186l2.17.868a.75.75 0 0 1-.557 1.392l-2.184-.873A5 5 0 0 1 8 16a5 5 0 0 1-4.288-2.427l-2.183.873a.75.75 0 0 1-.558-1.392l2.17-.868A5 5 0 0 1 3 11v-.5H.75a.75.75 0 0 1 0-1.5H3V7.258L.971 6.446a.75.75 0 0 1 .558-1.392l1.967.787c.265-.33.62-.583 1.03-.722a1.7 1.7 0 0 1-.026-.292V4.5c0-.951.38-1.814.995-2.444L4.72 1.28a.75.75 0 0 1 0-1.06m.53 6.28a.75.75 0 0 0-.75.75V11a3.5 3.5 0 1 0 7 0V7.25a.75.75 0 0 0-.75-.75ZM6.173 5h3.654A.17.17 0 0 0 10 4.827V4.5a2 2 0 1 0-4 0v.327c0 .096.077.173.173.173"/></svg>');--md-admonition-icon--example:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M5 5.782V2.5h-.25a.75.75 0 0 1 0-1.5h6.5a.75.75 0 0 1 0 1.5H11v3.282l3.666 5.76C15.619 13.04 14.543 15 12.767 15H3.233c-1.776 0-2.852-1.96-1.899-3.458Zm-2.4 6.565a.75.75 0 0 0 .633 1.153h9.534a.75.75 0 0 0 .633-1.153L12.225 10.5h-8.45ZM9.5 2.5h-3V6c0 .143-.04.283-.117.403L4.73 9h6.54L9.617 6.403A.75.75 0 0 1 9.5 6Z"/></svg>');--md-admonition-icon--quote:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M1.75 2.5h10.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5m4 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5m0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5M2.5 7.75v6a.75.75 0 0 1-1.5 0v-6a.75.75 0 0 1 1.5 0"/></svg>');}</style>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
-<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"Roboto";--md-code-font:"JetBrains Mono"}</style>
 <link href="../assets/_mkdocstrings.css" rel="stylesheet"/>
+<link href="../css/neoteroi.cards.css" rel="stylesheet"/>
 <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
 </head>
-<body data-md-color-accent="indigo" data-md-color-primary="indigo" data-md-color-scheme="default" dir="ltr">
+<body data-md-color-accent="deep-purple" data-md-color-primary="deep-purple" data-md-color-scheme="default" dir="ltr">
 <input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
@@ -35,7 +37,7 @@
 <header class="md-header md-header--shadow" data-md-component="header">
 <nav aria-label="Header" class="md-header__inner md-grid">
 <a aria-label="Codegen Lab" class="md-header__button md-logo" data-md-component="logo" href=".." title="Codegen Lab">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+<img alt="logo" src="../images/logo2.png"/>
 </a>
 <label class="md-header__button md-icon" for="__drawer">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
@@ -56,6 +58,17 @@
 </div>
 </div>
 </div>
+<form class="md-header__option" data-md-component="palette">
+<input aria-label="Switch to dark mode" class="md-option" data-md-color-accent="deep-purple" data-md-color-media="(prefers-color-scheme: light)" data-md-color-primary="deep-purple" data-md-color-scheme="default" id="__palette_0" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_1" hidden="" title="Switch to dark mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"></path></svg>
+</label>
+<input aria-label="Switch to light mode" class="md-option" data-md-color-accent="deep-purple" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-primary="deep-purple" data-md-color-scheme="slate" id="__palette_1" name="__palette" type="radio"/>
+<label class="md-header__button md-icon" for="__palette_0" hidden="" title="Switch to light mode">
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5"></path></svg>
+</label>
+</form>
+<script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
 <label class="md-header__button md-icon" for="__search">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
 </label>
@@ -92,7 +105,7 @@
 <div class="md-header__source">
 <a class="md-source" data-md-component="source" href="https://github.com/bossjones/codegen-lab" title="Go to repository">
 <div class="md-source__icon md-icon">
-<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"></path></svg>
+<svg viewbox="0 0 496 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
 </div>
 <div class="md-source__repository">
     bossjones/codegen-lab
@@ -110,14 +123,14 @@
 <nav aria-label="Navigation" class="md-nav md-nav--primary" data-md-level="0">
 <label class="md-nav__title" for="__drawer">
 <a aria-label="Codegen Lab" class="md-nav__button md-logo" data-md-component="logo" href=".." title="Codegen Lab">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+<img alt="logo" src="../images/logo2.png"/>
 </a>
     Codegen Lab
   </label>
 <div class="md-nav__source">
 <a class="md-source" data-md-component="source" href="https://github.com/bossjones/codegen-lab" title="Go to repository">
 <div class="md-source__icon md-icon">
-<svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"></path></svg>
+<svg viewbox="0 0 496 512" xmlns="http://www.w3.org/2000/svg"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
 </div>
 <div class="md-source__repository">
     bossjones/codegen-lab
@@ -161,6 +174,14 @@
 <a class="md-nav__link" href="../contributing/">
 <span class="md-ellipsis">
     Contributing to Codegen Lab
+    
+  </span>
+</a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../coverage/">
+<span class="md-ellipsis">
+    Coverage
     
   </span>
 </a>
@@ -343,16 +364,16 @@
 </a>
 </li>
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" id="__nav_16" type="checkbox"/>
-<label class="md-nav__link" for="__nav_16" id="__nav_16_label" tabindex="0">
+<input class="md-nav__toggle md-toggle" id="__nav_17" type="checkbox"/>
+<label class="md-nav__link" for="__nav_17" id="__nav_17_label" tabindex="0">
 <span class="md-ellipsis">
     Cursor auto rules agile workflow
     
   </span>
 <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-expanded="false" aria-labelledby="__nav_16_label" class="md-nav" data-md-level="1">
-<label class="md-nav__title" for="__nav_16">
+<nav aria-expanded="false" aria-labelledby="__nav_17_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_17">
 <span class="md-nav__icon md-icon"></span>
             Cursor auto rules agile workflow
           </label>
@@ -409,16 +430,16 @@
 </nav>
 </li>
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" id="__nav_17" type="checkbox"/>
-<label class="md-nav__link" for="__nav_17" id="__nav_17_label" tabindex="0">
+<input class="md-nav__toggle md-toggle" id="__nav_18" type="checkbox"/>
+<label class="md-nav__link" for="__nav_18" id="__nav_18_label" tabindex="0">
 <span class="md-ellipsis">
     Developer guide
     
   </span>
 <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-expanded="false" aria-labelledby="__nav_17_label" class="md-nav" data-md-level="1">
-<label class="md-nav__title" for="__nav_17">
+<nav aria-expanded="false" aria-labelledby="__nav_18_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_18">
 <span class="md-nav__icon md-icon"></span>
             Developer guide
           </label>
@@ -443,46 +464,46 @@
 </nav>
 </li>
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" id="__nav_18" type="checkbox"/>
-<label class="md-nav__link" for="__nav_18" id="__nav_18_label" tabindex="0">
+<input class="md-nav__toggle md-toggle" id="__nav_19" type="checkbox"/>
+<label class="md-nav__link" for="__nav_19" id="__nav_19_label" tabindex="0">
 <span class="md-ellipsis">
     External
     
   </span>
 <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-expanded="false" aria-labelledby="__nav_18_label" class="md-nav" data-md-level="1">
-<label class="md-nav__title" for="__nav_18">
+<nav aria-expanded="false" aria-labelledby="__nav_19_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_19">
 <span class="md-nav__icon md-icon"></span>
             External
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" id="__nav_18_1" type="checkbox"/>
-<label class="md-nav__link" for="__nav_18_1" id="__nav_18_1_label" tabindex="0">
+<input class="md-nav__toggle md-toggle" id="__nav_19_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_19_1" id="__nav_19_1_label" tabindex="0">
 <span class="md-ellipsis">
     Software development
     
   </span>
 <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-expanded="false" aria-labelledby="__nav_18_1_label" class="md-nav" data-md-level="2">
-<label class="md-nav__title" for="__nav_18_1">
+<nav aria-expanded="false" aria-labelledby="__nav_19_1_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_19_1">
 <span class="md-nav__icon md-icon"></span>
             Software development
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" id="__nav_18_1_1" type="checkbox"/>
-<label class="md-nav__link" for="__nav_18_1_1" id="__nav_18_1_1_label" tabindex="0">
+<input class="md-nav__toggle md-toggle" id="__nav_19_1_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_19_1_1" id="__nav_19_1_1_label" tabindex="0">
 <span class="md-ellipsis">
     Might be interesting
     
   </span>
 <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-expanded="false" aria-labelledby="__nav_18_1_1_label" class="md-nav" data-md-level="3">
-<label class="md-nav__title" for="__nav_18_1_1">
+<nav aria-expanded="false" aria-labelledby="__nav_19_1_1_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_19_1_1">
 <span class="md-nav__icon md-icon"></span>
             Might be interesting
           </label>
@@ -499,16 +520,16 @@
 </nav>
 </li>
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" id="__nav_18_1_2" type="checkbox"/>
-<label class="md-nav__link" for="__nav_18_1_2" id="__nav_18_1_2_label" tabindex="0">
+<input class="md-nav__toggle md-toggle" id="__nav_19_1_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_19_1_2" id="__nav_19_1_2_label" tabindex="0">
 <span class="md-ellipsis">
     Mkdocs stuff
     
   </span>
 <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-expanded="false" aria-labelledby="__nav_18_1_2_label" class="md-nav" data-md-level="3">
-<label class="md-nav__title" for="__nav_18_1_2">
+<nav aria-expanded="false" aria-labelledby="__nav_19_1_2_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_19_1_2">
 <span class="md-nav__icon md-icon"></span>
             Mkdocs stuff
           </label>
@@ -526,16 +547,16 @@
 </nav>
 </li>
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" id="__nav_18_1_3" type="checkbox"/>
-<label class="md-nav__link" for="__nav_18_1_3" id="__nav_18_1_3_label" tabindex="0">
+<input class="md-nav__toggle md-toggle" id="__nav_19_1_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_19_1_3" id="__nav_19_1_3_label" tabindex="0">
 <span class="md-ellipsis">
     Python
     
   </span>
 <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-expanded="false" aria-labelledby="__nav_18_1_3_label" class="md-nav" data-md-level="3">
-<label class="md-nav__title" for="__nav_18_1_3">
+<nav aria-expanded="false" aria-labelledby="__nav_19_1_3_label" class="md-nav" data-md-level="3">
+<label class="md-nav__title" for="__nav_19_1_3">
 <span class="md-nav__icon md-icon"></span>
             Python
           </label>
@@ -549,16 +570,16 @@
 </a>
 </li>
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" id="__nav_18_1_3_2" type="checkbox"/>
-<label class="md-nav__link" for="__nav_18_1_3_2" id="__nav_18_1_3_2_label" tabindex="0">
+<input class="md-nav__toggle md-toggle" id="__nav_19_1_3_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_19_1_3_2" id="__nav_19_1_3_2_label" tabindex="0">
 <span class="md-ellipsis">
     UV
     
   </span>
 <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-expanded="false" aria-labelledby="__nav_18_1_3_2_label" class="md-nav" data-md-level="4">
-<label class="md-nav__title" for="__nav_18_1_3_2">
+<nav aria-expanded="false" aria-labelledby="__nav_19_1_3_2_label" class="md-nav" data-md-level="4">
+<label class="md-nav__title" for="__nav_19_1_3_2">
 <span class="md-nav__icon md-icon"></span>
             UV
           </label>
@@ -575,31 +596,31 @@
 </nav>
 </li>
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" id="__nav_18_1_3_3" type="checkbox"/>
-<label class="md-nav__link" for="__nav_18_1_3_3" id="__nav_18_1_3_3_label" tabindex="0">
+<input class="md-nav__toggle md-toggle" id="__nav_19_1_3_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_19_1_3_3" id="__nav_19_1_3_3_label" tabindex="0">
 <span class="md-ellipsis">
     Rapid prototyping
     
   </span>
 <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-expanded="false" aria-labelledby="__nav_18_1_3_3_label" class="md-nav" data-md-level="4">
-<label class="md-nav__title" for="__nav_18_1_3_3">
+<nav aria-expanded="false" aria-labelledby="__nav_19_1_3_3_label" class="md-nav" data-md-level="4">
+<label class="md-nav__title" for="__nav_19_1_3_3">
 <span class="md-nav__icon md-icon"></span>
             Rapid prototyping
           </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" id="__nav_18_1_3_3_1" type="checkbox"/>
-<label class="md-nav__link" for="__nav_18_1_3_3_1" id="__nav_18_1_3_3_1_label" tabindex="0">
+<input class="md-nav__toggle md-toggle" id="__nav_19_1_3_3_1" type="checkbox"/>
+<label class="md-nav__link" for="__nav_19_1_3_3_1" id="__nav_19_1_3_3_1_label" tabindex="0">
 <span class="md-ellipsis">
     Dash
     
   </span>
 <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-expanded="false" aria-labelledby="__nav_18_1_3_3_1_label" class="md-nav" data-md-level="5">
-<label class="md-nav__title" for="__nav_18_1_3_3_1">
+<nav aria-expanded="false" aria-labelledby="__nav_19_1_3_3_1_label" class="md-nav" data-md-level="5">
+<label class="md-nav__title" for="__nav_19_1_3_3_1">
 <span class="md-nav__icon md-icon"></span>
             Dash
           </label>
@@ -616,16 +637,16 @@
 </nav>
 </li>
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" id="__nav_18_1_3_3_2" type="checkbox"/>
-<label class="md-nav__link" for="__nav_18_1_3_3_2" id="__nav_18_1_3_3_2_label" tabindex="0">
+<input class="md-nav__toggle md-toggle" id="__nav_19_1_3_3_2" type="checkbox"/>
+<label class="md-nav__link" for="__nav_19_1_3_3_2" id="__nav_19_1_3_3_2_label" tabindex="0">
 <span class="md-ellipsis">
     Gradio
     
   </span>
 <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-expanded="false" aria-labelledby="__nav_18_1_3_3_2_label" class="md-nav" data-md-level="5">
-<label class="md-nav__title" for="__nav_18_1_3_3_2">
+<nav aria-expanded="false" aria-labelledby="__nav_19_1_3_3_2_label" class="md-nav" data-md-level="5">
+<label class="md-nav__title" for="__nav_19_1_3_3_2">
 <span class="md-nav__icon md-icon"></span>
             Gradio
           </label>
@@ -642,16 +663,16 @@
 </nav>
 </li>
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" id="__nav_18_1_3_3_3" type="checkbox"/>
-<label class="md-nav__link" for="__nav_18_1_3_3_3" id="__nav_18_1_3_3_3_label" tabindex="0">
+<input class="md-nav__toggle md-toggle" id="__nav_19_1_3_3_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_19_1_3_3_3" id="__nav_19_1_3_3_3_label" tabindex="0">
 <span class="md-ellipsis">
     Taipy
     
   </span>
 <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-expanded="false" aria-labelledby="__nav_18_1_3_3_3_label" class="md-nav" data-md-level="5">
-<label class="md-nav__title" for="__nav_18_1_3_3_3">
+<nav aria-expanded="false" aria-labelledby="__nav_19_1_3_3_3_label" class="md-nav" data-md-level="5">
+<label class="md-nav__title" for="__nav_19_1_3_3_3">
 <span class="md-nav__icon md-icon"></span>
             Taipy
           </label>
@@ -680,16 +701,16 @@
 </nav>
 </li>
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" id="__nav_19" type="checkbox"/>
-<label class="md-nav__link" for="__nav_19" id="__nav_19_label" tabindex="0">
+<input class="md-nav__toggle md-toggle" id="__nav_20" type="checkbox"/>
+<label class="md-nav__link" for="__nav_20" id="__nav_20_label" tabindex="0">
 <span class="md-ellipsis">
     Mcp servers
     
   </span>
 <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-expanded="false" aria-labelledby="__nav_19_label" class="md-nav" data-md-level="1">
-<label class="md-nav__title" for="__nav_19">
+<nav aria-expanded="false" aria-labelledby="__nav_20_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_20">
 <span class="md-nav__icon md-icon"></span>
             Mcp servers
           </label>
@@ -714,16 +735,16 @@
 </nav>
 </li>
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" id="__nav_20" type="checkbox"/>
-<label class="md-nav__link" for="__nav_20" id="__nav_20_label" tabindex="0">
+<input class="md-nav__toggle md-toggle" id="__nav_21" type="checkbox"/>
+<label class="md-nav__link" for="__nav_21" id="__nav_21_label" tabindex="0">
 <span class="md-ellipsis">
     Tools
     
   </span>
 <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-expanded="false" aria-labelledby="__nav_20_label" class="md-nav" data-md-level="1">
-<label class="md-nav__title" for="__nav_20">
+<nav aria-expanded="false" aria-labelledby="__nav_21_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_21">
 <span class="md-nav__icon md-icon"></span>
             Tools
           </label>
@@ -748,16 +769,16 @@
 </nav>
 </li>
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" id="__nav_21" type="checkbox"/>
-<label class="md-nav__link" for="__nav_21" id="__nav_21_label" tabindex="0">
+<input class="md-nav__toggle md-toggle" id="__nav_22" type="checkbox"/>
+<label class="md-nav__link" for="__nav_22" id="__nav_22_label" tabindex="0">
 <span class="md-ellipsis">
     User guide
     
   </span>
 <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-expanded="false" aria-labelledby="__nav_21_label" class="md-nav" data-md-level="1">
-<label class="md-nav__title" for="__nav_21">
+<nav aria-expanded="false" aria-labelledby="__nav_22_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_22">
 <span class="md-nav__icon md-icon"></span>
             User guide
           </label>
@@ -787,16 +808,16 @@
 </a>
 </li>
 <li class="md-nav__item md-nav__item--nested">
-<input class="md-nav__toggle md-toggle" id="__nav_21_4" type="checkbox"/>
-<label class="md-nav__link" for="__nav_21_4" id="__nav_21_4_label" tabindex="0">
+<input class="md-nav__toggle md-toggle" id="__nav_22_4" type="checkbox"/>
+<label class="md-nav__link" for="__nav_22_4" id="__nav_22_4_label" tabindex="0">
 <span class="md-ellipsis">
     Ai workflows
     
   </span>
 <span class="md-nav__icon md-icon"></span>
 </label>
-<nav aria-expanded="false" aria-labelledby="__nav_21_4_label" class="md-nav" data-md-level="2">
-<label class="md-nav__title" for="__nav_21_4">
+<nav aria-expanded="false" aria-labelledby="__nav_22_4_label" class="md-nav" data-md-level="2">
+<label class="md-nav__title" for="__nav_22_4">
 <span class="md-nav__icon md-icon"></span>
             Ai workflows
           </label>
@@ -918,10 +939,10 @@
 <div class="md-content" data-md-component="content">
 <article class="md-content__inner md-typeset">
 <a class="md-content__button md-icon" href="https://github.com/bossjones/codegen-lab/edit/main/docs/environment.md" title="Edit this page">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z"></path></svg>
 </a>
 <a class="md-content__button md-icon" href="https://github.com/bossjones/codegen-lab/raw/main/docs/environment.md" title="View source of this page">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"></path></svg>
+<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5"></path></svg>
 </a>
 <h1 id="environment">Environment<a class="headerlink" href="#environment" title="Permanent link">¶</a></h1>
 <h2 id="macros-plugin-environment">Macros Plugin Environment<a class="headerlink" href="#macros-plugin-environment" title="Permanent link">¶</a></h2>
@@ -939,7 +960,7 @@
 <tr>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>config</b></td>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>MkDocsConfig</i></td>
-<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">{'config_file_path': '/home/runner/work/codegen-lab/codegen-lab/mkdocs.yml', 'site_name': 'Codegen Lab', 'nav': None, 'pages': None, 'exclude_docs': None, 'draft_docs': None, 'not_in_nav': None, 'site_url': 'https://bossjones.github.io/codegen-lab/docs/', 'site_description': 'AI-powered code generation tooling for efficient software development', 'site_author': 'Malcolm Jones', 'theme': Theme(name='material', dirs=['/home/runner/work/codegen-lab/codegen-lab/true/lib/python3.12/site-packages/material/templates', '/home/runner/work/codegen-lab/codegen-lab/true/lib/python3.12/site-packages/mkdocs/templates'], static_templates={'404.html', 'sitemap.xml'}, name='material', locale=Locale('en'), language='en', direction=None, features=['content.action.edit', 'content.action.view', 'content.code.copy', 'content.code.select', 'content.tooltips', 'navigation.footer', 'search.share'], font={'text': 'Roboto', 'code': 'Roboto Mono'}, icon=None, favicon='assets/images/favicon.png', palette={'primary': 'indigo', 'accent': 'indigo'}), 'docs_dir': '/home/runner/work/codegen-lab/codegen-lab/docs', 'site_dir': '/home/runner/work/codegen-lab/codegen-lab/site', 'copyright': 'Copyright © 2023 - 2025 Malcolm Jones', 'google_analytics': None, 'dev_addr': _IpAddressValue(host='127.0.0.1', port=8000), 'use_directory_urls': True, 'repo_url': 'https://github.com/bossjones/codegen-lab', 'repo_name': 'bossjones/codegen-lab', 'edit_uri_template': None, 'edit_uri': 'edit/main/docs/', 'extra_css': ['assets/_mkdocstrings.css'], 'extra_javascript': [], 'extra_templates': [], 'markdown_extensions': ['toc', 'tables', 'fenced_code', 'abbr', 'admonition', 'attr_list', 'neoteroi.cards', 'pymdownx.details', 'pymdownx.emoji', 'pymdownx.highlight', 'pymdownx.inlinehilite', 'pymdownx.magiclink', 'pymdownx.snippets', 'pymdownx.superfences', 'pymdownx.tabbed', <mkdocs_autorefs._internal.references.autorefsextension 0x7fc21c70b050="" at="" object="">, <mkdocstrings._internal.extension.mkdocstringsextension 0x7fc2197d3620="" at="" object="">], 'mdx_configs': {'toc': {'permalink': True}, 'pymdownx.emoji': {'emoji_index': <function 0x7fc21ae54180="" at="" twemoji="">, 'emoji_generator': <function 0x7fc21aeb9940="" at="" to_svg="">}, 'pymdownx.superfences': {'custom_fences': [{'name': 'mermaid', 'class': 'mermaid', 'format': functools.partial(<function 0x7fc21aa59940="" at="" fence_mermaid="">, custom=True)}]}, 'pymdownx.tabbed': {'alternate_style': True}}, 'strict': False, 'remote_branch': 'gh-pages', 'remote_name': 'origin', 'extra': {'social': [{'icon': 'fontawesome/brands/github', 'link': 'https://github.com/bossjones/codegen-lab'}]}, 'plugins': {'autorefs': <mkdocs_autorefs._internal.plugin.autorefsplugin 0x7fc219f9bc50="" at="" object="">, 'awesome-pages': <mkdocs_awesome_pages_plugin.plugin.awesomepagesplugin 0x7fc219b4d250="" at="" object="">, 'git-revision-date-localized': <mkdocs_git_revision_date_localized_plugin.plugin.gitrevisiondatelocalizedplugin 0x7fc21a373890="" at="" object="">, 'git-authors': <mkdocs_git_authors_plugin.plugin.gitauthorsplugin 0x7fc219a88f80="" at="" object="">, 'macros': <mkdocs_macros.plugin.macrosplugin 0x7fc219b95520="" at="" object="">, 'mermaid2': <mermaid2.plugin.markdownmermaidplugin 0x7fc2199ba5d0="" at="" object="">, 'gen-files': <mkdocs_gen_files.plugin.genfilesplugin 0x7fc219800920="" at="" object="">, 'literate-nav': <mkdocs_literate_nav.plugin.literatenavplugin 0x7fc2193e6ab0="" at="" object="">, 'mkdocstrings': <mkdocstrings._internal.plugin.mkdocstringsplugin 0x7fc2197b1b50="" at="" object="">, 'material/search': <material.plugins.search.plugin.searchplugin 0x7fc21bc1e630="" at="" object="">, 'material/tags': <material.plugins.tags.plugin.tagsplugin 0x7fc2193e6a80="" at="" object="">, 'ezlinks': <mkdocs_ezlinks_plugin.plugin.ezlinksplugin 0x7fc21993cc80="" at="" object="">}, 'hooks': {}, 'watch': ['/home/runner/work/codegen-lab/codegen-lab/mkdocs_macro_plugin.py', '/home/runner/work/codegen-lab/codegen-lab/docs_templates', '/home/runner/work/codegen-lab/codegen-lab/src/codegen_lab', '/home/runner/work/codegen-lab/codegen-lab/README.md', '/home/runner/work/codegen-lab/codegen-lab/CHANGELOG.md', '/home/runner/work/codegen-lab/codegen-lab/changes', '/home/runner/work/codegen-lab/codegen-lab/scripts/docs'], 'validation': {'nav': {'omitted_files': 20, 'not_found': 30, 'absolute_links': 20}, 'links': {'not_found': 30, 'absolute_links': 20, 'unrecognized_links': 20, 'anchors': 20}}}</mkdocs_ezlinks_plugin.plugin.ezlinksplugin></material.plugins.tags.plugin.tagsplugin></material.plugins.search.plugin.searchplugin></mkdocstrings._internal.plugin.mkdocstringsplugin></mkdocs_literate_nav.plugin.literatenavplugin></mkdocs_gen_files.plugin.genfilesplugin></mermaid2.plugin.markdownmermaidplugin></mkdocs_macros.plugin.macrosplugin></mkdocs_git_authors_plugin.plugin.gitauthorsplugin></mkdocs_git_revision_date_localized_plugin.plugin.gitrevisiondatelocalizedplugin></mkdocs_awesome_pages_plugin.plugin.awesomepagesplugin></mkdocs_autorefs._internal.plugin.autorefsplugin></function></function></function></mkdocstrings._internal.extension.mkdocstringsextension></mkdocs_autorefs._internal.references.autorefsextension></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">{'config_file_path': '/home/runner/work/codegen-lab/codegen-lab/mkdocs.yml', 'site_name': 'Codegen Lab', 'nav': None, 'pages': None, 'exclude_docs': None, 'draft_docs': None, 'not_in_nav': None, 'site_url': 'https://bossjones.github.io/codegen-lab/docs/', 'site_description': 'AI-powered code generation tooling for efficient software development', 'site_author': 'Malcolm Jones', 'theme': Theme(name='material', dirs=['/home/runner/work/codegen-lab/codegen-lab/true/lib/python3.12/site-packages/material/templates', '/home/runner/work/codegen-lab/codegen-lab/true/lib/python3.12/site-packages/mkdocs/templates'], static_templates={'sitemap.xml', '404.html'}, name='material', locale=Locale('en'), language='en', direction=None, features=['content.action.edit', 'content.action.view', 'content.code.copy', 'content.code.select', 'content.tooltips', 'navigation.footer', 'search.share'], font={'code': 'JetBrains Mono'}, icon={'repo': 'fontawesome/brands/github', 'edit': 'material/pencil', 'view': 'material/eye', 'admonition': {'note': 'octicons/tag-16', 'abstract': 'octicons/checklist-16', 'info': 'octicons/info-16', 'tip': 'octicons/squirrel-16', 'success': 'octicons/check-16', 'question': 'octicons/question-16', 'warning': 'octicons/alert-16', 'failure': 'octicons/x-circle-16', 'danger': 'octicons/zap-16', 'bug': 'octicons/bug-16', 'example': 'octicons/beaker-16', 'quote': 'octicons/quote-16'}}, favicon='images/logo2.png', logo='images/logo2.png', palette=[{'media': '(prefers-color-scheme: light)', 'scheme': 'default', 'primary': 'deep purple', 'accent': 'deep purple', 'toggle': {'icon': 'material/lightbulb', 'name': 'Switch to dark mode'}}, {'media': '(prefers-color-scheme: dark)', 'scheme': 'slate', 'primary': 'deep purple', 'accent': 'deep purple', 'toggle': {'icon': 'material/lightbulb-outline', 'name': 'Switch to light mode'}}]), 'docs_dir': '/home/runner/work/codegen-lab/codegen-lab/docs', 'site_dir': '/home/runner/work/codegen-lab/codegen-lab/site', 'copyright': 'Copyright © 2023 - 2025 Malcolm Jones', 'google_analytics': None, 'dev_addr': _IpAddressValue(host='127.0.0.1', port=8000), 'use_directory_urls': True, 'repo_url': 'https://github.com/bossjones/codegen-lab', 'repo_name': 'bossjones/codegen-lab', 'edit_uri_template': None, 'edit_uri': 'edit/main/docs/', 'extra_css': ['assets/_mkdocstrings.css', 'css/neoteroi.cards.css'], 'extra_javascript': [], 'extra_templates': [], 'markdown_extensions': ['toc', 'tables', 'fenced_code', 'abbr', 'admonition', 'attr_list', 'def_list', 'footnotes', 'meta', 'md_in_html', 'pymdownx.snippets', 'pymdownx.caret', 'pymdownx.details', 'pymdownx.keys', 'pymdownx.mark', 'pymdownx.superfences', 'pymdownx.tilde', 'pymdownx.emoji', 'pymdownx.betterem', 'pymdownx.tabbed', 'pymdownx.tasklist', 'pymdownx.highlight', 'pymdownx.inlinehilite', 'pymdownx.magiclink', <mkdocs_autorefs._internal.references.autorefsextension 0x7f32e3b2d0a0="" at="" object="">, <mkdocstrings._internal.extension.mkdocstringsextension 0x7f32e3c1a960="" at="" object="">], 'mdx_configs': {'toc': {'permalink': True}, 'pymdownx.superfences': {'custom_fences': [{'name': 'mermaid', 'class': 'mermaid', 'format': functools.partial(<function 0x7f32e47da7a0="" at="" fence_mermaid="">, custom=True)}]}, 'pymdownx.emoji': {'emoji_index': <function 0x7f32e4e24220="" at="" twemoji="">, 'emoji_generator': <function 0x7f32e4e89a80="" at="" to_svg="">}, 'pymdownx.betterem': {'smart_enable': 'all'}, 'pymdownx.tabbed': {'alternate_style': True}, 'pymdownx.tasklist': {'custom_checkbox': True}}, 'strict': False, 'remote_branch': 'gh-pages', 'remote_name': 'origin', 'extra': {'social': [{'icon': 'fontawesome/brands/github', 'link': 'https://github.com/bossjones/codegen-lab'}]}, 'plugins': {'autorefs': <mkdocs_autorefs._internal.plugin.autorefsplugin 0x7f32e48068a0="" at="" object="">, 'awesome-pages': <mkdocs_awesome_pages_plugin.plugin.awesomepagesplugin 0x7f32e4b4d790="" at="" object="">, 'git-revision-date-localized': <mkdocs_git_revision_date_localized_plugin.plugin.gitrevisiondatelocalizedplugin 0x7f32e447eb70="" at="" object="">, 'git-authors': <mkdocs_git_authors_plugin.plugin.gitauthorsplugin 0x7f32e44caa20="" at="" object="">, 'macros': <mkdocs_macros.plugin.macrosplugin 0x7f32e447e9f0="" at="" object="">, 'mermaid2': <mermaid2.plugin.markdownmermaidplugin 0x7f32e4047f80="" at="" object="">, 'gen-files': <mkdocs_gen_files.plugin.genfilesplugin 0x7f32e3ee39b0="" at="" object="">, 'mkdocstrings': <mkdocstrings._internal.plugin.mkdocstringsplugin 0x7f32e3a7cd70="" at="" object="">, 'material/search': <material.plugins.search.plugin.searchplugin 0x7f32e3a7e450="" at="" object="">, 'material/tags': <material.plugins.tags.plugin.tagsplugin 0x7f32e3d053d0="" at="" object="">, 'coverage': <mkdocs_coverage.plugin.mkdocscoverageplugin 0x7f32e3866660="" at="" object="">}, 'hooks': {}, 'watch': ['/home/runner/work/codegen-lab/codegen-lab/mkdocs_macro_plugin.py', '/home/runner/work/codegen-lab/codegen-lab/docs_templates', '/home/runner/work/codegen-lab/codegen-lab/src/codegen_lab', '/home/runner/work/codegen-lab/codegen-lab/README.md', '/home/runner/work/codegen-lab/codegen-lab/CHANGELOG.md', '/home/runner/work/codegen-lab/codegen-lab/changes', '/home/runner/work/codegen-lab/codegen-lab/scripts/docs'], 'validation': {'nav': {'omitted_files': 20, 'not_found': 30, 'absolute_links': 20}, 'links': {'not_found': 30, 'absolute_links': 20, 'unrecognized_links': 20, 'anchors': 20}}}</mkdocs_coverage.plugin.mkdocscoverageplugin></material.plugins.tags.plugin.tagsplugin></material.plugins.search.plugin.searchplugin></mkdocstrings._internal.plugin.mkdocstringsplugin></mkdocs_gen_files.plugin.genfilesplugin></mermaid2.plugin.markdownmermaidplugin></mkdocs_macros.plugin.macrosplugin></mkdocs_git_authors_plugin.plugin.gitauthorsplugin></mkdocs_git_revision_date_localized_plugin.plugin.gitrevisiondatelocalizedplugin></mkdocs_awesome_pages_plugin.plugin.awesomepagesplugin></mkdocs_autorefs._internal.plugin.autorefsplugin></function></function></function></mkdocstrings._internal.extension.mkdocstringsextension></mkdocs_autorefs._internal.references.autorefsextension></td>
 </tr>
 <tr>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>environment</b></td>
@@ -954,7 +975,7 @@
 <tr>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>git</b></td>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>dict</i></td>
-<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">status = True, <b>date</b> [<i>datetime</i>], short_commit = '857a08f', commit = '857a08f19c2779de10680499c49801e99a65b8f1', tag = 'v0.1.0-38-g857a08f', short_tag = 'v0.1.0', author = 'Malcolm Jones (bossjones/Tony Dark)', author_email = 'bossjones@theblacktonystark.com', committer = 'GitHub', committer_email = 'noreply@github.com', date_ISO = 'Thu Apr 3 22:05:10 2025 -0400', message = 'Merge pull request #26 from bossjones/feature-release-workflows\n\nfeat: release workflows', raw = 'commit 857a08f19c2779de10680499c49801e99a65b8f1\nMerge: 425f9be 630e349\nAuthor: Malcolm Jones (bossjones/Tony Dark) <bossjones@theblacktonystark.com>\nDate:   Thu Apr 3 22:05:10 2025 -0400\n\n    Merge pull request #26 from bossjones/feature-release-workflows\n    \n    feat: release workflows', root_dir = '/home/runner/work/codegen-lab/codegen-lab'</bossjones@theblacktonystark.com></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">status = True, <b>date</b> [<i>datetime</i>], short_commit = 'c3f741b', commit = 'c3f741bd709bddd4c259fecb0d915cee13310039', tag = 'v0.2.0-12-gc3f741b', short_tag = 'v0.2.0', author = 'Malcolm Jones (bossjones/Tony Dark)', author_email = 'bossjones@theblacktonystark.com', committer = 'GitHub', committer_email = 'noreply@github.com', date_ISO = 'Fri Apr 4 14:53:43 2025 -0400', message = 'Merge pull request #28 from bossjones/feature-mkdocs-schema\n\nFeat: mkdocs schema', raw = 'commit c3f741bd709bddd4c259fecb0d915cee13310039\nMerge: 0deb39c b2d53a2\nAuthor: Malcolm Jones (bossjones/Tony Dark) <bossjones@theblacktonystark.com>\nDate:   Fri Apr 4 14:53:43 2025 -0400\n\n    Merge pull request #28 from bossjones/feature-mkdocs-schema\n    \n    Feat: mkdocs schema', root_dir = '/home/runner/work/codegen-lab/codegen-lab'</bossjones@theblacktonystark.com></td>
 </tr>
 <tr>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>social</b></td>
@@ -979,12 +1000,12 @@
 <tr>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>navigation</b></td>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>Navigation</i></td>
-<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><mkdocs.structure.nav.navigation 0x7fc21886ee10="" at="" object=""></mkdocs.structure.nav.navigation></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><mkdocs.structure.nav.navigation 0x7f32e2b12360="" at="" object=""></mkdocs.structure.nav.navigation></td>
 </tr>
 <tr>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>files</b></td>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>Files</i></td>
-<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><mkdocs.structure.files.files 0x7fc218bde3c0="" at="" object=""></mkdocs.structure.files.files></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><mkdocs.structure.files.files 0x7f32e2b33c20="" at="" object=""></mkdocs.structure.files.files></td>
 </tr>
 <tr>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>page</b></td>
@@ -1053,7 +1074,7 @@
 <tr>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>theme</b></td>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>Theme</i></td>
-<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">Theme(name='material', dirs=['/home/runner/work/codegen-lab/codegen-lab/true/lib/python3.12/site-packages/material/templates', '/home/runner/work/codegen-lab/codegen-lab/true/lib/python3.12/site-packages/mkdocs/templates'], static_templates={'404.html', 'sitemap.xml'}, name='material', locale=Locale('en'), language='en', direction=None, features=['content.action.edit', 'content.action.view', 'content.code.copy', 'content.code.select', 'content.tooltips', 'navigation.footer', 'search.share'], font={'text': 'Roboto', 'code': 'Roboto Mono'}, icon=None, favicon='assets/images/favicon.png', palette={'primary': 'indigo', 'accent': 'indigo'})</td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">Theme(name='material', dirs=['/home/runner/work/codegen-lab/codegen-lab/true/lib/python3.12/site-packages/material/templates', '/home/runner/work/codegen-lab/codegen-lab/true/lib/python3.12/site-packages/mkdocs/templates'], static_templates={'sitemap.xml', '404.html'}, name='material', locale=Locale('en'), language='en', direction=None, features=['content.action.edit', 'content.action.view', 'content.code.copy', 'content.code.select', 'content.tooltips', 'navigation.footer', 'search.share'], font={'code': 'JetBrains Mono'}, icon={'repo': 'fontawesome/brands/github', 'edit': 'material/pencil', 'view': 'material/eye', 'admonition': {'note': 'octicons/tag-16', 'abstract': 'octicons/checklist-16', 'info': 'octicons/info-16', 'tip': 'octicons/squirrel-16', 'success': 'octicons/check-16', 'question': 'octicons/question-16', 'warning': 'octicons/alert-16', 'failure': 'octicons/x-circle-16', 'danger': 'octicons/zap-16', 'bug': 'octicons/bug-16', 'example': 'octicons/beaker-16', 'quote': 'octicons/quote-16'}}, favicon='images/logo2.png', logo='images/logo2.png', palette=[{'media': '(prefers-color-scheme: light)', 'scheme': 'default', 'primary': 'deep purple', 'accent': 'deep purple', 'toggle': {'icon': 'material/lightbulb', 'name': 'Switch to dark mode'}}, {'media': '(prefers-color-scheme: dark)', 'scheme': 'slate', 'primary': 'deep purple', 'accent': 'deep purple', 'toggle': {'icon': 'material/lightbulb-outline', 'name': 'Switch to light mode'}}])</td>
 </tr>
 <tr>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>docs_dir</b></td>
@@ -1108,7 +1129,7 @@
 <tr>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>extra_css</b></td>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>list</i></td>
-<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">['assets/_mkdocstrings.css']</td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">['assets/_mkdocstrings.css', 'css/neoteroi.cards.css']</td>
 </tr>
 <tr>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>extra_javascript</b></td>
@@ -1123,12 +1144,12 @@
 <tr>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>markdown_extensions</b></td>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>list</i></td>
-<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">['toc', 'tables', 'fenced_code', 'abbr', 'admonition', 'attr_list', 'neoteroi.cards', 'pymdownx.details', 'pymdownx.emoji', 'pymdownx.highlight', 'pymdownx.inlinehilite', 'pymdownx.magiclink', 'pymdownx.snippets', 'pymdownx.superfences', 'pymdownx.tabbed', <mkdocs_autorefs._internal.references.autorefsextension 0x7fc21c70b050="" at="" object="">, <mkdocstrings._internal.extension.mkdocstringsextension 0x7fc2197d3620="" at="" object="">]</mkdocstrings._internal.extension.mkdocstringsextension></mkdocs_autorefs._internal.references.autorefsextension></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">['toc', 'tables', 'fenced_code', 'abbr', 'admonition', 'attr_list', 'def_list', 'footnotes', 'meta', 'md_in_html', 'pymdownx.snippets', 'pymdownx.caret', 'pymdownx.details', 'pymdownx.keys', 'pymdownx.mark', 'pymdownx.superfences', 'pymdownx.tilde', 'pymdownx.emoji', 'pymdownx.betterem', 'pymdownx.tabbed', 'pymdownx.tasklist', 'pymdownx.highlight', 'pymdownx.inlinehilite', 'pymdownx.magiclink', <mkdocs_autorefs._internal.references.autorefsextension 0x7f32e3b2d0a0="" at="" object="">, <mkdocstrings._internal.extension.mkdocstringsextension 0x7f32e3c1a960="" at="" object="">]</mkdocstrings._internal.extension.mkdocstringsextension></mkdocs_autorefs._internal.references.autorefsextension></td>
 </tr>
 <tr>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>mdx_configs</b></td>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>dict</i></td>
-<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>toc</b> [<i>dict</i>], <b>pymdownx.emoji</b> [<i>dict</i>], <b>pymdownx.superfences</b> [<i>dict</i>], <b>pymdownx.tabbed</b> [<i>dict</i>]</td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>toc</b> [<i>dict</i>], <b>pymdownx.superfences</b> [<i>dict</i>], <b>pymdownx.emoji</b> [<i>dict</i>], <b>pymdownx.betterem</b> [<i>dict</i>], <b>pymdownx.tabbed</b> [<i>dict</i>], <b>pymdownx.tasklist</b> [<i>dict</i>]</td>
 </tr>
 <tr>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>strict</b></td>
@@ -1153,7 +1174,7 @@
 <tr>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>plugins</b></td>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>PluginCollection</i></td>
-<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>autorefs</b> [<i>AutorefsPlugin</i>], <b>awesome-pages</b> [<i>AwesomePagesPlugin</i>], <b>git-revision-date-localized</b> [<i>GitRevisionDateLocalizedPlugin</i>], <b>git-authors</b> [<i>GitAuthorsPlugin</i>], <b>macros</b> [<i>MacrosPlugin</i>], <b>mermaid2</b> [<i>MarkdownMermaidPlugin</i>], <b>gen-files</b> [<i>GenFilesPlugin</i>], <b>literate-nav</b> [<i>LiterateNavPlugin</i>], <b>mkdocstrings</b> [<i>MkdocstringsPlugin</i>], <b>material/search</b> [<i>SearchPlugin</i>], <b>material/tags</b> [<i>TagsPlugin</i>], <b>ezlinks</b> [<i>EzLinksPlugin</i>]</td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>autorefs</b> [<i>AutorefsPlugin</i>], <b>awesome-pages</b> [<i>AwesomePagesPlugin</i>], <b>git-revision-date-localized</b> [<i>GitRevisionDateLocalizedPlugin</i>], <b>git-authors</b> [<i>GitAuthorsPlugin</i>], <b>macros</b> [<i>MacrosPlugin</i>], <b>mermaid2</b> [<i>MarkdownMermaidPlugin</i>], <b>gen-files</b> [<i>GenFilesPlugin</i>], <b>mkdocstrings</b> [<i>MkdocstringsPlugin</i>], <b>material/search</b> [<i>SearchPlugin</i>], <b>material/tags</b> [<i>TagsPlugin</i>], <b>coverage</b> [<i>MkDocsCoveragePlugin</i>]</td>
 </tr>
 <tr>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>hooks</b></td>
@@ -1230,27 +1251,27 @@ documentation project:</p>
 <tr>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>date</b></td>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>datetime</i></td>
-<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">datetime.datetime(2025, 4, 3, 22, 5, 10, tzinfo=tzoffset(None, -14400))</td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">datetime.datetime(2025, 4, 4, 14, 53, 43, tzinfo=tzoffset(None, -14400))</td>
 </tr>
 <tr>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>short_commit</b></td>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
-<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'857a08f'</td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'c3f741b'</td>
 </tr>
 <tr>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>commit</b></td>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
-<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'857a08f19c2779de10680499c49801e99a65b8f1'</td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'c3f741bd709bddd4c259fecb0d915cee13310039'</td>
 </tr>
 <tr>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>tag</b></td>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
-<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'v0.1.0-38-g857a08f'</td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'v0.2.0-12-gc3f741b'</td>
 </tr>
 <tr>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>short_tag</b></td>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
-<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'v0.1.0'</td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'v0.2.0'</td>
 </tr>
 <tr>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>author</b></td>
@@ -1275,17 +1296,17 @@ documentation project:</p>
 <tr>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>date_ISO</b></td>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
-<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'Thu Apr 3 22:05:10 2025 -0400'</td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'Fri Apr 4 14:53:43 2025 -0400'</td>
 </tr>
 <tr>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>message</b></td>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
-<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'Merge pull request #26 from bossjones/feature-release-workflows\n\nfeat: release workflows'</td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'Merge pull request #28 from bossjones/feature-mkdocs-schema\n\nFeat: mkdocs schema'</td>
 </tr>
 <tr>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>raw</b></td>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>str</i></td>
-<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'commit 857a08f19c2779de10680499c49801e99a65b8f1\nMerge: 425f9be 630e349\nAuthor: Malcolm Jones (bossjones/Tony Dark) <bossjones@theblacktonystark.com>\nDate:   Thu Apr 3 22:05:10 2025 -0400\n\n    Merge pull request #26 from bossjones/feature-release-workflows\n    \n    feat: release workflows'</bossjones@theblacktonystark.com></td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">'commit c3f741bd709bddd4c259fecb0d915cee13310039\nMerge: 0deb39c b2d53a2\nAuthor: Malcolm Jones (bossjones/Tony Dark) <bossjones@theblacktonystark.com>\nDate:   Fri Apr 4 14:53:43 2025 -0400\n\n    Merge pull request #28 from bossjones/feature-mkdocs-schema\n    \n    Feat: mkdocs schema'</bossjones@theblacktonystark.com></td>
 </tr>
 <tr>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>root_dir</b></td>
@@ -1370,7 +1391,7 @@ documentation project:</p>
 <tr>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><b>meta</b></td>
 <td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px"><i>dict</i></td>
-<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">foo = 'Hello world', <b>bar</b> [<i>dict</i>], bingo = 'Hello', git_revision_date_localized = '<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="April 2, 2025 01:14:46">April 2, 2025 01:14:46</span>', git_revision_date_localized_hash = '34ceecf7712b1bd2e4fa9162e38b540576821e78', git_revision_date_localized_tag = '', git_revision_date_localized_raw_date = 'April 2, 2025', git_revision_date_localized_raw_datetime = 'April 2, 2025 01:14:46', git_revision_date_localized_raw_iso_date = '2025-04-02', git_revision_date_localized_raw_iso_datetime = '2025-04-02 01:14:46', git_revision_date_localized_raw_timeago = '<span class="timeago" datetime="2025-04-02T01:14:46+00:00" locale="en"></span>', git_revision_date_localized_raw_custom = '02. April 2025', git_site_revision_date_localized_hash = '31757d46d2b3be3bdce792263a95baa178ffc184', git_site_revision_date_localized_tag = '', git_site_revision_date_localized = '<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="April 3, 2025 23:02:53">April 3, 2025 23:02:53</span>', git_site_revision_date_localized_raw_date = 'April 3, 2025', git_site_revision_date_localized_raw_datetime = 'April 3, 2025 23:02:53', git_site_revision_date_localized_raw_iso_date = '2025-04-03', git_site_revision_date_localized_raw_iso_datetime = '2025-04-03 23:02:53', git_site_revision_date_localized_raw_timeago = '<span class="timeago" datetime="2025-04-03T23:02:53+00:00" locale="en"></span>', git_site_revision_date_localized_raw_custom = '03. April 2025', git_creation_date_localized_hash = '', git_creation_date_localized_tag = '', git_creation_date_localized = '<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="April 2, 2025 01:14:46">April 2, 2025 01:14:46</span>', git_creation_date_localized_raw_date = 'April 2, 2025', git_creation_date_localized_raw_datetime = 'April 2, 2025 01:14:46', git_creation_date_localized_raw_iso_date = '2025-04-02', git_creation_date_localized_raw_iso_datetime = '2025-04-02 01:14:46', git_creation_date_localized_raw_timeago = '<span class="timeago" datetime="2025-04-02T01:14:46+00:00" locale="en"></span>', git_creation_date_localized_raw_custom = '02. April 2025'</td>
+<td style="vertical-align:top; color:#000000; border:1px solid #DCDCDC; padding: 5px">foo = 'Hello world', <b>bar</b> [<i>dict</i>], bingo = 'Hello', git_revision_date_localized = '<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="April 2, 2025 01:14:46">April 2, 2025 01:14:46</span>', git_revision_date_localized_hash = '34ceecf7712b1bd2e4fa9162e38b540576821e78', git_revision_date_localized_tag = '', git_revision_date_localized_raw_date = 'April 2, 2025', git_revision_date_localized_raw_datetime = 'April 2, 2025 01:14:46', git_revision_date_localized_raw_iso_date = '2025-04-02', git_revision_date_localized_raw_iso_datetime = '2025-04-02 01:14:46', git_revision_date_localized_raw_timeago = '<span class="timeago" datetime="2025-04-02T01:14:46+00:00" locale="en"></span>', git_revision_date_localized_raw_custom = '02. April 2025', git_site_revision_date_localized_hash = '622b6339aff48e9b5a66e73fd7158b49e7939c0d', git_site_revision_date_localized_tag = '', git_site_revision_date_localized = '<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="April 4, 2025 18:37:55">April 4, 2025 18:37:55</span>', git_site_revision_date_localized_raw_date = 'April 4, 2025', git_site_revision_date_localized_raw_datetime = 'April 4, 2025 18:37:55', git_site_revision_date_localized_raw_iso_date = '2025-04-04', git_site_revision_date_localized_raw_iso_datetime = '2025-04-04 18:37:55', git_site_revision_date_localized_raw_timeago = '<span class="timeago" datetime="2025-04-04T18:37:55+00:00" locale="en"></span>', git_site_revision_date_localized_raw_custom = '04. April 2025', git_creation_date_localized_hash = '', git_creation_date_localized_tag = '', git_creation_date_localized = '<span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-datetime" title="April 2, 2025 01:14:46">April 2, 2025 01:14:46</span>', git_creation_date_localized_raw_date = 'April 2, 2025', git_creation_date_localized_raw_datetime = 'April 2, 2025 01:14:46', git_creation_date_localized_raw_iso_date = '2025-04-02', git_creation_date_localized_raw_iso_datetime = '2025-04-02 01:14:46', git_creation_date_localized_raw_timeago = '<span class="timeago" datetime="2025-04-02T01:14:46+00:00" locale="en"></span>', git_creation_date_localized_raw_custom = '02. April 2025'</td>
 </tr>
 </table>
 <p>To have all titles of all pages, use:</p>
@@ -1691,6 +1712,9 @@ documentation project:</p>
 <p>Contributing to Codegen Lab (2025-04-04)</p>
 </li>
 <li>
+<p>None (2025-04-04)</p>
+</li>
+<li>
 <p>Cursor Rules: Style Guide and Migration (2025-04-04)</p>
 </li>
 <li>
@@ -1793,16 +1817,16 @@ documentation project:</p>
 <h2 id="mkdocsyal-file-portion">Mkdocs.yal file (portion)<a class="headerlink" href="#mkdocsyal-file-portion" title="Permanent link">¶</a></h2>
 <div class="highlight"><pre><span></span><code># Basic site information
 
-site_name: Codegen Lab # The name of your documentation site that appears in the header
+# Sets the name of your documentation site that appears in the header
 
-site_description: AI-powered code generation tooling for efficient software development # Meta description for SEO
+site_name: Codegen Lab
 
-site_author: Malcolm Jones # Site author information
+# Provides a meta description for SEO purposes
 
-# For GitHub Pages deployment
+site_description: AI-powered code generation tooling for efficient software development
 </code></pre></div>
 <h2 id="list-env-object">List env object<a class="headerlink" href="#list-env-object" title="Permanent link">¶</a></h2>
-<div class="highlight"><pre><span></span><code>{'J2_STRING': &lt;mkdocs.config.config_options.Type object at 0x7fc219df1910&gt;,
+<div class="highlight"><pre><span></span><code>{'J2_STRING': &lt;mkdocs.config.config_options.Type object at 0x7f32e3eedd60&gt;,
  'conf': {'config_file_path': '/home/runner/work/codegen-lab/codegen-lab/mkdocs.yml',
           'copyright': 'Copyright &amp;copy; 2023 - 2025 Malcolm Jones',
           'dev_addr': _IpAddressValue(host='127.0.0.1', port=8000),
@@ -1813,7 +1837,7 @@ site_author: Malcolm Jones # Site author information
           'exclude_docs': None,
           'extra': {'social': [{'icon': 'fontawesome/brands/github',
                                 'link': 'https://github.com/bossjones/codegen-lab'}]},
-          'extra_css': ['assets/_mkdocstrings.css'],
+          'extra_css': ['assets/_mkdocstrings.css', 'css/neoteroi.cards.css'],
           'extra_javascript': [],
           'extra_templates': [],
           'google_analytics': None,
@@ -1824,76 +1848,49 @@ site_author: Malcolm Jones # Site author information
                                   'abbr',
                                   'admonition',
                                   'attr_list',
-                                  'neoteroi.cards',
+                                  'def_list',
+                                  'footnotes',
+                                  'meta',
+                                  'md_in_html',
+                                  'pymdownx.snippets',
+                                  'pymdownx.caret',
                                   'pymdownx.details',
+                                  'pymdownx.keys',
+                                  'pymdownx.mark',
+                                  'pymdownx.superfences',
+                                  'pymdownx.tilde',
                                   'pymdownx.emoji',
+                                  'pymdownx.betterem',
+                                  'pymdownx.tabbed',
+                                  'pymdownx.tasklist',
                                   'pymdownx.highlight',
                                   'pymdownx.inlinehilite',
                                   'pymdownx.magiclink',
-                                  'pymdownx.snippets',
-                                  'pymdownx.superfences',
-                                  'pymdownx.tabbed',
-                                  &lt;mkdocs_autorefs._internal.references.AutorefsExtension object at 0x7fc21c70b050&gt;,
-                                  &lt;mkdocstrings._internal.extension.MkdocstringsExtension object at 0x7fc2197d3620&gt;],
-          'mdx_configs': {'pymdownx.emoji': {'emoji_generator': &lt;function to_svg at 0x7fc21aeb9940&gt;,
-                                             'emoji_index': &lt;function twemoji at 0x7fc21ae54180&gt;},
+                                  &lt;mkdocs_autorefs._internal.references.AutorefsExtension object at 0x7f32e3b2d0a0&gt;,
+                                  &lt;mkdocstrings._internal.extension.MkdocstringsExtension object at 0x7f32e3c1a960&gt;],
+          'mdx_configs': {'pymdownx.betterem': {'smart_enable': 'all'},
+                          'pymdownx.emoji': {'emoji_generator': &lt;function to_svg at 0x7f32e4e89a80&gt;,
+                                             'emoji_index': &lt;function twemoji at 0x7f32e4e24220&gt;},
                           'pymdownx.superfences': {'custom_fences': [{'class': 'mermaid',
-                                                                      'format': functools.partial(&lt;function fence_mermaid at 0x7fc21aa59940&gt;, custom=True),
+                                                                      'format': functools.partial(&lt;function fence_mermaid at 0x7f32e47da7a0&gt;, custom=True),
                                                                       'name': 'mermaid'}]},
                           'pymdownx.tabbed': {'alternate_style': True},
+                          'pymdownx.tasklist': {'custom_checkbox': True},
                           'toc': {'permalink': True}},
-          'nav': [{None: 'README.md'},
-                  {None: 'api-reference.md'},
-                  {None: 'changelog.md'},
-                  {None: 'comitizen.md'},
-                  {None: 'contributing.md'},
-                  {None: 'cursor-rules-styles.md'},
-                  {None: 'environment.md'},
-                  {None: 'getting-started.md'},
-                  {None: 'info.md'},
-                  {None: 'inspiration.md'},
-                  {None: 'pre_commit.md'},
-                  {None: 'prompt_library_mcp_server.md'},
-                  {None: 'rule-deps.md'},
-                  {None: 'troubleshooting.md'},
-                  {None: 'workflow-rules.md'},
-                  {'Cursor auto rules agile workflow': [{None: 'cursor-auto-rules-agile-workflow/README.md'},
-                                                        {None: 'cursor-auto-rules-agile-workflow/agile-readme.md'},
-                                                        {None: 'cursor-auto-rules-agile-workflow/cursor-rules-readme.md'},
-                                                        {None: 'cursor-auto-rules-agile-workflow/templates-readme.md'},
-                                                        {None: 'cursor-auto-rules-agile-workflow/workflows-readme.md'},
-                                                        {None: 'cursor-auto-rules-agile-workflow/xnotes-readme.md'}]},
-                  {'Developer guide': [{None: 'developer-guide/Justfile.md'},
-                                       {None: 'developer-guide/releases.md'}]},
-                  {'External': [{'Software development': [{'Might be interesting': [{None: 'external/software_development/might_be_interesting/minio.md'}]},
-                                                          {'Mkdocs stuff': [{None: 'external/software_development/mkdocs_stuff/diagrams.md'}]},
-                                                          {'Python': [{None: 'external/software_development/python/pyenv.md'},
-                                                                      {'UV': [{None: 'external/software_development/python/UV/00_index.md'}]},
-                                                                      {'Rapid prototyping': [{'Dash': [{None: 'external/software_development/python/rapid_prototyping/dash/index.md'}]},
-                                                                                             {'Gradio': [{None: 'external/software_development/python/rapid_prototyping/gradio/index.md'}]},
-                                                                                             {'Taipy': [{None: 'external/software_development/python/rapid_prototyping/taipy/index.md'}]}]}]}]}]},
-                  {'Mcp servers': [{None: 'mcp-servers/prompt_library_mcp.md'},
-                                   {None: 'mcp-servers/prompt_library_mcp_server_tools.md'}]},
-                  {'Tools': [{None: 'tools/cursor-rules.md'},
-                             {None: 'tools/uv-workspace.md'}]},
-                  {'User guide': [{None: 'user-guide/configuration.md'},
-                                  {None: 'user-guide/docs-automation.md'},
-                                  {None: 'user-guide/installation.md'},
-                                  {'Ai workflows': [{None: 'user-guide/ai-workflows/autogenerate_cursor_rules.md'}]}]}],
+          'nav': None,
           'not_in_nav': None,
           'pages': None,
-          'plugins': {'autorefs': &lt;mkdocs_autorefs._internal.plugin.AutorefsPlugin object at 0x7fc219f9bc50&gt;,
-                      'awesome-pages': &lt;mkdocs_awesome_pages_plugin.plugin.AwesomePagesPlugin object at 0x7fc219b4d250&gt;,
-                      'ezlinks': &lt;mkdocs_ezlinks_plugin.plugin.EzLinksPlugin object at 0x7fc21993cc80&gt;,
-                      'gen-files': &lt;mkdocs_gen_files.plugin.GenFilesPlugin object at 0x7fc219800920&gt;,
-                      'git-authors': &lt;mkdocs_git_authors_plugin.plugin.GitAuthorsPlugin object at 0x7fc219a88f80&gt;,
-                      'git-revision-date-localized': &lt;mkdocs_git_revision_date_localized_plugin.plugin.GitRevisionDateLocalizedPlugin object at 0x7fc21a373890&gt;,
-                      'literate-nav': &lt;mkdocs_literate_nav.plugin.LiterateNavPlugin object at 0x7fc2193e6ab0&gt;,
-                      'macros': &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7fc219b95520&gt;,
-                      'material/search': &lt;material.plugins.search.plugin.SearchPlugin object at 0x7fc21bc1e630&gt;,
-                      'material/tags': &lt;material.plugins.tags.plugin.TagsPlugin object at 0x7fc2193e6a80&gt;,
-                      'mermaid2': &lt;mermaid2.plugin.MarkdownMermaidPlugin object at 0x7fc2199ba5d0&gt;,
-                      'mkdocstrings': &lt;mkdocstrings._internal.plugin.MkdocstringsPlugin object at 0x7fc2197b1b50&gt;},
+          'plugins': {'autorefs': &lt;mkdocs_autorefs._internal.plugin.AutorefsPlugin object at 0x7f32e48068a0&gt;,
+                      'awesome-pages': &lt;mkdocs_awesome_pages_plugin.plugin.AwesomePagesPlugin object at 0x7f32e4b4d790&gt;,
+                      'coverage': &lt;mkdocs_coverage.plugin.MkDocsCoveragePlugin object at 0x7f32e3866660&gt;,
+                      'gen-files': &lt;mkdocs_gen_files.plugin.GenFilesPlugin object at 0x7f32e3ee39b0&gt;,
+                      'git-authors': &lt;mkdocs_git_authors_plugin.plugin.GitAuthorsPlugin object at 0x7f32e44caa20&gt;,
+                      'git-revision-date-localized': &lt;mkdocs_git_revision_date_localized_plugin.plugin.GitRevisionDateLocalizedPlugin object at 0x7f32e447eb70&gt;,
+                      'macros': &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f32e447e9f0&gt;,
+                      'material/search': &lt;material.plugins.search.plugin.SearchPlugin object at 0x7f32e3a7e450&gt;,
+                      'material/tags': &lt;material.plugins.tags.plugin.TagsPlugin object at 0x7f32e3d053d0&gt;,
+                      'mermaid2': &lt;mermaid2.plugin.MarkdownMermaidPlugin object at 0x7f32e4047f80&gt;,
+                      'mkdocstrings': &lt;mkdocstrings._internal.plugin.MkdocstringsPlugin object at 0x7f32e3a7cd70&gt;},
           'remote_branch': 'gh-pages',
           'remote_name': 'origin',
           'repo_name': 'bossjones/codegen-lab',
@@ -1905,7 +1902,7 @@ site_author: Malcolm Jones # Site author information
           'site_name': 'Codegen Lab',
           'site_url': 'https://bossjones.github.io/codegen-lab/docs/',
           'strict': False,
-          'theme': Theme(name='material', dirs=['/home/runner/work/codegen-lab/codegen-lab/true/lib/python3.12/site-packages/material/templates', '/home/runner/work/codegen-lab/codegen-lab/true/lib/python3.12/site-packages/mkdocs/templates'], static_templates={'404.html', 'sitemap.xml'}, name='material', locale=Locale('en'), language='en', direction=None, features=['content.action.edit', 'content.action.view', 'content.code.copy', 'content.code.select', 'content.tooltips', 'navigation.footer', 'search.share'], font={'text': 'Roboto', 'code': 'Roboto Mono'}, icon=None, favicon='assets/images/favicon.png', palette={'primary': 'indigo', 'accent': 'indigo'}),
+          'theme': Theme(name='material', dirs=['/home/runner/work/codegen-lab/codegen-lab/true/lib/python3.12/site-packages/material/templates', '/home/runner/work/codegen-lab/codegen-lab/true/lib/python3.12/site-packages/mkdocs/templates'], static_templates={'sitemap.xml', '404.html'}, name='material', locale=Locale('en'), language='en', direction=None, features=['content.action.edit', 'content.action.view', 'content.code.copy', 'content.code.select', 'content.tooltips', 'navigation.footer', 'search.share'], font={'code': 'JetBrains Mono'}, icon={'repo': 'fontawesome/brands/github', 'edit': 'material/pencil', 'view': 'material/eye', 'admonition': {'note': 'octicons/tag-16', 'abstract': 'octicons/checklist-16', 'info': 'octicons/info-16', 'tip': 'octicons/squirrel-16', 'success': 'octicons/check-16', 'question': 'octicons/question-16', 'warning': 'octicons/alert-16', 'failure': 'octicons/x-circle-16', 'danger': 'octicons/zap-16', 'bug': 'octicons/bug-16', 'example': 'octicons/beaker-16', 'quote': 'octicons/quote-16'}}, favicon='images/logo2.png', logo='images/logo2.png', palette=[{'media': '(prefers-color-scheme: light)', 'scheme': 'default', 'primary': 'deep purple', 'accent': 'deep purple', 'toggle': {'icon': 'material/lightbulb', 'name': 'Switch to dark mode'}}, {'media': '(prefers-color-scheme: dark)', 'scheme': 'slate', 'primary': 'deep purple', 'accent': 'deep purple', 'toggle': {'icon': 'material/lightbulb-outline', 'name': 'Switch to light mode'}}]),
           'use_directory_urls': True,
           'validation': {'links': {'absolute_links': 20,
                                    'anchors': 20,
@@ -1938,49 +1935,49 @@ site_author: Malcolm Jones # Site author information
             'verbose': True},
  'config_class': &lt;class 'mkdocs.config.base.LegacyConfig'&gt;,
  'config_scheme': (('module_name',
-                    &lt;mkdocs.config.config_options.Type object at 0x7fc2198220f0&gt;),
+                    &lt;mkdocs.config.config_options.Type object at 0x7f32e3eb04d0&gt;),
                    ('modules',
-                    &lt;mkdocs.config.config_options.Type object at 0x7fc219822120&gt;),
+                    &lt;mkdocs.config.config_options.Type object at 0x7f32e3d04140&gt;),
                    ('render_by_default',
-                    &lt;mkdocs.config.config_options.Type object at 0x7fc219842390&gt;),
+                    &lt;mkdocs.config.config_options.Type object at 0x7f32e3d04170&gt;),
                    ('force_render_paths',
-                    &lt;mkdocs.config.config_options.Type object at 0x7fc219df1910&gt;),
+                    &lt;mkdocs.config.config_options.Type object at 0x7f32e3eedd60&gt;),
                    ('include_dir',
-                    &lt;mkdocs.config.config_options.Type object at 0x7fc219df1910&gt;),
+                    &lt;mkdocs.config.config_options.Type object at 0x7f32e3eedd60&gt;),
                    ('include_yaml',
-                    &lt;mkdocs.config.config_options.Type object at 0x7fc2198428a0&gt;),
+                    &lt;mkdocs.config.config_options.Type object at 0x7f32e3d04230&gt;),
                    ('j2_block_start_string',
-                    &lt;mkdocs.config.config_options.Type object at 0x7fc219df1910&gt;),
+                    &lt;mkdocs.config.config_options.Type object at 0x7f32e3eedd60&gt;),
                    ('j2_block_end_string',
-                    &lt;mkdocs.config.config_options.Type object at 0x7fc219df1910&gt;),
+                    &lt;mkdocs.config.config_options.Type object at 0x7f32e3eedd60&gt;),
                    ('j2_variable_start_string',
-                    &lt;mkdocs.config.config_options.Type object at 0x7fc219df1910&gt;),
+                    &lt;mkdocs.config.config_options.Type object at 0x7f32e3eedd60&gt;),
                    ('j2_variable_end_string',
-                    &lt;mkdocs.config.config_options.Type object at 0x7fc219df1910&gt;),
+                    &lt;mkdocs.config.config_options.Type object at 0x7f32e3eedd60&gt;),
                    ('j2_comment_start_string',
-                    &lt;mkdocs.config.config_options.Type object at 0x7fc219df1910&gt;),
+                    &lt;mkdocs.config.config_options.Type object at 0x7f32e3eedd60&gt;),
                    ('j2_comment_end_string',
-                    &lt;mkdocs.config.config_options.Type object at 0x7fc219df1910&gt;),
+                    &lt;mkdocs.config.config_options.Type object at 0x7f32e3eedd60&gt;),
                    ('on_undefined',
-                    &lt;mkdocs.config.config_options.Type object at 0x7fc219842cc0&gt;),
+                    &lt;mkdocs.config.config_options.Type object at 0x7f32e3d1c440&gt;),
                    ('on_error_fail',
-                    &lt;mkdocs.config.config_options.Type object at 0x7fc219842f60&gt;),
+                    &lt;mkdocs.config.config_options.Type object at 0x7f32e3d1c8f0&gt;),
                    ('verbose',
-                    &lt;mkdocs.config.config_options.Type object at 0x7fc219842cf0&gt;)),
- 'env': &lt;jinja2.environment.Environment object at 0x7fc21934eba0&gt;,
- 'filter': &lt;bound method MacrosPlugin.filter of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7fc219b95520&gt;&gt;,
- 'filters': {'pretty': &lt;function define_env.&lt;locals&gt;.pretty at 0x7fc219362a20&gt;,
-             'relative_url': &lt;function define_env.&lt;locals&gt;.relative_url at 0x7fc219362ca0&gt;},
- 'force_page_rendering': &lt;bound method MacrosPlugin.force_page_rendering of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7fc219b95520&gt;&gt;,
- 'load_config': &lt;bound method BasePlugin.load_config of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7fc219b95520&gt;&gt;,
- 'macro': &lt;bound method MacrosPlugin.macro of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7fc219b95520&gt;&gt;,
- 'macros': {'context': &lt;function define_env.&lt;locals&gt;.context at 0x7fc219362ac0&gt;,
-            'doc_env': &lt;function define_env.&lt;locals&gt;.doc_env at 0x7fc219362fc0&gt;,
-            'fix_url': &lt;function fix_url at 0x7fc219828720&gt;,
-            'include_file': &lt;function define_env.&lt;locals&gt;.include_file at 0x7fc219362f20&gt;,
-            'macros_info': &lt;function define_env.&lt;locals&gt;.macros_info at 0x7fc219362b60&gt;,
-            'now': &lt;function define_env.&lt;locals&gt;.now at 0x7fc219362c00&gt;,
-            'render_with_page_template': &lt;function define_env.&lt;locals&gt;.render_with_page_template at 0x7fc219363060&gt;},
+                    &lt;mkdocs.config.config_options.Type object at 0x7f32e3d1c980&gt;)),
+ 'env': &lt;jinja2.environment.Environment object at 0x7f32e3d1ce60&gt;,
+ 'filter': &lt;bound method MacrosPlugin.filter of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f32e447e9f0&gt;&gt;,
+ 'filters': {'pretty': &lt;function define_env.&lt;locals&gt;.pretty at 0x7f32e38d9760&gt;,
+             'relative_url': &lt;function define_env.&lt;locals&gt;.relative_url at 0x7f32e38d99e0&gt;},
+ 'force_page_rendering': &lt;bound method MacrosPlugin.force_page_rendering of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f32e447e9f0&gt;&gt;,
+ 'load_config': &lt;bound method BasePlugin.load_config of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f32e447e9f0&gt;&gt;,
+ 'macro': &lt;bound method MacrosPlugin.macro of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f32e447e9f0&gt;&gt;,
+ 'macros': {'context': &lt;function define_env.&lt;locals&gt;.context at 0x7f32e38d9800&gt;,
+            'doc_env': &lt;function define_env.&lt;locals&gt;.doc_env at 0x7f32e38d9d00&gt;,
+            'fix_url': &lt;function fix_url at 0x7f32e3cf87c0&gt;,
+            'include_file': &lt;function define_env.&lt;locals&gt;.include_file at 0x7f32e38d9c60&gt;,
+            'macros_info': &lt;function define_env.&lt;locals&gt;.macros_info at 0x7f32e38d98a0&gt;,
+            'now': &lt;function define_env.&lt;locals&gt;.now at 0x7f32e38d9940&gt;,
+            'render_with_page_template': &lt;function define_env.&lt;locals&gt;.render_with_page_template at 0x7f32e38d9da0&gt;},
  'markdown': '# Environment\n'
              '\n'
              '{{ macros_info() }}\n'
@@ -2003,14 +2000,14 @@ site_author: Malcolm Jones # Site author information
              '```\n'
              '{{ doc_env() | pprint }}\n'
              '```\n',
- 'on_config': &lt;bound method MacrosPlugin.on_config of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7fc219b95520&gt;&gt;,
- 'on_nav': &lt;bound method MacrosPlugin.on_nav of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7fc219b95520&gt;&gt;,
- 'on_page_markdown': &lt;bound method MacrosPlugin.on_page_markdown of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7fc219b95520&gt;&gt;,
- 'on_post_build': &lt;bound method MacrosPlugin.on_post_build of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7fc219b95520&gt;&gt;,
- 'on_pre_build': &lt;bound method MacrosPlugin.on_pre_build of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7fc219b95520&gt;&gt;,
- 'on_serve': &lt;bound method MacrosPlugin.on_serve of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7fc219b95520&gt;&gt;,
+ 'on_config': &lt;bound method MacrosPlugin.on_config of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f32e447e9f0&gt;&gt;,
+ 'on_nav': &lt;bound method MacrosPlugin.on_nav of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f32e447e9f0&gt;&gt;,
+ 'on_page_markdown': &lt;bound method MacrosPlugin.on_page_markdown of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f32e447e9f0&gt;&gt;,
+ 'on_post_build': &lt;bound method MacrosPlugin.on_post_build of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f32e447e9f0&gt;&gt;,
+ 'on_pre_build': &lt;bound method MacrosPlugin.on_pre_build of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f32e447e9f0&gt;&gt;,
+ 'on_serve': &lt;bound method MacrosPlugin.on_serve of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f32e447e9f0&gt;&gt;,
  'page': Page(title='Environment', url='/codegen-lab/docs/environment/'),
- 'post_build_functions': [&lt;function on_post_build at 0x7fc219362e80&gt;],
+ 'post_build_functions': [&lt;function on_post_build at 0x7f32e38d9bc0&gt;],
  'post_macro_functions': [],
  'pre_macro_functions': [],
  'project_dir': '/home/runner/work/codegen-lab/codegen-lab',
@@ -2036,8 +2033,8 @@ site_author: Malcolm Jones # Site author information
                  '```\n'
                  '{{ doc_env() | pprint }}\n'
                  '```\n',
- 'render': &lt;bound method MacrosPlugin.render of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7fc219b95520&gt;&gt;,
- 'start_chatting': &lt;bound method MacrosPlugin.start_chatting of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7fc219b95520&gt;&gt;,
+ 'render': &lt;bound method MacrosPlugin.render of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f32e447e9f0&gt;&gt;,
+ 'start_chatting': &lt;bound method MacrosPlugin.start_chatting of &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f32e447e9f0&gt;&gt;,
  'supports_multiple_instances': False,
  'variables': {'config': {'config_file_path': '/home/runner/work/codegen-lab/codegen-lab/mkdocs.yml',
                           'copyright': 'Copyright &amp;copy; 2023 - 2025 Malcolm '
@@ -2050,7 +2047,8 @@ site_author: Malcolm Jones # Site author information
                           'exclude_docs': None,
                           'extra': {'social': [{'icon': 'fontawesome/brands/github',
                                                 'link': 'https://github.com/bossjones/codegen-lab'}]},
-                          'extra_css': ['assets/_mkdocstrings.css'],
+                          'extra_css': ['assets/_mkdocstrings.css',
+                                        'css/neoteroi.cards.css'],
                           'extra_javascript': [],
                           'extra_templates': [],
                           'google_analytics': None,
@@ -2061,39 +2059,49 @@ site_author: Malcolm Jones # Site author information
                                                   'abbr',
                                                   'admonition',
                                                   'attr_list',
-                                                  'neoteroi.cards',
+                                                  'def_list',
+                                                  'footnotes',
+                                                  'meta',
+                                                  'md_in_html',
+                                                  'pymdownx.snippets',
+                                                  'pymdownx.caret',
                                                   'pymdownx.details',
+                                                  'pymdownx.keys',
+                                                  'pymdownx.mark',
+                                                  'pymdownx.superfences',
+                                                  'pymdownx.tilde',
                                                   'pymdownx.emoji',
+                                                  'pymdownx.betterem',
+                                                  'pymdownx.tabbed',
+                                                  'pymdownx.tasklist',
                                                   'pymdownx.highlight',
                                                   'pymdownx.inlinehilite',
                                                   'pymdownx.magiclink',
-                                                  'pymdownx.snippets',
-                                                  'pymdownx.superfences',
-                                                  'pymdownx.tabbed',
-                                                  &lt;mkdocs_autorefs._internal.references.AutorefsExtension object at 0x7fc21c70b050&gt;,
-                                                  &lt;mkdocstrings._internal.extension.MkdocstringsExtension object at 0x7fc2197d3620&gt;],
-                          'mdx_configs': {'pymdownx.emoji': {'emoji_generator': &lt;function to_svg at 0x7fc21aeb9940&gt;,
-                                                             'emoji_index': &lt;function twemoji at 0x7fc21ae54180&gt;},
+                                                  &lt;mkdocs_autorefs._internal.references.AutorefsExtension object at 0x7f32e3b2d0a0&gt;,
+                                                  &lt;mkdocstrings._internal.extension.MkdocstringsExtension object at 0x7f32e3c1a960&gt;],
+                          'mdx_configs': {'pymdownx.betterem': {'smart_enable': 'all'},
+                                          'pymdownx.emoji': {'emoji_generator': &lt;function to_svg at 0x7f32e4e89a80&gt;,
+                                                             'emoji_index': &lt;function twemoji at 0x7f32e4e24220&gt;},
                                           'pymdownx.superfences': {'custom_fences': [{'class': 'mermaid',
-                                                                                      'format': functools.partial(&lt;function fence_mermaid at 0x7fc21aa59940&gt;, custom=True),
+                                                                                      'format': functools.partial(&lt;function fence_mermaid at 0x7f32e47da7a0&gt;, custom=True),
                                                                                       'name': 'mermaid'}]},
                                           'pymdownx.tabbed': {'alternate_style': True},
+                                          'pymdownx.tasklist': {'custom_checkbox': True},
                                           'toc': {'permalink': True}},
                           'nav': None,
                           'not_in_nav': None,
                           'pages': None,
-                          'plugins': {'autorefs': &lt;mkdocs_autorefs._internal.plugin.AutorefsPlugin object at 0x7fc219f9bc50&gt;,
-                                      'awesome-pages': &lt;mkdocs_awesome_pages_plugin.plugin.AwesomePagesPlugin object at 0x7fc219b4d250&gt;,
-                                      'ezlinks': &lt;mkdocs_ezlinks_plugin.plugin.EzLinksPlugin object at 0x7fc21993cc80&gt;,
-                                      'gen-files': &lt;mkdocs_gen_files.plugin.GenFilesPlugin object at 0x7fc219800920&gt;,
-                                      'git-authors': &lt;mkdocs_git_authors_plugin.plugin.GitAuthorsPlugin object at 0x7fc219a88f80&gt;,
-                                      'git-revision-date-localized': &lt;mkdocs_git_revision_date_localized_plugin.plugin.GitRevisionDateLocalizedPlugin object at 0x7fc21a373890&gt;,
-                                      'literate-nav': &lt;mkdocs_literate_nav.plugin.LiterateNavPlugin object at 0x7fc2193e6ab0&gt;,
-                                      'macros': &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7fc219b95520&gt;,
-                                      'material/search': &lt;material.plugins.search.plugin.SearchPlugin object at 0x7fc21bc1e630&gt;,
-                                      'material/tags': &lt;material.plugins.tags.plugin.TagsPlugin object at 0x7fc2193e6a80&gt;,
-                                      'mermaid2': &lt;mermaid2.plugin.MarkdownMermaidPlugin object at 0x7fc2199ba5d0&gt;,
-                                      'mkdocstrings': &lt;mkdocstrings._internal.plugin.MkdocstringsPlugin object at 0x7fc2197b1b50&gt;},
+                          'plugins': {'autorefs': &lt;mkdocs_autorefs._internal.plugin.AutorefsPlugin object at 0x7f32e48068a0&gt;,
+                                      'awesome-pages': &lt;mkdocs_awesome_pages_plugin.plugin.AwesomePagesPlugin object at 0x7f32e4b4d790&gt;,
+                                      'coverage': &lt;mkdocs_coverage.plugin.MkDocsCoveragePlugin object at 0x7f32e3866660&gt;,
+                                      'gen-files': &lt;mkdocs_gen_files.plugin.GenFilesPlugin object at 0x7f32e3ee39b0&gt;,
+                                      'git-authors': &lt;mkdocs_git_authors_plugin.plugin.GitAuthorsPlugin object at 0x7f32e44caa20&gt;,
+                                      'git-revision-date-localized': &lt;mkdocs_git_revision_date_localized_plugin.plugin.GitRevisionDateLocalizedPlugin object at 0x7f32e447eb70&gt;,
+                                      'macros': &lt;mkdocs_macros.plugin.MacrosPlugin object at 0x7f32e447e9f0&gt;,
+                                      'material/search': &lt;material.plugins.search.plugin.SearchPlugin object at 0x7f32e3a7e450&gt;,
+                                      'material/tags': &lt;material.plugins.tags.plugin.TagsPlugin object at 0x7f32e3d053d0&gt;,
+                                      'mermaid2': &lt;mermaid2.plugin.MarkdownMermaidPlugin object at 0x7f32e4047f80&gt;,
+                                      'mkdocstrings': &lt;mkdocstrings._internal.plugin.MkdocstringsPlugin object at 0x7f32e3a7cd70&gt;},
                           'remote_branch': 'gh-pages',
                           'remote_name': 'origin',
                           'repo_name': 'bossjones/codegen-lab',
@@ -2106,7 +2114,7 @@ site_author: Malcolm Jones # Site author information
                           'site_name': 'Codegen Lab',
                           'site_url': 'https://bossjones.github.io/codegen-lab/docs/',
                           'strict': False,
-                          'theme': Theme(name='material', dirs=['/home/runner/work/codegen-lab/codegen-lab/true/lib/python3.12/site-packages/material/templates', '/home/runner/work/codegen-lab/codegen-lab/true/lib/python3.12/site-packages/mkdocs/templates'], static_templates={'404.html', 'sitemap.xml'}, name='material', locale=Locale('en'), language='en', direction=None, features=['content.action.edit', 'content.action.view', 'content.code.copy', 'content.code.select', 'content.tooltips', 'navigation.footer', 'search.share'], font={'text': 'Roboto', 'code': 'Roboto Mono'}, icon=None, favicon='assets/images/favicon.png', palette={'primary': 'indigo', 'accent': 'indigo'}),
+                          'theme': Theme(name='material', dirs=['/home/runner/work/codegen-lab/codegen-lab/true/lib/python3.12/site-packages/material/templates', '/home/runner/work/codegen-lab/codegen-lab/true/lib/python3.12/site-packages/mkdocs/templates'], static_templates={'sitemap.xml', '404.html'}, name='material', locale=Locale('en'), language='en', direction=None, features=['content.action.edit', 'content.action.view', 'content.code.copy', 'content.code.select', 'content.tooltips', 'navigation.footer', 'search.share'], font={'code': 'JetBrains Mono'}, icon={'repo': 'fontawesome/brands/github', 'edit': 'material/pencil', 'view': 'material/eye', 'admonition': {'note': 'octicons/tag-16', 'abstract': 'octicons/checklist-16', 'info': 'octicons/info-16', 'tip': 'octicons/squirrel-16', 'success': 'octicons/check-16', 'question': 'octicons/question-16', 'warning': 'octicons/alert-16', 'failure': 'octicons/x-circle-16', 'danger': 'octicons/zap-16', 'bug': 'octicons/bug-16', 'example': 'octicons/beaker-16', 'quote': 'octicons/quote-16'}}, favicon='images/logo2.png', logo='images/logo2.png', palette=[{'media': '(prefers-color-scheme: light)', 'scheme': 'default', 'primary': 'deep purple', 'accent': 'deep purple', 'toggle': {'icon': 'material/lightbulb', 'name': 'Switch to dark mode'}}, {'media': '(prefers-color-scheme: dark)', 'scheme': 'slate', 'primary': 'deep purple', 'accent': 'deep purple', 'toggle': {'icon': 'material/lightbulb-outline', 'name': 'Switch to light mode'}}]),
                           'use_directory_urls': True,
                           'validation': {'links': {'absolute_links': 20,
                                                    'anchors': 20,
@@ -2130,98 +2138,98 @@ site_author: Malcolm Jones # Site author information
                                'system_version': '6.8.0-1021-azure'},
                'extra': {'social': [{'icon': 'fontawesome/brands/github',
                                      'link': 'https://github.com/bossjones/codegen-lab'}]},
-               'files': &lt;mkdocs.structure.files.Files object at 0x7fc218bde3c0&gt;,
-               'filters': {'pretty': &lt;function define_env.&lt;locals&gt;.pretty at 0x7fc219362a20&gt;,
-                           'relative_url': &lt;function define_env.&lt;locals&gt;.relative_url at 0x7fc219362ca0&gt;},
+               'files': &lt;mkdocs.structure.files.Files object at 0x7f32e2b33c20&gt;,
+               'filters': {'pretty': &lt;function define_env.&lt;locals&gt;.pretty at 0x7f32e38d9760&gt;,
+                           'relative_url': &lt;function define_env.&lt;locals&gt;.relative_url at 0x7f32e38d99e0&gt;},
                'filters_builtin': {'abs': &lt;built-in function abs&gt;,
-                                   'attr': &lt;function do_attr at 0x7fc21b86d580&gt;,
-                                   'batch': &lt;function do_batch at 0x7fc21b86c2c0&gt;,
-                                   'capitalize': &lt;function do_capitalize at 0x7fc21b866c00&gt;,
-                                   'center': &lt;function do_center at 0x7fc21b867420&gt;,
+                                   'attr': &lt;function do_attr at 0x7f32e57dd620&gt;,
+                                   'batch': &lt;function do_batch at 0x7f32e57dc360&gt;,
+                                   'capitalize': &lt;function do_capitalize at 0x7f32e57d6ca0&gt;,
+                                   'center': &lt;function do_center at 0x7f32e57d74c0&gt;,
                                    'count': &lt;built-in function len&gt;,
-                                   'd': &lt;function do_default at 0x7fc21b8672e0&gt;,
-                                   'default': &lt;function do_default at 0x7fc21b8672e0&gt;,
-                                   'dictsort': &lt;function do_dictsort at 0x7fc21b866d40&gt;,
-                                   'e': &lt;function escape at 0x7fc21ba19620&gt;,
-                                   'escape': &lt;function escape at 0x7fc21ba19620&gt;,
-                                   'filesizeformat': &lt;function do_filesizeformat at 0x7fc21b867a60&gt;,
-                                   'first': &lt;function do_first at 0x7fc21b867920&gt;,
-                                   'float': &lt;function do_float at 0x7fc21b867f60&gt;,
-                                   'forceescape': &lt;function do_forceescape at 0x7fc21b8667a0&gt;,
-                                   'format': &lt;function do_format at 0x7fc21b86c040&gt;,
-                                   'groupby': &lt;function do_groupby at 0x7fc21b86ccc0&gt;,
-                                   'indent': &lt;function do_indent at 0x7fc21b867c40&gt;,
-                                   'int': &lt;function do_int at 0x7fc21b867ec0&gt;,
-                                   'items': &lt;function do_items at 0x7fc21b866ac0&gt;,
-                                   'join': &lt;function do_join at 0x7fc21b867600&gt;,
-                                   'last': &lt;function do_last at 0x7fc21b867740&gt;,
+                                   'd': &lt;function do_default at 0x7f32e57d7380&gt;,
+                                   'default': &lt;function do_default at 0x7f32e57d7380&gt;,
+                                   'dictsort': &lt;function do_dictsort at 0x7f32e57d6de0&gt;,
+                                   'e': &lt;function escape at 0x7f32e59916c0&gt;,
+                                   'escape': &lt;function escape at 0x7f32e59916c0&gt;,
+                                   'filesizeformat': &lt;function do_filesizeformat at 0x7f32e57d7b00&gt;,
+                                   'first': &lt;function do_first at 0x7f32e57d79c0&gt;,
+                                   'float': &lt;function do_float at 0x7f32e57dc040&gt;,
+                                   'forceescape': &lt;function do_forceescape at 0x7f32e57d6840&gt;,
+                                   'format': &lt;function do_format at 0x7f32e57dc0e0&gt;,
+                                   'groupby': &lt;function do_groupby at 0x7f32e57dcd60&gt;,
+                                   'indent': &lt;function do_indent at 0x7f32e57d7ce0&gt;,
+                                   'int': &lt;function do_int at 0x7f32e57d7f60&gt;,
+                                   'items': &lt;function do_items at 0x7f32e57d6b60&gt;,
+                                   'join': &lt;function do_join at 0x7f32e57d76a0&gt;,
+                                   'last': &lt;function do_last at 0x7f32e57d77e0&gt;,
                                    'length': &lt;built-in function len&gt;,
-                                   'list': &lt;function do_list at 0x7fc21b86d1c0&gt;,
-                                   'lower': &lt;function do_lower at 0x7fc21b866a20&gt;,
-                                   'map': &lt;function do_map at 0x7fc21b86dc60&gt;,
-                                   'max': &lt;function do_max at 0x7fc21b867240&gt;,
-                                   'min': &lt;function do_min at 0x7fc21b8671a0&gt;,
-                                   'pprint': &lt;function do_pprint at 0x7fc21b867b00&gt;,
-                                   'random': &lt;function do_random at 0x7fc21b8679c0&gt;,
-                                   'reject': &lt;function do_reject at 0x7fc21b86e160&gt;,
-                                   'rejectattr': &lt;function do_rejectattr at 0x7fc21b86e660&gt;,
-                                   'replace': &lt;function do_replace at 0x7fc21b8668e0&gt;,
-                                   'reverse': &lt;function do_reverse at 0x7fc21b86d4e0&gt;,
-                                   'round': &lt;function do_round at 0x7fc21b86c540&gt;,
-                                   'safe': &lt;function do_mark_safe at 0x7fc21b86cfe0&gt;,
-                                   'select': &lt;function do_select at 0x7fc21b86dee0&gt;,
-                                   'selectattr': &lt;function do_selectattr at 0x7fc21b86e3e0&gt;,
-                                   'slice': &lt;function do_slice at 0x7fc21b86c4a0&gt;,
-                                   'sort': &lt;function do_sort at 0x7fc21b866de0&gt;,
-                                   'string': &lt;function soft_str at 0x7fc21ba198a0&gt;,
-                                   'striptags': &lt;function do_striptags at 0x7fc21b86c180&gt;,
-                                   'sum': &lt;function do_sum at 0x7fc21b86cf40&gt;,
-                                   'title': &lt;function do_title at 0x7fc21b866ca0&gt;,
-                                   'tojson': &lt;function do_tojson at 0x7fc21b86e480&gt;,
-                                   'trim': &lt;function do_trim at 0x7fc21b86c0e0&gt;,
-                                   'truncate': &lt;function do_truncate at 0x7fc21b867ce0&gt;,
-                                   'unique': &lt;function do_unique at 0x7fc21b867100&gt;,
-                                   'upper': &lt;function do_upper at 0x7fc21b866980&gt;,
-                                   'urlencode': &lt;function do_urlencode at 0x7fc21b866840&gt;,
-                                   'urlize': &lt;function do_urlize at 0x7fc21b867ba0&gt;,
-                                   'wordcount': &lt;function do_wordcount at 0x7fc21b867e20&gt;,
-                                   'wordwrap': &lt;function do_wordwrap at 0x7fc21b867d80&gt;,
-                                   'xmlattr': &lt;function do_xmlattr at 0x7fc21b866b60&gt;},
+                                   'list': &lt;function do_list at 0x7f32e57dd260&gt;,
+                                   'lower': &lt;function do_lower at 0x7f32e57d6ac0&gt;,
+                                   'map': &lt;function do_map at 0x7f32e57ddd00&gt;,
+                                   'max': &lt;function do_max at 0x7f32e57d72e0&gt;,
+                                   'min': &lt;function do_min at 0x7f32e57d7240&gt;,
+                                   'pprint': &lt;function do_pprint at 0x7f32e57d7ba0&gt;,
+                                   'random': &lt;function do_random at 0x7f32e57d7a60&gt;,
+                                   'reject': &lt;function do_reject at 0x7f32e57de200&gt;,
+                                   'rejectattr': &lt;function do_rejectattr at 0x7f32e57de700&gt;,
+                                   'replace': &lt;function do_replace at 0x7f32e57d6980&gt;,
+                                   'reverse': &lt;function do_reverse at 0x7f32e57dd580&gt;,
+                                   'round': &lt;function do_round at 0x7f32e57dc5e0&gt;,
+                                   'safe': &lt;function do_mark_safe at 0x7f32e57dd080&gt;,
+                                   'select': &lt;function do_select at 0x7f32e57ddf80&gt;,
+                                   'selectattr': &lt;function do_selectattr at 0x7f32e57de480&gt;,
+                                   'slice': &lt;function do_slice at 0x7f32e57dc540&gt;,
+                                   'sort': &lt;function do_sort at 0x7f32e57d6e80&gt;,
+                                   'string': &lt;function soft_str at 0x7f32e5991940&gt;,
+                                   'striptags': &lt;function do_striptags at 0x7f32e57dc220&gt;,
+                                   'sum': &lt;function do_sum at 0x7f32e57dcfe0&gt;,
+                                   'title': &lt;function do_title at 0x7f32e57d6d40&gt;,
+                                   'tojson': &lt;function do_tojson at 0x7f32e57de520&gt;,
+                                   'trim': &lt;function do_trim at 0x7f32e57dc180&gt;,
+                                   'truncate': &lt;function do_truncate at 0x7f32e57d7d80&gt;,
+                                   'unique': &lt;function do_unique at 0x7f32e57d71a0&gt;,
+                                   'upper': &lt;function do_upper at 0x7f32e57d6a20&gt;,
+                                   'urlencode': &lt;function do_urlencode at 0x7f32e57d68e0&gt;,
+                                   'urlize': &lt;function do_urlize at 0x7f32e57d7c40&gt;,
+                                   'wordcount': &lt;function do_wordcount at 0x7f32e57d7ec0&gt;,
+                                   'wordwrap': &lt;function do_wordwrap at 0x7f32e57d7e20&gt;,
+                                   'xmlattr': &lt;function do_xmlattr at 0x7f32e57d6c00&gt;},
                'git': {'author': 'Malcolm Jones (bossjones/Tony Dark)',
                        'author_email': 'bossjones@theblacktonystark.com',
-                       'commit': '857a08f19c2779de10680499c49801e99a65b8f1',
+                       'commit': 'c3f741bd709bddd4c259fecb0d915cee13310039',
                        'committer': 'GitHub',
                        'committer_email': 'noreply@github.com',
-                       'date': datetime.datetime(2025, 4, 3, 22, 5, 10, tzinfo=tzoffset(None, -14400)),
-                       'date_ISO': 'Thu Apr 3 22:05:10 2025 -0400',
-                       'message': 'Merge pull request #26 from '
-                                  'bossjones/feature-release-workflows\n'
+                       'date': datetime.datetime(2025, 4, 4, 14, 53, 43, tzinfo=tzoffset(None, -14400)),
+                       'date_ISO': 'Fri Apr 4 14:53:43 2025 -0400',
+                       'message': 'Merge pull request #28 from '
+                                  'bossjones/feature-mkdocs-schema\n'
                                   '\n'
-                                  'feat: release workflows',
+                                  'Feat: mkdocs schema',
                        'raw': 'commit '
-                              '857a08f19c2779de10680499c49801e99a65b8f1\n'
-                              'Merge: 425f9be 630e349\n'
+                              'c3f741bd709bddd4c259fecb0d915cee13310039\n'
+                              'Merge: 0deb39c b2d53a2\n'
                               'Author: Malcolm Jones (bossjones/Tony Dark) '
                               '&lt;bossjones@theblacktonystark.com&gt;\n'
-                              'Date:   Thu Apr 3 22:05:10 2025 -0400\n'
+                              'Date:   Fri Apr 4 14:53:43 2025 -0400\n'
                               '\n'
-                              '    Merge pull request #26 from '
-                              'bossjones/feature-release-workflows\n'
+                              '    Merge pull request #28 from '
+                              'bossjones/feature-mkdocs-schema\n'
                               '    \n'
-                              '    feat: release workflows',
+                              '    Feat: mkdocs schema',
                        'root_dir': '/home/runner/work/codegen-lab/codegen-lab',
-                       'short_commit': '857a08f',
-                       'short_tag': 'v0.1.0',
+                       'short_commit': 'c3f741b',
+                       'short_tag': 'v0.2.0',
                        'status': True,
-                       'tag': 'v0.1.0-38-g857a08f'},
-               'macros': {'context': &lt;function define_env.&lt;locals&gt;.context at 0x7fc219362ac0&gt;,
-                          'doc_env': &lt;function define_env.&lt;locals&gt;.doc_env at 0x7fc219362fc0&gt;,
-                          'fix_url': &lt;function fix_url at 0x7fc219828720&gt;,
-                          'include_file': &lt;function define_env.&lt;locals&gt;.include_file at 0x7fc219362f20&gt;,
-                          'macros_info': &lt;function define_env.&lt;locals&gt;.macros_info at 0x7fc219362b60&gt;,
-                          'now': &lt;function define_env.&lt;locals&gt;.now at 0x7fc219362c00&gt;,
-                          'render_with_page_template': &lt;function define_env.&lt;locals&gt;.render_with_page_template at 0x7fc219363060&gt;},
-               'navigation': &lt;mkdocs.structure.nav.Navigation object at 0x7fc21886ee10&gt;,
+                       'tag': 'v0.2.0-12-gc3f741b'},
+               'macros': {'context': &lt;function define_env.&lt;locals&gt;.context at 0x7f32e38d9800&gt;,
+                          'doc_env': &lt;function define_env.&lt;locals&gt;.doc_env at 0x7f32e38d9d00&gt;,
+                          'fix_url': &lt;function fix_url at 0x7f32e3cf87c0&gt;,
+                          'include_file': &lt;function define_env.&lt;locals&gt;.include_file at 0x7f32e38d9c60&gt;,
+                          'macros_info': &lt;function define_env.&lt;locals&gt;.macros_info at 0x7f32e38d98a0&gt;,
+                          'now': &lt;function define_env.&lt;locals&gt;.now at 0x7f32e38d9940&gt;,
+                          'render_with_page_template': &lt;function define_env.&lt;locals&gt;.render_with_page_template at 0x7f32e38d9da0&gt;},
+               'navigation': &lt;mkdocs.structure.nav.Navigation object at 0x7f32e2b12360&gt;,
                'page': Page(title='Environment', url='/codegen-lab/docs/environment/'),
                'plugin': {'force_render_paths': '',
                           'include_dir': '',
