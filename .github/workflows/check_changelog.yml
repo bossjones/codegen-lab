@@ -1,5 +1,5 @@
 # via mne-python
-name: Changelog
+name: Check Changelog
 permissions:
   contents: read
 
@@ -27,11 +27,11 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           python-version: "3.12"
-          enable-cache: true
-          cache-dependency-glob: |
-            **/requirements*.txt
-            **/pyproject.toml
-            **/uv.lock
+          # enable-cache: true
+          # cache-dependency-glob: |
+          #   **/requirements*.txt
+          #   **/pyproject.toml
+          #   **/uv.lock
 
       - name: Setup Python "3.12"
         uses: actions/setup-python@v5
