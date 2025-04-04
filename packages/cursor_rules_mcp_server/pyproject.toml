@@ -1,28 +1,28 @@
 [build-system]
-build-backend = "setuptools.build_meta"
-requires = ["setuptools>=61"]
+  build-backend = "setuptools.build_meta"
+  requires      = ["setuptools>=61"]
 
 [project]
-authors = [
-    {email = "bossjones@theblacktonystark.com", name = "Malcolm Jones"},
-]
-dependencies = [
+  authors = [
+    { email = "bossjones@theblacktonystark.com", name = "Malcolm Jones" },
+  ]
+  dependencies = [
     "better-exceptions>=0.3.3",
     "fastapi>=0.115.0",
     "pydantic>=2.7.4",
     "rich>=13.9.4",
     "tenacity>=9.0.0",
     "uvicorn>=0.29.0",
-]
-description = "Cursor Rules MCP Server for creating and managing repository-specific cursor rules"
-name = "cursor-rules-mcp-server"
-readme = "README.md"
-requires-python = ">=3.12"
-version = "0.1.0"
+  ]
+  description = "Cursor Rules MCP Server for creating and managing repository-specific cursor rules"
+  name = "cursor-rules-mcp-server"
+  readme = "README.md"
+  requires-python = ">=3.12"
+  version = "0.1.0"
 
-[project.scripts]
-cursor-rules-server = "cursor_rules_mcp_server.__main__:main"
+  [project.scripts]
+    cursor-rules-server = "cursor_rules_mcp_server.__main__:main"
 
 [tool.setuptools]
-package-dir = {"" = "src"}
-packages = ["cursor_rules_mcp_server"]
+  package-dir = { "" = "src" }
+  packages    = ["cursor_rules_mcp_server"]

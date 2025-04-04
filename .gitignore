@@ -609,3 +609,5 @@ output.txt
 # Private individual user cursor rules
 .cursor/rules/_*.mdc
 !changes/build/
+!scripts/tests/bats/helpers/lib
+bin/taplo
