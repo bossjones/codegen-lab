@@ -1,3 +1,9 @@
+---
+description: Enforces conventional commit message format based on commitizen configuration
+globs:
+alwaysApply: false
+---
+
 # Conventional Commits Rule
 
 This rule enforces the use of conventional commits following the commitizen configuration.
