@@ -1,0 +1,152 @@
+name: Bats Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        description: Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)
+        required: false
+        default: "false"
+
+concurrency:
+  group: bats-${{ github.workflow }}-${{ github.ref_name }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+env:
+  COLUMNS: 150
+  UV_FROZEN: true
+  FORCE_COLOR: 1
+jobs:
+  bats-test:
+    runs-on: ubuntu-latest
+    name: Run Bats Tests
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bats and bats libs
+        id: setup-bats
+        uses: bats-core/bats-action@3.0.0
+        with:
+          support-path: "${{ github.workspace }}/scripts/tests/bats/helpers/lib/bats-support"
+          assert-path: "${{ github.workspace }}/scripts/tests/bats/helpers/lib/bats-assert"
+          detik-path: "${{ github.workspace }}/scripts/tests/bats/helpers/lib/bats-detik"
+          file-path: "${{ github.workspace }}/scripts/tests/bats/helpers/lib/bats-file"
+
+      - name: verify bats-lib-path
+        id: verify-bats-lib-path
+        # if: steps.setup-bats.outputs.support-installed == 'true'
+        shell: bash
+        env:
+          BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
+          TMP_PATH: ${{ steps.setup-bats.outputs.tmp-path }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install tree -y || true
+          echo "BATS_LIB_PATH: $BATS_LIB_PATH"
+          echo "TMP_PATH: $TMP_PATH"
+
+          echo "Remove duplicate paths from BATS_LIB_PATH"
+          export BATS_LIB_PATH=$(echo "$BATS_LIB_PATH" | awk -v RS=':' '!seen[$0]++' | paste -sd ':' -)
+          echo "BATS_LIB_PATH: $BATS_LIB_PATH"
+          echo "BATS_LIB_PATH=${{ github.workspace }}/scripts/tests/bats/helpers/lib" >> $GITHUB_ENV
+          echo "bats-lib-path=${{ github.workspace }}/scripts/tests/bats/helpers/lib" >> $GITHUB_OUTPUT
+
+          echo "tree -L 2 ${{ github.workspace }}/scripts/tests/bats/helpers/lib || true"
+          tree -L 2 ${{ github.workspace }}/scripts/tests/bats/helpers/lib || true
+
+          echo "tree ${{ github.workspace }}/scripts/"
+          tree ${{ github.workspace }}/scripts/
+          echo "verify-bats-lib-path=${{ github.workspace }}/scripts/tests/bats/helpers/lib" >> $GITHUB_OUTPUT
+
+      - name: check verify-bats-lib-path
+        shell: bash
+        continue-on-error: true
+        run: |
+          set -x
+          echo "BATS_LIB_PATH: $BATS_LIB_PATH"
+          echo "TMP_PATH: $TMP_PATH"
+
+          tree -L 2 $BATS_LIB_PATH || true
+          tree $BATS_LIB_PATH || true
+
+      - name: run bats tests
+        shell: bash
+        continue-on-error: true
+        env:
+          BATS_LIB_PATH: ${{ steps.verify-bats-lib-path.outputs.verify-bats-lib-path }}
+          TMP_PATH: ${{ steps.setup-bats.outputs.tmp-path }}
+          DRY_RUN: 1
+          TERM: xterm
+        run: |
+          sudo apt-get update
+          sudo apt-get install tree -y || true
+          echo "BATS_LIB_PATH: $BATS_LIB_PATH"
+          echo "TMP_PATH: $TMP_PATH"
+
+          tree -L 2 $BATS_LIB_PATH || true
+          tree $BATS_LIB_PATH || true
+
+          bats -T -p scripts/tests/bats/run_tests.sh
+
+      # Setup tmate session for debugging when requested
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled == 'true' }}
+        with:
+          limit-access-to-actor: true
+
+      # - name: Run Bats tests
+      #   shell: bash
+      #   env:
+      #     BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
+      #     TERM: xterm
+      #     DRY_RUN: 1
+      #   run: |
+      #     # Create test helper directory if it doesn't exist
+      #     mkdir -p scripts/tests/bats/helpers
+
+      #     # Create test helper
+      #     cat > scripts/tests/bats/helpers/test_helper.bash << 'EOL'
+      #     #!/usr/bin/env bash
+
+      #     # Load bats libraries
+      #     BATS_LIB_PATH=${BATS_LIB_PATH:-"/usr/lib"}
+      #     bats_load_library bats-support
+      #     bats_load_library bats-assert
+      #     bats_load_library bats-file
+      #     bats_load_library bats-detik/detik.bash
+
+      #     # Add any common test helper functions here
+      #     setup() {
+      #         # Common setup for all tests
+      #         load 'test_helper'
+
+      #         # Create temporary test directory
+      #         TEST_TEMP_DIR="$(mktemp -d)"
+
+      #         # Export any needed environment variables
+      #         export TEST_TEMP_DIR
+      #     }
+
+      #     teardown() {
+      #         # Clean up temporary test directory
+      #         if [ -d "$TEST_TEMP_DIR" ]; then
+      #             rm -rf "$TEST_TEMP_DIR"
+      #         fi
+      #     }
+      #     EOL
+
+      #     # Make helper script executable
+      #     chmod +x scripts/tests/bats/helpers/test_helper.bash
+
+      #     # Run all bats tests using the run_tests.sh script if it exists
+      #     if [ -f "scripts/tests/bats/run_tests.sh" ]; then
+      #         ./scripts/tests/bats/run_tests.sh
+      #     else
+      #         # Otherwise, run tests directly
+      #         find scripts/tests/bats -type f -name "*_test.bats" -print0 | xargs -0 bats --tap
+      #     fi

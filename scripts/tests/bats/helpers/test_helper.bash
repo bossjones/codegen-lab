@@ -9,14 +9,25 @@ PROJECT_ROOT="$( cd "$CURR_DIR/../../../../" >/dev/null 2>&1 && pwd )"
 
 # Add the path to load helper libraries
 export TEST_LIB_DIR="${CURR_DIR}/lib"
+export BATS_LIB_PATH=${BATS_LIB_PATH:-"${TEST_LIB_DIR}"}
+
+
+_tests_helper() {
+    export BATS_LIB_PATH=${BATS_LIB_PATH:-"${TEST_LIB_DIR}"}
+    echo $BATS_LIB_PATH
+    bats_load_library bats-support
+    bats_load_library bats-assert
+    bats_load_library bats-file
+    # bats_load_library bats-detik/detik.bash
+}
 
 # Load bats-support and bats-assert libraries if they exist
-if [ -d "${TEST_LIB_DIR}/bats-support" ]; then
-  load "${TEST_LIB_DIR}/bats-support/load"
+if [ -d "${BATS_LIB_PATH}/bats-support" ]; then
+  load "${BATS_LIB_PATH}/bats-support/load"
 fi
 
-if [ -d "${TEST_LIB_DIR}/bats-assert" ]; then
-  load "${TEST_LIB_DIR}/bats-assert/load"
+if [ -d "${BATS_LIB_PATH}/bats-assert" ]; then
+  load "${BATS_LIB_PATH}/bats-assert/load"
 fi
 
 # Path to the scripts being tested
