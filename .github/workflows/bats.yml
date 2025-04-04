@@ -44,11 +44,12 @@ jobs:
           TMP_PATH: ${{ steps.setup-bats.outputs.tmp-path }}
         run: |
           sudo apt-get update
-          sudo apt-get install tree -y
+          sudo apt-get install tree -y || true
           echo "BATS_LIB_PATH: $BATS_LIB_PATH"
           echo "TMP_PATH: $TMP_PATH"
 
-          tree -L 2 $BATS_LIB_PATH
+          tree -L 2 $BATS_LIB_PATH || true
+          tree -L 2 ${{ github.workspace }}/scripts/
 
       # Setup tmate session for debugging when requested
       - name: Setup tmate session
