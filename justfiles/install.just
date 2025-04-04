@@ -7,6 +7,7 @@ install: install-project install-hooks
 install-hooks:
 	uv run pre-commit install --hook-type=pre-push
 	uv run pre-commit install --hook-type=commit-msg
+	uv run pre-commit install
 
 # install the project
 [group('install')]

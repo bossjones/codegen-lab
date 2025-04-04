@@ -80,22 +80,19 @@ class PromptLibraryVersion:
         prerelease_num = int(prerelease_num) if prerelease else float("inf")
         self._cmp = (*self.version, prerelease_num)
 
-    @typing_extensions.override
-    def __str__(self) -> str:
-        """Convert version object to string."""
-        # Join version numbers with dots
-        vstring = ".".join(map(str, self.version))
+    def __lt__(self, other: object) -> bool:
+        """Check if this version is less than other version."""
+        if not isinstance(other, PromptLibraryVersion):
+            return NotImplemented
 
-        # Add prerelease info if present
-        if self.prerelease:
-            vstring += "".join(map(str, self.prerelease))
+        return self._cmp < other._cmp
 
-        return vstring
+    def __le__(self, other: object) -> bool:
+        """Check if this version is less than or equal to other version."""
+        if not isinstance(other, PromptLibraryVersion):
+            return NotImplemented
 
-    @typing_extensions.override
-    def __repr__(self) -> str:
-        """Return string representation of version object."""
-        return f"PromptLibraryVersion('{self!s}')"
+        return self._cmp <= other._cmp
 
     @typing_extensions.override
     def __eq__(self, other: object) -> bool:
@@ -113,20 +110,6 @@ class PromptLibraryVersion:
 
         return self._cmp != other._cmp
 
-    def __lt__(self, other: object) -> bool:
-        """Check if this version is less than other version."""
-        if not isinstance(other, PromptLibraryVersion):
-            return NotImplemented
-
-        return self._cmp < other._cmp
-
-    def __le__(self, other: object) -> bool:
-        """Check if this version is less than or equal to other version."""
-        if not isinstance(other, PromptLibraryVersion):
-            return NotImplemented
-
-        return self._cmp <= other._cmp
-
     def __gt__(self, other: object) -> bool:
         """Check if this version is greater than other version."""
         if not isinstance(other, PromptLibraryVersion):
@@ -140,6 +123,23 @@ class PromptLibraryVersion:
             return NotImplemented
 
         return self._cmp >= other._cmp
+
+    @typing_extensions.override
+    def __repr__(self) -> str:
+        """Return string representation of version object."""
+        return f"PromptLibraryVersion('{self!s}')"
+
+    @typing_extensions.override
+    def __str__(self) -> str:
+        """Convert version object to string."""
+        # Join version numbers with dots
+        vstring = ".".join(map(str, self.version))
+
+        # Add prerelease info if present
+        if self.prerelease:
+            vstring += "".join(map(str, self.prerelease))
+
+        return vstring
 
 # Create version object from command line argument
 version = PromptLibraryVersion(sys.argv[1])

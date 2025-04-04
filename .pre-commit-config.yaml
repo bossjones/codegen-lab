@@ -1,4 +1,5 @@
 ---
+# Global exclude pattern - Skip running hooks on alembic migration files
 exclude: ^codegen_lab/alembic/.*
 # To use:
 #
@@ -14,25 +15,54 @@ exclude: ^codegen_lab/alembic/.*
 #
 # See https://github.com/pre-commit/pre-commit
 ci:
+  # Message used when pre-commit auto-fixes issues
   autofix_commit_msg: "style: pre-commit fixes"
+  # Whether to auto-fix PRs
   autofix_prs: true
+  # Branch to update when auto-updating hooks
   autoupdate_branch: ""
+  # Message used when auto-updating hooks
   autoupdate_commit_msg: "chore: update pre-commit hooks"
+  # How often to auto-update hooks
   autoupdate_schedule: weekly
+  # List of hooks to skip in CI
   skip: []
+  # Whether to process git submodules
   submodules: false
 default_install_hook_types:
-  # is triggered before the commit is finalized to allow checks on the code being committed. Running hooks on unstaged changes can lead to both false-positives and false-negatives during committing. pre-commit only runs on the staged contents of files by temporarily stashing the unstaged changes while running hooks.
+  # Runs before commit is finalized, checks staged changes
   - pre-commit
-  # hooks will be passed a single filename -- this file contains the current contents of the commit message to be validated. The commit will be aborted if there is a nonzero exit code.
+  # Validates commit messages
   - commit-msg
-  # pre-push is triggered on git push.
+  # Runs before push operation
   - pre-push
+  # Runs after checkout operation
+  - post-checkout
+  # Runs after merge operation
+  - post-merge
 default_stages:
+  # Run during git commit
   - pre-commit
+  # Run during git push
   - pre-push
+  # Run during git merge
+  - pre-merge-commit
+  # Run during git rebase
+  - pre-rebase
 # TODO: Work with team to see when the right time is to enable this
 repos:
+  # # Meta hooks for validating pre-commit configuration
+  # - repo: meta
+  #   hooks:
+  #     # Ensures hooks apply to at least one file
+  #     - id: check-hooks-apply
+  #     # Ensures exclude patterns are valid
+  #     - id: check-useless-excludes
+  #     # Useful for debugging hook arguments
+  #     - id: identity
+  #       stages: [pre-commit, manual]
+
+  # Validates pyproject.toml file structure
   - repo: https://github.com/abravalheri/validate-pyproject
     rev: v0.24.1
     hooks:
@@ -41,6 +71,7 @@ repos:
         additional_dependencies:
           ["validate-pyproject[all]", "validate-pyproject-schema-store"]
 
+  # Text-related hooks for various formatting tasks
   - repo: https://github.com/sirosen/texthooks
     rev: 0.6.8
     hooks:
@@ -48,33 +79,37 @@ repos:
       - id: fix-smartquotes
       - id: fix-ligatures
 
+  # Prettier formatting for YAML and JSON5
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: v4.0.0-alpha.8
     hooks:
       - id: prettier
         types_or: [yaml, json5]
 
+  # Standard pre-commit hooks for basic file checks
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
-      # Simply check whether files parse as valid python.
+      # Verifies Python syntax
       - id: check-ast
         exclude: (.vscode|contrib)
+      # Verifies JSON syntax
       - id: check-json
         exclude: (.vscode|.devcontainer|hack|cookbook|ai_docs)
 
+  # Python import sorting for aio_settings.py
   - repo: https://github.com/bwhmather/ssort
     rev: 0.14.0
     hooks:
       - id: ssort
-        files: ^.*aio_settings\.py$
+        files: ^.*increase_version_number\.py$
 
   # When running with --fix, Ruff's lint hook should be placed before Ruff's formatter hook, and before Black, isort, and other formatting tools, as Ruff's fix behavior can output code changes that require reformatting.
   # SOURCE: https://github.com/astral-sh/ruff-pre-commit
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.11.3
     hooks:
-      # Run the linter.
+      # Ruff linter
       - id: ruff
         # entry: ruff check --force-exclude
         args:
@@ -86,28 +121,35 @@ repos:
         types_or:
           - python
           # - jupyter
-        exclude: ^(.tasks|typings)/.*
+        exclude: ^(justfiles|typings)/.*
 
-      # Run the formatter.
+      # Ruff formatter
       - id: ruff-format
         # entry: ruff format --force-exclude
         types_or:
           - python
-          # - jupyter
         args:
           - --config=pyproject.toml
         files: ^((src|tests|notebooks)/.+)?[^/]+\.(py|ipynb)$
-        exclude: (.tasks|hack)
+        exclude: (justfiles|hack)
+
+  # Additional pre-commit hooks for file integrity checks
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
+      # Check for case conflicts in filenames
       - id: check-case-conflict
+      # Check for merge conflict markers
       - id: check-merge-conflict
+      # Check for broken symlinks
       - id: check-symlinks
+      # Ensure files end with a newline
       - id: end-of-file-fixer
         exclude: (.*\.pyi$)
+      # Check for mixed line endings
       - id: mixed-line-ending
         exclude: (.*\.pyi$)
+      # Remove trailing whitespace
       - id: trailing-whitespace
         exclude: (.*\.pyi$)
   ##########################################################################################
@@ -119,12 +161,15 @@ repos:
   - repo: https://github.com/pre-commit/pygrep-hooks
     rev: v1.10.0
     hooks:
+      # Prevent use of deprecated logging.warn
       - id: python-no-log-warn
+      # Check for Unicode replacement characters
       - id: text-unicode-replacement-char
 
-  # NOTE: This requires you to brew install taplo
+  # Local hooks that run commands directly on the system
   - repo: local
     hooks:
+      # Custom hook to detect pytest live logging configuration
       - id: detect-pytest-live-log
         name: detect-pytest-live-log
         entry: bash -x ./detect_pytest_live_logging.sh
@@ -133,7 +178,7 @@ repos:
           - toml
         files: ^pyproject.*$
 
-  # SOURCE: https://github.com/3MAH/microgen/blob/0a7b86ccffb6a904443049e475c1c571a94addb5/.pre-commit-config.yaml#L42
+  # Python docstring formatting
   - repo: https://github.com/DanielNoord/pydocstringformatter
     rev: v0.7.3
     hooks:
@@ -143,7 +188,9 @@ repos:
           - --no-strip-whitespace
           - --no-capitalize-first-letter
         files: ^((src|tests|notebooks)/.+)?[^/]+\.(py|ipynb)$
-        exclude: (.tasks|hack)
+        exclude: (justfiles|hack)
+
+  # Automatically upgrade Python syntax
   - repo: https://github.com/asottile/pyupgrade
     rev: v3.19.1
     hooks:
@@ -151,26 +198,30 @@ repos:
         args:
           - --py310-plus
           - --keep-runtime-typing
+
+  # Changelog management with towncrier
   - repo: https://github.com/twisted/towncrier
     rev: 24.8.0
     hooks:
+      # Check if news fragments are properly formatted
       - id: towncrier-check
-        files: $changes/
+        entry: uv run towncrier --draft
+        files: changes/
+      # # Update changelog from news fragments
+      # - id: towncrier-update
+      #   entry: uv run towncrier
+      #   files: changes/
+      #   args:
+      #     - --keep
 
-  - repo: https://github.com/twisted/towncrier
-    rev: 24.8.0
-    hooks:
-      - id: towncrier-update
-        files: $changes/
-        args:
-          - --keep
-          - --yes
-
+  # JSON Schema validation for GitHub workflows
   - repo: https://github.com/python-jsonschema/check-jsonschema
     rev: 0.32.1
     hooks:
+      # Validate GitHub workflow files
       - id: check-github-workflows
-        exclude: (.tasks|hack|.github/workflows/_python-vulnerability-scan.yml)
+        exclude: (justfiles|hack|.github/workflows/_python-vulnerability-scan.yml)
+      # Validate ReadTheDocs configuration
       - id: check-readthedocs
 
   # SOURCE: https://github.com/kiwicom/pytest-recording/tree/master
@@ -181,19 +232,26 @@ repos:
         args:
           - --config=.relint.yml
           - --diff
+
+  # Commitizen for standardizing commit messages
   - repo: https://github.com/commitizen-tools/commitizen
     rev: "v4.4.1"
     hooks:
+      # Check commit message format
       - id: commitizen
+      # Check branch naming convention
       - id: commitizen-branch
         stages: [pre-push]
 
+  # TOML file sorting
   - repo: https://github.com/pappasam/toml-sort
     rev: v0.24.2
     hooks:
+      # Sort pyproject.toml sections
       - id: toml-sort-fix
         files: pyproject.toml
 
+  # Additional pyproject.toml validation
   - repo: https://github.com/abravalheri/validate-pyproject
     rev: v0.24.1
     hooks:
@@ -206,17 +264,3 @@ repos:
   #   rev: v1.5.1
   #   hooks:
   #     - id: zizmor
-
-  # - repo: https://github.com/rhysd/actionlint
-  #   rev: v1.7.7
-  #   hooks:
-  #     - id: actionlint
-
-  # - repo: local
-  #   hooks:
-  #       - id: uv-lock-check
-  #         name: Check uv.lock is up to date
-  #         entry: uv lock --check
-  #         language: system
-  #         files: ^(pyproject\.toml|uv\.lock)$
-  #         pass_filenames: false
