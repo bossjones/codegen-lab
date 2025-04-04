@@ -1,0 +1,145 @@
+# Conventional Commits Rule
+
+This rule enforces the use of conventional commits following the commitizen configuration.
+
+<rule>
+name: conventional_commits
+description: Enforces conventional commit message format based on commitizen configuration
+filters:
+  - type: message
+    pattern: "(?i)(commit|conventional commits|git commit)"
+  - type: event
+    pattern: "pre_commit"
+
+actions:
+  - type: suggest
+    message: |
+      # Conventional Commits Guide
+
+      This project uses conventional commits with commitizen configuration. Follow these guidelines for commit messages:
+
+      ## Commit Message Format
+
+      ```
+      <type>(<optional scope>): <description>
+
+      [optional body]
+
+      [optional footer(s)]
+      ```
+
+      ## Types
+
+      - `feat`: A new feature
+      - `fix`: A bug fix
+      - `docs`: Documentation only changes
+      - `style`: Changes that do not affect the meaning of the code
+      - `refactor`: A code change that neither fixes a bug nor adds a feature
+      - `perf`: A code change that improves performance
+      - `test`: Adding missing tests or correcting existing tests
+      - `build`: Changes that affect the build system or external dependencies
+      - `ci`: Changes to our CI configuration files and scripts
+      - `chore`: Other changes that don't modify src or test files
+      - `revert`: Reverts a previous commit
+
+      ## Scope
+
+      The scope should be the name of the module affected (as perceived by the person reading the changelog).
+
+      ## Description
+
+      - Use imperative, present tense: "change" not "changed" nor "changes"
+      - Don't capitalize first letter
+      - No dot (.) at the end
+
+      ## Examples
+
+      ```
+      feat(auth): add login functionality
+      fix(api): handle edge case in data validation
+      docs(readme): update installation instructions
+      style(lint): format code according to new rules
+      refactor(core): simplify data processing logic
+      perf(queries): optimize database lookups
+      test(api): add integration tests for auth endpoints
+      build(deps): update dependencies to latest versions
+      ci(github): add new workflow for documentation
+      chore(release): prepare for version 1.2.0
+      ```
+
+      ## Version Bumping
+
+      - Breaking changes (indicated by ! after type/scope) trigger major version bump
+      - Features trigger minor version bump
+      - Fixes and other changes trigger patch version bump
+
+      ## Configuration Details
+
+      ```toml
+      [tool.commitizen]
+      changelog_start_rev = "v0.1.0"
+      name = "cz_conventional_commits"
+      tag_format = "v$version"
+      update_changelog_on_bump = true
+      version_provider = "pep621"
+      version_scheme = "pep440"
+      ```
+
+      ## Breaking Changes
+
+      If introducing a breaking change, add ! after the type/scope and include BREAKING CHANGE: in the footer:
+
+      ```
+      feat(api)!: remove deprecated endpoints
+
+      BREAKING CHANGE: The v1 API endpoints have been removed. Please migrate to v2.
+      ```
+
+examples:
+  - input: |
+      How should I format my commit message?
+    output: |
+      Here's how to format your commit message following our conventional commits standard:
+
+      1. Choose the appropriate type from: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert
+      2. Add an optional scope in parentheses
+      3. Add a colon and space
+      4. Write a concise description in imperative mood
+
+      Example:
+      ```
+      feat(auth): implement OAuth2 authentication
+      ```
+
+      For breaking changes:
+      ```
+      feat(api)!: redesign user endpoints
+
+      BREAKING CHANGE: User endpoints now require authentication token
+      ```
+
+  - input: |
+      What triggers a version bump?
+    output: |
+      Version bumping follows these rules:
+
+      1. MAJOR version bump (1.0.0 -> 2.0.0):
+         - Adding ! after type/scope
+         - Including "BREAKING CHANGE:" in footer
+
+      2. MINOR version bump (1.1.0 -> 1.2.0):
+         - Adding new features (feat)
+
+      3. PATCH version bump (1.1.1 -> 1.1.2):
+         - Bug fixes (fix)
+         - Other changes (docs, style, refactor, etc.)
+
+metadata:
+  priority: high
+  version: 1.0
+  tags:
+    - git
+    - commits
+    - conventional-commits
+    - commitizen
+</rule>

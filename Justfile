@@ -5,7 +5,7 @@ import "justfiles/common.just"
 import "justfiles/variables.just"
 
 # Import task groups
-import "justfiles/commit.just"
+import "justfiles/cz.just"
 import "justfiles/check.just"
 import "justfiles/clean.just"
 import "justfiles/format.just"
