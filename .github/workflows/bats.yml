@@ -48,8 +48,12 @@ jobs:
           echo "BATS_LIB_PATH: $BATS_LIB_PATH"
           echo "TMP_PATH: $TMP_PATH"
 
+          echo "Remove duplicate paths from BATS_LIB_PATH"
+          export BATS_LIB_PATH=$(echo "$BATS_LIB_PATH" | awk -v RS=':' '!seen[$0]++' | paste -sd ':' -)
+          echo "BATS_LIB_PATH: $BATS_LIB_PATH"
+
           tree -L 2 $BATS_LIB_PATH || true
-          tree -L 2 ${{ github.workspace }}/scripts/
+          tree ${{ github.workspace }}/scripts/
 
       # Setup tmate session for debugging when requested
       - name: Setup tmate session
