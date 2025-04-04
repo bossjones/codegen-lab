@@ -1,0 +1,114 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+
+# Bats Testing Expert
+
+## Context
+
+- When writing or reviewing Bats test files
+- When setting up new Bats test suites
+- When modifying existing Bats test infrastructure
+- When debugging Bats test failures
+- When generating mocks and test helpers
+
+## Scripts Directory Structure
+
+```
+scripts/
+├── ci/
+├── docs/
+├── tests/
+├── audit_cursor_rules_headers.py
+├── bboxes.py
+├── check_rule_lines.py
+├── cursor-logs.sh
+├── init-changelog.sh
+├── open-browser.py
+├── serve_docs.py
+├── token_counter.py
+├── update_changelog.py
+├── uv-workspace-init-package.sh
+└── validate_frontmatter.py
+```
+
+This structure shows all the scripts that may need testing coverage. Key files include:
+- Shell scripts (*.sh) - Require Bats tests
+- Python scripts (*.py) - Require Python unit tests
+- Special directories:
+  - `ci/` - CI/CD related scripts
+  - `docs/` - Documentation generation scripts
+  - `tests/` - Test files and utilities
+
+## Critical Rules
+
+- Always load test helper at the start of test files: `load "helpers/test_helper"`
+- Use setup() for test environment preparation and teardown() for cleanup
+- Create mock executables using create_mock_executable() for external commands
+- Use TEMP_DIR for all temporary test files and directories
+- Follow the naming convention: `*_test.bats` for test files
+- Include descriptive test names with format: `@test "script_name - test description"`
+- Use mock_command() for simple command mocks, create_mock_executable() for complex ones
+- Always export paths relative to PROJECT_ROOT in test_helper.bash
+- Use skip_if_not_macos() or skip_if_not_linux() for OS-specific tests
+- Include both success and failure test cases for each feature
+- Use bats-assert for assertions: assert, assert_success, assert_failure
+- Mock all external dependencies (git, gh, uv, sed/gsed)
+- Add new test files to run_tests.sh script
+- Document all helper functions in test_helper.bash
+- Use setup_mock_commands() to prepare PATH for mock binaries
+
+## Examples
+
+<example>
+@test "script_name - validates required environment variables" {
+  # Unset required variable
+  unset REQUIRED_VAR
+
+  # Run the script
+  run bash "$SCRIPT_PATH"
+
+  # Assert failure and error message
+  [ "$status" -eq 1 ]
+  [[ "$output" == *"REQUIRED_VAR environment variable is missing"* ]]
+}
+
+setup() {
+  setup_temp_dir
+  setup_mock_commands
+
+  # Create mock executables
+  create_mock_executable "git" "echo 'Mock git: $@'"
+
+  # Create test files
+  create_mock_pyproject "1.0.0"
+}
+
+teardown() {
+  cleanup_temp_dir
+  restore_path
+  unset TEST_VAR
+}
+</example>
+
+<example type="invalid">
+# Missing test helper load
+@test "test without setup" {
+  run some_command
+  [ "$status" -eq 0 ]
+}
+
+# Direct command execution without mocking
+@test "unsafe test" {
+  run git commit -m "test"
+  [ "$status" -eq 0 ]
+}
+
+# Hardcoded paths
+@test "bad paths" {
+  run /usr/local/bin/script.sh
+  [ "$status" -eq 0 ]
+}
+</example>

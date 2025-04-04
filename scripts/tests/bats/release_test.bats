@@ -30,11 +30,15 @@ setup() {
 
   # Create an empty changes directory
   mkdir -p "changes"
+
+  # Reset DRY_RUN to default value before each test
+  unset DRY_RUN
 }
 
 teardown() {
   cleanup_temp_dir
   restore_path
+  unset DRY_RUN
 }
 
 # Helper function to create changelog fragments
@@ -99,7 +103,33 @@ create_changelog_fragments() {
   [[ "$output" == *"Version in pyproject.toml does not match the version"* ]]
 }
 
-@test "release.sh - builds package correctly" {
+@test "release.sh - builds package correctly in dry run mode" {
+  export DRY_RUN=1
+  # Mock the increase_version_number.py script
+  mkdir -p "scripts/ci"
+  cat > "scripts/ci/increase_version_number.py" << 'EOF'
+#!/usr/bin/env python
+import sys
+version = sys.argv[1]
+# Simple version incrementer for testing
+parts = version.split('.')
+patch = int(parts[2]) + 1
+new_version = f"{parts[0]}.{parts[1]}.{patch}.dev0"
+print(new_version)
+EOF
+  chmod +x "scripts/ci/increase_version_number.py"
+
+  run bash "$RELEASE_SCRIPT"
+  echo "Output: $output"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"=== BUILDING PACKAGE ==="* ]]
+  [[ "$output" == *"Would execute: uv sync --frozen"* ]]
+  [[ "$output" == *"Would execute: uv build"* ]]
+  [[ "$output" == *"This was a DRY RUN. No changes were actually made."* ]]
+}
+
+@test "release.sh - builds package correctly in actual execution mode" {
+  export DRY_RUN=0
   # Mock the increase_version_number.py script
   mkdir -p "scripts/ci"
   cat > "scripts/ci/increase_version_number.py" << 'EOF'
@@ -120,9 +150,11 @@ EOF
   [[ "$output" == *"=== BUILDING PACKAGE ==="* ]]
   [[ "$output" == *"Mock UV executed with: sync --frozen"* ]]
   [[ "$output" == *"Mock UV executed with: build"* ]]
+  [[ ! "$output" == *"This was a DRY RUN"* ]]
 }
 
-@test "release.sh - updates version in repository" {
+@test "release.sh - updates version in repository in dry run mode" {
+  export DRY_RUN=1
   # Mock the increase_version_number.py script
   mkdir -p "scripts/ci"
   cat > "scripts/ci/increase_version_number.py" << 'EOF'
@@ -136,13 +168,37 @@ EOF
   echo "Output: $output"
   [ "$status" -eq 0 ]
   [[ "$output" == *"=== UPDATING VERSION IN REPOSITORY ==="* ]]
-  [[ "$output" == *"-- Calculating new development version --"* ]]
-  [[ "$output" == *"-- Bumping to development version (1.2.4.dev0) --"* ]]
-  [[ "$output" == *"Mock git executed with: commit -am"* ]]
-  [[ "$output" == *"Mock git executed with: push"* ]]
+  [[ "$output" == *"Would execute: git fetch origin"* ]]
+  [[ "$output" == *"Would execute: git checkout -f main"* ]]
+  [[ "$output" == *"Would execute: git commit -am"* ]]
+  [[ "$output" == *"Would execute: git push"* ]]
+  [[ "$output" == *"This was a DRY RUN. No changes were actually made."* ]]
 }
 
-@test "release.sh - creates GitHub release" {
+@test "release.sh - updates version in repository in actual execution mode" {
+  export DRY_RUN=0
+  # Mock the increase_version_number.py script
+  mkdir -p "scripts/ci"
+  cat > "scripts/ci/increase_version_number.py" << 'EOF'
+#!/usr/bin/env python
+import sys
+print("1.2.4.dev0")
+EOF
+  chmod +x "scripts/ci/increase_version_number.py"
+
+  run bash "$RELEASE_SCRIPT"
+  echo "Output: $output"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"=== UPDATING VERSION IN REPOSITORY ==="* ]]
+  [[ "$output" == *"Mock git executed with: fetch origin"* ]]
+  [[ "$output" == *"Mock git executed with: checkout -f main"* ]]
+  [[ "$output" == *"Mock git executed with: commit -am"* ]]
+  [[ "$output" == *"Mock git executed with: push"* ]]
+  [[ ! "$output" == *"This was a DRY RUN"* ]]
+}
+
+@test "release.sh - creates GitHub release in dry run mode" {
+  export DRY_RUN=1
   # Mock the increase_version_number.py script
   mkdir -p "scripts/ci"
   cat > "scripts/ci/increase_version_number.py" << 'EOF'
@@ -156,7 +212,26 @@ EOF
   echo "Output: $output"
   [ "$status" -eq 0 ]
   [[ "$output" == *"=== CREATING GITHUB RELEASE ==="* ]]
-  [[ "$output" == *"-- Creating release v1.2.3 --"* ]]
+  [[ "$output" == *"Would execute: gh release create"* ]]
+  [[ "$output" == *"This was a DRY RUN. No changes were actually made."* ]]
+}
+
+@test "release.sh - creates GitHub release in actual execution mode" {
+  export DRY_RUN=0
+  # Mock the increase_version_number.py script
+  mkdir -p "scripts/ci"
+  cat > "scripts/ci/increase_version_number.py" << 'EOF'
+#!/usr/bin/env python
+import sys
+print("1.2.4.dev0")
+EOF
+  chmod +x "scripts/ci/increase_version_number.py"
+
+  run bash "$RELEASE_SCRIPT"
+  echo "Output: $output"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"=== CREATING GITHUB RELEASE ==="* ]]
   [[ "$output" == *"Mock GitHub CLI executed with: release create"* ]]
   [[ "$output" == *"=== RELEASE COMPLETED SUCCESSFULLY ==="* ]]
+  [[ ! "$output" == *"This was a DRY RUN"* ]]
 }

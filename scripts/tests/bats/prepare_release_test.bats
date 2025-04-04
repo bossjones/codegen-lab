@@ -15,6 +15,7 @@ setup() {
   create_mock_executable "uv" "echo 'Mock UV executed with: $@'"
   create_mock_executable "git" "echo 'Mock git executed with: $@'"
   create_mock_executable "gh" "echo 'Mock GitHub CLI executed with: $@'"
+  create_mock_executable "towncrier" "echo 'Mock Towncrier executed with: $@'"
 
   # OS-specific mocks
   if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -62,12 +63,17 @@ EOF
 
   # Create a mock changes directory
   mkdir -p "$TEMP_DIR/changes"
+
+  # Reset DRY_RUN and CI to default values before each test
+  unset DRY_RUN
+  unset CI
 }
 
 teardown() {
   cleanup_temp_dir
   restore_path
   unset VERSION
+  unset DRY_RUN
   unset CI
 }
 
@@ -82,93 +88,131 @@ Fixed critical bug
 EOF
 }
 
-@test "prepare-release.sh - fails when VERSION is not provided" {
+@test "prepare-release.sh - fails when VERSION is not set" {
+  unset VERSION
   run bash "$PREPARE_RELEASE_SCRIPT"
   echo "Output: $output"
   [ "$status" -eq 1 ]
-  [[ "$output" == *"VERSION environment variable is missing"* ]]
+  [[ "$output" == *"$VERSION environment variable is missing"* ]]
 }
 
 @test "prepare-release.sh - fails when VERSION is empty" {
   export VERSION=""
-
   run bash "$PREPARE_RELEASE_SCRIPT"
   echo "Output: $output"
   [ "$status" -eq 1 ]
-  [[ "$output" == *"VERSION environment variable is empty"* ]]
+  [[ "$output" == *"$VERSION environment variable is empty"* ]]
 }
 
-@test "prepare-release.sh - updates version in pyproject.toml" {
+@test "prepare-release.sh - updates version in dry run mode" {
   export VERSION="2.0.0"
+  export DRY_RUN=1
 
   run bash "$PREPARE_RELEASE_SCRIPT"
   echo "Output: $output"
   [ "$status" -eq 0 ]
-  [[ "$output" == *"Bumping repository version to 2.0.0"* ]]
-  if [[ "$OSTYPE" == "darwin"* ]]; then
-    [[ "$output" == *"Mock gsed executed with: -i s/^version = \".*\"/version = \"2.0.0\"/ pyproject.toml"* ]]
-  else
-    [[ "$output" == *"Mock sed executed with: -i s/^version = \".*\"/version = \"2.0.0\"/ pyproject.toml"* ]]
-  fi
+  [[ "$output" == *"===== UPDATING RELEASE INFORMATION ====="* ]]
+  [[ "$output" == *"Would execute: "* ]]
+  [[ "$output" == *"version = \"${VERSION}\""* ]]
 }
 
-@test "prepare-release.sh - runs towncrier to build changelog" {
+@test "prepare-release.sh - updates version in actual execution mode" {
   export VERSION="2.0.0"
-  create_changelog_fragments
+  export DRY_RUN=0
 
   run bash "$PREPARE_RELEASE_SCRIPT"
   echo "Output: $output"
   [ "$status" -eq 0 ]
-  [[ "$output" == *"=== UPDATING CHANGELOG ==="* ]]
+  [[ "$output" == *"===== UPDATING RELEASE INFORMATION ====="* ]]
+  [[ "$output" == *"Mock "* ]]
+  [[ ! "$output" == *"Would execute: "* ]]
+}
+
+@test "prepare-release.sh - updates changelog in dry run mode" {
+  export VERSION="2.0.0"
+  export DRY_RUN=1
+
+  run bash "$PREPARE_RELEASE_SCRIPT"
+  echo "Output: $output"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"===== UPDATING CHANGELOG ====="* ]]
+  [[ "$output" == *"Would execute: uv sync --frozen --dev"* ]]
+  [[ "$output" == *"Would execute: uv run towncrier build --yes --version ${VERSION}"* ]]
+}
+
+@test "prepare-release.sh - updates changelog in actual execution mode" {
+  export VERSION="2.0.0"
+  export DRY_RUN=0
+
+  run bash "$PREPARE_RELEASE_SCRIPT"
+  echo "Output: $output"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"===== UPDATING CHANGELOG ====="* ]]
   [[ "$output" == *"Mock UV executed with: sync --frozen --dev"* ]]
-  [[ "$output" == *"Mock UV executed with: run towncrier build --yes --version 2.0.0"* ]]
+  [[ "$output" == *"Mock UV executed with: run towncrier build --yes --version ${VERSION}"* ]]
 }
 
-@test "prepare-release.sh - creates branch and commits changes" {
+@test "prepare-release.sh - creates branch and commits in dry run mode" {
   export VERSION="2.0.0"
+  export DRY_RUN=1
 
   run bash "$PREPARE_RELEASE_SCRIPT"
   echo "Output: $output"
   [ "$status" -eq 0 ]
-  [[ "$output" == *"=== COMMITTING CHANGES ==="* ]]
-  [[ "$output" == *"-- Checkout branch task/prepare-release-2.0.0 --"* ]]
-  [[ "$output" == *"Mock git executed with: checkout -b task/prepare-release-2.0.0"* ]]
-  [[ "$output" == *"Mock git executed with: commit -am Prepare for release of version 2.0.0"* ]]
+  [[ "$output" == *"===== COMMITTING CHANGES ====="* ]]
+  [[ "$output" == *"Would execute: git checkout -b \"task/prepare-release-${VERSION}\""* ]]
+  [[ "$output" == *"Would execute: git commit -am \"Prepare for release of version ${VERSION}\""* ]]
 }
 
-@test "prepare-release.sh - doesn't push changes when not in CI" {
+@test "prepare-release.sh - creates branch and commits in actual execution mode" {
   export VERSION="2.0.0"
-  unset CI
+  export DRY_RUN=0
 
   run bash "$PREPARE_RELEASE_SCRIPT"
   echo "Output: $output"
   [ "$status" -eq 0 ]
-  [[ "$output" == *"Changes committed to 'task/prepare-release-2.0.0'. You can now push the changes and create a pull request"* ]]
-  [[ ! "$output" == *"Mock git executed with: push"* ]]
+  [[ "$output" == *"===== COMMITTING CHANGES ====="* ]]
+  [[ "$output" == *"Mock git executed with: checkout -b task/prepare-release-${VERSION}"* ]]
+  [[ "$output" == *"Mock git executed with: commit -am \"Prepare for release of version ${VERSION}\""* ]]
 }
 
-@test "prepare-release.sh - pushes changes and creates PR when in CI" {
+@test "prepare-release.sh - handles CI environment in dry run mode" {
   export VERSION="2.0.0"
+  export DRY_RUN=1
   export CI=true
 
   run bash "$PREPARE_RELEASE_SCRIPT"
   echo "Output: $output"
   [ "$status" -eq 0 ]
   [[ "$output" == *"-- Pushing changes --"* ]]
-  [[ "$output" == *"Mock git executed with: push origin task/prepare-release-2.0.0"* ]]
-  [[ "$output" == *"-- Creating pull request --"* ]]
+  [[ "$output" == *"Would execute: git push origin \"task/prepare-release-${VERSION}\""* ]]
+  [[ "$output" == *"Would execute: gh pr create --title \"Prepare for release of version ${VERSION}\""* ]]
 }
 
-@test "prepare-release.sh - suggests next steps after completion" {
+@test "prepare-release.sh - handles CI environment in actual execution mode" {
   export VERSION="2.0.0"
+  export DRY_RUN=0
+  export CI=true
 
   run bash "$PREPARE_RELEASE_SCRIPT"
   echo "Output: $output"
   [ "$status" -eq 0 ]
-  [[ "$output" == *"=== NEXT STEPS ==="* ]]
-  [[ "$output" == *"After the PR is merged, create a release with:"* ]]
-  [[ "$output" == *"gh release create \"v2.0.0\" --generate-notes"* ]]
-  [[ "$output" == *"or use: just release-create"* ]]
+  [[ "$output" == *"-- Pushing changes --"* ]]
+  [[ "$output" == *"Mock git executed with: push origin task/prepare-release-${VERSION}"* ]]
+  [[ "$output" == *"Mock GitHub CLI executed with: pr create"* ]]
+}
+
+@test "prepare-release.sh - handles non-CI environment" {
+  export VERSION="2.0.0"
+  export DRY_RUN=0
+  unset CI
+
+  run bash "$PREPARE_RELEASE_SCRIPT"
+  echo "Output: $output"
+  [ "$status" -eq 0 ]
+  [[ "$output" == *"Changes committed to 'task/prepare-release-${VERSION}'. You can now push the changes and create a pull request"* ]]
+  [[ "$output" == *"===== NEXT STEPS ====="* ]]
+  [[ "$output" == *"gh release create \"v${VERSION}\" --generate-notes"* ]]
 }
 
 @test "prepare-release.sh - OS-specific sed commands" {

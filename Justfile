@@ -18,6 +18,8 @@ import "justfiles/changelog.just"
 import "justfiles/towncrier.just"
 import "justfiles/validate.just"
 import "justfiles/security.just"
+import "justfiles/convert.just"
+import "justfiles/taplo.just"
 
 # display help information
 default:
