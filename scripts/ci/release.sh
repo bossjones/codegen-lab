@@ -28,7 +28,7 @@ check_required_binaries() {
   local missing_binaries=()
 
   # List of required binaries
-  local required_bins=("uv" "git" "gh" "awk" "python" "twine", "just")
+  local required_bins=("uv" "git" "gh" "awk" "python" "just")
 
   # Add OS-specific requirements
   if [[ "$OSTYPE" == "darwin"* ]]; then
