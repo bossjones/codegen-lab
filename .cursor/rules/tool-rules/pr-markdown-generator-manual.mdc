@@ -1,0 +1,113 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+
+# PR Markdown Generator
+
+## Context
+
+- When creating a pull request that needs a structured markdown description
+- When analyzing git diffs to generate PR descriptions
+- When using GitHub CLI to create PRs with formatted markdown content
+- Requires GitHub CLI (gh) to be installed and authenticated
+
+## Critical Rules
+
+- Use git diff commands to analyze changes between current branch and main
+- Generate structured markdown with clear sections:
+  - Overview
+  - Major Changes
+  - Technical Details
+  - Impact
+  - Notes
+- Include emojis for better readability
+- Use proper git commands to stage and commit changes
+- Use GitHub CLI to create the PR
+- Always format code blocks with proper language tags
+- Include links to relevant issues or documentation
+- Follow the project's markdown style guide
+
+## Command Sequence
+
+1. Analyze changes:
+```bash
+git fetch origin main
+git diff origin/main...HEAD
+```
+
+2. Generate markdown description using the template:
+```markdown
+# {Title} 📝
+
+## Overview
+{Brief description of changes} 🔍
+
+## Major Changes
+{List major changes with bullet points} ✨
+
+### {Category 1}
+- Change 1
+- Change 2
+
+### {Category 2}
+- Change 3
+- Change 4
+
+## Technical Details
+{Technical implementation details} 🛠️
+
+## Impact
+{Impact of changes on the project} 💫
+
+## Notes
+{Additional notes or warnings} 📌
+```
+
+3. Create PR using GitHub CLI:
+```bash
+gh pr create --title "{title}" --body-file pr_description.md --base main
+```
+
+## Examples
+
+<example>
+# Documentation Enhancement PR 📚
+
+## Overview
+This PR introduces comprehensive updates to the project's documentation infrastructure 🛠️
+
+## Major Changes
+
+### Schema Updates
+- Added JSON schemas for configuration
+- Updated validation rules
+
+### Documentation
+- Added new assets
+- Updated templates
+
+## Technical Details
+- Schema follows JSON Schema draft-07
+- Added support for new plugins
+
+## Impact
+1. Better configuration validation
+2. Enhanced documentation tooling
+
+## Notes
+- Development progress not in PyPI yet
+</example>
+
+<example type="invalid">
+Bug fixes and updates
+
+Fixed some bugs in the code and updated documentation. Also added new features
+and changed configuration. Please review and merge.
+
+Changes:
+- Bug fixes
+- Updates
+- New stuff
+</example>

@@ -14,6 +14,7 @@
         "markdown-emdash>=0.2.0",
         "mkdocs-api-autonav>=0.2.1",
         "mkdocs-awesome-pages-plugin>=2.10.1",
+        "mkdocs-coverage>=1.1.0",
         "mkdocs-ezlinks-plugin>=0.1.14",
         "mkdocs-gen-files>=0.5.0",
         "mkdocs-git-authors-plugin>=0.9.4",
@@ -476,6 +477,7 @@
         "README.rst",
         "simple.md.jinja",
         "towncrier_template.md.jinja",
+        "towncrier_template_from_hikari.md.jinja",
     ]
     # Format string for rendering the issue/ticket number in newsfiles
     issue_format = "[#{issue}](https://github.com/bossjones/codegen-lab/pull/{issue})"
@@ -489,11 +491,13 @@
     start_string = "<!-- towncrier release notes start -->\n"
     # Path to the template for generating the news file
     # template = "changes/.template.md.jinja"
-    template = "changes/towncrier_template.md.jinja"
+    # template = "changes/towncrier_template.md.jinja"
+    template = "changes/towncrier_template_from_hikari.md.jinja"
     # Format string for the title of your project, using {name}, {version}, and {project_date}
-    title_format = "## [{version}](https://github.com/bossjones/codegen-lab/tree/{version}) - {project_date}"
+    # title_format = "## [{version}](https://github.com/bossjones/codegen-lab/tree/{version}) - {project_date}"
     # The characters used for underlining headers (empty strings mean no underlining)
-    underlines = ["", "", ""]
+    # underlines = ["", "", ""]
+    underlines = [2, 3]
 
     [[tool.towncrier.section]]
         path = ""

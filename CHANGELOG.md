@@ -8,18 +8,19 @@ This project uses [*towncrier*](https://towncrier.readthedocs.io/) and the chang
 
 <!-- towncrier release notes start -->
 
-## [v0.2.0](https://github.com/bossjones/codegen-lab/tree/v0.2.0) - 2025-04-04
+## 0.2.0 (2025-04-04)
 
-## [v0.2.0](https://github.com/bossjones/codegen-lab/tree/v0.2.0) - 2025-04-04
-No significant changes.
+### Chores
 
+- [#20250404121809](https://github.com/bossjones/codegen-lab/pull/20250404121809), [#20250404121809](https://github.com/bossjones/codegen-lab/pull/20250404121809), [#20250404121809](https://github.com/bossjones/codegen-lab/pull/20250404121809), [#20250404121852](https://github.com/bossjones/codegen-lab/pull/20250404121852)
+
+---
 ## [main](https://github.com/bossjones/codegen-lab/tree/main) - 2025-04-04
 
 ## Changes for the Upcoming Release
 
-:::{warning}
-These changes reflect the current [development progress](https://github.com/bossjones/codegen-lab/tree/main) and have **not** been part of a PyPI release yet.
-:::
+> [!NOTE]
+> These changes reflect the current [development progress](https://github.com/bossjones/codegen-lab/tree/main) and have **not** been part of a PyPI release yet.
 
 
 ### Features

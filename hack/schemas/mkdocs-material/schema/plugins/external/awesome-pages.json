@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "Awesome Pages configuration",
+  "markdownDescription": "https://github.com/lukasgeiter/mkdocs-awesome-pages-plugin",
+  "oneOf": [
+    {
+      "type": "string",
+      "const": "awesome-pages"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "awesome-pages": {
+          "type": "object",
+          "properties": {
+            "filename": {
+              "type": "string",
+              "default": ".pages",
+              "description": "Name of the file used to configure pages of a directory"
+            },
+            "collapse_single_pages": {
+              "type": "boolean",
+              "default": false,
+              "description": "Collapse single nested pages in the navigation"
+            },
+            "strict": {
+              "type": "boolean",
+              "default": false,
+              "description": "Raise errors instead of warnings when processing .pages files"
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "EZLinks configuration",
+  "markdownDescription": "https://github.com/orbikm/mkdocs-ezlinks-plugin",
+  "oneOf": [
+    {
+      "type": "string",
+      "const": "ezlinks"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "ezlinks": {
+          "type": "object",
+          "properties": {
+            "wikilinks": {
+              "type": "boolean",
+              "default": true,
+              "description": "Enable wikilinks style links"
+            },
+            "file_extension": {
+              "type": "string",
+              "default": ".md",
+              "description": "File extension to use when resolving links"
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    }
+  ]
+}

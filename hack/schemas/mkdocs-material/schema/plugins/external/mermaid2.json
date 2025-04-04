@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "Mermaid2 configuration",
+  "markdownDescription": "https://github.com/fralau/mkdocs-mermaid2-plugin",
+  "oneOf": [
+    {
+      "type": "string",
+      "const": "mermaid2"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "mermaid2": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "string",
+              "description": "Version of mermaid.js to use"
+            },
+            "arguments": {
+              "type": "object",
+              "description": "Arguments to pass to mermaid.js"
+            },
+            "javascript": {
+              "type": "string",
+              "description": "Custom JavaScript file to include"
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    }
+  ]
+}
