@@ -31,10 +31,10 @@ jobs:
         id: setup-bats
         uses: bats-core/bats-action@3.0.0
         with:
-          support-path: "${{ github.workspace }}/scripts/tests/bats/libs/bats-support"
-          assert-path: "${{ github.workspace }}/scripts/tests/bats/libs/bats-assert"
-          detik-path: "${{ github.workspace }}/scripts/tests/bats/libs/bats-detik"
-          file-path: "${{ github.workspace }}/scripts/tests/bats/libs/bats-file"
+          support-path: "${{ github.workspace }}/scripts/tests/bats/helpers/lib/bats-support"
+          assert-path: "${{ github.workspace }}/scripts/tests/bats/helpers/lib/bats-assert"
+          detik-path: "${{ github.workspace }}/scripts/tests/bats/helpers/lib/bats-detik"
+          file-path: "${{ github.workspace }}/scripts/tests/bats/helpers/lib/bats-file"
 
       - name: verify bats-lib-path
         id: verify-bats-lib-path
@@ -52,15 +52,15 @@ jobs:
           echo "Remove duplicate paths from BATS_LIB_PATH"
           export BATS_LIB_PATH=$(echo "$BATS_LIB_PATH" | awk -v RS=':' '!seen[$0]++' | paste -sd ':' -)
           echo "BATS_LIB_PATH: $BATS_LIB_PATH"
-          echo "BATS_LIB_PATH=${{ github.workspace }}/scripts/tests/bats/helpers/libs" >> $GITHUB_ENV
-          echo "bats-lib-path=${{ github.workspace }}/scripts/tests/bats/helpers/libs" >> $GITHUB_OUTPUT
+          echo "BATS_LIB_PATH=${{ github.workspace }}/scripts/tests/bats/helpers/lib" >> $GITHUB_ENV
+          echo "bats-lib-path=${{ github.workspace }}/scripts/tests/bats/helpers/lib" >> $GITHUB_OUTPUT
 
-          echo "tree -L 2 ${{ github.workspace }}/scripts/tests/bats/helpers/libs || true"
-          tree -L 2 ${{ github.workspace }}/scripts/tests/bats/helpers/libs || true
+          echo "tree -L 2 ${{ github.workspace }}/scripts/tests/bats/helpers/lib || true"
+          tree -L 2 ${{ github.workspace }}/scripts/tests/bats/helpers/lib || true
 
           echo "tree ${{ github.workspace }}/scripts/"
           tree ${{ github.workspace }}/scripts/
-          echo "verify-bats-lib-path=${{ github.workspace }}/scripts/tests/bats/helpers/libs" >> $GITHUB_OUTPUT
+          echo "verify-bats-lib-path=${{ github.workspace }}/scripts/tests/bats/helpers/lib" >> $GITHUB_OUTPUT
 
       - name: check verify-bats-lib-path
         shell: bash
@@ -80,6 +80,7 @@ jobs:
           BATS_LIB_PATH: ${{ steps.verify-bats-lib-path.outputs.verify-bats-lib-path }}
           TMP_PATH: ${{ steps.setup-bats.outputs.tmp-path }}
           DRY_RUN: 1
+          TERM: xterm
         run: |
           sudo apt-get update
           sudo apt-get install tree -y || true
