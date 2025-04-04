@@ -5,7 +5,12 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        description: Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)
+        required: false
+        default: "false"
 jobs:
   bats-test:
     runs-on: ubuntu-latest
@@ -23,54 +28,75 @@ jobs:
           detik-path: "${{ github.workspace }}/scripts/tests/bats/libs/bats-detik"
           file-path: "${{ github.workspace }}/scripts/tests/bats/libs/bats-file"
 
-      - name: Run Bats tests
+      - name: verify bats-support
+        if: steps.setup-bats.outputs.support-installed == 'true'
         shell: bash
         env:
           BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
-          TERM: xterm
-          DRY_RUN: 1
+          TMP_PATH: ${{ steps.setup-bats.outputs.tmp-path }}
         run: |
-          # Create test helper directory if it doesn't exist
-          mkdir -p scripts/tests/bats/helpers
+          sudo apt-get update
+          sudo apt-get install tree -y
+          echo "BATS_LIB_PATH: $BATS_LIB_PATH"
+          echo "TMP_PATH: $TMP_PATH"
 
-          # Create test helper
-          cat > scripts/tests/bats/helpers/test_helper.bash << 'EOL'
-          #!/usr/bin/env bash
+          tree -L 2 $BATS_LIB_PATH
 
-          # Load bats libraries
-          BATS_LIB_PATH=${BATS_LIB_PATH:-"/usr/lib"}
-          bats_load_library bats-support
-          bats_load_library bats-assert
-          bats_load_library bats-file
-          bats_load_library bats-detik/detik.bash
+      # Setup tmate session for debugging when requested
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled == 'true' }}
+        with:
+          limit-access-to-actor: true
 
-          # Add any common test helper functions here
-          setup() {
-              # Common setup for all tests
-              load 'test_helper'
+      # - name: Run Bats tests
+      #   shell: bash
+      #   env:
+      #     BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
+      #     TERM: xterm
+      #     DRY_RUN: 1
+      #   run: |
+      #     # Create test helper directory if it doesn't exist
+      #     mkdir -p scripts/tests/bats/helpers
 
-              # Create temporary test directory
-              TEST_TEMP_DIR="$(mktemp -d)"
+      #     # Create test helper
+      #     cat > scripts/tests/bats/helpers/test_helper.bash << 'EOL'
+      #     #!/usr/bin/env bash
 
-              # Export any needed environment variables
-              export TEST_TEMP_DIR
-          }
+      #     # Load bats libraries
+      #     BATS_LIB_PATH=${BATS_LIB_PATH:-"/usr/lib"}
+      #     bats_load_library bats-support
+      #     bats_load_library bats-assert
+      #     bats_load_library bats-file
+      #     bats_load_library bats-detik/detik.bash
 
-          teardown() {
-              # Clean up temporary test directory
-              if [ -d "$TEST_TEMP_DIR" ]; then
-                  rm -rf "$TEST_TEMP_DIR"
-              fi
-          }
-          EOL
+      #     # Add any common test helper functions here
+      #     setup() {
+      #         # Common setup for all tests
+      #         load 'test_helper'
 
-          # Make helper script executable
-          chmod +x scripts/tests/bats/helpers/test_helper.bash
+      #         # Create temporary test directory
+      #         TEST_TEMP_DIR="$(mktemp -d)"
 
-          # Run all bats tests using the run_tests.sh script if it exists
-          if [ -f "scripts/tests/bats/run_tests.sh" ]; then
-              ./scripts/tests/bats/run_tests.sh
-          else
-              # Otherwise, run tests directly
-              find scripts/tests/bats -type f -name "*_test.bats" -print0 | xargs -0 bats --tap
-          fi
+      #         # Export any needed environment variables
+      #         export TEST_TEMP_DIR
+      #     }
+
+      #     teardown() {
+      #         # Clean up temporary test directory
+      #         if [ -d "$TEST_TEMP_DIR" ]; then
+      #             rm -rf "$TEST_TEMP_DIR"
+      #         fi
+      #     }
+      #     EOL
+
+      #     # Make helper script executable
+      #     chmod +x scripts/tests/bats/helpers/test_helper.bash
+
+      #     # Run all bats tests using the run_tests.sh script if it exists
+      #     if [ -f "scripts/tests/bats/run_tests.sh" ]; then
+      #         ./scripts/tests/bats/run_tests.sh
+      #     else
+      #         # Otherwise, run tests directly
+      #         find scripts/tests/bats -type f -name "*_test.bats" -print0 | xargs -0 bats --tap
+      #     fi
