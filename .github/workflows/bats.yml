@@ -11,6 +11,14 @@ on:
         description: Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)
         required: false
         default: "false"
+
+concurrency:
+  group: bats-${{ github.workflow }}-${{ github.ref_name }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+env:
+  COLUMNS: 150
+  UV_FROZEN: true
+  FORCE_COLOR: 1
 jobs:
   bats-test:
     runs-on: ubuntu-latest
