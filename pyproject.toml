@@ -493,9 +493,10 @@
     # template = "changes/towncrier_template.md.jinja"
     template = "changes/towncrier_template_from_hikari.md.jinja"
     # Format string for the title of your project, using {name}, {version}, and {project_date}
-    title_format = "## [{version}](https://github.com/bossjones/codegen-lab/tree/{version}) - {project_date}"
+    # title_format = "## [{version}](https://github.com/bossjones/codegen-lab/tree/{version}) - {project_date}"
     # The characters used for underlining headers (empty strings mean no underlining)
-    underlines = ["", "", ""]
+    # underlines = ["", "", ""]
+    underlines = [2, 3]
 
     [[tool.towncrier.section]]
         path = ""
