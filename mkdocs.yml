@@ -76,7 +76,7 @@ plugins: # Enable MkDocs plugins
       verbose: true
   - mermaid2 # https://mkdocs-mermaid2.readthedocs.io/
   # - mkdocs_apidoc  # https://ecurtin2.github.io/mkdocs-apidoc/
-  - towncrier
+  # - towncrier
   # # :
   # #     hide_if_empty: !ENV [HIDE_EMPTY_TOWNCRIER_DRAFT, true]
   - gen-files:
