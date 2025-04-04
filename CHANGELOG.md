@@ -19,9 +19,8 @@ This project uses [*towncrier*](https://towncrier.readthedocs.io/) and the chang
 
 ## Changes for the Upcoming Release
 
-:::{warning}
-These changes reflect the current [development progress](https://github.com/bossjones/codegen-lab/tree/main) and have **not** been part of a PyPI release yet.
-:::
+> [!NOTE]
+> These changes reflect the current [development progress](https://github.com/bossjones/codegen-lab/tree/main) and have **not** been part of a PyPI release yet.
 
 
 ### Features

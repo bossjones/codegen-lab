@@ -68,8 +68,8 @@ theme:
     code: JetBrains Mono # Monospace font for code blocks
 
   # Theme assets
-  logo: logo.png # Site logo image
-  favicon: logo.png # Browser favicon
+  logo: images/logo.png # Site logo image
+  favicon: images/logo.png # Browser favicon
 
   # Icon configurations for various UI elements
   icon:
@@ -230,41 +230,89 @@ plugins: # Enable MkDocs plugins
 #   - pymdownx.snippets # Enable code snippets inclusion
 #   - pymdownx.superfences # Enable nested code blocks
 
+# via hikari
 markdown_extensions:
-  # Python Markdown
-  - toc:
-      permalink: true
+  # Basic markdown extensions
+  - abbr # Abbreviations
+  - admonition # Block-styled side content
+  - attr_list # Add HTML attributes to elements
+  - def_list # Definition lists
+  - footnotes # Footnote references
+  - meta # Metadata parsing
+  - md_in_html # Markdown inside HTML
+  - toc: # Table of contents
+      permalink: "#" # Add permanent links to headers
 
-  # Python Markdown Extensions
-  - abbr
-  - admonition
-  - attr_list
-  - neoteroi.cards
-  - pymdownx.details
-  # ----------------------------------------------------
-  # Using with MkDocs
-  # This project uses these extensions with MkDocs to generate the documentation. It might not be obvious how to set the index or generator functions in MkDocs' YAML settings file, but it is actually pretty easy. The functions are referenced like you would import them in Python except you also append them with a special prefix to let the YAML module know that the setting value is a Python object. For instance, to specify the to_svg generator, you would simply reference it like this: !!python/name:pymdownx.emoji.to_svg (or you could use your own custom module 😉).
-
-  # markdown_extensions:
-  #   - pymdownx.emoji:
-  #       emoji_generator: !!python/name:pymdownx.emoji.to_svg
-  # ----------------------------------------------------
-  - pymdownx.emoji:
-      emoji_index: !!python/name:material.extensions.emoji.twemoji
-      emoji_generator: !!python/name:material.extensions.emoji.to_svg
-  - pymdownx.highlight:
-  - pymdownx.inlinehilite
-  - pymdownx.magiclink # Allows plain ol' URLs to be links
-  - pymdownx.snippets
-  - pymdownx.superfences:
+  # Python Markdown Extensions (PyMdownx)
+  - pymdownx.snippets # Include external files
+  - pymdownx.caret # Superscript/insert text
+  - pymdownx.details # Collapsible blocks
+  - pymdownx.keys # Keyboard key styling
+  - pymdownx.mark # Highlighted text
+  - pymdownx.superfences: # Enhanced fenced code blocks
       # make exceptions to highlighting of code:
       custom_fences:
         - name: mermaid
           class: mermaid
           format: !!python/name:mermaid2.fence_mermaid_custom
+
+  - pymdownx.tilde # Subscript/delete text
+  - pymdownx.emoji: # Emoji support
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.betterem: # Better emphasis handling
+      smart_enable: all
+  - pymdownx.tabbed: # Tabbed content
+      alternate_style: true
+      combine_header_slug: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+  - pymdownx.tasklist: # Task lists
+      custom_checkbox: true
+  - pymdownx.highlight:
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink # Allows plain ol' URLs to be links
   - pymdownx.tabbed:
       alternate_style: true
   - tables
+
+# markdown_extensions:
+
+#   # Python Markdown
+#   - toc:
+#       permalink: true
+
+#   # Python Markdown Extensions
+#   - abbr
+#   - admonition
+#   - attr_list
+#   - neoteroi.cards
+#   - pymdownx.details
+#   # ----------------------------------------------------
+#   # Using with MkDocs
+#   # This project uses these extensions with MkDocs to generate the documentation. It might not be obvious how to set the index or generator functions in MkDocs' YAML settings file, but it is actually pretty easy. The functions are referenced like you would import them in Python except you also append them with a special prefix to let the YAML module know that the setting value is a Python object. For instance, to specify the to_svg generator, you would simply reference it like this: !!python/name:pymdownx.emoji.to_svg (or you could use your own custom module 😉).
+
+#   # markdown_extensions:
+#   #   - pymdownx.emoji:
+#   #       emoji_generator: !!python/name:pymdownx.emoji.to_svg
+#   # ----------------------------------------------------
+#   - pymdownx.emoji:
+#       emoji_index: !!python/name:material.extensions.emoji.twemoji
+#       emoji_generator: !!python/name:material.extensions.emoji.to_svg
+#   - pymdownx.highlight:
+#   - pymdownx.inlinehilite
+#   - pymdownx.magiclink # Allows plain ol' URLs to be links
+#   - pymdownx.snippets
+#   - pymdownx.superfences:
+#       # make exceptions to highlighting of code:
+#       custom_fences:
+#         - name: mermaid
+#           class: mermaid
+#           format: !!python/name:mermaid2.fence_mermaid_custom
+#   - pymdownx.tabbed:
+#       alternate_style: true
+#   - tables
 
 # Additional settings
 extra: # Extra customization

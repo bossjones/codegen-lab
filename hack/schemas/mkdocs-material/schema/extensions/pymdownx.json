@@ -664,38 +664,42 @@
       ]
     },
     {
-      "type": "object",
-      "properties": {
-        "pymdownx.tabbed": {
-          "title": "Tabbed – Python Markdown Extensions",
-          "markdownDescription": "https://squidfunk.github.io/mkdocs-material/setup/extensions/python-markdown-extensions/#tabbed",
+      "oneOf": [
+        {
           "type": "object",
           "properties": {
-            "alternate_style": {
-              "markdownDescription": "https://squidfunk.github.io/mkdocs-material/setup/extensions/python-markdown-extensions/#+pymdownx.tabbed.alternate_style",
-              "type": "boolean",
-              "enum": [
-                true
-              ],
-              "default": true
-            },
-            "combine_header_slug": {
-              "markdownDescription": "https://squidfunk.github.io/mkdocs-material/setup/extensions/python-markdown-extensions/#+pymdownx.tabbed.combine_header_slug",
-              "type": "boolean",
-              "default": true
-            },
-            "slugify": {
-              "markdownDescription": "https://squidfunk.github.io/mkdocs-material/setup/extensions/python-markdown-extensions/#+pymdownx.tabbed.slugify",
-              "default": "!!python/object/apply:pymdownx.slugs.slugify {kwds: {case: lower}}"
+            "pymdownx.tabbed": {
+              "title": "Tabbed – Python Markdown Extensions",
+              "markdownDescription": "https://squidfunk.github.io/mkdocs-material/setup/extensions/python-markdown-extensions/#tabbed",
+              "type": "object",
+              "properties": {
+                "alternate_style": {
+                  "markdownDescription": "https://facelessuser.github.io/pymdown-extensions/extensions/tabbed/#options",
+                  "type": "boolean",
+                  "default": false
+                },
+                "slugify": {
+                  "markdownDescription": "https://facelessuser.github.io/pymdown-extensions/extensions/tabbed/#options",
+                  "type": ["string", "object"],
+                  "default": "!!python/object/apply:pymdownx.slugs.slugify {kwds: {case: lower}}"
+                },
+                "combine_header_slug": {
+                  "markdownDescription": "https://facelessuser.github.io/pymdown-extensions/extensions/tabbed/#options",
+                  "type": "boolean",
+                  "default": false
+                }
+              },
+              "additionalProperties": false
             }
           },
-          "additionalProperties": false,
-          "required": [
-            "alternate_style"
-          ]
+          "additionalProperties": false
+        },
+        {
+          "title": "Tabbed – Python Markdown Extensions",
+          "markdownDescription": "https://squidfunk.github.io/mkdocs-material/setup/extensions/python-markdown-extensions/#tabbed",
+          "const": "pymdownx.tabbed"
         }
-      },
-      "additionalProperties": false
+      ]
     },
     {
       "oneOf": [

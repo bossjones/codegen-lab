@@ -53,6 +53,14 @@
       ]
     },
     {
+      "title": "Meta Data – Python Markdown",
+      "markdownDescription": "https://python-markdown.github.io/extensions/meta_data/",
+      "enum": [
+        "markdown.extensions.meta",
+        "meta"
+      ]
+    },
+    {
       "title": "Markdown in HTML – Python Markdown",
       "markdownDescription": "https://squidfunk.github.io/mkdocs-material/setup/extensions/python-markdown/#markdown-in-html",
       "enum": [
