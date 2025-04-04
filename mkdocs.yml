@@ -22,46 +22,7 @@ watch:
   - CHANGELOG.md
   - changes/
   - scripts/docs
-# Navigation structure
-# nav: # Define the navigation/menu structure
-#   - Home: index.md # Homepage link
-#   - Getting Started: getting-started.md # Getting started guide
-#   - User Guide: # User guide section with nested pages
-#       - Installation: user-guide/installation.md # Installation instructions
-#       - Configuration: user-guide/configuration.md # Configuration guide
-#       - Documentation Automation: user-guide/docs-automation.md # Documentation automation guide
-#   - Development Tools: # Development tools section
-#       - Cursor Rules: tools/cursor-rules.md # Cursor rules documentation
-#       - UV Workspace: tools/uv-workspace.md # UV workspace documentation
-#   - API Reference: api-reference.md # API documentation
-#   - Troubleshooting: troubleshooting.md # Troubleshooting guide
-#   - Contributing: contributing.md # Contribution guidelines
-#   - Changelog: changelog.md # Version history
 
-# # Theme configuration
-# theme: # Theme settings
-#   name: material # Use Material for MkDocs theme
-#   palette: # Color scheme configuration
-#     primary: indigo # Primary color
-#     accent: indigo # Accent color
-#   # features: # Theme feature flags
-#   #   - navigation.instant # Enable instant loading of pages
-#   #   - navigation.tracking # Enable URL tracking as you scroll
-#   #   - navigation.expand # Auto-expand navigation sections
-#   #   - navigation.indexes # Allow index pages for sections
-#   #   - navigation.top # Add "back to top" button
-#   #   - search.highlight # Highlight search results
-#   #   - search.share # Enable search result sharing
-#   #   - content.code.copy # Add copy button to code blocks
-#   features:
-#     - content.action.edit
-#     - content.action.view
-#     - content.code.copy # https://squidfunk.github.io/mkdocs-material/reference/code-blocks/#code-copy-button
-#     - content.code.select # https://squidfunk.github.io/mkdocs-material/reference/code-blocks/#code-selection-button
-#     - content.tooltips
-#     - navigation.footer
-#     - search.share
-# Theme configuration
 theme:
   name: material # Using Material for MkDocs theme
   font:
@@ -142,30 +103,6 @@ plugins: # Enable MkDocs plugins
         - scripts/docs/gen_ref_pages.py
   - literate-nav:
       nav_file: summary.md
-  # - mkdocstrings: # https://mkdocstrings.github.io/
-  #     handlers:
-  #       python:
-  #         import:
-  #           - https://docs.python.org/3/objects.inv # Imports the objects.inv file from the official Python documentation to enable cross-references.
-  #           - https://installer.readthedocs.io/en/stable/objects.inv # demonstration purpose in the docs # Imports another objects.inv file, likely for demonstration, from a different documentation source.
-  #           - https://mkdocstrings.github.io/autorefs/objects.inv # Imports the objects.inv file from the mkdocstrings autorefs documentation.
-  #         paths: [src] # Specifies the source directory where Python modules are located.
-  #         options:
-  #           docstring_options:
-  #             ignore_init_summary: true # Ignores the summary from the __init__ method's docstring.
-  #           docstring_section_style: list # Sets the style for docstring sections to a list format.
-  #           filters: ["!^_"] # Excludes any members that start with an underscore from the documentation.
-  #           heading_level: 1 # Sets the base heading level for documented items to H1.
-  #           inherited_members: false # Does not include inherited members in the documentation by default.
-  #           merge_init_into_class: true # Merges the __init__ docstring into the class docstring.
-  #           separate_signature: true # Displays the function or method signature separately from its documentation.
-  #           show_root_heading: true # Shows a heading for the root-level module.
-  #           show_root_full_path: false # Does not display the full path to the root module in the heading.
-  #           show_signature_annotations: true # Displays signature annotations in the function signatures.
-  #           show_symbol_type_heading: true # Shows a heading indicating the type of symbol being documented.
-  #           show_symbol_type_toc: true # Includes symbol types in the table of contents.
-  #           signature_crossrefs: true # Enables cross-references in signatures.
-  #           summary: true # Displays a summary of each documented item.
   - mkdocstrings: # Enables the mkdocstrings plugin for automatic API documentation generation.
       # enabled: !ENV [ENABLE_MKDOCSTRINGS, true] # Activates the plugin based on the `ENABLE_MKDOCSTRINGS` environment variable, defaulting to `true` if not set.
       default_handler: python # Sets Python as the default handler for processing and rendering documentation.
@@ -202,34 +139,10 @@ plugins: # Enable MkDocs plugins
   - search # https://squidfunk.github.io/mkdocs-material/plugins/search/
   - tags # https://squidfunk.github.io/mkdocs-material/plugins/tags/
   # Want to have ezlinks after macros
-  # because macros might return markup with ezlinks that we want expanded - e.g.: for people
-  # - with-pdf  # Lets us export our docs site to a PDF file, which we can then feed to Acrobat Assistant FTW!
-  - ezlinks # https://github.com/orbikm/mkdocs-ezlinks-plugin
-  # - search # Enable search functionality
-  # - macros:
-  #     module_name: mkdocs_macro_plugin
-  # - api-autonav:
-  #   modules: ["src/codegen_lab"]
-  #   nav_section_title: "API Reference"
-  #   api_root_uri: "reference"
-  #   nav_item_prefix: "<code class='doc-symbol doc-symbol-nav doc-symbol-module'></code>"
-  #   exclude_private: true
-  #   on_implicit_namespace_packge: "warn"
+  # because macros might return markup with ezlinks that we want expanded - e.g.: for people  - ezlinks # https://github.com/orbikm/mkdocs-ezlinks-plugin
   - coverage:
       page_path: coverage # default
       html_report_dir: htmlcov # default
-
-# Markdown extensions
-# markdown_extensions: # Configure Markdown processing
-#   - admonition # Enable admonitions (note, warning, etc.)
-#   - codehilite # Enable code highlighting
-#   - toc: # Table of contents settings
-#       permalink: true # Add permalinks to headers
-#   - pymdownx.highlight: # Python Markdown Extensions for code highlighting
-#       anchor_linenums: true # Add anchors to line numbers
-#   - pymdownx.inlinehilite # Enable inline code highlighting
-#   - pymdownx.snippets # Enable code snippets inclusion
-#   - pymdownx.superfences # Enable nested code blocks
 
 # via hikari
 markdown_extensions:
@@ -277,43 +190,6 @@ markdown_extensions:
   - pymdownx.tabbed:
       alternate_style: true
   - tables
-
-# markdown_extensions:
-
-#   # Python Markdown
-#   - toc:
-#       permalink: true
-
-#   # Python Markdown Extensions
-#   - abbr
-#   - admonition
-#   - attr_list
-#   - neoteroi.cards
-#   - pymdownx.details
-#   # ----------------------------------------------------
-#   # Using with MkDocs
-#   # This project uses these extensions with MkDocs to generate the documentation. It might not be obvious how to set the index or generator functions in MkDocs' YAML settings file, but it is actually pretty easy. The functions are referenced like you would import them in Python except you also append them with a special prefix to let the YAML module know that the setting value is a Python object. For instance, to specify the to_svg generator, you would simply reference it like this: !!python/name:pymdownx.emoji.to_svg (or you could use your own custom module 😉).
-
-#   # markdown_extensions:
-#   #   - pymdownx.emoji:
-#   #       emoji_generator: !!python/name:pymdownx.emoji.to_svg
-#   # ----------------------------------------------------
-#   - pymdownx.emoji:
-#       emoji_index: !!python/name:material.extensions.emoji.twemoji
-#       emoji_generator: !!python/name:material.extensions.emoji.to_svg
-#   - pymdownx.highlight:
-#   - pymdownx.inlinehilite
-#   - pymdownx.magiclink # Allows plain ol' URLs to be links
-#   - pymdownx.snippets
-#   - pymdownx.superfences:
-#       # make exceptions to highlighting of code:
-#       custom_fences:
-#         - name: mermaid
-#           class: mermaid
-#           format: !!python/name:mermaid2.fence_mermaid_custom
-#   - pymdownx.tabbed:
-#       alternate_style: true
-#   - tables
 
 # Additional settings
 extra: # Extra customization
