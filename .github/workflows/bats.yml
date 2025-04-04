@@ -38,7 +38,7 @@ jobs:
 
       - name: verify bats-lib-path
         id: verify-bats-lib-path
-        if: steps.setup-bats.outputs.support-installed == 'true'
+        # if: steps.setup-bats.outputs.support-installed == 'true'
         shell: bash
         env:
           BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
@@ -53,10 +53,24 @@ jobs:
           export BATS_LIB_PATH=$(echo "$BATS_LIB_PATH" | awk -v RS=':' '!seen[$0]++' | paste -sd ':' -)
           echo "BATS_LIB_PATH: $BATS_LIB_PATH"
           echo "BATS_LIB_PATH=${{ github.workspace }}/scripts/tests/bats/helpers/lib" >> $GITHUB_ENV
-          echo "bats-lib-path=$BATS_LIB_PATH" >> $GITHUB_OUTPUT
+          echo "bats-lib-path=${{ github.workspace }}/scripts/tests/bats/helpers/lib" >> $GITHUB_OUTPUT
+
+          echo "tree -L 2 ${{ github.workspace }}/scripts/tests/bats/helpers/lib || true"
+          tree -L 2 ${{ github.workspace }}/scripts/tests/bats/helpers/lib || true
+
+          echo "tree ${{ github.workspace }}/scripts/"
+          tree ${{ github.workspace }}/scripts/
+
+      - name: check verify-bats-lib-path
+        shell: bash
+        continue-on-error: true
+        run: |
+          set -x
+          echo "BATS_LIB_PATH: $BATS_LIB_PATH"
+          echo "TMP_PATH: $TMP_PATH"
 
           tree -L 2 $BATS_LIB_PATH || true
-          tree ${{ github.workspace }}/scripts/
+          tree $BATS_LIB_PATH || true
 
       - name: set verify-bats-lib-path regardless of previous step
         shell: bash
