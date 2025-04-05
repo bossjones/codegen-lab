@@ -8,6 +8,15 @@ if [ -n "$(git status --porcelain)" ]; then
     git stash push --include-untracked --message "Stash for release preparation"
 fi
 
+echo "===== CURRENT VERSION CHECK ====="
+CURRENT_VERSION=$(uv run cz version -p)
+if [ -z "${CURRENT_VERSION}" ]; then
+    echo "❌ Failed to determine current version"
+    exit 1
+fi
+echo "✅ Current version: ${CURRENT_VERSION}"
+
+
 echo "===== VERSION DETERMINATION ====="
 echo "-- Running Commitizen dry-run --"
 VERSION=$(uv run cz bump --dry-run 2>&1 | grep -oP 'bump: version \S+ → \K\S+')
@@ -24,7 +33,7 @@ if [ -z "${VERSION}" ]; then
     echo "❌ Failed to determine new version from Commitizen"
     exit 1
 fi
-echo "✅ New version determined: ${VERSION}"
+echo "✅ New version determined: ${VERSION} (from ${CURRENT_VERSION})"
 
 echo "===== VERSION CONSISTENCY CHECK ====="
 cz check --consistency || {
@@ -89,7 +98,7 @@ echo "===== COMMIT SAFEGUARDS ====="
 git add .
 if ! git diff --cached --quiet; then
     echo "-- Committing version changes --"
-    git commit -m "chore: bump version to ${VERSION}"
+    git commit -m "chore: bump version from ${CURRENT_VERSION} to ${VERSION}"
 else
     echo "❌ No changes to commit after version bump and pre-commit"
     exit 1
@@ -116,14 +125,17 @@ if command -v gh >/dev/null; then
     fi
 
     echo "-- Creating pull request --"
-    PR_TITLE="Prepare for release of ${VERSION}"
+    PR_TITLE="Prepare for release of ${CURRENT_VERSION} to ${VERSION}"
     PR_BODY="Release preparation triggered by @$(git config user.name).\n\nOnce merged, create a GitHub release for \`${VERSION}\` to publish."
 
     gh pr create \
         --title "${PR_TITLE}" \
         --body "${PR_BODY}" \
         --assignee "@me" \
-        --label "release" || {
+        --label "release" \
+        --fill \
+        --base main \
+        --head "${RELEASE_BRANCH}" || {
             echo "❌ PR creation failed"
             echo "Check GitHub CLI configuration and permissions"
             exit 1
