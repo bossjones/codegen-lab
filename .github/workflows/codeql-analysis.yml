@@ -1,0 +1,40 @@
+---
+name: CodeQL
+on:
+  push:
+    branches: [main]
+  merge_group:
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 0 * * *" # Run daily at midnight
+  workflow_dispatch: # Allow manual triggering
+jobs:
+  analyze:
+    uses: ./.github/workflows/_reusable-codeql-analysis.yml
+    with:
+      languages-array: '["python", "javascript"]'
+      codeql-queries: security-extended,security-and-quality
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+  gitleaks:
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+    # - uses: gitleaks/gitleaks-action@v2
+    #   with:
+    #     config-path: .gitleaks.toml
+    #     verbose: true
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #     GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}  # If using pro version

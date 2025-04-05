@@ -1,0 +1,52 @@
+# SOURCE: https://github.com/tektronix/python-package-ci-cd/blob/main/.github/workflows/_reusable-codeql-analysis.yml
+---
+name: CodeQL
+on:
+  workflow_call:
+    inputs:
+      languages-array:
+        type: string
+        description: A valid JSON array of languages to analyze.
+        required: true
+      codeql-queries:
+        type: string
+        description: A comma-separate list of CodeQL query sets to use.
+        default: security-extended,security-and-quality
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ${{ fromJSON(inputs.languages-array) }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@1b549b9259bda1cb5ddde3b41741a82a2d15a841 # v3.28.13
+        with:
+          languages: ${{ matrix.language }}
+          queries: ${{ inputs.codeql-queries }}
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@1b549b9259bda1cb5ddde3b41741a82a2d15a841 # v3.28.13
+        with:
+          category: /language:${{matrix.language}}
+  # Check that all jobs passed
+  check-codeql-passed:
+    if: ${{ !cancelled() }}
+    needs: [analyze]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Decide whether the needed jobs succeeded or failed
+        uses: re-actors/alls-green@05ac9388f0aebcb5727afa17fcccfecd6f8ec5fe # v1.2.2
+        with:
+          jobs: ${{ toJSON(needs) }}
