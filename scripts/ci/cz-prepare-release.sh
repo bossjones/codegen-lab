@@ -1,4 +1,39 @@
 #!/bin/sh
+# cz-prepare-release.sh - Automates the release preparation process using Commitizen
+#
+# DESCRIPTION:
+#   This script automates the process of preparing a new release by:
+#   - Checking for uncommitted changes
+#   - Determining the next version based on conventional commits
+#   - Creating a release branch
+#   - Bumping version numbers
+#   - Running pre-commit hooks
+#   - Creating a pull request
+#
+# REQUIREMENTS:
+#   - uv (Python package manager)
+#   - commitizen (cz)
+#   - pre-commit
+#   - gh (GitHub CLI, optional but recommended for PR creation)
+#
+# USAGE:
+#   ./scripts/ci/cz-prepare-release.sh
+#
+# ENVIRONMENT VARIABLES:
+#   PRERELEASE_PHASE - Optional. Set to 'alpha', 'beta', or 'rc' for prerelease versions
+#   CI              - Optional. If set, indicates running in CI environment
+#
+# EXAMPLES:
+#   # Standard release
+#   ./scripts/ci/cz-prepare-release.sh
+#
+#   # Beta release
+#   PRERELEASE_PHASE=beta ./scripts/ci/cz-prepare-release.sh
+#
+# EXIT CODES:
+#   0 - Success
+#   1 - Various error conditions (see error messages)
+
 set -e
 
 echo "===== ENVIRONMENT PRE-CHECKS ====="
