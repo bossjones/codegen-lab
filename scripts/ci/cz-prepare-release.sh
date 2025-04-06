@@ -54,7 +54,7 @@ echo "✅ Current version: ${CURRENT_VERSION}"
 
 echo "===== VERSION DETERMINATION ====="
 echo "-- Running Commitizen dry-run --"
-VERSION=$(uv run cz bump --dry-run 2>&1 | grep -oP 'bump: version \S+ → \K\S+')
+VERSION=$(uv run cz bump --dry-run 2>&1 | sed -n 's/bump: version .* → \(.*\)/\1/p')
 CZ_EXIT_CODE=$?
 if [ $CZ_EXIT_CODE -ne 0 ]; then
     echo "❌ Commitizen dry-run failed with exit code $CZ_EXIT_CODE"
