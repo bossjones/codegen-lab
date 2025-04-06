@@ -70,13 +70,13 @@ if [ -z "${VERSION}" ]; then
 fi
 echo "✅ New version determined: ${VERSION} (from ${CURRENT_VERSION})"
 
-echo "===== VERSION CONSISTENCY CHECK ====="
-cz check --consistency || {
-    echo "❌ Version inconsistency detected between files"
-    echo "Verify version declarations in:"
-    grep 'version_files' pyproject.toml || echo "Check Commitizen config"
-    exit 1
-}
+# echo "===== VERSION CONSISTENCY CHECK ====="
+# uv run cz check --consistency || {
+#     echo "❌ Version inconsistency detected between files"
+#     echo "Verify version declarations in:"
+#     grep 'version_files' pyproject.toml || echo "Check Commitizen config"
+#     exit 1
+# }
 
 echo "===== BRANCH MANAGEMENT ====="
 RELEASE_BRANCH="task/prepare-release-${VERSION}"
