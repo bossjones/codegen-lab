@@ -169,8 +169,7 @@ if command -v gh >/dev/null; then
         --assignee "@me" \
         --label "release" \
         --fill \
-        --base main \
-        --head "${RELEASE_BRANCH}" || {
+        --base main || {
             echo "❌ PR creation failed"
             echo "Check GitHub CLI configuration and permissions"
             exit 1
