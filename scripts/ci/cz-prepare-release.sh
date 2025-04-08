@@ -154,7 +154,7 @@ fi
 echo "===== PR CREATION SAFEGUARDS ====="
 if command -v gh >/dev/null; then
     echo "-- Checking GitHub CLI authentication --"
-    if ! gh auth status 2>/dev/null; then
+    if ! gh auth status -h github.com 2>/dev/null; then
         echo "❌ GitHub CLI not authenticated"
         exit 1
     fi
