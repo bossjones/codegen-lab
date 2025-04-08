@@ -12,9 +12,9 @@ format-import:
 format-source:
 	uv run ruff format {{SOURCES}} {{TESTS}}
 
-# format markdown
-[group('format')]
-format_markdown:
-    @echo "Formatting markdown files..."
-    @echo "SOURCE: https://github.com/tmux-python/tmuxp/blob/master/Makefile"
-	npx prettier --parser=markdown -w *.md docs/*.md docs/**/*.md CHANGES
+# # format markdown
+# [group('format')]
+# format_markdown:
+#     @echo "Formatting markdown files..."
+#     @echo "SOURCE: https://github.com/tmux-python/tmuxp/blob/master/Makefile"
+# 	npx prettier --parser=markdown -w *.md docs/*.md docs/**/*.md CHANGES
