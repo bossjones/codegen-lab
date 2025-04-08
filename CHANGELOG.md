@@ -1,4 +1,20 @@
-## Unreleased
+## v1.1.0 (2025-04-07)
+
+### Feat
+
+- introduce git commit and push rules for consistent message formatting
+- add GitHub release automation script
+- add release preparation script with enhanced safeguards
+
+### Fix
+
+- simplify PR creation command in release preparation script
+- update GitHub CLI authentication check in release preparation script
+- remove invalid commitizen consistency check
+
+### Refactor
+
+- replace grep -P with cross-platform sed command
 
 ## v1.0.0 (2025-04-04)
 
