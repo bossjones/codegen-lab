@@ -5,12 +5,15 @@
 #   This script automates the GitHub release creation process by:
 #   - Verifying GitHub CLI installation and authentication
 #   - Determining the current version from Commitizen
+#   - Checking tag existence locally and remotely
+#   - Pushing tag if needed
 #   - Creating a GitHub release with auto-generated release notes
 #
 # REQUIREMENTS:
 #   - gh (GitHub CLI)
 #   - uv (Python package manager)
 #   - commitizen (cz)
+#   - git
 #
 # USAGE:
 #   ./scripts/ci/cz-release.sh
@@ -26,6 +29,7 @@
 #     - GitHub CLI not authenticated
 #     - Version determination failed
 #     - Release creation failed
+#     - Git tag operations failed
 
 set -e
 
@@ -38,7 +42,7 @@ if ! command -v gh >/dev/null; then
 fi
 
 # Verify authentication
-if ! gh auth status 2>/dev/null; then
+if ! gh auth status -h github.com 2>/dev/null; then
     echo "❌ GitHub CLI not authenticated"
     exit 1
 fi
@@ -51,10 +55,27 @@ if [ -z "${VERSION}" ]; then
 fi
 echo "✅ Current version: ${VERSION}"
 
+# Check if tag exists locally
+echo "-- Checking tag status --"
+if ! git rev-parse "v${VERSION}" >/dev/null 2>&1; then
+    echo "❌ Tag v${VERSION} does not exist locally"
+    exit 1
+fi
+
+# Check if tag exists on remote
+if ! git ls-remote --exit-code --tags origin "refs/tags/v${VERSION}" >/dev/null 2>&1; then
+    echo "-- Pushing tag v${VERSION} to remote --"
+    if ! git push origin "v${VERSION}"; then
+        echo "❌ Failed to push tag v${VERSION} to remote"
+        exit 1
+    fi
+    echo "✅ Successfully pushed tag v${VERSION} to remote"
+fi
+
 echo "-- Creating release v${VERSION} --"
-gh release create "v${VERSION}" --generate-notes || {
+if ! gh release create "v${VERSION}" --generate-notes; then
     echo "❌ Release creation failed"
     exit 1
-}
+fi
 
 echo "🎉 Successfully created release v${VERSION}"
