@@ -25,7 +25,7 @@ jobs:
     name: Run Bats Tests
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up UV and Python "3.12"
         id: setup-uv
