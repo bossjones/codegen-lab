@@ -44,7 +44,7 @@ jobs:
 
       - name: Setup Bats and bats libs
         id: setup-bats
-        uses: bats-core/bats-action@3.0.0
+        uses: bats-core/bats-action@3.0.1
         with:
           support-path: "${{ github.workspace }}/scripts/tests/bats/helpers/lib/bats-support"
           assert-path: "${{ github.workspace }}/scripts/tests/bats/helpers/lib/bats-assert"
