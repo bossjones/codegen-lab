@@ -17,7 +17,7 @@ jobs:
   build:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # Allow debugging with tmate
       - name: Setup tmate session
