@@ -82,7 +82,7 @@ jobs:
 
       # Upload test results and coverage reports as artifacts
       - name: Upload test results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: always()
         with:
           name: test-results-${{ matrix.os }}-${{ matrix.python-version }}
@@ -139,7 +139,7 @@ jobs:
           uv run pytest --diff-width=60 --diff-symbols --cov-append --cov-report=term-missing --cov-report=xml:cov.xml --cov-report=html:htmlcov --junitxml=junit/test-results-extended.xml --cov=.
 
       - name: Upload extended test results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: always()
         with:
           name: test-results-macos-extended
